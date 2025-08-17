@@ -1,0 +1,43 @@
+# Task ID: 8
+# Title: Appointment Management System
+# Status: pending
+# Dependencies: 7
+# Priority: high
+# Description: Implement a calendar-based appointment scheduling and management system for nutritionists with consultation notes.
+# Details:
+Integrate a full-featured calendar component using @tanstack/react-calendar or react-big-calendar. Implement appointment creation, editing, and cancellation flows. Create recurring appointment functionality. Add consultation notes feature with rich text editing using Tiptap or Lexical. Implement appointment reminders via email using a service like Resend.com. Create appointment status tracking (scheduled, completed, cancelled, no-show). Add buffer time settings between appointments. Implement timezone handling for international clients. Create patient appointment history view. Add drag-and-drop rescheduling functionality. Implement calendar sync options with Google Calendar and iCal using their respective APIs.
+
+# Test Strategy:
+Unit tests for calendar operations and state management. Integration tests for appointment CRUD operations. E2E tests for complete appointment scheduling flows. Test timezone edge cases. Test calendar sync functionality. Performance testing with many appointments.
+
+# Subtasks:
+## 1. Calendar Component Integration [pending]
+### Dependencies: None
+### Description: Integrate a full-featured calendar component using @tanstack/react-calendar or react-big-calendar with basic view options.
+### Details:
+Research and select between @tanstack/react-calendar and react-big-calendar based on feature requirements. Implement the chosen calendar component with day, week, and month views. Configure styling to match the application's design system. Implement responsive design for different screen sizes. Set up basic calendar navigation and date selection functionality.
+
+## 2. Appointment CRUD Operations [pending]
+### Dependencies: 8.1
+### Description: Implement appointment creation, editing, cancellation, and recurring appointment functionality with status tracking.
+### Details:
+Create forms for appointment creation and editing with validation. Implement appointment status tracking (scheduled, completed, cancelled, no-show). Develop recurring appointment logic with options for daily, weekly, monthly patterns. Add buffer time settings between appointments. Create appointment conflict detection and prevention. Implement drag-and-drop rescheduling functionality.
+
+## 3. Consultation Notes System [pending]
+### Dependencies: 8.2
+### Description: Develop a consultation notes feature with rich text editing using Tiptap or Lexical and attachment capabilities.
+### Details:
+Integrate a rich text editor (Tiptap or Lexical) for consultation notes. Implement note templates for common consultation scenarios. Create auto-save functionality for notes. Add attachment support for documents and images. Implement note versioning to track changes. Create a searchable notes history view. Ensure proper data encryption for sensitive patient information.
+
+## 4. Appointment Reminder System [pending]
+### Dependencies: 8.2
+### Description: Implement appointment reminders via email using Resend.com with customizable notification schedules.
+### Details:
+Integrate with Resend.com API for email delivery. Create email templates for appointment reminders, confirmations, and cancellations. Implement configurable reminder schedules (e.g., 24 hours, 1 hour before). Add SMS reminder option as an alternative channel. Create a notification preferences management interface for nutritionists. Implement notification logs and delivery status tracking.
+
+## 5. Calendar Synchronization [pending]
+### Dependencies: 8.1, 8.2
+### Description: Implement calendar sync options with Google Calendar and iCal using their respective APIs with timezone handling.
+### Details:
+Integrate with Google Calendar API for two-way synchronization. Implement iCal export and import functionality. Develop timezone handling for international clients using a library like date-fns-tz. Create sync conflict resolution strategies. Implement sync frequency settings and manual sync options. Add visual indicators for synced vs. local-only appointments. Create a patient appointment history view with filtering options.
+

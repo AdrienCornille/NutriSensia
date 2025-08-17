@@ -1,0 +1,43 @@
+# Task ID: 17
+# Title: Physical Measurements Tracking
+# Status: pending
+# Dependencies: 14
+# Priority: medium
+# Description: Create a system for patients to track physical measurements including weight, waist circumference, and progress photos with visualization.
+# Details:
+Design a measurement tracking interface with input validation. Implement measurement history with trend visualization using recharts. Create progress photo storage and comparison tools using Supabase Storage. Implement measurement reminders and scheduling. Add goal setting for measurements with progress indicators. Create measurement insights and analysis for patients. Implement export functionality for measurement data. Add privacy controls for sensitive measurements. Create sharing options for nutritionist review. Implement BMI and other calculated metrics. Add custom measurement tracking for specific patient needs.
+
+# Test Strategy:
+Component testing for measurement input forms. Integration tests for data persistence and retrieval. Visual regression testing for charts and visualizations. E2E tests for complete measurement logging flows. Test photo upload and comparison features. Test privacy controls and sharing functionality. User testing for sensitivity and usability.
+
+# Subtasks:
+## 1. Measurement Input Interface [pending]
+### Dependencies: None
+### Description: Design and implement a user interface for inputting physical measurements with validation
+### Details:
+Create form components for weight, waist circumference, and other physical measurements with appropriate input validation using Zod. Implement a responsive design that works well on mobile devices. Include unit selection (metric/imperial) and conversion functionality. Design an intuitive UI for measurement entry with clear labels and instructions.
+
+## 2. Measurement History and Visualization [pending]
+### Dependencies: 17.1
+### Description: Implement storage and visualization of measurement history with trend charts
+### Details:
+Create database schema for storing measurement history in Supabase. Implement TanStack Query for efficient data fetching with caching. Build visualization components using recharts to display measurement trends over time. Include filtering options by date range and measurement type. Create summary statistics (min, max, average) for each measurement type.
+
+## 3. Progress Photo Management [pending]
+### Dependencies: 17.1
+### Description: Create a system for uploading, storing, and comparing progress photos
+### Details:
+Implement photo upload functionality using Supabase Storage. Create a secure storage structure with appropriate access controls. Build a photo comparison tool that allows side-by-side viewing of photos from different dates. Implement photo categorization (front, side, back views). Add metadata storage for photos including date, category, and optional notes.
+
+## 4. Goal Setting and Progress Tracking [pending]
+### Dependencies: 17.1, 17.2
+### Description: Implement functionality for setting measurement goals and tracking progress
+### Details:
+Create interfaces for setting target goals for different measurements. Implement progress indicators showing current status relative to goals. Build notification system for goal achievements. Design visual indicators for progress (progress bars, percentage complete). Add functionality to adjust goals and track goal history.
+
+## 5. Privacy Controls and Data Sharing [pending]
+### Dependencies: 17.1, 17.2, 17.3
+### Description: Implement privacy settings and sharing options for measurement data
+### Details:
+Create granular privacy controls for different measurement types. Implement sharing functionality to allow patients to share specific measurements with nutritionists. Build export functionality for measurement data in common formats (CSV, PDF). Implement Row Level Security in Supabase for measurement data. Add audit logging for access to sensitive measurement data.
+

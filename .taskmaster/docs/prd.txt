@@ -1,0 +1,199 @@
+# NutriSensia - Product Requirements Document (PRD)
+
+## Overview
+NutriSensia est une plateforme digitale leader en Suisse francophone connectant nutritionnistes certifiés et patients via des outils modernes de suivi nutritionnel. La plateforme simplifie la gestion patient pour nutritionnistes solo, facilite le remboursement par assurances suisses (ASCA/RME), offre un suivi nutritionnel engageant pour les patients, et garantit la conformité RGPD/HDS.
+
+## Core Features
+
+### 1. Site Vitrine & Acquisition
+- Homepage conversion-optimisée avec hero section et proposition de valeur claire
+- Pages pour patients (forfaits, processus consultation, FAQ remboursement)
+- Pages pour nutritionnistes (avantages plateforme, pricing, démo)
+- Blog nutritionnel avec content marketing
+- SEO local Suisse francophone
+- Forms contact avec validation et lead capture
+
+### 2. Authentification & Gestion Utilisateurs
+- Auth Supabase (email/password + OAuth Google)
+- 2FA obligatoire pour nutritionnistes
+- Rôles: nutritionniste, patient, admin
+- Profils personnalisables avec validation Zod
+- Onboarding guidé par rôle
+
+### 3. Dashboard Nutritionniste
+- Vue d'ensemble patients (cartes avec status, prochains RDV)
+- Gestion consultations (calendrier, prise RDV, notes)
+- Création plans alimentaires (base USDA/Ciqual avec cache)
+- Messagerie patients (RGPD-compliant, temps réel)
+- Génération factures (format assurance suisse, PDF automatique)
+- Analytics dashboard (engagement patients, revenus)
+
+### 4. Dashboard Patient
+- Vue programme quotidien (repas, objectifs, progrès)
+- Journal alimentaire (recherche aliments, photos, portions)
+- Scanner code-barres (V2: automatique avec ML)
+- Suivi mesures (poids, tour taille, progrès photos)
+- Messagerie nutritionniste (selon tier, notifications push)
+- Ressources éducatives (selon tier, contenu interactif)
+- Gamification (streaks, badges, objectifs)
+
+### 5. Base Données Nutritionnelle
+- Intégration USDA FoodData Central avec cache Redis local
+- Intégration Ciqual ANSES (France) avec fallback offline
+- Recherche rapide + autocomplete (indexation Elasticsearch)
+- Scan code-barres (MVP: manuel, V2: automatique via Open Food Facts)
+- Synchronisation quotidienne des données nutritionnelles
+
+### 6. Système Facturation Suisse
+- Templates factures français (assurance suisse)
+- Credentials ASCA/RME auto-inclus
+- PDF téléchargeable patient avec QR code
+- Stripe payment (abonnements + à la carte)
+- Comptabilité automatisée (exports pour fiduciaire)
+- Rappels paiement automatiques
+
+## User Experience
+
+### Personas
+- **Nutritionniste fondateur**: Gestion simplifiée de patients, facturation automatisée
+- **Patient actuel**: Suivi nutritionnel engageant, communication facilitée
+- **Patient potentiel**: Découverte via site vitrine, onboarding guidé
+
+### User Flows
+- Onboarding nutritionniste: Inscription → Validation credentials → Formation → Premiers patients
+- Onboarding patient: Découverte → Consultation → Inscription → Suivi
+- Parcours facturation: Consultation → Génération facture → Paiement → Remboursement
+
+## Technical Architecture
+
+### Frontend Stack
+- Next.js 14.2.5 + TypeScript 5.5.4 + Tailwind CSS 3.4.7
+- React 18.3.1 (App Router)
+- Zustand (state management)
+- TanStack Query (cache et synchronisation)
+- React Hook Form + Zod (validation)
+- Framer Motion (animations)
+
+### Backend & Database
+- Supabase (PostgreSQL + Auth + Storage + Realtime)
+- Hébergement EU-West (conformité RGPD)
+- Base nutritionnelle: USDA FoodData + Ciqual ANSES
+- Paiements: Stripe (conformité suisse)
+- Notifications: Supabase Realtime + Email service EU
+
+### Testing & Quality
+- Jest (tests unitaires)
+- Playwright (tests E2E)
+- ESLint + Prettier (code quality)
+- Husky (Git hooks)
+
+### CI/CD & Monitoring
+- GitHub Actions (pipeline CI/CD)
+- Vercel (déploiement + analytics)
+- Sentry (error monitoring)
+- Uptime monitoring
+
+## Development Roadmap
+
+### Phase 0: Site Vitrine (3-4 semaines) - EN PARALLÈLE
+**Objectif**: Acquisition patients + crédibilité avant lancement app
+- Design & Content (1 sem): Wireframes, copywriting, assets
+- Développement (2 sem): Next.js, CMS, forms, SEO
+- Launch & SEO (1 sem): Mise en ligne, Google Business, analytics
+
+### Phase 1: MVP Core (10-14 semaines)
+**Objectif**: Platform fonctionnelle pour 1 nutritionniste + 50 patients
+- Setup & Architecture (2 sem): Supabase setup EU + Next.js boilerplate, Design system Tailwind
+- Auth & Security (2 sem): Auth Supabase + 2FA, Validation Zod + React Hook Form
+- Dashboard Nutritionniste (3 sem): Vue patients avec TanStack Query, Gestion consultations + calendrier
+- Dashboard Patient (3 sem): Vue programme + journal alimentaire, Messagerie temps réel Supabase
+- Facturation & Tests (2-3 sem): Templates factures + Stripe, Tests E2E Playwright
+- Polish & Launch (1-2 sem): Optimisations performance, Tests utilisateurs + feedback
+
+### Phase 2: Scale & Features (8-10 semaines)
+- Multi-nutritionnistes (onboarding, validation credentials)
+- App mobile PWA (notifications push, mode offline)
+- Features avancées (IA meal planning, intégrations fitness)
+- Analytics avancés (dashboard business, KPIs)
+- API publique (documentation, rate limiting)
+
+### Phase 3: Growth (6-8 semaines)
+- Expansion Suisse allemande/italienne (i18n)
+- Community features (recettes partagées, forums)
+- Marketplace (plans alimentaires premium)
+- Intégrations (Google Fit, Apple Health, MyFitnessPal)
+- Advanced analytics (ML prédictions, recommandations)
+
+## Logical Dependency Chain
+
+### Foundation First (Phase 1)
+1. **Setup & Architecture**: Supabase + Next.js boilerplate, Design system
+2. **Auth & Security**: Authentification, validation, sécurité
+3. **Dashboard Nutritionniste**: Gestion patients, consultations, plans alimentaires
+4. **Dashboard Patient**: Suivi, journal alimentaire, messagerie
+5. **Facturation**: Templates, Stripe, conformité assurance
+6. **Tests & Polish**: Quality assurance, performance, UX
+
+### Getting to MVP Quickly
+- Site vitrine en parallèle pour acquisition
+- Focus sur 1 nutritionniste + patients actuels
+- Fonctionnalités core avant features avancées
+- Conformité RGPD/HDS dès le début
+
+### Atomic Features
+- Chaque feature peut être développée et testée indépendamment
+- Architecture modulaire pour faciliter les améliorations
+- API-first design pour future extensibilité
+
+## Risks and Mitigations
+
+### Technical Challenges
+- **Supabase Limitations**: Monitoring usage + plan backup PostgreSQL self-hosted
+- **Performance Mobile**: Tests constants device lab + optimisations bundle
+- **RGPD Compliance**: Audit légal trimestriel + DPO externe
+- **Base Données Nutritionnelle**: Cache local robuste + données de fallback
+
+### Business Risks
+- **Adoption Nutritionnistes**: Onboarding personnalisé + formation gratuite
+- **Concurrence Etablie**: Focus conformité suisse + relation client premium
+- **Réglementation Santé**: Veille réglementaire + architecture flexible
+
+### Operational Risks
+- **Équipe Technique**: Priorisation ruthless + freelances ponctuels
+- **Coûts Infrastructure**: Monitoring coûts + optimisation continue
+
+## Success Metrics
+
+### Phase 0 (Vitrine)
+- SEO: Top 5 "nutritionniste [ville]" dans 6 mois
+- Conversion: 3% visiteurs → leads qualifiés
+- Trafic: 500+ visiteurs uniques/mois
+- Performance: <1.5s load time
+
+### Phase 1 (MVP)
+- Adoption: 1 nutritionniste + 25 patients actifs
+- Engagement: 70% patients loggent 4+ repas/semaine
+- Satisfaction: NPS > 7, <5% churn mensuel
+- Technique: 99.5% uptime, <2s load time, 0 incidents sécurité
+
+### Phase 2 (Scale)
+- Business: 10 nutritionnistes + 250 patients, CHF 15k MRR
+- Produit: <3 clics pour actions principales, 90% tâches complétées sans support
+
+## Appendix
+
+### Design System
+- Couleurs: Primary (#2E7D5E), Background (#FAFBFC), Accent (#FF6B35), Neutral (#6B7280)
+- Typography: Inter (web), SF Pro (iOS), Roboto (Android)
+- Spacing: Échelle 4px, Mobile-first approach, Accessibility WCAG 2.1 AA
+
+### Security & Compliance
+- RGPD: Hébergement EU, chiffrement AES-256, gestion consentements
+- HDS: Audit trails, traçabilité accès, backup chiffré quotidien
+- Sécurité: Headers sécurité, rate limiting, input sanitization, 2FA obligatoire
+
+### Testing Strategy
+- Unit Tests (Jest): 90% coverage fonctions, 80% coverage composants
+- Integration Tests (React Testing Library): Formulaires, auth, interactions
+- E2E Tests (Playwright): Parcours critiques, paiements, multi-browser
+- Tests Manuels: UAT, accessibility, performance, security

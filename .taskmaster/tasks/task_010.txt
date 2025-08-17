@@ -1,0 +1,43 @@
+# Task ID: 10
+# Title: Meal Planning System
+# Status: pending
+# Dependencies: 7, 9
+# Priority: high
+# Description: Create a system for nutritionists to design customized meal plans for patients using the integrated food database.
+# Details:
+Design a drag-and-drop meal planning interface using react-beautiful-dnd or similar library. Implement meal template creation and saving functionality. Create meal nutritional calculation engine using the food database. Build a meal plan assignment system to assign plans to patients. Implement plan versioning to track changes over time. Create print-friendly and PDF export options using react-pdf. Add meal plan duplication and modification features. Implement meal suggestions based on patient preferences and restrictions. Create a meal plan calendar view for weekly/monthly planning. Add portion adjustment tools with real-time nutritional recalculation. Implement meal plan compliance tracking.
+
+# Test Strategy:
+Component testing for drag-and-drop functionality. Unit tests for nutritional calculations. Integration tests for meal plan CRUD operations. E2E tests for complete meal planning workflows. Test PDF generation and exports. Performance testing with complex meal plans.
+
+# Subtasks:
+## 1. Drag-and-Drop Meal Planning Interface [pending]
+### Dependencies: None
+### Description: Implement an intuitive drag-and-drop interface for nutritionists to create and modify meal plans
+### Details:
+Integrate react-beautiful-dnd or a similar library to create a responsive drag-and-drop interface. Design components for meal slots (breakfast, lunch, dinner, snacks), food item cards, and drop zones. Implement smooth animations for dragging operations. Ensure the interface is accessible and works on both desktop and mobile devices.
+
+## 2. Meal Template Creation and Management [pending]
+### Dependencies: 10.1
+### Description: Develop functionality for creating, saving, duplicating, and modifying meal plan templates
+### Details:
+Create a system for saving meal plans as reusable templates. Implement CRUD operations for templates with appropriate database schema. Add duplication functionality to allow quick creation of similar plans. Include categorization and tagging for templates to improve searchability. Implement version history to track changes over time.
+
+## 3. Nutritional Calculation Engine [pending]
+### Dependencies: None
+### Description: Build a calculation engine that computes nutritional information for meals and complete plans using the food database
+### Details:
+Develop algorithms to calculate total calories, macronutrients (protein, carbs, fat), micronutrients, and other nutritional values based on food items and portions in a meal plan. Implement real-time recalculation when portions are adjusted. Create visualizations for nutritional breakdowns. Add functionality to compare calculated values against patient-specific nutritional targets.
+
+## 4. Meal Plan Assignment and Patient Management [pending]
+### Dependencies: 10.2, 10.3
+### Description: Create a system to assign meal plans to patients and track their compliance
+### Details:
+Implement functionality to assign meal plans to specific patients. Create a patient dashboard for nutritionists to monitor multiple meal plans. Add compliance tracking features to record patient adherence to assigned plans. Implement notification system for plan updates. Create analytics dashboard showing aggregated compliance data and nutritional trends.
+
+## 5. Export and Sharing Functionality [pending]
+### Dependencies: 10.1, 10.3
+### Description: Implement print-friendly views, PDF export, and sharing options for meal plans
+### Details:
+Integrate react-pdf or similar library to generate PDF exports of meal plans. Create print-friendly CSS styles for direct printing. Implement sharing functionality via email or messaging platforms. Add customization options for exports including branding elements, notes, and level of detail. Ensure exported documents are accessible and well-formatted on various devices.
+

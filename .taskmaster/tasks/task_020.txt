@@ -1,0 +1,43 @@
+# Task ID: 20
+# Title: Analytics Dashboard for Nutritionists
+# Status: pending
+# Dependencies: 7, 12, 13
+# Priority: medium
+# Description: Create a comprehensive analytics dashboard for nutritionists to track patient engagement, progress, and business metrics.
+# Details:
+Design data visualization components using recharts or visx. Implement patient engagement metrics (app usage, meal logging compliance, message response time). Create business analytics (revenue, appointment utilization, patient retention). Add patient progress tracking across various metrics. Implement cohort analysis for patient groups. Create custom report generation and export. Add goal tracking and achievement visualization. Implement trend analysis and forecasting. Create alert system for concerning patient trends. Add benchmark comparisons against anonymized averages. Implement dashboard customization for individual preferences. Create PDF export for reports.
+
+# Test Strategy:
+Unit tests for calculation and aggregation functions. Visual regression testing for charts and visualizations. Integration tests for data fetching and filtering. Performance testing with large datasets. Test report generation and exports. User testing with nutritionists for actionable insights. Test data accuracy and consistency.
+
+# Subtasks:
+## 1. Design and Implement Data Visualization Components [pending]
+### Dependencies: None
+### Description: Create reusable chart components using recharts or visx for displaying various metrics and analytics data.
+### Details:
+Develop bar charts, line charts, pie charts, and area charts components that can be reused across the dashboard. Implement responsive design for all visualization components. Create a theming system for consistent styling. Add interactive features like tooltips, zooming, and filtering. Ensure accessibility compliance for all chart components.
+
+## 2. Implement Patient Engagement and Progress Metrics [pending]
+### Dependencies: 20.1
+### Description: Develop components to track and visualize patient engagement metrics and progress indicators.
+### Details:
+Create metrics for app usage frequency, meal logging compliance, and message response time. Implement progress tracking for weight, measurements, lab values, and other health indicators. Design trend visualizations showing changes over time. Add goal achievement tracking with visual indicators. Implement comparison views between current values and targets.
+
+## 3. Develop Business Analytics and Reporting [pending]
+### Dependencies: 20.1
+### Description: Create business performance metrics, reporting tools, and export functionality for nutritionists.
+### Details:
+Implement revenue tracking and visualization by time period. Create appointment utilization metrics and no-show analysis. Add patient retention and churn analytics. Develop custom report generation with selectable metrics. Implement PDF and CSV export functionality for reports. Create scheduled report delivery via email.
+
+## 4. Create Cohort Analysis and Benchmarking Tools [pending]
+### Dependencies: 20.2
+### Description: Implement tools for analyzing patient groups and comparing performance against benchmarks.
+### Details:
+Develop cohort creation and management interface. Implement comparative analysis between different patient groups. Create benchmark comparisons against anonymized averages. Add filtering capabilities by demographic factors, conditions, and goals. Implement statistical significance indicators for meaningful differences.
+
+## 5. Implement Dashboard Customization and Alerts [pending]
+### Dependencies: 20.1, 20.2, 20.3, 20.4
+### Description: Create customization options for the dashboard and implement an alert system for concerning patient trends.
+### Details:
+Develop dashboard layout customization with draggable and resizable widgets. Implement saved views for different analysis scenarios. Create alert system for concerning patient trends with configurable thresholds. Add notification preferences for different alert types. Implement trend analysis and basic forecasting for key metrics.
+
