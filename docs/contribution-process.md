@@ -18,22 +18,28 @@ Ce guide détaille le processus de contribution et de code review pour le projet
    - Vérifier si le problème est déjà en cours de résolution
 
 2. **Créer une issue claire** :
+
    ```markdown
    ## Description
+
    [Description claire du problème ou de la fonctionnalité]
 
    ## Contexte
+
    [Pourquoi cette modification est nécessaire]
 
    ## Solution proposée
+
    [Approche technique envisagée]
 
    ## Critères d'acceptation
+
    - [ ] Critère 1
    - [ ] Critère 2
    - [ ] Critère 3
 
    ## Informations supplémentaires
+
    [Captures d'écran, logs, etc.]
    ```
 
@@ -70,6 +76,7 @@ git checkout -b refactor/component-structure
 ### Workflow de développement
 
 1. **Synchroniser avec develop** :
+
    ```bash
    git checkout develop
    git pull origin develop
@@ -117,11 +124,13 @@ git commit -m "test(api): ajouter tests pour l'endpoint users"
 ### Tests obligatoires
 
 1. **Tests de qualité** :
+
    ```bash
    npm run quality
    ```
 
 2. **Tests de build** :
+
    ```bash
    npm run build
    ```
@@ -140,6 +149,7 @@ git commit -m "test(api): ajouter tests pour l'endpoint users"
 ### Créer une PR
 
 1. **Pousser la branche** :
+
    ```bash
    git push -u origin feature/votre-fonctionnalite
    ```
@@ -187,23 +197,27 @@ Le template de PR est automatiquement rempli avec :
 ### Critères de review
 
 #### Qualité du code
+
 - [ ] Code lisible et maintenable
 - [ ] Conventions respectées
 - [ ] Pas de code dupliqué
 - [ ] Gestion d'erreurs appropriée
 
 #### Architecture
+
 - [ ] Structure logique
 - [ ] Séparation des responsabilités
 - [ ] Réutilisabilité
 - [ ] Performance
 
 #### Tests
+
 - [ ] Couverture de tests suffisante
 - [ ] Tests pertinents
 - [ ] Tests de régression
 
 #### Documentation
+
 - [ ] Code documenté
 - [ ] README mis à jour si nécessaire
 - [ ] Changelog mis à jour
@@ -216,6 +230,7 @@ Le template de PR est automatiquement rempli avec :
    - Identifier les problèmes potentiels
 
 2. **Tester localement** :
+
    ```bash
    git fetch origin
    git checkout feature/votre-fonctionnalite
@@ -253,6 +268,7 @@ Le template de PR est automatiquement rempli avec :
 ### Après le merge
 
 1. **Nettoyer** :
+
    ```bash
    git checkout develop
    git pull origin develop
@@ -269,6 +285,7 @@ Le template de PR est automatiquement rempli avec :
 ### Résolution de conflits
 
 1. **Identifier les conflits** :
+
    ```bash
    git status
    ```

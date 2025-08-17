@@ -112,6 +112,7 @@ npm run setup        # Configuration automatique
 ## 📖 Documentation
 
 ### Guides principaux
+
 - [Guide d'onboarding](docs/onboarding.md) - Configuration de l'environnement pour nouveaux développeurs
 - [Guide de dépannage](docs/troubleshooting.md) - Résolution des problèmes courants
 - [Guide de qualité de code](docs/code-quality.md) - Outils et conventions de qualité
@@ -120,6 +121,7 @@ npm run setup        # Configuration automatique
 - [Configuration Supabase](docs/supabase-setup.md) - Setup de la base de données
 
 ### Scripts d'automatisation
+
 - `scripts/validate-env.js` - Validation complète de l'environnement
 - `scripts/setup.sh` - Configuration automatique de l'environnement
 

@@ -5,6 +5,7 @@ Bienvenue dans l'équipe NutriSensia ! Ce guide vous accompagnera dans la config
 ## 📋 Prérequis
 
 ### Outils requis
+
 - **Node.js** : Version 18.x ou supérieure
 - **Git** : Version 2.30.x ou supérieure
 - **npm** : Version 8.x ou supérieure
@@ -16,6 +17,7 @@ Bienvenue dans l'équipe NutriSensia ! Ce guide vous accompagnera dans la config
   - GitLens
 
 ### Comptes requis
+
 - **GitHub** : Pour accéder au repository
 - **Supabase** : Pour la base de données (accès fourni par l'équipe)
 - **Vercel** : Pour le déploiement (accès fourni par l'équipe)
@@ -54,6 +56,7 @@ nano .env.local
 ```
 
 **Variables requises :**
+
 ```env
 # Supabase Configuration
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
@@ -136,6 +139,7 @@ git push -u origin feature/nom-de-la-fonctionnalite
 ## 📚 Ressources utiles
 
 ### Documentation
+
 - [README.md](../README.md) - Vue d'ensemble du projet
 - [CONTRIBUTING.md](../CONTRIBUTING.md) - Guide de contribution
 - [docs/code-quality.md](code-quality.md) - Outils de qualité de code
@@ -143,6 +147,7 @@ git push -u origin feature/nom-de-la-fonctionnalite
 - [docs/supabase-setup.md](supabase-setup.md) - Configuration Supabase
 
 ### Technologies utilisées
+
 - [Next.js 14](https://nextjs.org/docs) - Framework React
 - [TypeScript](https://www.typescriptlang.org/docs/) - Typage statique
 - [Tailwind CSS](https://tailwindcss.com/docs) - Framework CSS
@@ -154,6 +159,7 @@ git push -u origin feature/nom-de-la-fonctionnalite
 - [Framer Motion](https://www.framer.com/motion/) - Animations
 
 ### Outils de développement
+
 - [ESLint](https://eslint.org/) - Linting JavaScript/TypeScript
 - [Prettier](https://prettier.io/) - Formatage de code
 - [Husky](https://typicode.github.io/husky/) - Hooks Git
@@ -162,6 +168,7 @@ git push -u origin feature/nom-de-la-fonctionnalite
 ## 🎨 Conventions de code
 
 ### Structure des fichiers
+
 ```
 src/
 ├── app/                 # Pages Next.js (App Router)
@@ -174,6 +181,7 @@ src/
 ```
 
 ### Conventions de nommage
+
 - **Fichiers** : `kebab-case` (ex: `user-profile.tsx`)
 - **Composants** : `PascalCase` (ex: `UserProfile`)
 - **Variables** : `camelCase` (ex: `userName`)
@@ -181,25 +189,26 @@ src/
 - **Types** : `PascalCase` avec préfixe (ex: `UserProfileProps`)
 
 ### Palette de couleurs
+
 ```css
 /* Primary */
---color-primary: #2E7D5E;
---color-primary-light: #4A9B7A;
---color-primary-dark: #1E5A3E;
+--color-primary: #2e7d5e;
+--color-primary-light: #4a9b7a;
+--color-primary-dark: #1e5a3e;
 
 /* Background */
---color-background: #FAFBFC;
---color-background-secondary: #F8F9FA;
+--color-background: #fafbfc;
+--color-background-secondary: #f8f9fa;
 
 /* Accent */
---color-accent: #FF6B35;
---color-accent-light: #FF8A5C;
---color-accent-dark: #E55A2B;
+--color-accent: #ff6b35;
+--color-accent-light: #ff8a5c;
+--color-accent-dark: #e55a2b;
 
 /* Neutral */
---color-neutral: #6B7280;
---color-neutral-light: #9CA3AF;
---color-neutral-dark: #4B5563;
+--color-neutral: #6b7280;
+--color-neutral-light: #9ca3af;
+--color-neutral-dark: #4b5563;
 ```
 
 ## 🚨 Dépannage
@@ -207,6 +216,7 @@ src/
 ### Problèmes courants
 
 #### Erreur de build
+
 ```bash
 # Nettoyer le cache
 rm -rf .next
@@ -214,6 +224,7 @@ npm run build
 ```
 
 #### Erreurs ESLint/Prettier
+
 ```bash
 # Corriger automatiquement
 npm run lint:fix
@@ -221,6 +232,7 @@ npm run format
 ```
 
 #### Problèmes de dépendances
+
 ```bash
 # Nettoyer et réinstaller
 rm -rf node_modules package-lock.json
@@ -228,6 +240,7 @@ npm install
 ```
 
 #### Problèmes de variables d'environnement
+
 ```bash
 # Vérifier que .env.local existe
 ls -la .env.local
@@ -239,6 +252,7 @@ npm run dev
 ### Support
 
 Si vous rencontrez des problèmes :
+
 1. Consultez la documentation dans `docs/`
 2. Vérifiez les issues GitHub existantes
 3. Créez une nouvelle issue avec les détails du problème

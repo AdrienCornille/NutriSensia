@@ -3,6 +3,7 @@
 ## 🛠️ Outils configurés
 
 ### ESLint
+
 - **Configuration** : `.eslintrc.json`
 - **Règles** : Next.js + Prettier
 - **Commandes** :
@@ -12,6 +13,7 @@
   ```
 
 ### Prettier
+
 - **Configuration** : `.prettierrc`
 - **Fichiers ignorés** : `.prettierignore`
 - **Commandes** :
@@ -21,6 +23,7 @@
   ```
 
 ### TypeScript
+
 - **Configuration** : `tsconfig.json`
 - **Commande** :
   ```bash
@@ -28,16 +31,19 @@
   ```
 
 ### Husky (Git Hooks)
+
 - **Configuration** : `.husky/pre-commit`
 - **Fonction** : Exécute automatiquement lint-staged avant chaque commit
 
 ### lint-staged
+
 - **Configuration** : `package.json`
 - **Fonction** : Formate et vérifie uniquement les fichiers modifiés
 
 ## 🚀 Workflow de développement
 
 ### 1. Avant de commencer
+
 ```bash
 # Installer les dépendances
 npm install
@@ -47,6 +53,7 @@ npm run quality
 ```
 
 ### 2. Pendant le développement
+
 ```bash
 # Démarrer le serveur de développement
 npm run dev
@@ -56,6 +63,7 @@ npm run lint -- --watch
 ```
 
 ### 3. Avant de commiter
+
 ```bash
 # Vérifier la qualité complète
 npm run quality
@@ -65,34 +73,34 @@ npm run format
 ```
 
 ### 4. Commit automatique
+
 Les hooks Git s'exécutent automatiquement :
+
 - Formatage automatique avec Prettier
 - Vérification ESLint
 - Vérification TypeScript
 
 ## 📋 Scripts disponibles
 
-| Script | Description |
-|--------|-------------|
-| `npm run dev` | Serveur de développement |
-| `npm run build` | Build de production |
-| `npm run start` | Serveur de production |
-| `npm run lint` | Vérification ESLint |
-| `npm run lint:fix` | Correction ESLint automatique |
-| `npm run format` | Formatage Prettier |
-| `npm run format:check` | Vérification formatage |
-| `npm run type-check` | Vérification TypeScript |
-| `npm run quality` | Vérification complète |
+| Script                 | Description                   |
+| ---------------------- | ----------------------------- |
+| `npm run dev`          | Serveur de développement      |
+| `npm run build`        | Build de production           |
+| `npm run start`        | Serveur de production         |
+| `npm run lint`         | Vérification ESLint           |
+| `npm run lint:fix`     | Correction ESLint automatique |
+| `npm run format`       | Formatage Prettier            |
+| `npm run format:check` | Vérification formatage        |
+| `npm run type-check`   | Vérification TypeScript       |
+| `npm run quality`      | Vérification complète         |
 
 ## 🔧 Configuration des outils
 
 ### ESLint
+
 ```json
 {
-  "extends": [
-    "next/core-web-vitals",
-    "prettier"
-  ],
+  "extends": ["next/core-web-vitals", "prettier"],
   "plugins": ["prettier"],
   "rules": {
     "prettier/prettier": "error",
@@ -103,6 +111,7 @@ Les hooks Git s'exécutent automatiquement :
 ```
 
 ### Prettier
+
 ```json
 {
   "semi": true,
@@ -114,15 +123,11 @@ Les hooks Git s'exécutent automatiquement :
 ```
 
 ### lint-staged
+
 ```json
 {
-  "*.{js,jsx,ts,tsx}": [
-    "eslint --fix",
-    "prettier --write"
-  ],
-  "*.{json,css,md}": [
-    "prettier --write"
-  ]
+  "*.{js,jsx,ts,tsx}": ["eslint --fix", "prettier --write"],
+  "*.{json,css,md}": ["prettier --write"]
 }
 ```
 
@@ -131,6 +136,7 @@ Les hooks Git s'exécutent automatiquement :
 ### Erreurs ESLint courantes
 
 #### Variables non utilisées
+
 ```typescript
 // ❌ Erreur
 const unusedVar = 'test';
@@ -143,6 +149,7 @@ const unusedVar = 'test';
 ```
 
 #### Console.log en production
+
 ```typescript
 // ❌ Erreur
 console.log('debug info');
@@ -156,18 +163,21 @@ if (process.env.NODE_ENV === 'development') {
 ### Erreurs Prettier courantes
 
 #### Guillemets
+
 ```typescript
 // ❌ Erreur
-const message = "Hello world";
+const message = 'Hello world';
 
 // ✅ Solution
 const message = 'Hello world';
 ```
 
 #### Longues lignes
+
 ```typescript
 // ❌ Erreur
-const veryLongLine = "Cette ligne est très longue et dépasse la limite de 80 caractères définie par Prettier";
+const veryLongLine =
+  'Cette ligne est très longue et dépasse la limite de 80 caractères définie par Prettier';
 
 // ✅ Solution (automatique)
 const veryLongLine =
@@ -177,7 +187,9 @@ const veryLongLine =
 ## 🔄 Intégration CI/CD
 
 ### GitHub Actions
+
 Le workflow `.github/workflows/ci.yml` vérifie automatiquement :
+
 - Linting ESLint
 - Formatage Prettier
 - Types TypeScript
@@ -185,6 +197,7 @@ Le workflow `.github/workflows/ci.yml` vérifie automatiquement :
 - Audit de sécurité
 
 ### Vercel
+
 - Déploiement automatique sur push vers `main`
 - Preview automatique sur Pull Requests
 - Variables d'environnement configurées

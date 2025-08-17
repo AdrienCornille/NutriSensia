@@ -7,6 +7,7 @@ Ce guide vous aide à résoudre les problèmes courants rencontrés lors du dév
 ### Node.js et npm
 
 #### Erreur : "Node.js version incompatible"
+
 ```bash
 # Vérifier la version
 node --version
@@ -22,6 +23,7 @@ nvm use 18
 ```
 
 #### Erreur : "npm install failed"
+
 ```bash
 # Nettoyer le cache npm
 npm cache clean --force
@@ -38,6 +40,7 @@ yarn install
 ### Git
 
 #### Erreur : "Permission denied"
+
 ```bash
 # Configurer les permissions SSH
 chmod 600 ~/.ssh/id_rsa
@@ -48,6 +51,7 @@ git remote set-url origin https://github.com/AdrienCornille/NutriSensia.git
 ```
 
 #### Erreur : "Branch protection rules"
+
 ```bash
 # Vérifier que vous êtes sur la bonne branche
 git branch
@@ -63,6 +67,7 @@ git checkout -b feature/votre-fonctionnalite
 ### Next.js
 
 #### Erreur : "Module not found"
+
 ```bash
 # Vérifier les imports
 # Assurez-vous que les chemins sont corrects
@@ -74,6 +79,7 @@ npm run build
 ```
 
 #### Erreur : "TypeScript compilation failed"
+
 ```bash
 # Vérifier les types
 npm run type-check
@@ -88,6 +94,7 @@ interface User {
 ```
 
 #### Erreur : "Build failed in production"
+
 ```bash
 # Vérifier les variables d'environnement
 cat .env.local
@@ -102,6 +109,7 @@ npm run build 2>&1 | tee build.log
 ### Tailwind CSS
 
 #### Erreur : "Classes CSS non appliquées"
+
 ```bash
 # Vérifier la configuration Tailwind
 cat tailwind.config.ts
@@ -122,6 +130,7 @@ content: [
 ### Connexion
 
 #### Erreur : "Supabase connection failed"
+
 ```bash
 # Vérifier les variables d'environnement
 echo $NEXT_PUBLIC_SUPABASE_URL
@@ -133,6 +142,7 @@ npm run dev
 ```
 
 #### Erreur : "Authentication failed"
+
 ```bash
 # Vérifier les clés Supabase
 # Aller sur https://supabase.com/dashboard/project/[PROJECT_ID]/settings/api
@@ -143,6 +153,7 @@ npm run dev
 ### Base de données
 
 #### Erreur : "Table does not exist"
+
 ```bash
 # Vérifier que les tables sont créées
 # Suivre le guide dans docs/supabase-setup.md
@@ -156,6 +167,7 @@ npm run dev
 ### ESLint
 
 #### Erreur : "ESLint configuration error"
+
 ```bash
 # Vérifier la configuration
 cat .eslintrc.json
@@ -169,6 +181,7 @@ npm run lint:fix
 ```
 
 #### Erreur : "Prettier conflict"
+
 ```bash
 # Formater le code
 npm run format
@@ -182,12 +195,13 @@ cat .prettierrc
 ### TypeScript
 
 #### Erreur : "Type 'X' is not assignable to type 'Y'"
+
 ```typescript
 // Solution : Ajouter des types explicites
 const user: User = {
   id: '1',
   name: 'John',
-  email: 'john@example.com'
+  email: 'john@example.com',
 };
 
 // Ou utiliser des types génériques
@@ -195,6 +209,7 @@ const users: User[] = [];
 ```
 
 #### Erreur : "Cannot find module"
+
 ```typescript
 // Vérifier les imports
 import { Component } from '@/components/Component';
@@ -217,6 +232,7 @@ ls src/components/Component.tsx
 ### Vercel
 
 #### Erreur : "Build failed on Vercel"
+
 ```bash
 # Vérifier les variables d'environnement sur Vercel
 # Aller sur https://vercel.com/dashboard/project/[PROJECT_ID]/settings/environment-variables
@@ -227,6 +243,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY
 ```
 
 #### Erreur : "Deployment timeout"
+
 ```bash
 # Optimiser le build
 # Vérifier les imports inutiles
@@ -240,6 +257,7 @@ npm outdated
 ### GitHub Actions
 
 #### Erreur : "CI/CD pipeline failed"
+
 ```bash
 # Vérifier les logs GitHub Actions
 # Aller sur https://github.com/AdrienCornille/NutriSensia/actions
@@ -305,20 +323,25 @@ Lorsque vous créez une issue ou demandez de l'aide, incluez :
 
 ```markdown
 ## Description du problème
+
 [Description claire du problème]
 
 ## Étapes pour reproduire
+
 1. [Étape 1]
 2. [Étape 2]
 3. [Étape 3]
 
 ## Comportement attendu
+
 [Ce qui devrait se passer]
 
 ## Comportement actuel
+
 [Ce qui se passe réellement]
 
 ## Informations système
+
 - OS : [macOS/Windows/Linux]
 - Node.js : [version]
 - npm : [version]
@@ -326,7 +349,9 @@ Lorsque vous créez une issue ou demandez de l'aide, incluez :
 
 ## Logs d'erreur
 ```
+
 [Coller les logs d'erreur complets]
+
 ```
 
 ## Captures d'écran
