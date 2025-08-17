@@ -1,0 +1,27 @@
+# Code Owners pour NutriSensia
+# Ce fichier définit qui doit reviewer les changements dans chaque section du code
+
+# Propriétaire principal du projet
+* @AdrienCornille
+
+# Configuration et infrastructure
+/.github/ @AdrienCornille
+/.taskmaster/ @AdrienCornille
+/docs/ @AdrienCornille
+/scripts/ @AdrienCornille
+
+# Configuration du projet
+/package.json @AdrienCornille
+/tsconfig.json @AdrienCornille
+/tailwind.config.js @AdrienCornille
+/next.config.js @AdrienCornille
+
+# Configuration Supabase
+/supabase/ @AdrienCornille
+
+# Variables d'environnement (sécurité)
+/.env* @AdrienCornille
+
+# Documentation
+/README.md @AdrienCornille
+/CONTRIBUTING.md @AdrienCornille
