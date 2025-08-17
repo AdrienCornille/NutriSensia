@@ -1,0 +1,43 @@
+# Task ID: 15
+# Title: Food Journal System
+# Status: pending
+# Dependencies: 9, 14
+# Priority: high
+# Description: Implement a comprehensive food journaling system with food search, portion tracking, photo uploads, and nutritional analysis.
+# Details:
+Create an intuitive food logging interface with quick search. Implement recent and favorite foods for faster logging. Add barcode scanning functionality using quagga.js or similar library. Implement portion size selection with visual guides. Add photo upload for meals using Supabase Storage. Create meal categorization (breakfast, lunch, dinner, snacks). Implement nutritional summary calculations and visualizations. Add water intake tracking. Create food journal history with filtering and search. Implement export functionality for journal data. Add meal pattern analysis for nutritionist insights. Create reminder system for logging meals.
+
+# Test Strategy:
+Component testing for food logging interface. Integration tests for search and data persistence. E2E tests for complete food logging workflows. Performance testing for search operations. Test barcode scanning with various products. Test photo upload and storage. User testing for usability feedback.
+
+# Subtasks:
+## 1. Food Logging Interface with Search and Favorites [pending]
+### Dependencies: None
+### Description: Develop the core food logging interface with search functionality, recent foods list, and favorites system
+### Details:
+Create an intuitive UI for food logging with a quick search component that queries the food database. Implement typeahead suggestions and filtering options. Build a recent foods list that automatically updates based on user activity. Create a favorites system allowing users to mark and quickly access commonly consumed foods. Design the interface to be mobile-responsive and accessible.
+
+## 2. Portion Tracking and Visual Guides [pending]
+### Dependencies: 15.1
+### Description: Implement portion size selection with visual guides and measurement options
+### Details:
+Create a portion selection system with common measurement units (grams, ounces, cups, tablespoons, etc.). Develop visual guides showing portion sizes with comparative objects for better estimation. Implement a slider or number input for precise quantity adjustment. Add custom portion presets for frequently used amounts. Ensure the portion selection affects nutritional calculations in real-time.
+
+## 3. Barcode Scanning and Photo Upload [pending]
+### Dependencies: 15.1
+### Description: Implement barcode scanning for quick food logging and photo upload functionality for meal documentation
+### Details:
+Integrate quagga.js or a similar library for barcode scanning capability. Connect barcode data to food database for automatic food identification. Implement photo upload functionality using Supabase Storage for meal documentation. Create image compression to optimize storage usage. Add optional photo annotation for additional meal details. Implement proper error handling for failed scans or uploads.
+
+## 4. Meal Categorization and Nutritional Analysis [pending]
+### Dependencies: 15.1, 15.2
+### Description: Create meal categorization system and implement nutritional summary calculations with visualizations
+### Details:
+Implement meal categorization (breakfast, lunch, dinner, snacks) with customizable meal times. Create a nutritional calculation engine that processes food entries and portions to generate comprehensive nutritional data. Develop visualizations (charts, graphs) showing macro and micronutrient breakdowns. Add daily, weekly, and monthly summary views. Implement comparison against dietary goals or recommended values.
+
+## 5. Journal History and Export Functionality [pending]
+### Dependencies: 15.1, 15.4
+### Description: Develop food journal history with filtering, search capabilities, and data export options
+### Details:
+Create a comprehensive journal history view with filtering by date, meal type, and food categories. Implement search functionality within the journal history. Add water intake tracking with daily goals and reminders. Develop export functionality for journal data in multiple formats (CSV, PDF, etc.). Implement meal pattern analysis to identify trends and provide insights. Create a reminder system for logging meals with customizable notification settings.
+

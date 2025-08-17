@@ -1,0 +1,43 @@
+# Task ID: 3
+# Title: Authentication System Implementation
+# Status: pending
+# Dependencies: 1, 2
+# Priority: high
+# Description: Implement Supabase authentication with email/password and OAuth Google options, including 2FA for nutritionists and role-based access control.
+# Details:
+Set up Supabase Auth with email/password and Google OAuth providers. Configure Row Level Security (RLS) policies in Supabase for role-based access. Implement user roles: nutritionist, patient, admin in a 'profiles' table with role field. Create auth hooks with React Context for global auth state. Implement 2FA using Supabase Auth's TOTP functionality, making it mandatory for nutritionist accounts. Build sign-up, sign-in, password reset, and email verification flows. Create protected routes using Next.js middleware. Implement session persistence and token refresh logic. Add security headers and CSRF protection. Use Zod for form validation in all auth forms.
+
+# Test Strategy:
+Unit tests for auth hooks and components. Integration tests for auth flows including sign-up, sign-in, and password reset. E2E tests with Playwright for complete auth journeys. Security testing for session management and token handling. Test 2FA flows thoroughly with mock TOTP generators.
+
+# Subtasks:
+## 1. Supabase Auth Provider Setup [pending]
+### Dependencies: None
+### Description: Configure Supabase authentication with email/password and Google OAuth providers
+### Details:
+Set up Supabase project and configure authentication settings. Enable email/password authentication with proper validation rules. Configure Google OAuth integration including API keys and redirect URIs. Implement proper error handling for auth failures. Create initial auth API wrapper functions for the frontend.
+
+## 2. User Roles and Profiles Implementation [pending]
+### Dependencies: 3.1
+### Description: Create profiles table with role-based access control and configure Row Level Security
+### Details:
+Design and implement 'profiles' table in Supabase with fields for user role (nutritionist, patient, admin), profile information, and account settings. Create database triggers to automatically create profile entries on user signup. Implement Row Level Security (RLS) policies for each role type. Configure database rules for data access based on user roles.
+
+## 3. Authentication UI Components [pending]
+### Dependencies: 3.1
+### Description: Build sign-up, sign-in, password reset, and email verification UI flows with Zod validation
+### Details:
+Create React components for all authentication screens with responsive design. Implement Zod schemas for form validation across all auth forms. Build password strength indicators and validation feedback. Create email verification flow with confirmation screens. Implement password reset functionality with secure token handling.
+
+## 4. Two-Factor Authentication Implementation [pending]
+### Dependencies: 3.1, 3.2
+### Description: Implement 2FA using Supabase Auth's TOTP functionality for nutritionist accounts
+### Details:
+Integrate Supabase Auth's TOTP functionality for two-factor authentication. Create UI for 2FA setup including QR code generation and backup codes. Make 2FA mandatory for nutritionist accounts with appropriate enforcement logic. Implement 2FA verification screens in the authentication flow. Create recovery options for lost 2FA devices.
+
+## 5. Auth Context and Protected Routes [pending]
+### Dependencies: 3.1, 3.2, 3.3, 3.4
+### Description: Create global auth state with React Context and implement protected routes using Next.js middleware
+### Details:
+Develop React Context for global authentication state management. Implement auth hooks for components to access user state and auth functions. Create session persistence and token refresh logic. Build Next.js middleware for protected route handling based on user roles. Add security headers and CSRF protection. Implement loading states and authentication redirects.
+

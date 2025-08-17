@@ -1,0 +1,1762 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Setup Project Repository and Infrastructure",
+        "description": "Initialize the project repository with Next.js 14.2.5, TypeScript 5.5.4, and Tailwind CSS 3.4.7. Configure Supabase for backend services with EU-West hosting for GDPR compliance.",
+        "details": "Create a new Next.js project using the App Router: `npx create-next-app@latest nutrisensia --typescript --tailwind --eslint --app`. Configure TypeScript 5.5.4 in tsconfig.json. Set up Tailwind CSS 3.4.7 with a custom configuration for the design system colors. Initialize Supabase client with environment variables for API keys stored in .env.local. Configure GitHub repository with proper .gitignore and branch protection rules. Set up Vercel project linking for CI/CD. Install dependencies: React 18.3.1, Zustand, TanStack Query, React Hook Form, Zod, and Framer Motion. Configure ESLint and Prettier with Husky git hooks for code quality.",
+        "testStrategy": "Verify project structure and configuration files. Test successful build and deployment to Vercel. Validate Supabase connection and environment variables. Run lighthouse tests for initial performance benchmarks.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Initialize Next.js Project with TypeScript and Tailwind CSS",
+            "description": "Create a new Next.js 14.2.5 project with TypeScript 5.5.4 and Tailwind CSS 3.4.7 using the App Router",
+            "dependencies": [],
+            "details": "Run `npx create-next-app@latest nutrisensia --typescript --tailwind --eslint --app`. Update TypeScript to version 5.5.4 in package.json and tsconfig.json. Configure Tailwind CSS 3.4.7 in tailwind.config.js with custom color palette for the design system (Primary #2E7D5E, Background #FAFBFC, Accent #FF6B35, Neutral #6B7280).",
+            "status": "pending",
+            "testStrategy": "Verify project structure and configuration files. Ensure TypeScript and Tailwind CSS are properly configured by running a test build."
+          },
+          {
+            "id": 2,
+            "title": "Install and Configure Project Dependencies",
+            "description": "Install required dependencies including React 18.3.1, Zustand, TanStack Query, React Hook Form, Zod, and Framer Motion",
+            "dependencies": [],
+            "details": "Install core dependencies: `npm install react@18.3.1 react-dom@18.3.1`. Install state management: `npm install zustand`. Install data fetching: `npm install @tanstack/react-query`. Install form handling: `npm install react-hook-form zod @hookform/resolvers`. Install animation: `npm install framer-motion`. Configure each library according to their documentation with appropriate TypeScript types.",
+            "status": "pending",
+            "testStrategy": "Verify all dependencies are correctly installed and configured by importing them in test files. Check for type errors and compatibility issues."
+          },
+          {
+            "id": 3,
+            "title": "Set Up Supabase Integration with EU-West Hosting",
+            "description": "Configure Supabase client with EU-West hosting for GDPR compliance and set up environment variables",
+            "dependencies": [],
+            "details": "Create a Supabase project with EU-West hosting region. Install Supabase client: `npm install @supabase/supabase-js`. Create .env.local file with Supabase URL and anon key: `NEXT_PUBLIC_SUPABASE_URL=your_supabase_url` and `NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_key`. Create a utils/supabase.ts file to initialize the Supabase client with these environment variables. Add .env.local to .gitignore.",
+            "status": "pending",
+            "testStrategy": "Test Supabase connection by creating a simple query. Verify environment variables are correctly loaded. Create a mock for Supabase client for testing purposes."
+          },
+          {
+            "id": 4,
+            "title": "Configure GitHub Repository and Version Control",
+            "description": "Set up GitHub repository with proper .gitignore and branch protection rules",
+            "dependencies": [],
+            "details": "Initialize Git repository: `git init`. Create comprehensive .gitignore file including node_modules, .next, .env.local, etc. Create a GitHub repository for the project. Set up main branch as default. Configure branch protection rules requiring pull request reviews before merging to main. Add README.md with project setup instructions. Create CONTRIBUTING.md with development guidelines.",
+            "status": "pending",
+            "testStrategy": "Verify .gitignore is working correctly by ensuring sensitive files are not tracked. Test branch protection by attempting to push directly to main branch."
+          },
+          {
+            "id": 5,
+            "title": "Set Up CI/CD with Vercel and Code Quality Tools",
+            "description": "Configure Vercel deployment, ESLint, Prettier, and Husky git hooks for code quality",
+            "dependencies": [],
+            "details": "Link GitHub repository to Vercel project. Configure Vercel environment variables matching .env.local. Set up automatic deployments for pull requests. Install and configure ESLint: `npm install --save-dev eslint-config-prettier eslint-plugin-prettier`. Install and configure Prettier: `npm install --save-dev prettier`. Set up Husky for git hooks: `npm install --save-dev husky lint-staged`. Configure pre-commit hooks to run linting and formatting. Create GitHub Actions workflow for CI checks.",
+            "status": "pending",
+            "testStrategy": "Test deployment pipeline by making a small change and verifying it deploys correctly. Verify ESLint and Prettier configurations by introducing formatting errors and ensuring they're caught. Test Husky hooks by attempting to commit code that violates linting rules."
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Design System Implementation",
+        "description": "Create a comprehensive design system using Tailwind CSS based on the specified color palette, typography, and spacing guidelines to ensure consistent UI across the platform for NutriSensia.",
+        "status": "pending",
+        "dependencies": [
+          1
+        ],
+        "priority": "high",
+        "details": "Extend tailwind.config.js with NutriSensia's color palette: Primary (#2E7D5E, #FAFBFC, #1B4F3F), Secondary (#4A9B7B, #E8F3EF, #B8D4C7), Accent (#00A693, #7FD1C1, #F4A261), Functional (#22C55E, #EF4444, #F59E0B, #3B82F6), Neutral (#F8F9FA, #9CA3AF, #374151, #E5E7EB), Background (#FFFFFF, #F8FAFB, #F0F7F4). Configure typography with Inter for web, SF Pro for iOS, and Roboto for Android with weights 400, 500, 600, 700. Implement heading sizes (H1-H4), body text (Large, Standard, Small), and special text styles (Caption, Button, Link, Label). Create a spacing system (2dp, 4dp, 8dp, 12dp, 16dp, 24dp, 32dp, 48dp, 64dp). Implement reusable UI components with variants: Buttons (Primary, Secondary, Ghost, Destructive), Cards (Primary, Dashboard, Nutrition), Inputs (Standard, Search, Textarea), Navigation (Sidebar, Tabs), and Icons (Primary, Small, Navigation, Feature). Define animations (Standard, Emphase, Micro, Page, Loading). Ensure WCAG AA compliance with 4.5:1 minimum contrast, 2dp Primary Green focus states, and minimum 44dp touch targets. Implement dark mode support with CSS variables. Support French as primary language with professional styling for Swiss insurance compliance.",
+        "testStrategy": "Visual regression testing with Chromatic or similar tool. Accessibility testing with axe-core to verify WCAG AA compliance, including contrast ratios and focus states. Component unit tests with React Testing Library. Cross-browser compatibility testing. Mobile responsiveness testing across different viewport sizes. Animation testing for timing and performance. Language display testing for French primary support. Test all component states including empty states, loading skeletons, and error states.",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Tailwind Configuration Setup",
+            "description": "Extend tailwind.config.js with NutriSensia's custom colors, typography, and spacing scale according to design specifications",
+            "status": "pending",
+            "dependencies": [],
+            "details": "Configure tailwind.config.js to include NutriSensia's color palette: Primary (#2E7D5E, #FAFBFC, #1B4F3F), Secondary (#4A9B7B, #E8F3EF, #B8D4C7), Accent (#00A693, #7FD1C1, #F4A261), Functional (#22C55E, #EF4444, #F59E0B, #3B82F6), Neutral (#F8F9FA, #9CA3AF, #374151, #E5E7EB), Background (#FFFFFF, #F8FAFB, #F0F7F4). Set up typography with Inter for web, SF Pro for iOS, and Roboto for Android with weights 400, 500, 600, 700. Implement a comprehensive spacing scale (2dp, 4dp, 8dp, 12dp, 16dp, 24dp, 32dp, 48dp, 64dp). Configure CSS variables for theme values to enable runtime customization and dark mode support.",
+            "testStrategy": "Verify color values match specifications. Test typography rendering across different platforms with all specified weights. Ensure spacing scale is correctly implemented. Test dark mode toggle functionality. Verify CSS variables are properly defined and accessible."
+          },
+          {
+            "id": 2,
+            "title": "Core UI Component Development",
+            "description": "Build essential reusable UI components with variants following the NutriSensia design system specifications",
+            "status": "pending",
+            "dependencies": [
+              1
+            ],
+            "details": "Develop core UI components including: Buttons (Primary 48dp, Secondary 48dp, Ghost 44dp, Destructive 48dp), Cards (Primary 12dp radius, Dashboard 16dp radius, Nutrition 12dp radius), Inputs (Standard 56dp, Search 44dp, Textarea 96dp min), Navigation (Sidebar 240dp, Tabs 48dp), and Icons (Primary 24dp, Small 20dp, Navigation 28dp, Feature 32dp). Implement component props for customization while maintaining design consistency. Ensure components follow a mobile-first approach and are responsive across all viewport sizes. Implement animation standards: Standard (200ms ease-out), Emphase (300ms cubic-bezier), Micro (150ms ease-in-out), Page (350ms cubic-bezier), and Loading (1200ms linear).",
+            "testStrategy": "Component unit tests with React Testing Library. Visual regression testing with Chromatic or similar tool. Test responsive behavior across different viewport sizes. Animation timing and performance testing. Test all component states and variants."
+          },
+          {
+            "id": 3,
+            "title": "Accessibility Implementation",
+            "description": "Ensure all components meet WCAG 2.1 AA compliance standards with NutriSensia-specific accessibility guidelines",
+            "status": "pending",
+            "dependencies": [
+              2
+            ],
+            "details": "Implement proper ARIA attributes for all components. Ensure sufficient color contrast ratios (minimum 4.5:1 per WCAG AA). Add keyboard navigation support with logical tab order. Implement focus management with 2dp Primary Green focus indicators at 20% opacity. Ensure touch targets are minimum 44dp, with 48dp recommended. Test with screen readers. Create accessible form validation and error messaging. Implement language support with French as primary language.",
+            "testStrategy": "Accessibility testing with axe-core. Manual testing with screen readers. Keyboard navigation testing. Color contrast verification using automated tools. Touch target size verification on mobile devices. Test language support for French content."
+          },
+          {
+            "id": 4,
+            "title": "Component Documentation System",
+            "description": "Create a Storybook or similar documentation system for the NutriSensia design system components",
+            "status": "pending",
+            "dependencies": [
+              2,
+              3
+            ],
+            "details": "Set up Storybook or a similar documentation system. Create stories for each component showcasing all variants and states. Document component props, usage guidelines, and accessibility considerations. Include code examples and live demos. Implement theme switching in the documentation to demonstrate dark mode. Document all feature states (MVP): Authentication flows, Dashboard states (empty, loading, populated), Patient Management interfaces, Consultation views, Meal Planning interfaces, Billing screens, Messaging components, Error states, and Mobile-specific components. Include Swiss-specific design considerations for professional styling, security indicators, and tone guidelines.",
+            "testStrategy": "Verify all components are properly documented. Test interactive examples. Ensure documentation is up-to-date with component implementations. Test documentation site responsiveness. Verify all feature states are documented with examples."
+          },
+          {
+            "id": 5,
+            "title": "Responsive Layout System",
+            "description": "Implement responsive layout components and utilities for consistent page structures across the NutriSensia platform",
+            "status": "pending",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Create responsive container components. Implement grid and flexbox-based layout utilities. Develop responsive navigation components including Sidebar (240dp) and Tabs (48dp). Create responsive spacing utilities based on the NutriSensia spacing scale (2dp-64dp). Implement responsive typography with appropriate scaling for headings (H1-H4) and body text (Large, Standard, Small). Build responsive table solutions for data-heavy interfaces like patient lists and meal plans. Ensure layouts support all feature states defined in the MVP: Authentication, Dashboard, Patient Management, Consultations, Meal Planning, Billing, Messaging, and Error States.",
+            "testStrategy": "Cross-browser compatibility testing. Mobile responsiveness testing across different viewport sizes. Visual regression testing for layout components. Performance testing to ensure minimal layout shifts. Test all feature states in responsive layouts."
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Authentication System Implementation",
+        "description": "Implement Supabase authentication with email/password and OAuth Google options, including 2FA for nutritionists and role-based access control.",
+        "details": "Set up Supabase Auth with email/password and Google OAuth providers. Configure Row Level Security (RLS) policies in Supabase for role-based access. Implement user roles: nutritionist, patient, admin in a 'profiles' table with role field. Create auth hooks with React Context for global auth state. Implement 2FA using Supabase Auth's TOTP functionality, making it mandatory for nutritionist accounts. Build sign-up, sign-in, password reset, and email verification flows. Create protected routes using Next.js middleware. Implement session persistence and token refresh logic. Add security headers and CSRF protection. Use Zod for form validation in all auth forms.",
+        "testStrategy": "Unit tests for auth hooks and components. Integration tests for auth flows including sign-up, sign-in, and password reset. E2E tests with Playwright for complete auth journeys. Security testing for session management and token handling. Test 2FA flows thoroughly with mock TOTP generators.",
+        "priority": "high",
+        "dependencies": [
+          1,
+          2
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Supabase Auth Provider Setup",
+            "description": "Configure Supabase authentication with email/password and Google OAuth providers",
+            "dependencies": [],
+            "details": "Set up Supabase project and configure authentication settings. Enable email/password authentication with proper validation rules. Configure Google OAuth integration including API keys and redirect URIs. Implement proper error handling for auth failures. Create initial auth API wrapper functions for the frontend.",
+            "status": "pending",
+            "testStrategy": "Unit tests for auth API wrapper functions. Integration tests verifying successful authentication with both methods. Security testing for proper credential handling. Test error scenarios and edge cases."
+          },
+          {
+            "id": 2,
+            "title": "User Roles and Profiles Implementation",
+            "description": "Create profiles table with role-based access control and configure Row Level Security",
+            "dependencies": [
+              "3.1"
+            ],
+            "details": "Design and implement 'profiles' table in Supabase with fields for user role (nutritionist, patient, admin), profile information, and account settings. Create database triggers to automatically create profile entries on user signup. Implement Row Level Security (RLS) policies for each role type. Configure database rules for data access based on user roles.",
+            "status": "pending",
+            "testStrategy": "Database schema validation tests. RLS policy tests to verify proper access control. Integration tests for profile creation on signup. Security testing to ensure users can only access appropriate data."
+          },
+          {
+            "id": 3,
+            "title": "Authentication UI Components",
+            "description": "Build sign-up, sign-in, password reset, and email verification UI flows with Zod validation",
+            "dependencies": [
+              "3.1"
+            ],
+            "details": "Create React components for all authentication screens with responsive design. Implement Zod schemas for form validation across all auth forms. Build password strength indicators and validation feedback. Create email verification flow with confirmation screens. Implement password reset functionality with secure token handling.",
+            "status": "pending",
+            "testStrategy": "Component tests with React Testing Library. Form validation tests with various input scenarios. Accessibility testing for all auth forms. Visual regression tests for responsive layouts."
+          },
+          {
+            "id": 4,
+            "title": "Two-Factor Authentication Implementation",
+            "description": "Implement 2FA using Supabase Auth's TOTP functionality for nutritionist accounts",
+            "dependencies": [
+              "3.1",
+              "3.2"
+            ],
+            "details": "Integrate Supabase Auth's TOTP functionality for two-factor authentication. Create UI for 2FA setup including QR code generation and backup codes. Make 2FA mandatory for nutritionist accounts with appropriate enforcement logic. Implement 2FA verification screens in the authentication flow. Create recovery options for lost 2FA devices.",
+            "status": "pending",
+            "testStrategy": "Unit tests for 2FA logic. Integration tests with mock TOTP generators. E2E tests for complete 2FA setup and verification flows. Security testing for 2FA bypass attempts."
+          },
+          {
+            "id": 5,
+            "title": "Auth Context and Protected Routes",
+            "description": "Create global auth state with React Context and implement protected routes using Next.js middleware",
+            "dependencies": [
+              "3.1",
+              "3.2",
+              "3.3",
+              "3.4"
+            ],
+            "details": "Develop React Context for global authentication state management. Implement auth hooks for components to access user state and auth functions. Create session persistence and token refresh logic. Build Next.js middleware for protected route handling based on user roles. Add security headers and CSRF protection. Implement loading states and authentication redirects.",
+            "status": "pending",
+            "testStrategy": "Unit tests for auth context and hooks. Integration tests for protected routes. Session handling tests including token refresh. Security testing for authentication bypasses. E2E tests for complete authentication flows."
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "User Profile Management",
+        "description": "Create customizable user profiles with Zod validation for both nutritionists and patients, including profile completion tracking and role-specific fields.",
+        "details": "Design database schema for user profiles with Supabase, including common fields and role-specific fields. Create Zod schemas for validation of profile data with strict typing. Implement profile edit forms with React Hook Form + Zod integration. Add profile picture upload functionality using Supabase Storage. Create profile completion percentage calculation for onboarding guidance. For nutritionists, include fields for ASCA/RME credentials, specialties, and professional information. For patients, include health metrics, dietary preferences, and goals. Implement profile privacy settings with granular control over visible information. Use TanStack Query for efficient data fetching and caching of profile data.",
+        "testStrategy": "Unit tests for Zod validation schemas. Integration tests for form submission and error handling. Storage tests for profile picture uploads. E2E tests for complete profile editing flows. Test edge cases like partial form submissions and validation errors.",
+        "priority": "high",
+        "dependencies": [
+          3
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design Database Schema for User Profiles",
+            "description": "Create Supabase database schema for user profiles with common and role-specific fields for nutritionists and patients",
+            "dependencies": [],
+            "details": "Design and implement database tables for user profiles in Supabase. Include common fields (name, email, contact info, profile picture URL) and separate tables for role-specific fields. For nutritionists: credentials, specialties, professional information, availability. For patients: health metrics, dietary preferences, goals, allergies. Implement proper relationships between tables and set up appropriate indexes and constraints.",
+            "status": "pending",
+            "testStrategy": "Create database migration tests to verify schema integrity. Test foreign key relationships and constraints. Verify data types and validation rules at the database level. Test query performance for common profile operations."
+          },
+          {
+            "id": 2,
+            "title": "Implement Zod Validation Schemas",
+            "description": "Create comprehensive Zod schemas for validating user profile data with strict typing for both user types",
+            "dependencies": [
+              "4.1"
+            ],
+            "details": "Develop Zod validation schemas that match the database structure. Create separate schemas for common fields, nutritionist-specific fields, and patient-specific fields. Implement strict validation rules for each field type including email format, credential formats, and required fields. Add custom error messages for validation failures. Create TypeScript types derived from Zod schemas for use throughout the application.",
+            "status": "pending",
+            "testStrategy": "Unit test all validation schemas with valid and invalid data. Test edge cases like empty strings, null values, and malformed data. Verify custom error messages are generated correctly. Test type inference with TypeScript."
+          },
+          {
+            "id": 3,
+            "title": "Build Profile Edit Forms with React Hook Form",
+            "description": "Create profile editing interfaces with React Hook Form and Zod integration for both user types",
+            "dependencies": [
+              "4.2"
+            ],
+            "details": "Implement profile edit forms using React Hook Form with Zod resolver for validation. Create separate form components for common fields and role-specific fields. Add field-level validation feedback. Implement form submission handlers that connect to Supabase. Create responsive layouts for forms that work on mobile and desktop. Add unsaved changes detection and confirmation dialogs.",
+            "status": "pending",
+            "testStrategy": "Test form validation behavior with React Testing Library. Verify form submission and error handling. Test responsive behavior across different viewport sizes. Test keyboard navigation and accessibility compliance."
+          },
+          {
+            "id": 4,
+            "title": "Implement Profile Picture Upload Functionality",
+            "description": "Add profile picture upload and management using Supabase Storage with image optimization",
+            "dependencies": [
+              "4.1"
+            ],
+            "details": "Implement profile picture upload functionality using Supabase Storage. Create image upload component with drag-and-drop support. Add client-side image resizing and optimization before upload. Implement image cropping functionality. Create proper storage bucket policies in Supabase. Generate and store different image sizes for various UI contexts. Add image deletion and replacement functionality.",
+            "status": "pending",
+            "testStrategy": "Test upload functionality with different image types and sizes. Verify storage permissions and access control. Test image optimization and cropping features. Test error handling for failed uploads and invalid file types."
+          },
+          {
+            "id": 5,
+            "title": "Create Profile Completion Tracking System",
+            "description": "Implement profile completion percentage calculation and guidance system for onboarding",
+            "dependencies": [
+              "4.2",
+              "4.3"
+            ],
+            "details": "Develop an algorithm to calculate profile completion percentage based on filled fields and their importance. Create visual indicators for completion status. Implement guided onboarding that highlights incomplete sections. Add personalized recommendations for profile improvement based on user role. Implement TanStack Query for efficient profile data fetching and caching. Create privacy settings interface with granular control over visible information.",
+            "status": "pending",
+            "testStrategy": "Test completion percentage calculation with various profile states. Verify onboarding guidance logic. Test privacy settings functionality and permissions. Test data fetching and caching with TanStack Query under different network conditions."
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Role-Based Onboarding Flows",
+        "description": "Develop guided onboarding experiences tailored to each user role (nutritionist, patient, admin) to improve user activation and engagement.",
+        "details": "Create step-by-step onboarding wizards for each user role using a multi-step form pattern. For nutritionists: credential verification, practice details, scheduling preferences, and platform training. For patients: health goals, dietary restrictions, measurements, and app tour. Use localStorage or Supabase to persist onboarding progress. Implement progress indicators and the ability to skip/return to steps. Create onboarding completion tracking in the database. Design engaging illustrations and micro-animations with Framer Motion to enhance the experience. Implement tooltips and guided tours for key features using a library like react-joyride. Create onboarding analytics to identify drop-off points.",
+        "testStrategy": "User testing with representatives from each role. A/B testing of different onboarding flows to optimize completion rates. E2E tests for complete onboarding journeys. Analytics tracking validation. Test persistence of partially completed onboarding data.",
+        "priority": "medium",
+        "dependencies": [
+          3,
+          4
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design Multi-Step Onboarding Wizards",
+            "description": "Create the UI/UX design for role-specific onboarding flows with wireframes and mockups for nutritionists, patients, and admin roles.",
+            "dependencies": [],
+            "details": "Design step-by-step wizards with consistent styling across roles. For nutritionists: include screens for credential verification, practice details, scheduling preferences, and platform training. For patients: design screens for health goals, dietary restrictions, measurements, and app tour. For admins: create screens for system configuration, user management, and analytics overview. Include progress indicators, navigation controls, and skip/return functionality in all designs.",
+            "status": "pending",
+            "testStrategy": "Conduct usability testing with representatives from each user role. Create prototypes in Figma and gather feedback on flow intuitiveness. Perform A/B testing on different design variations to optimize for completion rates."
+          },
+          {
+            "id": 2,
+            "title": "Implement Onboarding Data Persistence",
+            "description": "Develop the backend infrastructure to store and retrieve onboarding progress using localStorage and Supabase.",
+            "dependencies": [
+              "5.1"
+            ],
+            "details": "Create Supabase tables for storing onboarding completion status and user-provided information. Implement client-side persistence using localStorage to save progress between sessions. Develop synchronization logic to update Supabase when connectivity is available. Create API endpoints for saving and retrieving onboarding data. Implement data validation to ensure required fields are completed before advancing steps.",
+            "status": "pending",
+            "testStrategy": "Unit test persistence logic for both localStorage and Supabase. Test synchronization between local and remote storage. Verify data integrity across browser sessions. Test edge cases like network interruptions during onboarding."
+          },
+          {
+            "id": 3,
+            "title": "Develop Frontend Onboarding Components",
+            "description": "Build React components for the multi-step onboarding wizards with form validation and navigation controls.",
+            "dependencies": [
+              "5.1",
+              "5.2"
+            ],
+            "details": "Create reusable form components with validation using React Hook Form and Zod. Implement step navigation with progress tracking. Build role-specific form fields and validation rules. Create responsive layouts that work across devices. Implement form state management to handle complex multi-step data. Add accessibility features to ensure all users can complete onboarding successfully.",
+            "status": "pending",
+            "testStrategy": "Write unit tests for form validation logic. Create integration tests for complete form submission flows. Test keyboard navigation and screen reader compatibility. Verify responsive behavior across different screen sizes."
+          },
+          {
+            "id": 4,
+            "title": "Create Engaging Visual Elements",
+            "description": "Design and implement illustrations, animations, and tooltips to enhance the onboarding experience.",
+            "dependencies": [
+              "5.3"
+            ],
+            "details": "Create role-specific illustrations that visually represent each onboarding step. Implement micro-animations using Framer Motion to provide visual feedback and guide users. Develop tooltips and guided tours for key features using react-joyride. Design celebration animations for onboarding completion. Ensure all visual elements are optimized for performance and accessibility.",
+            "status": "pending",
+            "testStrategy": "Conduct visual testing to ensure animations render correctly across browsers. Perform performance testing to verify animations don't impact page load times. Test with users to measure engagement impact of visual elements. Verify accessibility of animated components."
+          },
+          {
+            "id": 5,
+            "title": "Implement Onboarding Analytics",
+            "description": "Set up tracking and reporting for onboarding completion rates, drop-off points, and user behavior.",
+            "dependencies": [
+              "5.2",
+              "5.3",
+              "5.4"
+            ],
+            "details": "Implement event tracking for each onboarding step using an analytics platform. Create custom events for step completion, form errors, and help requests. Develop a dashboard to visualize onboarding funnel and identify drop-off points. Set up automated reports for onboarding completion rates by role. Implement A/B testing framework to optimize the onboarding flow based on analytics data.",
+            "status": "pending",
+            "testStrategy": "Verify correct event firing for all tracked interactions. Test data accuracy in analytics dashboard. Create automated tests to ensure analytics code doesn't break during updates. Validate that sensitive user data is not included in analytics events."
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Landing Page and Marketing Site",
+        "description": "Develop a conversion-optimized homepage with hero section, clear value proposition, and role-specific content for patients and nutritionists.",
+        "details": "Create a Next.js-based landing page with static generation for optimal performance. Implement a compelling hero section with clear value proposition and CTA. Design separate sections for patients (explaining packages, consultation process, insurance FAQ) and nutritionists (platform benefits, pricing, demo request). Implement responsive design with mobile-first approach. Add contact forms with React Hook Form and Zod validation, storing submissions in Supabase. Implement SEO optimization for Swiss French market with next-seo package. Create a blog section with MDX for content marketing. Set up Google Analytics and conversion tracking. Implement structured data for rich search results. Add testimonials section with carousel component.",
+        "testStrategy": "Lighthouse performance testing targeting >90 scores. Cross-browser and device testing. Form submission validation and error handling tests. SEO audit with tools like Screaming Frog. A/B testing of different CTAs and hero messages. User flow analysis with heatmaps (Hotjar).",
+        "priority": "high",
+        "dependencies": [
+          1,
+          2
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Hero Section and Value Proposition",
+            "description": "Design and implement a compelling hero section with clear value proposition and call-to-action buttons",
+            "dependencies": [],
+            "details": "Create a visually appealing hero section using Next.js with static generation. Craft a concise value proposition that clearly communicates the platform's benefits. Implement primary and secondary CTAs with tracking capabilities. Ensure the hero section is responsive across all devices with a mobile-first approach. Use high-quality imagery that resonates with both patients and nutritionists.",
+            "status": "pending",
+            "testStrategy": "A/B testing of different hero messages and CTA placements. Lighthouse performance testing targeting >90 scores. Cross-device testing for responsiveness. User engagement metrics tracking via Google Analytics."
+          },
+          {
+            "id": 2,
+            "title": "Role-Specific Content Sections",
+            "description": "Develop separate content sections tailored for patients and nutritionists with relevant information for each audience",
+            "dependencies": [
+              "6.1"
+            ],
+            "details": "Create patient-focused sections explaining consultation packages, the nutrition consultation process, and insurance FAQs. Design nutritionist-focused sections highlighting platform benefits, pricing structure, and demo request functionality. Implement smooth scrolling between sections with anchor links. Use compelling visuals and concise copy to maintain engagement. Ensure consistent styling while differentiating the sections visually.",
+            "status": "pending",
+            "testStrategy": "User testing with both patient and nutritionist representatives. Heatmap analysis using Hotjar to track section engagement. Conversion tracking for demo requests and contact form submissions from each section."
+          },
+          {
+            "id": 3,
+            "title": "Contact Forms with Validation",
+            "description": "Implement contact forms with React Hook Form and Zod validation, storing submissions in Supabase",
+            "dependencies": [
+              "6.2"
+            ],
+            "details": "Create separate contact forms for general inquiries, patient questions, and nutritionist partnership requests. Implement form validation using React Hook Form with Zod schema validation. Set up Supabase tables to store form submissions securely. Add honeypot fields and rate limiting to prevent spam. Implement success/error notifications and form reset after submission. Ensure forms are fully accessible with proper ARIA attributes.",
+            "status": "pending",
+            "testStrategy": "Unit tests for form validation logic. Integration tests for form submission and database storage. Accessibility testing using axe or similar tools. Manual testing of error states and form submission flows."
+          },
+          {
+            "id": 4,
+            "title": "SEO Optimization and Blog Section",
+            "description": "Implement SEO optimization for Swiss French market and create a blog section with MDX for content marketing",
+            "dependencies": [
+              "6.1",
+              "6.2"
+            ],
+            "details": "Set up next-seo package with optimized meta tags, Open Graph data, and structured data for rich search results. Implement localized SEO targeting the Swiss French market with appropriate keywords. Create a blog section using MDX for content marketing with categories and tags. Implement blog post previews on the homepage. Set up sitemap generation and robots.txt. Ensure proper canonical URLs and meta descriptions for all pages.",
+            "status": "pending",
+            "testStrategy": "SEO audit with tools like Screaming Frog. Lighthouse SEO score testing targeting >90. Schema validation for structured data. Testing of social media preview cards. Performance testing of MDX blog rendering."
+          },
+          {
+            "id": 5,
+            "title": "Analytics and Conversion Tracking",
+            "description": "Set up Google Analytics, conversion tracking, and implement a testimonials section with carousel component",
+            "dependencies": [
+              "6.1",
+              "6.2",
+              "6.3",
+              "6.4"
+            ],
+            "details": "Implement Google Analytics 4 with custom events for key user interactions. Set up conversion tracking for form submissions and CTA clicks. Create a testimonials section with a responsive carousel component showcasing client success stories. Implement structured data for testimonials to enhance SEO. Add privacy-compliant cookie consent banner. Set up goal tracking in Google Analytics to measure conversion rates.",
+            "status": "pending",
+            "testStrategy": "Verification of analytics events firing correctly. Testing of carousel component across devices. Validation of structured data using Google's Rich Results Test. A/B testing of testimonial presentation formats. Performance impact assessment of analytics scripts."
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "title": "Nutritionist Dashboard Overview",
+        "description": "Create a comprehensive dashboard for nutritionists showing patient overview cards with status and upcoming appointments.",
+        "details": "Design a responsive dashboard layout with Tailwind CSS grid system. Implement patient overview cards showing key information: name, status, next appointment, compliance rate. Create a summary statistics section showing active patients, upcoming appointments, and revenue metrics. Use TanStack Query for efficient data fetching with caching and background updates. Implement filtering and sorting options for patient lists. Add quick action buttons for common tasks (message patient, schedule appointment, etc.). Create skeleton loading states for improved UX during data fetching. Implement real-time updates using Supabase Realtime subscriptions for appointment changes. Add date range selectors for viewing different time periods. Create mobile-optimized views for dashboard access on the go.",
+        "testStrategy": "Component testing with React Testing Library. Integration tests for data fetching and state management. Performance testing for large patient lists. Realtime subscription testing. Responsive design testing across breakpoints. User testing with actual nutritionists for UX feedback.",
+        "priority": "high",
+        "dependencies": [
+          3,
+          4,
+          5
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design Responsive Dashboard Layout",
+            "description": "Create the responsive dashboard layout using Tailwind CSS grid system with appropriate breakpoints for desktop and mobile views.",
+            "dependencies": [],
+            "details": "Implement a responsive grid layout using Tailwind CSS that adapts to different screen sizes. Create container components for the main dashboard sections: summary statistics area, patient list area, and quick actions panel. Define appropriate breakpoints for desktop, tablet, and mobile views. Ensure proper spacing and alignment between dashboard elements. Implement a mobile-optimized view that reorganizes content for smaller screens.",
+            "status": "pending",
+            "testStrategy": "Test responsive behavior across multiple breakpoints using React Testing Library and viewport simulation. Verify layout integrity on various device sizes. Conduct visual regression testing to ensure consistent appearance."
+          },
+          {
+            "id": 2,
+            "title": "Implement Patient Overview Cards",
+            "description": "Create patient overview cards displaying key information including name, status, next appointment, and compliance rate.",
+            "dependencies": [
+              "7.1"
+            ],
+            "details": "Design and implement reusable patient card components with consistent styling. Display essential patient information: full name, profile image, current status (active/inactive), next appointment date and time, and compliance rate percentage. Add visual indicators for compliance status (good/warning/poor). Include hover states and focus styles for improved accessibility. Ensure cards maintain proper layout at all screen sizes.",
+            "status": "pending",
+            "testStrategy": "Unit test card components with various data scenarios. Test accessibility features including keyboard navigation and screen reader compatibility. Verify proper rendering of all patient information fields."
+          },
+          {
+            "id": 3,
+            "title": "Create Summary Statistics Section",
+            "description": "Develop a summary statistics section showing active patients, upcoming appointments, and revenue metrics.",
+            "dependencies": [
+              "7.1"
+            ],
+            "details": "Design and implement statistics cards for key metrics: total active patients, appointments scheduled for today/this week, revenue metrics (current month, comparison to previous month). Create visual representations using appropriate icons and color coding. Implement number formatting for currency and percentages. Add tooltips for additional context on each metric. Ensure the statistics section is prominently positioned at the top of the dashboard.",
+            "status": "pending",
+            "testStrategy": "Test calculation logic for all metrics. Verify proper formatting of numbers, currencies, and percentages. Test tooltip functionality and content accuracy."
+          },
+          {
+            "id": 4,
+            "title": "Implement Data Fetching with TanStack Query",
+            "description": "Set up efficient data fetching with TanStack Query including caching, background updates, and loading states.",
+            "dependencies": [
+              "7.1",
+              "7.2",
+              "7.3"
+            ],
+            "details": "Configure TanStack Query for fetching dashboard data with appropriate caching strategies. Implement query hooks for patient data, appointment data, and statistics data. Set up background refetching to keep dashboard data current. Create skeleton loading states for all dashboard components during initial load and refetching. Implement error handling and retry logic for failed queries. Add query invalidation triggers for real-time updates.",
+            "status": "pending",
+            "testStrategy": "Test query caching behavior and background update functionality. Verify proper display of loading states and error messages. Test network failure scenarios and recovery. Measure and optimize query performance with large datasets."
+          },
+          {
+            "id": 5,
+            "title": "Add Filtering, Sorting and Quick Actions",
+            "description": "Implement filtering and sorting options for patient lists along with quick action buttons for common tasks.",
+            "dependencies": [
+              "7.2",
+              "7.4"
+            ],
+            "details": "Create filter controls for patient status, appointment date range, and compliance levels. Implement sorting functionality for patient lists by name, next appointment, and compliance rate. Add quick action buttons on patient cards for common tasks: message patient, schedule appointment, view details, etc. Implement action confirmation dialogs where appropriate. Create date range selectors for filtering dashboard data by time period. Ensure all controls are accessible and mobile-friendly.",
+            "status": "pending",
+            "testStrategy": "Test all filter and sort combinations for correct results. Verify quick action button functionality and confirmation flows. Test keyboard accessibility for all interactive elements. Verify filter state persistence during navigation."
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "title": "Appointment Management System",
+        "description": "Implement a calendar-based appointment scheduling and management system for nutritionists with consultation notes.",
+        "details": "Integrate a full-featured calendar component using @tanstack/react-calendar or react-big-calendar. Implement appointment creation, editing, and cancellation flows. Create recurring appointment functionality. Add consultation notes feature with rich text editing using Tiptap or Lexical. Implement appointment reminders via email using a service like Resend.com. Create appointment status tracking (scheduled, completed, cancelled, no-show). Add buffer time settings between appointments. Implement timezone handling for international clients. Create patient appointment history view. Add drag-and-drop rescheduling functionality. Implement calendar sync options with Google Calendar and iCal using their respective APIs.",
+        "testStrategy": "Unit tests for calendar operations and state management. Integration tests for appointment CRUD operations. E2E tests for complete appointment scheduling flows. Test timezone edge cases. Test calendar sync functionality. Performance testing with many appointments.",
+        "priority": "high",
+        "dependencies": [
+          7
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Calendar Component Integration",
+            "description": "Integrate a full-featured calendar component using @tanstack/react-calendar or react-big-calendar with basic view options.",
+            "dependencies": [],
+            "details": "Research and select between @tanstack/react-calendar and react-big-calendar based on feature requirements. Implement the chosen calendar component with day, week, and month views. Configure styling to match the application's design system. Implement responsive design for different screen sizes. Set up basic calendar navigation and date selection functionality.",
+            "status": "pending",
+            "testStrategy": "Unit tests for calendar rendering and view switching. Cross-browser compatibility testing. Responsive design testing across different viewport sizes. Performance testing with large datasets of appointments."
+          },
+          {
+            "id": 2,
+            "title": "Appointment CRUD Operations",
+            "description": "Implement appointment creation, editing, cancellation, and recurring appointment functionality with status tracking.",
+            "dependencies": [
+              "8.1"
+            ],
+            "details": "Create forms for appointment creation and editing with validation. Implement appointment status tracking (scheduled, completed, cancelled, no-show). Develop recurring appointment logic with options for daily, weekly, monthly patterns. Add buffer time settings between appointments. Create appointment conflict detection and prevention. Implement drag-and-drop rescheduling functionality.",
+            "status": "pending",
+            "testStrategy": "Unit tests for appointment state management. Integration tests for CRUD operations. Test edge cases like conflicting appointments and recurring pattern exceptions. E2E tests for complete appointment scheduling flows."
+          },
+          {
+            "id": 3,
+            "title": "Consultation Notes System",
+            "description": "Develop a consultation notes feature with rich text editing using Tiptap or Lexical and attachment capabilities.",
+            "dependencies": [
+              "8.2"
+            ],
+            "details": "Integrate a rich text editor (Tiptap or Lexical) for consultation notes. Implement note templates for common consultation scenarios. Create auto-save functionality for notes. Add attachment support for documents and images. Implement note versioning to track changes. Create a searchable notes history view. Ensure proper data encryption for sensitive patient information.",
+            "status": "pending",
+            "testStrategy": "Unit tests for rich text editor functionality. Integration tests for note saving and retrieval. Test attachment upload and download functionality. Performance testing with large notes and multiple attachments."
+          },
+          {
+            "id": 4,
+            "title": "Appointment Reminder System",
+            "description": "Implement appointment reminders via email using Resend.com with customizable notification schedules.",
+            "dependencies": [
+              "8.2"
+            ],
+            "details": "Integrate with Resend.com API for email delivery. Create email templates for appointment reminders, confirmations, and cancellations. Implement configurable reminder schedules (e.g., 24 hours, 1 hour before). Add SMS reminder option as an alternative channel. Create a notification preferences management interface for nutritionists. Implement notification logs and delivery status tracking.",
+            "status": "pending",
+            "testStrategy": "Unit tests for reminder scheduling logic. Integration tests with Resend.com API. Test email template rendering across different email clients. E2E tests for complete reminder workflows. Test handling of failed deliveries and retry mechanisms."
+          },
+          {
+            "id": 5,
+            "title": "Calendar Synchronization",
+            "description": "Implement calendar sync options with Google Calendar and iCal using their respective APIs with timezone handling.",
+            "dependencies": [
+              "8.1",
+              "8.2"
+            ],
+            "details": "Integrate with Google Calendar API for two-way synchronization. Implement iCal export and import functionality. Develop timezone handling for international clients using a library like date-fns-tz. Create sync conflict resolution strategies. Implement sync frequency settings and manual sync options. Add visual indicators for synced vs. local-only appointments. Create a patient appointment history view with filtering options.",
+            "status": "pending",
+            "testStrategy": "Integration tests with Google Calendar API. Test iCal import/export functionality. Test timezone edge cases across international date lines. Test sync conflict scenarios and resolution. Performance testing of sync operations with large calendars."
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "title": "Nutritional Database Integration",
+        "description": "Integrate USDA FoodData Central and Ciqual ANSES databases with Redis caching for fast food data access and search functionality.",
+        "details": "Set up data ingestion pipelines for USDA FoodData Central API and Ciqual ANSES database. Create a normalized database schema in Supabase for storing food data. Implement Redis caching layer using Upstash or similar service for frequently accessed food items. Build an Elasticsearch index for fast food search with autocomplete. Create API endpoints for food search, nutritional information retrieval, and portion calculation. Implement daily synchronization jobs using cron tasks to keep data updated. Create fallback mechanisms for offline operation with core food items. Build food categorization and filtering system. Implement portion size conversion utilities. Create data versioning to track database updates.",
+        "testStrategy": "Unit tests for data transformation and normalization. Performance testing for search operations. Cache hit ratio monitoring. Integration tests for API endpoints. Test synchronization jobs and error handling. Test offline fallback mechanisms. Load testing with concurrent searches.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Database Schema Design and Setup",
+            "description": "Create a normalized database schema in Supabase for storing food data from USDA FoodData Central and Ciqual ANSES databases.",
+            "dependencies": [],
+            "details": "Design tables for foods, nutrients, portions, categories, and relationships. Include fields for source tracking (USDA vs Ciqual). Create appropriate indexes for efficient querying. Set up foreign key relationships and constraints. Document the schema with ERD diagrams. Configure Supabase permissions and access controls.",
+            "status": "pending",
+            "testStrategy": "Validate schema design with sample data imports. Test query performance for common access patterns. Verify data integrity constraints. Ensure proper normalization to avoid redundancy."
+          },
+          {
+            "id": 2,
+            "title": "Data Ingestion Pipeline Implementation",
+            "description": "Set up automated data ingestion pipelines for USDA FoodData Central API and Ciqual ANSES database.",
+            "dependencies": [
+              "9.1"
+            ],
+            "details": "Create ETL processes for both data sources. Implement API client for USDA FoodData Central. Develop parser for Ciqual ANSES data files. Build data transformation logic to normalize between different formats. Implement data validation and cleaning procedures. Create logging and error handling for ingestion processes. Set up initial data load process.",
+            "status": "pending",
+            "testStrategy": "Test API connectivity and rate limiting. Validate data transformation accuracy. Measure ingestion performance and optimize for large datasets. Test error recovery mechanisms. Verify complete data coverage from both sources."
+          },
+          {
+            "id": 3,
+            "title": "Redis Caching Layer Implementation",
+            "description": "Implement Redis caching using Upstash for frequently accessed food items and search results.",
+            "dependencies": [
+              "9.1",
+              "9.2"
+            ],
+            "details": "Set up Upstash Redis instance with appropriate configuration. Implement caching strategies for common queries (popular foods, recent searches). Create cache invalidation mechanisms for data updates. Implement TTL policies based on data access patterns. Build monitoring for cache hit/miss ratios. Create fallback mechanisms for cache failures.",
+            "status": "pending",
+            "testStrategy": "Measure performance improvements with caching. Test cache consistency during data updates. Verify cache invalidation works correctly. Simulate cache failures and test recovery. Load test with concurrent access patterns."
+          },
+          {
+            "id": 4,
+            "title": "Search Functionality with Elasticsearch",
+            "description": "Build an Elasticsearch index for fast food search with autocomplete and filtering capabilities.",
+            "dependencies": [
+              "9.1",
+              "9.2"
+            ],
+            "details": "Set up Elasticsearch instance and configure mappings for food data. Implement indexing process for all food items. Create search API with autocomplete functionality. Implement filters for food categories, nutrients, and dietary restrictions. Optimize relevance scoring for search results. Build reindexing process for data updates. Implement fuzzy matching for typo tolerance.",
+            "status": "pending",
+            "testStrategy": "Test search performance with large datasets. Validate autocomplete accuracy and speed. Test filtering combinations. Measure query response times. Test multilingual search capabilities if applicable. Verify fuzzy matching handles common misspellings."
+          },
+          {
+            "id": 5,
+            "title": "API Endpoints and Synchronization Jobs",
+            "description": "Create API endpoints for food data access and implement daily synchronization jobs to keep data updated.",
+            "dependencies": [
+              "9.1",
+              "9.2",
+              "9.3",
+              "9.4"
+            ],
+            "details": "Develop RESTful API endpoints for food search, nutritional information retrieval, and portion calculation. Implement daily cron jobs for data synchronization with source databases. Create data versioning system to track updates. Build offline fallback mechanisms with core food items. Implement portion size conversion utilities. Create food categorization system. Add documentation for API endpoints using Swagger or similar.",
+            "status": "pending",
+            "testStrategy": "Test API endpoint functionality and error handling. Verify synchronization jobs complete successfully. Test offline mode functionality. Validate portion calculations for accuracy. Measure API response times under load. Test concurrent API access patterns."
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "title": "Meal Planning System",
+        "description": "Create a system for nutritionists to design customized meal plans for patients using the integrated food database.",
+        "details": "Design a drag-and-drop meal planning interface using react-beautiful-dnd or similar library. Implement meal template creation and saving functionality. Create meal nutritional calculation engine using the food database. Build a meal plan assignment system to assign plans to patients. Implement plan versioning to track changes over time. Create print-friendly and PDF export options using react-pdf. Add meal plan duplication and modification features. Implement meal suggestions based on patient preferences and restrictions. Create a meal plan calendar view for weekly/monthly planning. Add portion adjustment tools with real-time nutritional recalculation. Implement meal plan compliance tracking.",
+        "testStrategy": "Component testing for drag-and-drop functionality. Unit tests for nutritional calculations. Integration tests for meal plan CRUD operations. E2E tests for complete meal planning workflows. Test PDF generation and exports. Performance testing with complex meal plans.",
+        "priority": "high",
+        "dependencies": [
+          7,
+          9
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Drag-and-Drop Meal Planning Interface",
+            "description": "Implement an intuitive drag-and-drop interface for nutritionists to create and modify meal plans",
+            "dependencies": [],
+            "details": "Integrate react-beautiful-dnd or a similar library to create a responsive drag-and-drop interface. Design components for meal slots (breakfast, lunch, dinner, snacks), food item cards, and drop zones. Implement smooth animations for dragging operations. Ensure the interface is accessible and works on both desktop and mobile devices.",
+            "status": "pending",
+            "testStrategy": "Component testing for drag-and-drop functionality. Accessibility testing to ensure keyboard navigation works. Cross-browser compatibility testing. Mobile responsiveness testing across different viewport sizes."
+          },
+          {
+            "id": 2,
+            "title": "Meal Template Creation and Management",
+            "description": "Develop functionality for creating, saving, duplicating, and modifying meal plan templates",
+            "dependencies": [
+              "10.1"
+            ],
+            "details": "Create a system for saving meal plans as reusable templates. Implement CRUD operations for templates with appropriate database schema. Add duplication functionality to allow quick creation of similar plans. Include categorization and tagging for templates to improve searchability. Implement version history to track changes over time.",
+            "status": "pending",
+            "testStrategy": "Unit tests for template CRUD operations. Integration tests for template persistence and retrieval. E2E tests for complete template workflows including duplication and modification."
+          },
+          {
+            "id": 3,
+            "title": "Nutritional Calculation Engine",
+            "description": "Build a calculation engine that computes nutritional information for meals and complete plans using the food database",
+            "dependencies": [],
+            "details": "Develop algorithms to calculate total calories, macronutrients (protein, carbs, fat), micronutrients, and other nutritional values based on food items and portions in a meal plan. Implement real-time recalculation when portions are adjusted. Create visualizations for nutritional breakdowns. Add functionality to compare calculated values against patient-specific nutritional targets.",
+            "status": "pending",
+            "testStrategy": "Unit tests for nutritional calculation algorithms. Performance testing with complex meal plans containing many ingredients. Integration tests with the food database. Validation testing against known nutritional values."
+          },
+          {
+            "id": 4,
+            "title": "Meal Plan Assignment and Patient Management",
+            "description": "Create a system to assign meal plans to patients and track their compliance",
+            "dependencies": [
+              "10.2",
+              "10.3"
+            ],
+            "details": "Implement functionality to assign meal plans to specific patients. Create a patient dashboard for nutritionists to monitor multiple meal plans. Add compliance tracking features to record patient adherence to assigned plans. Implement notification system for plan updates. Create analytics dashboard showing aggregated compliance data and nutritional trends.",
+            "status": "pending",
+            "testStrategy": "Integration tests for plan assignment and persistence. E2E tests for nutritionist workflows. Security testing for patient data protection. Performance testing with large numbers of patients and plans."
+          },
+          {
+            "id": 5,
+            "title": "Export and Sharing Functionality",
+            "description": "Implement print-friendly views, PDF export, and sharing options for meal plans",
+            "dependencies": [
+              "10.1",
+              "10.3"
+            ],
+            "details": "Integrate react-pdf or similar library to generate PDF exports of meal plans. Create print-friendly CSS styles for direct printing. Implement sharing functionality via email or messaging platforms. Add customization options for exports including branding elements, notes, and level of detail. Ensure exported documents are accessible and well-formatted on various devices.",
+            "status": "pending",
+            "testStrategy": "Visual testing of generated PDFs and print layouts. Integration tests for export functionality. Cross-device testing for shared documents. Performance testing for large meal plan exports. Accessibility testing for exported documents."
+          }
+        ]
+      },
+      {
+        "id": 11,
+        "title": "Real-time Messaging System",
+        "description": "Implement a GDPR-compliant real-time messaging system between nutritionists and patients with message history and notifications.",
+        "details": "Leverage Supabase Realtime for WebSocket-based messaging. Design database schema for messages with proper indexing. Implement end-to-end encryption for message content using TweetNaCl.js or similar library. Create conversation UI with message history, typing indicators, and read receipts. Add file and image sharing capabilities with Supabase Storage. Implement push notifications for new messages using web push API. Create message search functionality. Add message retention policies for GDPR compliance. Implement conversation archiving and deletion. Create admin monitoring tools for abuse prevention. Add rate limiting to prevent spam. Implement offline message queueing for mobile use.",
+        "testStrategy": "Unit tests for encryption/decryption functions. Integration tests for message sending and receiving. Realtime subscription testing. E2E tests for complete messaging flows. Security testing for encryption implementation. Performance testing with high message volumes. Test offline behavior and message queueing.",
+        "priority": "medium",
+        "dependencies": [
+          3,
+          4
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Database Schema and Supabase Realtime Setup",
+            "description": "Design and implement the database schema for messages with proper indexing and set up Supabase Realtime for WebSocket-based messaging",
+            "dependencies": [],
+            "details": "Create tables for conversations, messages, and participants with appropriate relationships. Implement indexes for efficient querying by conversation, sender, timestamp, and content. Configure Supabase Realtime channels for real-time message delivery. Set up proper access policies for secure data access. Include metadata fields for read status, delivery status, and message types.",
+            "status": "pending",
+            "testStrategy": "Unit tests for database schema integrity. Integration tests for Supabase Realtime subscription and event handling. Performance testing with high message volumes. Security testing for access policies."
+          },
+          {
+            "id": 2,
+            "title": "End-to-End Encryption Implementation",
+            "description": "Implement end-to-end encryption for message content using TweetNaCl.js or similar library to ensure GDPR compliance",
+            "dependencies": [
+              "11.1"
+            ],
+            "details": "Research and select appropriate encryption library (TweetNaCl.js recommended). Implement key generation and exchange protocol. Create encryption/decryption utilities for message content. Store encrypted messages in the database. Implement secure key storage on client devices. Document the encryption approach for GDPR compliance documentation.",
+            "status": "pending",
+            "testStrategy": "Unit tests for encryption/decryption functions. Security audits of the implementation. Integration tests with the messaging system. Verification of encrypted data in storage."
+          },
+          {
+            "id": 3,
+            "title": "Conversation UI with Message History",
+            "description": "Create the conversation UI with message history, typing indicators, and read receipts",
+            "dependencies": [
+              "11.1",
+              "11.2"
+            ],
+            "details": "Design and implement the chat interface with message bubbles, timestamps, and sender information. Add real-time typing indicators using Supabase presence. Implement read receipts functionality. Create infinite scrolling for message history. Add message grouping by time periods. Implement UI for different message types (text, files, images).",
+            "status": "pending",
+            "testStrategy": "Component tests for UI elements. Integration tests for real-time updates. E2E tests for complete messaging flows. Responsive design testing across devices. Accessibility testing for the conversation interface."
+          },
+          {
+            "id": 4,
+            "title": "File Sharing and Push Notifications",
+            "description": "Implement file and image sharing capabilities with Supabase Storage and push notifications for new messages",
+            "dependencies": [
+              "11.3"
+            ],
+            "details": "Set up Supabase Storage buckets with appropriate access policies. Implement file upload and download functionality. Add image preview and compression. Create file type validation and size limits. Implement the Web Push API for browser notifications. Set up service workers for background notification handling. Create notification preferences management for users.",
+            "status": "pending",
+            "testStrategy": "Unit tests for file upload/download functions. Integration tests for storage operations. Push notification delivery testing across browsers. Permission handling tests. File type and size validation tests."
+          },
+          {
+            "id": 5,
+            "title": "GDPR Compliance and Admin Tools",
+            "description": "Implement message retention policies, conversation archiving/deletion, and admin monitoring tools for GDPR compliance",
+            "dependencies": [
+              "11.1",
+              "11.2",
+              "11.3",
+              "11.4"
+            ],
+            "details": "Create configurable message retention policies. Implement automatic and manual message purging. Add conversation archiving functionality. Create data export tools for GDPR data requests. Implement conversation deletion with proper data cleanup. Build admin dashboard for monitoring system usage and potential abuse. Add rate limiting to prevent spam. Implement audit logging for compliance purposes.",
+            "status": "pending",
+            "testStrategy": "Integration tests for retention policy enforcement. E2E tests for data export and deletion. Performance testing for large-scale data operations. Compliance verification against GDPR requirements. Security testing for admin tools access control."
+          }
+        ]
+      },
+      {
+        "id": 12,
+        "title": "Swiss-Compliant Invoicing System",
+        "description": "Develop an automated invoicing system with Swiss insurance-compatible templates, ASCA/RME credentials, and PDF generation with QR codes.",
+        "details": "Create invoice templates following Swiss insurance standards. Implement PDF generation using react-pdf or similar library. Add QR code generation for Swiss QR-bill format using qrcode.react. Integrate ASCA/RME credential auto-inclusion in invoices. Build invoice numbering and tracking system. Implement invoice status tracking (draft, sent, paid, overdue). Create automatic invoice generation after appointments. Add invoice history and search functionality. Implement invoice reminders via email. Create invoice analytics and reporting. Add invoice customization options for nutritionists. Implement batch invoice operations for efficiency.",
+        "testStrategy": "Unit tests for PDF generation and QR code creation. Integration tests for invoice CRUD operations. Visual regression testing for invoice templates. E2E tests for complete invoicing workflows. Test compliance with Swiss insurance requirements. Test email delivery of invoices and reminders.",
+        "priority": "high",
+        "dependencies": [
+          7,
+          8
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Swiss Insurance-Compatible Template Design",
+            "description": "Create standardized invoice templates that comply with Swiss insurance requirements and include ASCA/RME credential fields",
+            "dependencies": [],
+            "details": "Research and document Swiss insurance invoice requirements. Design template layouts with proper fields for service codes, provider information, and patient details. Include placeholders for ASCA/RME credentials. Create template variations for different insurance providers if needed. Ensure templates include all legally required information for Swiss healthcare invoices.",
+            "status": "pending",
+            "testStrategy": "Visual validation of templates against Swiss standards. Compliance review with sample Swiss insurance requirements. User testing with nutritionists familiar with Swiss invoicing."
+          },
+          {
+            "id": 2,
+            "title": "PDF Generation with QR Code Implementation",
+            "description": "Implement PDF generation system using react-pdf with Swiss QR-bill format integration via qrcode.react",
+            "dependencies": [
+              "12.1"
+            ],
+            "details": "Set up react-pdf library for invoice rendering. Implement qrcode.react for Swiss QR-bill format generation with proper payment information encoding. Create PDF layout components that match the designed templates. Ensure proper formatting of monetary values according to Swiss standards. Implement digital signature or verification features if required by regulations.",
+            "status": "pending",
+            "testStrategy": "Unit tests for PDF generation functions. Visual regression testing of generated PDFs. Validation of QR codes with Swiss payment systems. Cross-browser compatibility testing for PDF downloads."
+          },
+          {
+            "id": 3,
+            "title": "Invoice Management System",
+            "description": "Build a comprehensive invoice tracking system with numbering, status management, and history functionality",
+            "dependencies": [
+              "12.2"
+            ],
+            "details": "Implement sequential invoice numbering with configurable format. Create status tracking system (draft, sent, paid, overdue). Develop invoice history database with search and filter capabilities. Build invoice detail view with status change options. Implement invoice duplication and editing features with proper version control.",
+            "status": "pending",
+            "testStrategy": "Unit tests for invoice numbering and status transitions. Integration tests for CRUD operations. Database performance testing with large invoice datasets. E2E tests for complete invoice lifecycle workflows."
+          },
+          {
+            "id": 4,
+            "title": "Automated Invoice Generation",
+            "description": "Create system for automatic invoice generation after appointments with proper service code mapping",
+            "dependencies": [
+              "12.3"
+            ],
+            "details": "Integrate with appointment system to trigger invoice creation. Implement service code mapping for different appointment types. Create configuration options for default pricing and services. Build batch processing for multiple appointments. Implement preview and approval workflow before finalization. Add manual adjustment capabilities for special cases.",
+            "status": "pending",
+            "testStrategy": "Integration tests with appointment system. Unit tests for service code mapping. Performance testing for batch processing. E2E tests for complete appointment-to-invoice workflow."
+          },
+          {
+            "id": 5,
+            "title": "Invoice Communication System",
+            "description": "Implement email delivery of invoices with reminder functionality and payment tracking",
+            "dependencies": [
+              "12.3",
+              "12.4"
+            ],
+            "details": "Create email templates for invoice delivery with PDF attachments. Implement reminder scheduling system with configurable intervals. Build payment tracking integration with Stripe (Task 13). Develop analytics dashboard for invoice status and payment metrics. Create customizable email content for nutritionists. Implement batch operations for sending multiple invoices or reminders.",
+            "status": "pending",
+            "testStrategy": "Email delivery testing across different clients. Integration tests with email service. Unit tests for reminder scheduling logic. E2E tests for complete invoice communication workflow. Security testing for sensitive information in emails."
+          }
+        ]
+      },
+      {
+        "id": 13,
+        "title": "Stripe Payment Integration",
+        "description": "Integrate Stripe for handling subscription and one-time payments with Swiss compliance and automated accounting exports.",
+        "details": "Implement Stripe Elements for secure payment form handling. Set up Stripe subscription plans for different tiers. Create webhook handlers for Stripe events (payment success, failure, subscription changes). Implement one-time payment options for individual sessions. Add payment method management for recurring customers. Create receipt generation and delivery. Implement automatic accounting exports for fiduciaries in Swiss-compatible format. Add payment analytics and reporting. Implement failed payment recovery flows. Create subscription management interface for users. Add coupon and promotion code functionality. Implement tax calculation and reporting for Swiss VAT.",
+        "testStrategy": "Integration tests with Stripe test mode. Webhook testing with stripe-cli. E2E tests for payment flows using test cards. Security testing for payment data handling. Test subscription lifecycle events. Test accounting export accuracy. Test tax calculation for different scenarios.",
+        "priority": "high",
+        "dependencies": [
+          12
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Stripe Elements for Payment Forms",
+            "description": "Set up Stripe Elements for secure payment form handling and implement the frontend components for collecting payment information.",
+            "dependencies": [],
+            "details": "Initialize Stripe.js in the application. Create React components for credit card input using Stripe Elements. Implement form validation for payment details. Add support for different payment methods (credit cards, SEPA, etc.). Ensure the payment form is responsive and accessible. Implement client-side error handling for payment submission. Add loading states during payment processing.",
+            "status": "pending",
+            "testStrategy": "Unit tests for payment form components. Integration tests with Stripe test mode. Cross-browser compatibility testing. Accessibility testing for payment forms. Security testing for proper handling of payment data."
+          },
+          {
+            "id": 2,
+            "title": "Configure Stripe Subscription Plans",
+            "description": "Set up subscription plans in Stripe Dashboard and implement the backend logic to handle subscription creation, updates, and cancellations.",
+            "dependencies": [
+              "13.1"
+            ],
+            "details": "Create tiered subscription products and prices in Stripe Dashboard. Implement API endpoints for subscription creation and management. Build subscription lifecycle handlers (create, update, cancel, reactivate). Implement prorated billing for subscription changes. Add trial period functionality. Create customer portal configuration for self-service. Implement subscription metadata for tracking business-specific information.",
+            "status": "pending",
+            "testStrategy": "Integration tests for subscription creation and management. Test subscription lifecycle events (upgrades, downgrades, cancellations). Test proration calculations. Test webhook handling for subscription events. Test edge cases like failed payments during subscription creation."
+          },
+          {
+            "id": 3,
+            "title": "Implement Webhook Handlers for Stripe Events",
+            "description": "Create webhook endpoints to handle Stripe events such as payment success/failure, subscription changes, and other important notifications.",
+            "dependencies": [
+              "13.2"
+            ],
+            "details": "Set up webhook endpoint with signature verification. Implement handlers for payment_intent events (succeeded, failed, processing). Create handlers for subscription events (created, updated, deleted, payment_failed). Implement invoice event handlers. Add customer event handlers. Create logging system for webhook events. Implement retry logic for failed webhook processing. Set up monitoring for webhook health.",
+            "status": "pending",
+            "testStrategy": "Test webhook signature verification. Use stripe-cli for local webhook testing. Create mock events for testing different scenarios. Test error handling and recovery. Integration tests for the complete webhook processing pipeline."
+          },
+          {
+            "id": 4,
+            "title": "Create Swiss-Compliant Accounting Exports",
+            "description": "Implement automated accounting exports in formats compatible with Swiss fiduciary requirements and tax regulations.",
+            "dependencies": [
+              "13.3"
+            ],
+            "details": "Research Swiss accounting format requirements. Implement data transformation for accounting exports. Create CSV/Excel export functionality. Add PDF export option for financial reports. Implement automatic categorization of transactions. Create monthly/quarterly/yearly export scheduling. Add VAT calculation and reporting for Swiss requirements. Implement audit trail for financial transactions. Create user interface for export configuration and download.",
+            "status": "pending",
+            "testStrategy": "Validate export format compliance with Swiss standards. Test data accuracy in exports. Test scheduled export functionality. Verify VAT calculations against known examples. Test export functionality with large datasets for performance."
+          },
+          {
+            "id": 5,
+            "title": "Build User Subscription Management Interface",
+            "description": "Create a user interface for customers to manage their subscription plans, payment methods, and billing history.",
+            "dependencies": [
+              "13.2",
+              "13.3"
+            ],
+            "details": "Design and implement subscription management dashboard. Create payment method management interface (add, update, remove). Build billing history and receipt access. Implement subscription upgrade/downgrade flows. Add cancellation and reactivation workflows. Create email notification templates for subscription events. Implement coupon and promotion code redemption. Add tax invoice generation. Create subscription analytics for internal use.",
+            "status": "pending",
+            "testStrategy": "User testing for subscription management flows. Integration tests for payment method operations. Visual regression testing for subscription interface. Test email delivery for subscription notifications. Test edge cases in subscription changes and payment method updates."
+          }
+        ]
+      },
+      {
+        "id": 14,
+        "title": "Patient Dashboard Overview",
+        "description": "Create a patient dashboard showing daily program, meals, objectives, and progress tracking in an engaging interface.",
+        "details": "Design a responsive dashboard layout optimized for patient use. Implement daily program view showing assigned meals and activities. Create progress visualization components using recharts or visx. Build objective tracking with completion indicators. Add motivational elements and daily tips. Implement streak tracking for consistent app usage. Create notification center for important updates. Add quick access to messaging and journal features. Implement mobile-optimized views for on-the-go access. Create personalized welcome messages and daily summaries. Add weather-based activity suggestions using a weather API. Implement social sharing of achievements.",
+        "testStrategy": "Component testing for dashboard elements. Integration tests for data fetching and state management. Responsive design testing across devices. User testing with actual patients for UX feedback. Performance testing for animation smoothness. A/B testing of different dashboard layouts for engagement.",
+        "priority": "high",
+        "dependencies": [
+          3,
+          4,
+          5
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Responsive Dashboard Layout Implementation",
+            "description": "Design and implement the core responsive dashboard layout structure optimized for both desktop and mobile views",
+            "dependencies": [],
+            "details": "Create a responsive grid layout using Tailwind CSS with appropriate breakpoints. Implement the main dashboard containers and navigation elements. Design the welcome section with personalized messages. Ensure the layout adapts seamlessly between desktop, tablet, and mobile views. Follow the design system guidelines from Task 2 for consistent styling.",
+            "status": "pending",
+            "testStrategy": "Conduct responsive design testing across multiple device sizes. Perform visual regression testing to ensure layout consistency. Test navigation elements and container positioning. Verify accessibility compliance with screen readers."
+          },
+          {
+            "id": 2,
+            "title": "Daily Program and Meal Visualization",
+            "description": "Implement the daily program view showing assigned meals, activities, and schedule in an intuitive interface",
+            "dependencies": [
+              "14.1"
+            ],
+            "details": "Create a timeline or calendar view for daily activities. Implement meal cards with nutritional information and preparation details. Add activity blocks with timing and instructions. Implement a toggle between list and calendar views. Use the recharts library for any time-based visualizations. Include quick action buttons for meal logging and activity completion.",
+            "status": "pending",
+            "testStrategy": "Test data rendering with various meal and activity combinations. Verify interactive elements function correctly. Test time-zone handling for scheduled activities. Conduct usability testing with sample patient data."
+          },
+          {
+            "id": 3,
+            "title": "Progress Tracking Visualization Components",
+            "description": "Develop interactive charts and visualizations for tracking patient progress across various health metrics",
+            "dependencies": [
+              "14.1"
+            ],
+            "details": "Implement line and bar charts using recharts or visx for weight, activity, and nutrition tracking. Create progress comparison views (current vs. target, week-over-week). Design streak tracking visualization for app usage consistency. Add interactive elements like tooltips and zoom functionality. Ensure visualizations are accessible and include alternative text representations.",
+            "status": "pending",
+            "testStrategy": "Test chart rendering with various data scenarios including edge cases. Verify interactive features like tooltips and zooming. Test performance with large datasets. Ensure visualizations are accessible and properly labeled."
+          },
+          {
+            "id": 4,
+            "title": "Objective Tracking and Notification Center",
+            "description": "Build a system for tracking objectives with completion indicators and a notification center for important updates",
+            "dependencies": [
+              "14.1",
+              "14.3"
+            ],
+            "details": "Create objective cards with progress indicators and completion tracking. Implement categorization of objectives (daily, weekly, long-term). Add achievement celebrations and motivational elements upon completion. Develop a notification center with filtering options. Implement read/unread status tracking. Create notification preferences settings. Ensure notifications link to relevant dashboard sections.",
+            "status": "pending",
+            "testStrategy": "Test objective completion logic with various scenarios. Verify notification delivery and display. Test read/unread status persistence. Conduct usability testing for objective clarity and notification relevance."
+          },
+          {
+            "id": 5,
+            "title": "Quick Access Features and Social Integration",
+            "description": "Implement quick access to messaging, journal features, and social sharing of achievements",
+            "dependencies": [
+              "14.1",
+              "14.4"
+            ],
+            "details": "Create quick access buttons for messaging nutritionists and accessing journal entries. Implement a journal entry quick-add feature. Design achievement cards with social sharing capabilities. Integrate with common social platforms for sharing milestones. Add weather-based activity suggestions using a weather API. Implement privacy controls for shared content. Create personalized daily tips and motivational content.",
+            "status": "pending",
+            "testStrategy": "Test messaging and journal quick access functionality. Verify social sharing features with mock social platforms. Test weather API integration and suggestion logic. Conduct privacy control testing to ensure proper content protection."
+          }
+        ]
+      },
+      {
+        "id": 15,
+        "title": "Food Journal System",
+        "description": "Implement a comprehensive food journaling system with food search, portion tracking, photo uploads, and nutritional analysis.",
+        "details": "Create an intuitive food logging interface with quick search. Implement recent and favorite foods for faster logging. Add barcode scanning functionality using quagga.js or similar library. Implement portion size selection with visual guides. Add photo upload for meals using Supabase Storage. Create meal categorization (breakfast, lunch, dinner, snacks). Implement nutritional summary calculations and visualizations. Add water intake tracking. Create food journal history with filtering and search. Implement export functionality for journal data. Add meal pattern analysis for nutritionist insights. Create reminder system for logging meals.",
+        "testStrategy": "Component testing for food logging interface. Integration tests for search and data persistence. E2E tests for complete food logging workflows. Performance testing for search operations. Test barcode scanning with various products. Test photo upload and storage. User testing for usability feedback.",
+        "priority": "high",
+        "dependencies": [
+          9,
+          14
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Food Logging Interface with Search and Favorites",
+            "description": "Develop the core food logging interface with search functionality, recent foods list, and favorites system",
+            "dependencies": [],
+            "details": "Create an intuitive UI for food logging with a quick search component that queries the food database. Implement typeahead suggestions and filtering options. Build a recent foods list that automatically updates based on user activity. Create a favorites system allowing users to mark and quickly access commonly consumed foods. Design the interface to be mobile-responsive and accessible.",
+            "status": "pending",
+            "testStrategy": "Component testing for search functionality with mock data. Integration tests for data persistence of favorites and recent foods. Usability testing with real users to validate interface intuitiveness. Performance testing for search response times with large datasets."
+          },
+          {
+            "id": 2,
+            "title": "Portion Tracking and Visual Guides",
+            "description": "Implement portion size selection with visual guides and measurement options",
+            "dependencies": [
+              "15.1"
+            ],
+            "details": "Create a portion selection system with common measurement units (grams, ounces, cups, tablespoons, etc.). Develop visual guides showing portion sizes with comparative objects for better estimation. Implement a slider or number input for precise quantity adjustment. Add custom portion presets for frequently used amounts. Ensure the portion selection affects nutritional calculations in real-time.",
+            "status": "pending",
+            "testStrategy": "Unit tests for portion calculations and conversions between measurement units. Visual regression tests for the portion guides. Integration tests with the nutritional calculation system. Cross-device testing for mobile responsiveness."
+          },
+          {
+            "id": 3,
+            "title": "Barcode Scanning and Photo Upload",
+            "description": "Implement barcode scanning for quick food logging and photo upload functionality for meal documentation",
+            "dependencies": [
+              "15.1"
+            ],
+            "details": "Integrate quagga.js or a similar library for barcode scanning capability. Connect barcode data to food database for automatic food identification. Implement photo upload functionality using Supabase Storage for meal documentation. Create image compression to optimize storage usage. Add optional photo annotation for additional meal details. Implement proper error handling for failed scans or uploads.",
+            "status": "pending",
+            "testStrategy": "Testing barcode scanning with various product barcodes in different lighting conditions. Integration tests for Supabase Storage connectivity. Performance testing for upload speeds and compression efficiency. Security testing for uploaded content."
+          },
+          {
+            "id": 4,
+            "title": "Meal Categorization and Nutritional Analysis",
+            "description": "Create meal categorization system and implement nutritional summary calculations with visualizations",
+            "dependencies": [
+              "15.1",
+              "15.2"
+            ],
+            "details": "Implement meal categorization (breakfast, lunch, dinner, snacks) with customizable meal times. Create a nutritional calculation engine that processes food entries and portions to generate comprehensive nutritional data. Develop visualizations (charts, graphs) showing macro and micronutrient breakdowns. Add daily, weekly, and monthly summary views. Implement comparison against dietary goals or recommended values.",
+            "status": "pending",
+            "testStrategy": "Unit tests for nutritional calculations with known food values. Integration tests for data aggregation across different time periods. Visual regression tests for charts and graphs. Performance testing with large datasets of food entries."
+          },
+          {
+            "id": 5,
+            "title": "Journal History and Export Functionality",
+            "description": "Develop food journal history with filtering, search capabilities, and data export options",
+            "dependencies": [
+              "15.1",
+              "15.4"
+            ],
+            "details": "Create a comprehensive journal history view with filtering by date, meal type, and food categories. Implement search functionality within the journal history. Add water intake tracking with daily goals and reminders. Develop export functionality for journal data in multiple formats (CSV, PDF, etc.). Implement meal pattern analysis to identify trends and provide insights. Create a reminder system for logging meals with customizable notification settings.",
+            "status": "pending",
+            "testStrategy": "Integration tests for filtering and search functionality. Unit tests for export data formatting. E2E tests for complete journal workflows including export. Performance testing for history loading with large datasets. User testing for the reminder system effectiveness."
+          }
+        ]
+      },
+      {
+        "id": 16,
+        "title": "Barcode Scanner Implementation",
+        "description": "Develop a barcode scanning feature for quick food logging with manual input for MVP and preparation for ML-based automatic scanning in V2.",
+        "details": "Implement client-side barcode scanning using quagga.js or zbar.wasm. Create integration with Open Food Facts API for product lookup. Build fallback manual entry form for unrecognized products. Implement scan history for quick re-logging. Add product favoriting functionality. Create database schema for storing scanned product information locally. Implement offline scanning capability with local database. Add product submission for missing items. Create admin interface for reviewing submitted products. Implement analytics for scan success rates. Prepare architecture for future ML-based automatic scanning in V2.",
+        "testStrategy": "Unit tests for barcode parsing and validation. Integration tests with Open Food Facts API. E2E tests for scanning and logging workflow. Test with various barcode formats and lighting conditions. Performance testing for scanning speed. Test offline functionality. User testing with actual food products.",
+        "priority": "medium",
+        "dependencies": [
+          9,
+          15
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Client-Side Barcode Scanning",
+            "description": "Integrate quagga.js or zbar.wasm for client-side barcode scanning functionality with camera access and barcode detection capabilities",
+            "dependencies": [],
+            "details": "Research and compare quagga.js and zbar.wasm libraries for performance and compatibility. Implement camera access with proper permissions handling. Create a scanning interface with viewfinder and feedback indicators. Handle various barcode formats (EAN-13, UPC-A, etc.). Implement error handling for poor lighting conditions or unreadable barcodes. Add vibration/sound feedback on successful scan.",
+            "status": "pending",
+            "testStrategy": "Unit test barcode parsing functions. Test camera access across devices. Test scanning performance in various lighting conditions. Test with different barcode formats. Create mock camera inputs for automated testing."
+          },
+          {
+            "id": 2,
+            "title": "Integrate Open Food Facts API",
+            "description": "Create a service to query the Open Food Facts API with scanned barcodes and process returned product information",
+            "dependencies": [
+              "16.1"
+            ],
+            "details": "Implement API client for Open Food Facts with proper error handling and rate limiting. Create data models for product information. Implement caching strategy to reduce API calls. Map API response to application data model. Handle internationalization of product data. Create fallback strategies for API downtime. Implement logging for failed lookups for future improvement.",
+            "status": "pending",
+            "testStrategy": "Mock API responses for testing. Test error handling for various API failure scenarios. Test caching mechanism. Integration tests with real API calls (limited). Test handling of incomplete product data."
+          },
+          {
+            "id": 3,
+            "title": "Build Manual Entry Form and Local Database",
+            "description": "Create a fallback form for manual product entry and implement local database schema for storing scanned products",
+            "dependencies": [
+              "16.2"
+            ],
+            "details": "Design and implement form for manual product entry with nutritional information fields. Create database schema for storing product information locally. Implement form validation for nutritional data. Create migrations for database schema. Implement data normalization for consistent storage. Add ability to attach photos to manually entered products. Create indexing strategy for efficient lookups.",
+            "status": "pending",
+            "testStrategy": "Unit test form validation logic. Test database CRUD operations. Test data migration scenarios. Validate data normalization functions. Test form usability on mobile devices."
+          },
+          {
+            "id": 4,
+            "title": "Implement Scan History and Favorites",
+            "description": "Create functionality for viewing scan history, quick re-logging of previous items, and favoriting products for easy access",
+            "dependencies": [
+              "16.3"
+            ],
+            "details": "Implement scan history view with sorting and filtering options. Create favoriting functionality with star/unstar UI. Implement quick re-logging from history or favorites with one tap. Add search functionality within scan history. Create data structures for efficient history storage. Implement pagination for large history lists. Add ability to bulk select items from history for logging.",
+            "status": "pending",
+            "testStrategy": "Test history persistence across sessions. Test favoriting/unfavoriting functionality. Performance test with large history datasets. Test search functionality with various queries. Test quick re-logging workflow."
+          },
+          {
+            "id": 5,
+            "title": "Develop Offline Capabilities and Missing Product Submission",
+            "description": "Implement offline scanning functionality and create a system for users to submit missing products to the database",
+            "dependencies": [
+              "16.3",
+              "16.4"
+            ],
+            "details": "Implement offline mode detection and graceful degradation. Create local storage for scanned items when offline. Implement sync mechanism for when connection is restored. Build product submission form for missing items. Create queue system for pending submissions. Implement admin review interface for submitted products. Add notification system for submission status updates. Create data validation for submitted products.",
+            "status": "pending",
+            "testStrategy": "Test offline scanning workflow. Test synchronization when coming back online. Test submission form validation. Test admin review interface functionality. Test notification delivery for submission status changes. Test with network throttling to simulate poor connections."
+          }
+        ]
+      },
+      {
+        "id": 17,
+        "title": "Physical Measurements Tracking",
+        "description": "Create a system for patients to track physical measurements including weight, waist circumference, and progress photos with visualization.",
+        "details": "Design a measurement tracking interface with input validation. Implement measurement history with trend visualization using recharts. Create progress photo storage and comparison tools using Supabase Storage. Implement measurement reminders and scheduling. Add goal setting for measurements with progress indicators. Create measurement insights and analysis for patients. Implement export functionality for measurement data. Add privacy controls for sensitive measurements. Create sharing options for nutritionist review. Implement BMI and other calculated metrics. Add custom measurement tracking for specific patient needs.",
+        "testStrategy": "Component testing for measurement input forms. Integration tests for data persistence and retrieval. Visual regression testing for charts and visualizations. E2E tests for complete measurement logging flows. Test photo upload and comparison features. Test privacy controls and sharing functionality. User testing for sensitivity and usability.",
+        "priority": "medium",
+        "dependencies": [
+          14
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Measurement Input Interface",
+            "description": "Design and implement a user interface for inputting physical measurements with validation",
+            "dependencies": [],
+            "details": "Create form components for weight, waist circumference, and other physical measurements with appropriate input validation using Zod. Implement a responsive design that works well on mobile devices. Include unit selection (metric/imperial) and conversion functionality. Design an intuitive UI for measurement entry with clear labels and instructions.",
+            "status": "pending",
+            "testStrategy": "Unit tests for form validation logic. Component tests for input fields and validation error messages. E2E tests for complete measurement entry flows. Test edge cases like invalid inputs and unit conversions."
+          },
+          {
+            "id": 2,
+            "title": "Measurement History and Visualization",
+            "description": "Implement storage and visualization of measurement history with trend charts",
+            "dependencies": [
+              "17.1"
+            ],
+            "details": "Create database schema for storing measurement history in Supabase. Implement TanStack Query for efficient data fetching with caching. Build visualization components using recharts to display measurement trends over time. Include filtering options by date range and measurement type. Create summary statistics (min, max, average) for each measurement type.",
+            "status": "pending",
+            "testStrategy": "Integration tests for data persistence and retrieval. Visual regression testing for charts and visualizations. Performance testing with large datasets. Test filtering and date range selection functionality."
+          },
+          {
+            "id": 3,
+            "title": "Progress Photo Management",
+            "description": "Create a system for uploading, storing, and comparing progress photos",
+            "dependencies": [
+              "17.1"
+            ],
+            "details": "Implement photo upload functionality using Supabase Storage. Create a secure storage structure with appropriate access controls. Build a photo comparison tool that allows side-by-side viewing of photos from different dates. Implement photo categorization (front, side, back views). Add metadata storage for photos including date, category, and optional notes.",
+            "status": "pending",
+            "testStrategy": "Storage tests for photo uploads and retrievals. Security testing for access controls. UI tests for photo comparison functionality. Test handling of different image formats and sizes. Test error handling for failed uploads."
+          },
+          {
+            "id": 4,
+            "title": "Goal Setting and Progress Tracking",
+            "description": "Implement functionality for setting measurement goals and tracking progress",
+            "dependencies": [
+              "17.1",
+              "17.2"
+            ],
+            "details": "Create interfaces for setting target goals for different measurements. Implement progress indicators showing current status relative to goals. Build notification system for goal achievements. Design visual indicators for progress (progress bars, percentage complete). Add functionality to adjust goals and track goal history.",
+            "status": "pending",
+            "testStrategy": "Unit tests for goal calculation logic. Integration tests for goal persistence and retrieval. UI tests for progress indicators. Test notification system for goal achievements. Test goal adjustment functionality."
+          },
+          {
+            "id": 5,
+            "title": "Privacy Controls and Data Sharing",
+            "description": "Implement privacy settings and sharing options for measurement data",
+            "dependencies": [
+              "17.1",
+              "17.2",
+              "17.3"
+            ],
+            "details": "Create granular privacy controls for different measurement types. Implement sharing functionality to allow patients to share specific measurements with nutritionists. Build export functionality for measurement data in common formats (CSV, PDF). Implement Row Level Security in Supabase for measurement data. Add audit logging for access to sensitive measurement data.",
+            "status": "pending",
+            "testStrategy": "Security testing for privacy controls and access restrictions. Integration tests for sharing functionality. Test export features with various data sets. Test permission management and role-based access. Test audit logging functionality."
+          }
+        ]
+      },
+      {
+        "id": 18,
+        "title": "Educational Resources System",
+        "description": "Implement a system for providing tier-based educational resources to patients including articles, videos, and interactive content.",
+        "details": "Create a content management system for educational resources. Implement content categorization and tagging. Add search functionality for resources. Create tier-based access control for premium content. Implement progress tracking for courses and series. Add interactive elements like quizzes and assessments using a form builder. Create content recommendation engine based on patient profile. Implement content favoriting and saving. Add social sharing functionality. Create content analytics for measuring engagement. Implement offline access for downloaded content. Add content feedback and rating system.",
+        "testStrategy": "Content rendering tests across devices. Integration tests for search and filtering. Access control testing for tier-based content. E2E tests for content consumption flows. Performance testing for video playback. Test offline functionality. User testing for content engagement and value perception.",
+        "priority": "low",
+        "dependencies": [
+          14
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Content Management System Development",
+            "description": "Create a robust CMS for managing educational resources including articles, videos, and interactive content with categorization and tagging capabilities.",
+            "dependencies": [],
+            "details": "Develop a content management interface for administrators to create, edit, and publish educational content. Implement content categorization with hierarchical taxonomy. Create a tagging system for cross-referencing related content. Build content versioning to track changes. Implement content scheduling for timed releases. Add support for multiple content types including text articles, videos, PDFs, and interactive elements.",
+            "status": "pending",
+            "testStrategy": "Unit tests for CRUD operations. Integration tests for content publishing workflow. Visual regression tests for admin interface. Test content versioning and history. Validate proper rendering of different content types."
+          },
+          {
+            "id": 2,
+            "title": "Tier-Based Access Control Implementation",
+            "description": "Implement a system that controls access to educational content based on user subscription tiers with premium content restrictions.",
+            "dependencies": [
+              "18.1"
+            ],
+            "details": "Design and implement subscription tier models (free, basic, premium). Create access control rules for content based on tier levels. Develop preview functionality for premium content to non-premium users. Implement upgrade prompts for accessing restricted content. Create an admin interface for assigning tier levels to content. Build analytics to track conversion from previews to upgrades.",
+            "status": "pending",
+            "testStrategy": "Unit tests for access control logic. Integration tests for tier-based content visibility. E2E tests for upgrade flows. Security testing for access control bypasses. A/B testing for different premium content preview strategies."
+          },
+          {
+            "id": 3,
+            "title": "Search and Recommendation Engine",
+            "description": "Build a comprehensive search system with filtering capabilities and a recommendation engine that suggests relevant content based on user profiles and behavior.",
+            "dependencies": [
+              "18.1",
+              "18.2"
+            ],
+            "details": "Implement full-text search functionality using PostgreSQL or a dedicated search service. Create advanced filtering by content type, category, difficulty level, and tags. Build a recommendation algorithm based on user profile data, past content consumption, and similar user behavior. Implement content popularity metrics to influence recommendations. Create a 'related content' feature for each resource. Develop personalized content collections on user dashboards.",
+            "status": "pending",
+            "testStrategy": "Performance testing for search queries. Relevance testing for search results. A/B testing for recommendation algorithms. User testing for search usability. Integration tests for filtering functionality."
+          },
+          {
+            "id": 4,
+            "title": "Interactive Content and Assessment Tools",
+            "description": "Develop interactive elements like quizzes, assessments, and progress tracking to enhance user engagement and learning outcomes.",
+            "dependencies": [
+              "18.1"
+            ],
+            "details": "Create a form builder for quizzes and assessments with multiple question types (multiple choice, true/false, short answer). Implement scoring and feedback mechanisms for assessments. Build progress tracking for courses and content series. Develop certificates of completion for finished courses. Create bookmarking functionality for resuming content. Implement interactive elements like flashcards and knowledge checks within content.",
+            "status": "pending",
+            "testStrategy": "Unit tests for quiz scoring logic. Integration tests for progress tracking. Cross-browser testing for interactive elements. Accessibility testing for all interactive components. User testing for quiz and assessment usability."
+          },
+          {
+            "id": 5,
+            "title": "Content Engagement and Offline Access",
+            "description": "Implement features for content favoriting, social sharing, feedback collection, and offline access to enhance user engagement and accessibility.",
+            "dependencies": [
+              "18.1",
+              "18.3",
+              "18.4"
+            ],
+            "details": "Build content favoriting and saving functionality with user libraries. Implement social sharing capabilities with customizable previews. Create a rating and feedback system for content quality improvement. Develop offline access for downloaded content using service workers or similar technology. Build content engagement analytics to track views, completion rates, and time spent. Implement notification system for new content in followed categories.",
+            "status": "pending",
+            "testStrategy": "Integration tests for favoriting and saving. E2E tests for offline functionality across devices. Performance testing for downloaded content access. Security testing for shared content. User testing for engagement feature discoverability and value."
+          }
+        ]
+      },
+      {
+        "id": 19,
+        "title": "Gamification System",
+        "description": "Develop a gamification system with streaks, badges, and objectives to increase patient engagement and adherence to nutritional plans.",
+        "details": "Design a comprehensive achievement system with badges and rewards. Implement streak tracking for consistent app usage and meal logging. Create challenge system with time-limited objectives. Add level progression based on platform engagement. Implement points system for various activities. Create leaderboards (optional, privacy-focused). Add notification system for achievements and milestones. Implement visual celebrations for achievements using Framer Motion. Create achievement history and showcase. Add social sharing of achievements. Implement reward redemption system for premium features. Create admin tools for managing challenges and rewards.",
+        "testStrategy": "Unit tests for achievement and streak calculation logic. Integration tests for achievement unlocking and persistence. Visual testing for animations and celebrations. E2E tests for complete achievement flows. A/B testing of different gamification elements for engagement. User testing for motivation impact. Test edge cases like streak recovery and achievement resets.",
+        "priority": "medium",
+        "dependencies": [
+          14,
+          15,
+          17
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Achievement and Badge System",
+            "description": "Design and implement a comprehensive achievement system with badges that reward users for reaching nutritional milestones and consistent app usage.",
+            "dependencies": [],
+            "details": "Create badge designs for different categories (meal logging, nutritional goals, app usage). Implement badge unlocking logic based on specific criteria. Design badge showcase UI with animations using Framer Motion. Create database schema for storing user achievements. Implement achievement notification system.",
+            "status": "pending",
+            "testStrategy": "Unit tests for achievement unlocking logic. Visual tests for badge designs and animations. Integration tests for achievement persistence. User testing to ensure badges are motivating."
+          },
+          {
+            "id": 2,
+            "title": "Streak and Consistency Tracking",
+            "description": "Develop a system to track and reward user streaks for consistent app usage and meal logging adherence.",
+            "dependencies": [
+              "19.1"
+            ],
+            "details": "Implement daily check-in tracking mechanism. Create streak calculation logic with rules for maintaining/breaking streaks. Design streak visualization UI with current and best streak displays. Add streak recovery options. Implement streak-based rewards and milestone celebrations.",
+            "status": "pending",
+            "testStrategy": "Unit tests for streak calculation edge cases. Integration tests for streak persistence across sessions. E2E tests for streak-related features. A/B testing of different streak visualization designs."
+          },
+          {
+            "id": 3,
+            "title": "Challenge and Objective System",
+            "description": "Create a system for time-limited challenges and objectives that encourage nutritional plan adherence.",
+            "dependencies": [
+              "19.1",
+              "19.2"
+            ],
+            "details": "Design challenge creation interface for nutritionists. Implement challenge assignment to patients. Create progress tracking for ongoing challenges. Develop challenge completion validation logic. Implement reward distribution for completed challenges. Add notification system for challenge updates.",
+            "status": "pending",
+            "testStrategy": "Unit tests for challenge validation logic. Integration tests for challenge assignment and completion. E2E tests for complete challenge workflows. User testing to ensure challenges are engaging and achievable."
+          },
+          {
+            "id": 4,
+            "title": "Points and Progression System",
+            "description": "Implement a points-based progression system with levels based on platform engagement and nutritional adherence.",
+            "dependencies": [
+              "19.1",
+              "19.2",
+              "19.3"
+            ],
+            "details": "Design point allocation rules for various activities (logging meals, completing challenges, maintaining streaks). Create level progression system with increasing requirements. Implement level-up animations and celebrations using Framer Motion. Design level badges and rewards. Create points history and analytics dashboard.",
+            "status": "pending",
+            "testStrategy": "Unit tests for points calculation and level progression logic. Integration tests for points persistence. Visual testing for level-up animations. User testing to ensure progression feels rewarding and motivating."
+          },
+          {
+            "id": 5,
+            "title": "Reward Redemption and Admin Tools",
+            "description": "Develop a reward redemption system for premium features and admin tools for managing the gamification elements.",
+            "dependencies": [
+              "19.1",
+              "19.2",
+              "19.3",
+              "19.4"
+            ],
+            "details": "Create reward catalog with premium features and benefits. Implement point redemption mechanism. Design admin interface for managing challenges, badges, and rewards. Create analytics dashboard for tracking engagement metrics. Implement A/B testing framework for optimizing gamification elements. Add social sharing functionality for achievements with privacy controls.",
+            "status": "pending",
+            "testStrategy": "Integration tests for reward redemption process. Admin tool functionality testing. Security testing for admin access controls. Performance testing for analytics dashboard. User testing for reward value perception and redemption experience."
+          }
+        ]
+      },
+      {
+        "id": 20,
+        "title": "Analytics Dashboard for Nutritionists",
+        "description": "Create a comprehensive analytics dashboard for nutritionists to track patient engagement, progress, and business metrics.",
+        "details": "Design data visualization components using recharts or visx. Implement patient engagement metrics (app usage, meal logging compliance, message response time). Create business analytics (revenue, appointment utilization, patient retention). Add patient progress tracking across various metrics. Implement cohort analysis for patient groups. Create custom report generation and export. Add goal tracking and achievement visualization. Implement trend analysis and forecasting. Create alert system for concerning patient trends. Add benchmark comparisons against anonymized averages. Implement dashboard customization for individual preferences. Create PDF export for reports.",
+        "testStrategy": "Unit tests for calculation and aggregation functions. Visual regression testing for charts and visualizations. Integration tests for data fetching and filtering. Performance testing with large datasets. Test report generation and exports. User testing with nutritionists for actionable insights. Test data accuracy and consistency.",
+        "priority": "medium",
+        "dependencies": [
+          7,
+          12,
+          13
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design and Implement Data Visualization Components",
+            "description": "Create reusable chart components using recharts or visx for displaying various metrics and analytics data.",
+            "dependencies": [],
+            "details": "Develop bar charts, line charts, pie charts, and area charts components that can be reused across the dashboard. Implement responsive design for all visualization components. Create a theming system for consistent styling. Add interactive features like tooltips, zooming, and filtering. Ensure accessibility compliance for all chart components.",
+            "status": "pending",
+            "testStrategy": "Unit tests for each chart component. Visual regression testing to ensure consistent rendering. Accessibility testing with screen readers. Performance testing with large datasets. Cross-browser compatibility testing."
+          },
+          {
+            "id": 2,
+            "title": "Implement Patient Engagement and Progress Metrics",
+            "description": "Develop components to track and visualize patient engagement metrics and progress indicators.",
+            "dependencies": [
+              "20.1"
+            ],
+            "details": "Create metrics for app usage frequency, meal logging compliance, and message response time. Implement progress tracking for weight, measurements, lab values, and other health indicators. Design trend visualizations showing changes over time. Add goal achievement tracking with visual indicators. Implement comparison views between current values and targets.",
+            "status": "pending",
+            "testStrategy": "Unit tests for calculation functions. Integration tests for data fetching and aggregation. User testing with nutritionists to validate usefulness of metrics. Performance testing with historical data sets."
+          },
+          {
+            "id": 3,
+            "title": "Develop Business Analytics and Reporting",
+            "description": "Create business performance metrics, reporting tools, and export functionality for nutritionists.",
+            "dependencies": [
+              "20.1"
+            ],
+            "details": "Implement revenue tracking and visualization by time period. Create appointment utilization metrics and no-show analysis. Add patient retention and churn analytics. Develop custom report generation with selectable metrics. Implement PDF and CSV export functionality for reports. Create scheduled report delivery via email.",
+            "status": "pending",
+            "testStrategy": "Unit tests for calculation and aggregation functions. Integration tests for export functionality. Load testing for report generation with large datasets. User acceptance testing with nutritionists for report usability."
+          },
+          {
+            "id": 4,
+            "title": "Create Cohort Analysis and Benchmarking Tools",
+            "description": "Implement tools for analyzing patient groups and comparing performance against benchmarks.",
+            "dependencies": [
+              "20.2"
+            ],
+            "details": "Develop cohort creation and management interface. Implement comparative analysis between different patient groups. Create benchmark comparisons against anonymized averages. Add filtering capabilities by demographic factors, conditions, and goals. Implement statistical significance indicators for meaningful differences.",
+            "status": "pending",
+            "testStrategy": "Unit tests for cohort creation and analysis functions. Integration tests for filtering and comparison features. Performance testing with large cohort datasets. User testing with nutritionists to validate insights."
+          },
+          {
+            "id": 5,
+            "title": "Implement Dashboard Customization and Alerts",
+            "description": "Create customization options for the dashboard and implement an alert system for concerning patient trends.",
+            "dependencies": [
+              "20.1",
+              "20.2",
+              "20.3",
+              "20.4"
+            ],
+            "details": "Develop dashboard layout customization with draggable and resizable widgets. Implement saved views for different analysis scenarios. Create alert system for concerning patient trends with configurable thresholds. Add notification preferences for different alert types. Implement trend analysis and basic forecasting for key metrics.",
+            "status": "pending",
+            "testStrategy": "Unit tests for customization persistence. Integration tests for alert triggering logic. User testing for dashboard customization usability. End-to-end tests for complete alert workflow."
+          }
+        ]
+      },
+      {
+        "id": 21,
+        "title": "Security and Compliance Implementation",
+        "description": "Implement comprehensive security measures and ensure GDPR/HDS compliance with proper data handling, encryption, and audit trails.",
+        "details": "Implement security headers using next-helmet or similar package. Set up CSRF protection for all forms. Create data encryption for sensitive information using AES-256. Implement audit trails for all data access and modifications. Create user consent management system with versioned terms. Implement data export functionality for GDPR compliance. Add data deletion workflows for right to be forgotten. Create privacy policy and terms generator based on enabled features. Implement session timeout and automatic logout. Add IP-based suspicious activity detection. Create admin tools for security monitoring. Implement regular security scanning with OWASP guidelines.",
+        "testStrategy": "Security penetration testing with tools like OWASP ZAP. Compliance audit against GDPR and HDS requirements. Unit tests for encryption/decryption functions. Integration tests for consent management. Test data export and deletion workflows. Test audit trail accuracy and completeness. Third-party security audit before launch.",
+        "priority": "high",
+        "dependencies": [
+          1,
+          3
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Security Headers and CSRF Protection",
+            "description": "Implement security headers using next-helmet and set up CSRF protection for all forms in the application.",
+            "dependencies": [],
+            "details": "Install and configure next-helmet or similar package to implement security headers including Content-Security-Policy, X-XSS-Protection, X-Frame-Options, and Referrer-Policy. Implement CSRF token generation and validation for all POST, PUT, and DELETE requests. Create middleware to verify CSRF tokens on form submissions. Add CSRF token fields to all form components.",
+            "status": "pending",
+            "testStrategy": "Use OWASP ZAP to verify security headers implementation. Write unit tests for CSRF token generation and validation. Create integration tests to ensure forms reject requests without valid CSRF tokens. Test across different browsers to ensure compatibility."
+          },
+          {
+            "id": 2,
+            "title": "Data Encryption and Audit Trails",
+            "description": "Implement AES-256 encryption for sensitive data and comprehensive audit logging for all data access and modifications.",
+            "dependencies": [
+              "21.1"
+            ],
+            "details": "Create encryption/decryption utilities using AES-256 for sensitive user data including health information and payment details. Implement database schema for storing encrypted data. Create middleware for automatic encryption/decryption during data access. Develop comprehensive audit trail system that logs all data access, modifications, and deletions with timestamps, user IDs, and IP addresses. Implement database models for audit logs with appropriate indexing for performance.",
+            "status": "pending",
+            "testStrategy": "Write unit tests for encryption/decryption functions. Create integration tests to verify data is properly encrypted in the database. Test audit trail accuracy by performing various operations and verifying log entries. Perform performance testing to ensure encryption doesn't significantly impact response times."
+          },
+          {
+            "id": 3,
+            "title": "User Consent Management System",
+            "description": "Create a versioned consent management system with privacy policy and terms generator based on enabled features.",
+            "dependencies": [
+              "21.2"
+            ],
+            "details": "Develop a consent management system that tracks user agreement to terms and privacy policies. Implement versioning for terms and privacy policies. Create a dynamic generator for privacy policies and terms based on enabled features. Build UI components for displaying and accepting terms. Implement database schema for storing user consent with timestamps and version information. Create admin interface for managing terms versions and content.",
+            "status": "pending",
+            "testStrategy": "Write unit tests for terms generation logic. Create integration tests for consent workflows. Test version tracking to ensure users are prompted when terms are updated. Perform user testing to ensure consent flows are clear and understandable. Verify compliance with GDPR requirements for consent management."
+          },
+          {
+            "id": 4,
+            "title": "GDPR Compliance Features",
+            "description": "Implement data export functionality and deletion workflows for GDPR right to access and right to be forgotten compliance.",
+            "dependencies": [
+              "21.3"
+            ],
+            "details": "Create API endpoints for users to request data exports in machine-readable formats (JSON, CSV). Implement comprehensive data export that includes all user data across all tables. Develop secure download mechanism for exported data. Create admin-approved data deletion workflows for right to be forgotten requests. Implement partial and complete data deletion options. Build notification system for data request status updates. Create audit logs specifically for GDPR-related actions.",
+            "status": "pending",
+            "testStrategy": "Test data export functionality to ensure all user data is included. Verify export formats are machine-readable. Test deletion workflows to ensure all user data is properly removed or anonymized. Perform security testing on download mechanisms. Verify compliance with GDPR requirements for data portability and right to be forgotten."
+          },
+          {
+            "id": 5,
+            "title": "Security Monitoring and Threat Detection",
+            "description": "Implement session management, suspicious activity detection, and admin security monitoring tools.",
+            "dependencies": [
+              "21.2",
+              "21.4"
+            ],
+            "details": "Create session timeout and automatic logout functionality after periods of inactivity. Implement IP-based suspicious activity detection for login attempts and sensitive operations. Develop rate limiting for authentication endpoints. Create admin dashboard for security monitoring with real-time alerts for suspicious activities. Implement regular automated security scanning based on OWASP guidelines. Create reporting tools for security incidents and resolution tracking.",
+            "status": "pending",
+            "testStrategy": "Test session timeout functionality across different browsers. Simulate suspicious activities to verify detection mechanisms. Perform penetration testing to identify security vulnerabilities. Test rate limiting under load conditions. Verify admin monitoring tools display accurate information. Conduct regular security audits using OWASP ZAP or similar tools."
+          }
+        ]
+      },
+      {
+        "id": 22,
+        "title": "Testing Infrastructure Setup",
+        "description": "Set up comprehensive testing infrastructure including unit tests with Jest, E2E tests with Playwright, and quality assurance tools.",
+        "details": "Configure Jest for unit and integration testing. Set up React Testing Library for component testing. Implement Playwright for E2E testing across browsers. Create testing utilities and mocks for common operations. Set up test database seeding for consistent test data. Implement visual regression testing with Playwright. Create accessibility testing with axe-core. Set up performance testing with Lighthouse CI. Implement test coverage reporting and thresholds. Create GitHub Actions workflows for automated testing. Set up error boundary testing. Implement API contract testing.",
+        "testStrategy": "Meta-testing to ensure test reliability. Coverage analysis to identify gaps. Test performance of the test suite itself. Regular review and refactoring of tests. Documentation of testing patterns and best practices. Training for team members on testing approach.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Configure Jest and React Testing Library",
+            "description": "Set up Jest for unit and integration testing along with React Testing Library for component testing",
+            "dependencies": [],
+            "details": "Install Jest, React Testing Library, and related dependencies. Configure Jest in package.json with appropriate settings for the Next.js environment. Create jest.config.js with proper transformers and module mappers. Set up test utilities folder with common testing helpers. Configure React Testing Library with custom renders that include providers (theme, auth, etc.). Create initial test examples for components and utilities.",
+            "status": "pending",
+            "testStrategy": "Verify Jest configuration by running sample tests. Ensure proper mocking of Next.js features. Test the testing utilities themselves to ensure they work as expected."
+          },
+          {
+            "id": 2,
+            "title": "Implement Playwright for E2E Testing",
+            "description": "Set up Playwright for end-to-end testing across multiple browsers with visual regression capabilities",
+            "dependencies": [],
+            "details": "Install Playwright and configure it to test across Chrome, Firefox, and Safari. Set up E2E test directory structure with page object models. Create helper functions for common test operations. Implement visual regression testing capabilities. Configure test recording and screenshot capture. Set up test fixtures for authentication and common application states. Create initial E2E test examples covering critical user flows.",
+            "status": "pending",
+            "testStrategy": "Run sample E2E tests across different browsers to verify configuration. Test visual regression capabilities with known UI changes. Verify authentication flows work correctly in the test environment."
+          },
+          {
+            "id": 3,
+            "title": "Set Up Test Database and Mocking",
+            "description": "Configure test database seeding and create mocking utilities for consistent test data",
+            "dependencies": [
+              "22.1"
+            ],
+            "details": "Create a separate test database configuration for Supabase. Implement database seeding scripts to populate test data. Set up data factories using a library like Faker.js for generating test data. Create mock implementations for external services and APIs. Implement utilities for resetting the test database between test runs. Configure environment variables for test environments.",
+            "status": "pending",
+            "testStrategy": "Verify database seeding works correctly by running tests that depend on seeded data. Test mock implementations against actual service behaviors. Ensure database reset functionality works properly between test runs."
+          },
+          {
+            "id": 4,
+            "title": "Implement Accessibility and Performance Testing",
+            "description": "Set up accessibility testing with axe-core and performance testing with Lighthouse CI",
+            "dependencies": [
+              "22.2"
+            ],
+            "details": "Install axe-core and integrate it with Playwright for automated accessibility testing. Configure Lighthouse CI for performance, accessibility, best practices, and SEO testing. Create custom accessibility test helpers for common patterns. Set up performance budgets and thresholds. Implement reporting for accessibility and performance issues. Create documentation for interpreting test results and fixing common issues.",
+            "status": "pending",
+            "testStrategy": "Run accessibility tests against existing components to establish baseline. Verify Lighthouse CI integration by testing performance on sample pages. Test reporting mechanisms to ensure issues are clearly communicated."
+          },
+          {
+            "id": 5,
+            "title": "Configure CI/CD and Test Coverage Reporting",
+            "description": "Set up GitHub Actions workflows for automated testing and implement test coverage reporting with thresholds",
+            "dependencies": [
+              "22.1",
+              "22.2",
+              "22.3",
+              "22.4"
+            ],
+            "details": "Create GitHub Actions workflows for running all test types on pull requests and merges to main. Configure Jest for code coverage reporting with Istanbul. Set up coverage thresholds for different parts of the codebase. Implement PR checks that fail if coverage drops below thresholds. Create test summary reports that are attached to PRs. Set up scheduled runs for E2E and performance tests. Configure notifications for test failures.",
+            "status": "pending",
+            "testStrategy": "Test the GitHub Actions workflows with PRs containing both passing and failing tests. Verify coverage reporting by adding and removing tests. Ensure PR checks work as expected for coverage thresholds."
+          }
+        ]
+      },
+      {
+        "id": 23,
+        "title": "CI/CD Pipeline Implementation",
+        "description": "Set up continuous integration and deployment pipelines using GitHub Actions and Vercel with proper environment management.",
+        "details": "Configure GitHub Actions workflows for CI/CD. Set up Vercel project with environment configurations. Implement branch preview deployments. Create deployment protection rules for production. Set up environment variable management across environments. Implement database migration automation. Create rollback procedures for failed deployments. Set up deployment notifications in Slack or similar. Implement feature flags for controlled rollouts. Create deployment documentation. Set up automated smoke tests post-deployment. Implement performance budget enforcement in CI.",
+        "testStrategy": "Test CI/CD pipeline with various scenarios (pass, fail, partial). Verify environment isolation between deployments. Test rollback procedures. Validate feature flag functionality. Test notification systems. Verify performance budgets are enforced. Test database migrations across environments.",
+        "priority": "high",
+        "dependencies": [
+          1,
+          22
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Configure GitHub Actions Workflows",
+            "description": "Set up CI workflows for testing, linting, and building the application using GitHub Actions.",
+            "dependencies": [],
+            "details": "Create .github/workflows directory with YAML configuration files. Implement workflow for running tests, linting code, and building the application. Configure caching for dependencies to speed up builds. Set up matrix testing for different Node.js versions. Implement status checks for pull requests.",
+            "status": "pending",
+            "testStrategy": "Verify workflow runs successfully on different branches. Test with intentionally failing tests to ensure proper reporting. Validate cache effectiveness by measuring build time improvements."
+          },
+          {
+            "id": 2,
+            "title": "Set Up Vercel Project with Environment Configurations",
+            "description": "Configure Vercel project with proper environment settings for development, staging, and production.",
+            "dependencies": [
+              "23.1"
+            ],
+            "details": "Create Vercel project and link to GitHub repository. Configure environment variables for development, staging, and production environments. Set up domain configurations for each environment. Implement branch-to-environment mapping (main → production, develop → staging). Configure build and output settings in vercel.json.",
+            "status": "pending",
+            "testStrategy": "Verify correct environment variables are loaded in each environment. Test domain configurations and redirects. Ensure proper isolation between environments."
+          },
+          {
+            "id": 3,
+            "title": "Implement Database Migration Automation",
+            "description": "Create automated database migration process that runs during deployment with safety checks.",
+            "dependencies": [
+              "23.2"
+            ],
+            "details": "Set up migration scripts using Prisma or similar ORM. Create GitHub Action to run migrations during deployment process. Implement database backup before migrations. Add validation steps to prevent destructive migrations in production. Create rollback mechanism for failed migrations. Configure migration logging for audit purposes.",
+            "status": "pending",
+            "testStrategy": "Test migration process with sample schema changes. Verify rollback functionality works correctly. Test migration failures and recovery process. Validate backup and restore procedures."
+          },
+          {
+            "id": 4,
+            "title": "Implement Deployment Notifications and Protection Rules",
+            "description": "Set up deployment notifications in Slack and implement protection rules for production deployments.",
+            "dependencies": [
+              "23.2",
+              "23.3"
+            ],
+            "details": "Configure Slack webhook integration for deployment notifications. Create custom notification messages for deployment events (started, completed, failed). Implement protection rules for production environment requiring manual approval. Set up deployment concurrency limits to prevent simultaneous deployments. Create deployment dashboard for monitoring status.",
+            "status": "pending",
+            "testStrategy": "Verify notifications are sent for all deployment events. Test protection rules by attempting unauthorized deployments. Validate approval workflow functions correctly. Test concurrent deployment handling."
+          },
+          {
+            "id": 5,
+            "title": "Implement Feature Flags and Documentation",
+            "description": "Set up feature flag system for controlled rollouts and create comprehensive CI/CD documentation.",
+            "dependencies": [
+              "23.1",
+              "23.2",
+              "23.4"
+            ],
+            "details": "Implement feature flag system using a service like LaunchDarkly or a custom solution. Create feature flag management interface. Set up automated smoke tests that run post-deployment. Implement performance budget enforcement in CI pipeline. Create comprehensive documentation covering the entire CI/CD process, including environment management, deployment procedures, rollback processes, and feature flag usage.",
+            "status": "pending",
+            "testStrategy": "Test feature flag functionality across environments. Verify smoke tests correctly identify deployment issues. Test performance budget enforcement with oversized assets. Validate documentation completeness with team review."
+          }
+        ]
+      },
+      {
+        "id": 24,
+        "title": "Error Monitoring and Logging",
+        "description": "Implement comprehensive error monitoring, logging, and alerting using Sentry and custom logging solutions.",
+        "details": "Set up Sentry for error tracking and monitoring. Implement custom error boundaries in React components. Create structured logging system for server operations. Set up alert thresholds and notification channels. Implement user feedback collection on errors. Create error categorization and prioritization system. Set up performance monitoring for key transactions. Implement breadcrumb tracking for error context. Create dashboard for error trends and hotspots. Set up log retention policies compliant with regulations. Implement rate limiting for error reporting. Create runbooks for common error scenarios.",
+        "testStrategy": "Intentionally trigger errors to verify capture. Test error grouping and deduplication. Verify alert delivery across channels. Test performance impact of error monitoring. Validate user feedback collection. Test log rotation and retention. Verify compliance with privacy regulations for logged data.",
+        "priority": "medium",
+        "dependencies": [
+          1,
+          23
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Sentry Integration Setup",
+            "description": "Set up Sentry for error tracking and monitoring across frontend and backend environments",
+            "dependencies": [],
+            "details": "Install Sentry SDK packages for Next.js and configure environment variables for different environments (development, staging, production). Set up source maps uploading for accurate error stack traces. Configure Sentry project settings including alert rules, team access, and integration with GitHub for issue tracking. Implement Sentry initialization in _app.js or equivalent for frontend and in API routes for backend services.",
+            "status": "pending",
+            "testStrategy": "Verify Sentry connection by triggering test errors in development. Confirm source maps are correctly uploaded by checking stack traces. Test error capture across different environments. Validate GitHub integration by checking issue creation."
+          },
+          {
+            "id": 2,
+            "title": "React Error Boundaries Implementation",
+            "description": "Implement custom error boundaries in React components with fallback UIs",
+            "dependencies": [
+              "24.1"
+            ],
+            "details": "Create a reusable ErrorBoundary component that catches JavaScript errors in child component trees. Implement fallback UI components that provide user-friendly error messages and recovery options. Add error reporting to Sentry within error boundaries including component context. Create specialized error boundaries for critical application sections like authentication, data visualization, and form submission flows. Implement retry mechanisms where appropriate.",
+            "status": "pending",
+            "testStrategy": "Unit test error boundaries with simulated errors. Test fallback UI rendering and functionality. Verify error reporting to Sentry includes component context. Test user recovery flows from error states."
+          },
+          {
+            "id": 3,
+            "title": "Structured Logging System",
+            "description": "Create a structured logging system for server operations with different log levels",
+            "dependencies": [
+              "24.1"
+            ],
+            "details": "Implement a structured logging system using Winston or Pino that supports different log levels (debug, info, warn, error, fatal). Create consistent log format with timestamps, request IDs, user context, and structured data. Implement log transport configuration for different environments (console for development, file/service for production). Add request context middleware to enrich logs with request data. Create utility functions for standardized logging across the application.",
+            "status": "pending",
+            "testStrategy": "Verify log output format and content across different log levels. Test log rotation and persistence. Validate request context is properly included in logs. Test performance impact of logging in high-load scenarios."
+          },
+          {
+            "id": 4,
+            "title": "Alert System and Notification Channels",
+            "description": "Set up alert thresholds, notification channels, and escalation policies",
+            "dependencies": [
+              "24.1",
+              "24.3"
+            ],
+            "details": "Configure alert thresholds for different error types and frequencies in Sentry. Set up notification channels including email, Slack, and SMS for critical alerts. Implement PagerDuty or similar service integration for urgent issues requiring immediate attention. Create escalation policies based on error severity and resolution time. Implement rate limiting for notifications to prevent alert fatigue. Configure working hours and on-call schedules for the team.",
+            "status": "pending",
+            "testStrategy": "Test alert triggering for different error scenarios. Verify notifications are delivered through all configured channels. Test escalation flows for unresolved issues. Validate rate limiting prevents notification storms during major incidents."
+          },
+          {
+            "id": 5,
+            "title": "Error Analytics Dashboard",
+            "description": "Create a dashboard for error trends, hotspots, and performance monitoring",
+            "dependencies": [
+              "24.1",
+              "24.3",
+              "24.4"
+            ],
+            "details": "Develop a custom dashboard that aggregates error data from Sentry and the logging system. Implement visualizations for error trends over time, most frequent errors, and error distribution by component/route. Create performance monitoring for key transactions with alerting for degradations. Implement user impact metrics to prioritize issues affecting the most users. Add filtering capabilities by error type, component, and time period. Set up automated weekly reports for the development team.",
+            "status": "pending",
+            "testStrategy": "Verify dashboard data accuracy against raw error logs. Test dashboard performance with large datasets. Validate filtering and time period selection. Test automated report generation and delivery. Ensure dashboard is accessible to all team members."
+          }
+        ]
+      },
+      {
+        "id": 25,
+        "title": "Performance Optimization",
+        "description": "Implement performance optimizations across the platform including code splitting, image optimization, caching strategies, and core web vitals improvements.",
+        "details": "Implement code splitting using Next.js dynamic imports. Set up image optimization with next/image. Create efficient caching strategies with TanStack Query. Implement service worker for offline capabilities and caching. Add resource hints (preconnect, prefetch) for critical resources. Optimize font loading with font-display and preloading. Implement lazy loading for below-the-fold content. Create bundle analysis and optimization workflow. Implement server-side rendering for critical pages. Add client-side rendering for interactive components. Optimize third-party script loading. Implement performance monitoring and budgets.",
+        "testStrategy": "Core Web Vitals measurement with Lighthouse and Web Vitals API. Performance testing across devices and connection speeds. A/B testing of performance optimizations. User-centric performance metrics tracking. Bundle size monitoring. Test offline functionality. Measure Time to Interactive and other key metrics before and after optimizations.",
+        "priority": "medium",
+        "dependencies": [
+          1,
+          2,
+          6,
+          7,
+          14
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Code Splitting Implementation",
+            "description": "Implement code splitting using Next.js dynamic imports to reduce initial bundle size and improve page load times",
+            "dependencies": [],
+            "details": "Use Next.js dynamic imports with the 'dynamic' function to lazy load components. Identify components that aren't needed for initial render. Implement loading states for dynamically imported components. Configure webpack chunk naming for better debugging. Set up error boundaries around dynamically loaded components to handle loading failures gracefully.",
+            "status": "pending",
+            "testStrategy": "Measure bundle size reduction using tools like @next/bundle-analyzer. Compare load times before and after implementation using Lighthouse. Test user experience during component loading with throttled network conditions. Verify error handling when dynamic imports fail."
+          },
+          {
+            "id": 2,
+            "title": "Image Optimization Setup",
+            "description": "Configure next/image for automatic image optimization, responsive sizing, and modern format delivery",
+            "dependencies": [
+              "25.1"
+            ],
+            "details": "Replace standard <img> tags with next/image components. Configure image domains in next.config.js. Implement responsive image sizing with appropriate breakpoints. Set up image quality parameters for optimal compression. Create image loading placeholders for improved perceived performance. Configure WebP and AVIF format delivery where supported.",
+            "status": "pending",
+            "testStrategy": "Measure image load time improvements with Lighthouse. Verify correct responsive behavior across device sizes. Test bandwidth savings using Chrome DevTools Network panel. Validate image quality at different compression levels. Ensure proper fallbacks for browsers without modern format support."
+          },
+          {
+            "id": 3,
+            "title": "Caching Strategy Implementation",
+            "description": "Develop efficient caching strategies using TanStack Query and implement service worker for offline capabilities",
+            "dependencies": [
+              "25.1",
+              "25.2"
+            ],
+            "details": "Configure TanStack Query with appropriate staleTime and cacheTime settings for different data types. Implement optimistic updates for improved UX. Set up background data refetching. Register and configure a service worker for offline caching. Create cache invalidation strategies. Implement offline-first data fetching patterns. Add cache persistence between sessions.",
+            "status": "pending",
+            "testStrategy": "Test cache hit rates using browser DevTools. Verify offline functionality by simulating network disconnection. Measure performance improvements from cached responses. Test cache invalidation scenarios. Validate data consistency between cache and server."
+          },
+          {
+            "id": 4,
+            "title": "Core Web Vitals Optimization",
+            "description": "Improve Core Web Vitals metrics including LCP, FID, and CLS through targeted optimizations",
+            "dependencies": [
+              "25.1",
+              "25.2",
+              "25.3"
+            ],
+            "details": "Identify and optimize Largest Contentful Paint (LCP) elements. Implement font optimization with font-display and preloading. Add resource hints (preconnect, prefetch) for critical resources. Optimize third-party script loading with async/defer attributes. Implement layout shift prevention techniques. Create fixed-size placeholders for dynamic content. Optimize JavaScript execution to improve First Input Delay (FID).",
+            "status": "pending",
+            "testStrategy": "Measure Core Web Vitals using Web Vitals API and Lighthouse. Create performance monitoring dashboard. Test improvements across different devices and connection speeds. Conduct A/B testing of performance optimizations. Monitor real user metrics (RUM) in production."
+          },
+          {
+            "id": 5,
+            "title": "Rendering Strategy Optimization",
+            "description": "Implement optimal rendering strategies including SSR for critical pages and CSR for interactive components",
+            "dependencies": [
+              "25.1",
+              "25.2",
+              "25.3",
+              "25.4"
+            ],
+            "details": "Identify pages that benefit most from Server-Side Rendering. Configure SSR for critical landing pages. Implement Client-Side Rendering for highly interactive components. Set up Incremental Static Regeneration (ISR) for semi-dynamic content. Create bundle analysis workflow to identify optimization opportunities. Implement lazy loading for below-the-fold content. Set up performance budgets and monitoring.",
+            "status": "pending",
+            "testStrategy": "Compare Time to First Byte (TTFB) and Time to Interactive (TTI) metrics before and after implementation. Test server load under different rendering strategies. Measure hydration performance. Validate SEO impact of rendering choices. Test user experience across different device capabilities."
+          }
+        ]
+      }
+    ],
+    "metadata": {
+      "created": "2025-08-17T13:10:23.768Z",
+      "updated": "2025-08-17T13:10:23.768Z",
+      "description": "Tasks for master context"
+    }
+  }
+}

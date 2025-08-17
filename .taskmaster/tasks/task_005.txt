@@ -1,0 +1,43 @@
+# Task ID: 5
+# Title: Role-Based Onboarding Flows
+# Status: pending
+# Dependencies: 3, 4
+# Priority: medium
+# Description: Develop guided onboarding experiences tailored to each user role (nutritionist, patient, admin) to improve user activation and engagement.
+# Details:
+Create step-by-step onboarding wizards for each user role using a multi-step form pattern. For nutritionists: credential verification, practice details, scheduling preferences, and platform training. For patients: health goals, dietary restrictions, measurements, and app tour. Use localStorage or Supabase to persist onboarding progress. Implement progress indicators and the ability to skip/return to steps. Create onboarding completion tracking in the database. Design engaging illustrations and micro-animations with Framer Motion to enhance the experience. Implement tooltips and guided tours for key features using a library like react-joyride. Create onboarding analytics to identify drop-off points.
+
+# Test Strategy:
+User testing with representatives from each role. A/B testing of different onboarding flows to optimize completion rates. E2E tests for complete onboarding journeys. Analytics tracking validation. Test persistence of partially completed onboarding data.
+
+# Subtasks:
+## 1. Design Multi-Step Onboarding Wizards [pending]
+### Dependencies: None
+### Description: Create the UI/UX design for role-specific onboarding flows with wireframes and mockups for nutritionists, patients, and admin roles.
+### Details:
+Design step-by-step wizards with consistent styling across roles. For nutritionists: include screens for credential verification, practice details, scheduling preferences, and platform training. For patients: design screens for health goals, dietary restrictions, measurements, and app tour. For admins: create screens for system configuration, user management, and analytics overview. Include progress indicators, navigation controls, and skip/return functionality in all designs.
+
+## 2. Implement Onboarding Data Persistence [pending]
+### Dependencies: 5.1
+### Description: Develop the backend infrastructure to store and retrieve onboarding progress using localStorage and Supabase.
+### Details:
+Create Supabase tables for storing onboarding completion status and user-provided information. Implement client-side persistence using localStorage to save progress between sessions. Develop synchronization logic to update Supabase when connectivity is available. Create API endpoints for saving and retrieving onboarding data. Implement data validation to ensure required fields are completed before advancing steps.
+
+## 3. Develop Frontend Onboarding Components [pending]
+### Dependencies: 5.1, 5.2
+### Description: Build React components for the multi-step onboarding wizards with form validation and navigation controls.
+### Details:
+Create reusable form components with validation using React Hook Form and Zod. Implement step navigation with progress tracking. Build role-specific form fields and validation rules. Create responsive layouts that work across devices. Implement form state management to handle complex multi-step data. Add accessibility features to ensure all users can complete onboarding successfully.
+
+## 4. Create Engaging Visual Elements [pending]
+### Dependencies: 5.3
+### Description: Design and implement illustrations, animations, and tooltips to enhance the onboarding experience.
+### Details:
+Create role-specific illustrations that visually represent each onboarding step. Implement micro-animations using Framer Motion to provide visual feedback and guide users. Develop tooltips and guided tours for key features using react-joyride. Design celebration animations for onboarding completion. Ensure all visual elements are optimized for performance and accessibility.
+
+## 5. Implement Onboarding Analytics [pending]
+### Dependencies: 5.2, 5.3, 5.4
+### Description: Set up tracking and reporting for onboarding completion rates, drop-off points, and user behavior.
+### Details:
+Implement event tracking for each onboarding step using an analytics platform. Create custom events for step completion, form errors, and help requests. Develop a dashboard to visualize onboarding funnel and identify drop-off points. Set up automated reports for onboarding completion rates by role. Implement A/B testing framework to optimize the onboarding flow based on analytics data.
+
