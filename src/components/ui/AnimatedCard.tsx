@@ -1,13 +1,13 @@
-'use client'
+'use client';
 
-import { motion } from 'framer-motion'
-import { ReactNode } from 'react'
+import { motion } from 'framer-motion';
+import { ReactNode } from 'react';
 
 interface AnimatedCardProps {
-  children: ReactNode
-  className?: string
-  delay?: number
-  whileHover?: boolean
+  children: ReactNode;
+  className?: string;
+  delay?: number;
+  whileHover?: boolean;
 }
 
 export function AnimatedCard({
@@ -42,17 +42,17 @@ export function AnimatedCard({
         },
       },
     }),
-  }
+  };
 
   return (
     <motion.div
       className={`card ${className}`}
       variants={cardVariants}
-      initial="hidden"
-      animate="visible"
+      initial='hidden'
+      animate='visible'
       whileHover={whileHover ? 'hover' : undefined}
     >
       {children}
     </motion.div>
-  )
+  );
 }

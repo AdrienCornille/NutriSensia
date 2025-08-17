@@ -29,7 +29,7 @@ Install core dependencies: `npm install react@18.3.1 react-dom@18.3.1`. Install 
 ### Details:
 Create a Supabase project with EU-West hosting region. Install Supabase client: `npm install @supabase/supabase-js`. Create .env.local file with Supabase URL and anon key: `NEXT_PUBLIC_SUPABASE_URL=your_supabase_url` and `NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_key`. Create a utils/supabase.ts file to initialize the Supabase client with these environment variables. Add .env.local to .gitignore.
 
-## 4. Configure GitHub Repository and Version Control [pending]
+## 4. Configure GitHub Repository and Version Control [done]
 ### Dependencies: None
 ### Description: Set up GitHub repository with proper .gitignore and branch protection rules
 ### Details:

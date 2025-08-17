@@ -1,15 +1,15 @@
-'use client'
+'use client';
 
-import { useFormContext } from 'react-hook-form'
-import { ExclamationCircleIcon } from '@heroicons/react/24/solid'
+import { useFormContext } from 'react-hook-form';
+import { ExclamationCircleIcon } from '@heroicons/react/24/solid';
 
 interface FormFieldProps {
-  name: string
-  label: string
-  type?: 'text' | 'email' | 'password' | 'number' | 'textarea'
-  placeholder?: string
-  required?: boolean
-  className?: string
+  name: string;
+  label: string;
+  type?: 'text' | 'email' | 'password' | 'number' | 'textarea';
+  placeholder?: string;
+  required?: boolean;
+  className?: string;
 }
 
 export function FormField({
@@ -23,18 +23,18 @@ export function FormField({
   const {
     register,
     formState: { errors },
-  } = useFormContext()
+  } = useFormContext();
 
-  const error = errors[name]
+  const error = errors[name];
 
   return (
     <div className={`space-y-2 ${className}`}>
-      <label htmlFor={name} className="block text-sm font-medium text-gray-700">
+      <label htmlFor={name} className='block text-sm font-medium text-gray-700'>
         {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
+        {required && <span className='text-red-500 ml-1'>*</span>}
       </label>
-      
-      <div className="relative">
+
+      <div className='relative'>
         {type === 'textarea' ? (
           <textarea
             id={name}
@@ -58,19 +58,17 @@ export function FormField({
             `}
           />
         )}
-        
+
         {error && (
-          <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-            <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
+          <div className='absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none'>
+            <ExclamationCircleIcon className='h-5 w-5 text-red-500' />
           </div>
         )}
       </div>
-      
+
       {error && (
-        <p className="text-sm text-red-600">
-          {error.message as string}
-        </p>
+        <p className='text-sm text-red-600'>{error.message as string}</p>
       )}
     </div>
-  )
+  );
 }

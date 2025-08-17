@@ -3,6 +3,7 @@
 ## 🚀 Workflow de développement
 
 ### Prérequis
+
 - Node.js 18+
 - Git
 - Compte GitHub
@@ -57,6 +58,7 @@ git branch -d feature/nom-de-la-fonctionnalite
 ## 📋 Conventions de commit
 
 ### Format
+
 ```
 type(scope): description
 
@@ -66,6 +68,7 @@ type(scope): description
 ```
 
 ### Types de commit
+
 - **`feat`** : Nouvelle fonctionnalité
 - **`fix`** : Correction de bug
 - **`docs`** : Documentation
@@ -75,6 +78,7 @@ type(scope): description
 - **`chore`** : Tâches de maintenance
 
 ### Exemples
+
 ```bash
 git commit -m "feat(auth): ajouter authentification 2FA"
 git commit -m "fix(dashboard): corriger l'affichage des patients"
@@ -85,6 +89,7 @@ git commit -m "style(components): formater les composants Button"
 ## 🧪 Tests et qualité
 
 ### Avant chaque commit
+
 ```bash
 npm run lint
 npm run test
@@ -92,6 +97,7 @@ npm run build
 ```
 
 ### Avant chaque merge
+
 - Tests E2E passent
 - Code coverage > 80%
 - Pas de vulnérabilités de sécurité
@@ -100,10 +106,12 @@ npm run build
 ## 🔒 Protection des branches
 
 ### Branches protégées
+
 - **`main`** : Requiert review et tests
 - **`develop`** : Requiert review
 
 ### Règles de merge
+
 - Pull Request obligatoire
 - Tests automatiques doivent passer
 - Review d'au moins une personne
@@ -112,6 +120,7 @@ npm run build
 ## 📱 Intégration avec Task Master AI
 
 ### Workflow recommandé
+
 1. Créer une branche feature pour chaque tâche Task Master AI
 2. Développer la fonctionnalité
 3. Mettre à jour la tâche avec le statut "in-progress"
@@ -120,6 +129,7 @@ npm run build
 6. Fusionner la branche
 
 ### Exemple pour une tâche
+
 ```bash
 # 1. Commencer la tâche
 ./scripts/git-workflow.sh start-feature setup-project-infrastructure
@@ -137,12 +147,14 @@ git commit -m "feat(setup): initialiser Next.js avec Supabase"
 ## 🚨 Gestion des conflits
 
 ### Résolution de conflits
+
 1. Identifier les fichiers en conflit
 2. Ouvrir chaque fichier et résoudre manuellement
 3. Ajouter les fichiers résolus
 4. Finaliser le merge
 
 ### En cas de conflit complexe
+
 ```bash
 # Annuler le merge
 git merge --abort
@@ -154,16 +166,19 @@ git reset --hard HEAD
 ## 🔄 Rollback et récupération
 
 ### Annuler le dernier commit
+
 ```bash
 git reset --soft HEAD~1
 ```
 
 ### Revenir à un commit spécifique
+
 ```bash
 git reset --hard <commit-hash>
 ```
 
 ### Créer un point de sauvegarde
+
 ```bash
 git tag -a backup-v1.0.0 -m "Sauvegarde avant refactoring"
 ```
@@ -171,12 +186,14 @@ git tag -a backup-v1.0.0 -m "Sauvegarde avant refactoring"
 ## 🍎 Spécificités NutriSensia
 
 ### Conventions de nommage
+
 - **Composants** : PascalCase (ex: `UserProfile.tsx`)
 - **Hooks** : camelCase avec préfixe `use` (ex: `useAuth.ts`)
 - **Fonctions utilitaires** : camelCase (ex: `formatNutritionData.ts`)
 - **Types/Interfaces** : PascalCase (ex: `NutritionData`)
 
 ### Structure des composants
+
 ```typescript
 // 1. Imports
 import { useState } from 'react'
@@ -191,12 +208,12 @@ interface ComponentProps {
 export function ComponentName({ ... }: ComponentProps) {
   // 4. Hooks et état
   const [state, setState] = useState()
-  
+
   // 5. Fonctions utilitaires
   const handleAction = () => {
     // ...
   }
-  
+
   // 6. Rendu
   return (
     <motion.div>
@@ -207,13 +224,16 @@ export function ComponentName({ ... }: ComponentProps) {
 ```
 
 ### Palette de couleurs
+
 Utilisez uniquement les couleurs définies dans `tailwind.config.ts` :
+
 - `text-primary` / `bg-primary` : #2E7D5E
 - `text-accent` / `bg-accent` : #FF6B35
 - `text-neutral` / `bg-neutral` : #6B7280
 - `bg-background` : #FAFBFC
 
 ### Tests
+
 - Tests unitaires pour les hooks personnalisés
 - Tests d'intégration pour les composants de formulaire
 - Tests E2E pour les flux utilisateur critiques
@@ -228,6 +248,7 @@ Utilisez uniquement les couleurs définies dans `tailwind.config.ts` :
 ## 🤝 Support
 
 Pour toute question ou problème :
+
 1. Consultez la documentation
 2. Vérifiez les issues existantes
 3. Créez une nouvelle issue si nécessaire

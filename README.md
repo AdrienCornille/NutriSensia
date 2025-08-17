@@ -21,45 +21,50 @@ Votre assistant nutritionnel intelligent - Une application web moderne pour la g
 
 ## 📋 Prérequis
 
-- Node.js 18+ 
+- Node.js 18+
 - npm, yarn ou pnpm
 - Compte Supabase (pour la base de données)
 
 ## 🚀 Installation
 
 1. **Cloner le dépôt**
+
    ```bash
    git clone https://github.com/AdrienCornille/NutriSensia.git
    cd NutriSensia
    ```
 
 2. **Installer les dépendances**
+
    ```bash
    npm install
    ```
 
 3. **Configuration des variables d'environnement**
+
    ```bash
    cp .env.example .env.local
    ```
-   
+
    Puis éditez `.env.local` avec vos clés Supabase :
+
    ```env
    NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
    NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
    ```
 
 4. **Configuration Supabase**
-   
+
    Suivez le guide de configuration dans [`docs/supabase-setup.md`](docs/supabase-setup.md)
 
 5. **Lancer le serveur de développement**
+
    ```bash
    npm run dev
    ```
 
 6. **Ouvrir l'application**
-   
+
    Naviguez vers [http://localhost:3000](http://localhost:3000)
 
 ## 🏗️ Structure du projet
@@ -101,16 +106,17 @@ npm run lint         # Vérification ESLint
 
 ### Variables d'environnement
 
-| Variable | Description | Requis |
-|----------|-------------|--------|
-| `NEXT_PUBLIC_SUPABASE_URL` | URL du projet Supabase | ✅ |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Clé anonyme Supabase | ✅ |
-| `NEXT_PUBLIC_APP_NAME` | Nom de l'application | ❌ |
-| `NEXT_PUBLIC_APP_VERSION` | Version de l'application | ❌ |
+| Variable                        | Description              | Requis |
+| ------------------------------- | ------------------------ | ------ |
+| `NEXT_PUBLIC_SUPABASE_URL`      | URL du projet Supabase   | ✅     |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Clé anonyme Supabase     | ✅     |
+| `NEXT_PUBLIC_APP_NAME`          | Nom de l'application     | ❌     |
+| `NEXT_PUBLIC_APP_VERSION`       | Version de l'application | ❌     |
 
 ### Base de données
 
 Le projet utilise Supabase avec les tables suivantes :
+
 - `users` - Profils utilisateurs et préférences
 - `meals` - Repas individuels avec valeurs nutritionnelles
 - `meal_plans` - Plans de repas complets

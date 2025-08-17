@@ -24,6 +24,7 @@ Ce document décrit la configuration de Supabase pour le projet NutriSensia, inc
 #### Tables à créer
 
 ##### Table `users`
+
 ```sql
 CREATE TABLE users (
   id UUID REFERENCES auth.users(id) PRIMARY KEY,
@@ -48,6 +49,7 @@ CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON users
 ```
 
 ##### Table `meals`
+
 ```sql
 CREATE TABLE meals (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -69,6 +71,7 @@ CREATE TRIGGER update_meals_updated_at BEFORE UPDATE ON meals
 ```
 
 ##### Table `meal_plans`
+
 ```sql
 CREATE TABLE meal_plans (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -91,6 +94,7 @@ CREATE TRIGGER update_meal_plans_updated_at BEFORE UPDATE ON meal_plans
 ### 3. Configuration des politiques de sécurité (RLS)
 
 #### Politique pour la table `users`
+
 ```sql
 -- Activer RLS
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
@@ -109,6 +113,7 @@ CREATE POLICY "Users can insert own data" ON users
 ```
 
 #### Politique pour la table `meals`
+
 ```sql
 -- Activer RLS
 ALTER TABLE meals ENABLE ROW LEVEL SECURITY;
@@ -131,6 +136,7 @@ CREATE POLICY "Users can delete own meals" ON meals
 ```
 
 #### Politique pour la table `meal_plans`
+
 ```sql
 -- Activer RLS
 ALTER TABLE meal_plans ENABLE ROW LEVEL SECURITY;
@@ -182,7 +188,7 @@ NEXT_PUBLIC_APP_VERSION=0.1.0
 Dans Supabase Dashboard > Authentication > Settings :
 
 1. **Site URL** : `http://localhost:3000` (développement)
-2. **Redirect URLs** : 
+2. **Redirect URLs** :
    - `http://localhost:3000/auth/callback`
    - `http://localhost:3000/dashboard`
 
@@ -229,6 +235,7 @@ Utilisez le composant `SupabaseTest` pour vérifier que la configuration fonctio
 ### Support
 
 Pour plus d'aide, consultez :
+
 - [Documentation Supabase](https://supabase.com/docs)
 - [Guide de migration](https://supabase.com/docs/guides/migrations)
 - [Politiques de sécurité](https://supabase.com/docs/guides/auth/row-level-security)
