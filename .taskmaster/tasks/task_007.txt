@@ -41,3 +41,9 @@ Configure TanStack Query for fetching dashboard data with appropriate caching st
 ### Details:
 Create filter controls for patient status, appointment date range, and compliance levels. Implement sorting functionality for patient lists by name, next appointment, and compliance rate. Add quick action buttons on patient cards for common tasks: message patient, schedule appointment, view details, etc. Implement action confirmation dialogs where appropriate. Create date range selectors for filtering dashboard data by time period. Ensure all controls are accessible and mobile-friendly.
 
+## 6. Dashboard Customization and Personalization [pending]
+### Dependencies: None
+### Description: Implement dashboard customization features for nutritionists
+### Details:
+Create dashboard customization interface allowing nutritionists to personalize their layout. Implement drag-and-drop dashboard builder for custom layouts. Add support for choosing which metrics and patient information to display. Create dashboard template system with predefined layouts. Implement dashboard preferences saving and synchronization. Add support for role-based dashboard customization. Create dashboard analytics to track usage patterns and optimization opportunities.
+

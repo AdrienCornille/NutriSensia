@@ -41,3 +41,9 @@ Integrate with appointment system to trigger invoice creation. Implement service
 ### Details:
 Create email templates for invoice delivery with PDF attachments. Implement reminder scheduling system with configurable intervals. Build payment tracking integration with Stripe (Task 13). Develop analytics dashboard for invoice status and payment metrics. Create customizable email content for nutritionists. Implement batch operations for sending multiple invoices or reminders.
 
+## 6. Swiss Payment Systems Integration [pending]
+### Dependencies: None
+### Description: Implement integration with Swiss payment systems and banks
+### Details:
+Integrate with Swiss payment systems and banks for automated reconciliation. Implement SEPA and Swiss payment standards compliance. Create automated payment reconciliation with invoice tracking. Add support for Swiss QR-bill payment processing. Implement bank account validation and verification. Create payment analytics and reporting for Swiss financial compliance. Add support for multiple Swiss payment methods and banking APIs.
+

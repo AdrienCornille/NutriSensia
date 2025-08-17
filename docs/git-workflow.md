@@ -94,6 +94,7 @@ git branch -d hotfix/critical-bug-fix
 ## 📋 Conventions de commit
 
 ### Format
+
 ```
 type(scope): description
 
@@ -103,6 +104,7 @@ type(scope): description
 ```
 
 ### Types
+
 - `feat`: Nouvelle fonctionnalité
 - `fix`: Correction de bug
 - `docs`: Documentation
@@ -112,6 +114,7 @@ type(scope): description
 - `chore`: Tâches de maintenance
 
 ### Exemples
+
 ```bash
 git commit -m "feat(auth): ajouter authentification 2FA"
 git commit -m "fix(dashboard): corriger l'affichage des patients"
@@ -121,10 +124,12 @@ git commit -m "docs(readme): mettre à jour la documentation"
 ## 🔒 Protection des branches
 
 ### Branches protégées
+
 - `main`: Requiert review et tests
 - `develop`: Requiert review
 
 ### Règles de merge
+
 - Pull Request obligatoire
 - Tests automatiques doivent passer
 - Review d'au moins une personne
@@ -133,6 +138,7 @@ git commit -m "docs(readme): mettre à jour la documentation"
 ## 🧪 Tests et qualité
 
 ### Avant chaque commit
+
 ```bash
 npm run lint
 npm run test
@@ -140,6 +146,7 @@ npm run build
 ```
 
 ### Avant chaque merge
+
 - Tests E2E passent
 - Code coverage > 80%
 - Pas de vulnérabilités de sécurité
@@ -148,12 +155,14 @@ npm run build
 ## 🚨 Gestion des conflits
 
 ### Résolution de conflits
+
 1. Identifier les fichiers en conflit
 2. Ouvrir chaque fichier et résoudre manuellement
 3. Ajouter les fichiers résolus
 4. Finaliser le merge
 
 ### En cas de conflit complexe
+
 ```bash
 # Annuler le merge
 git merge --abort
@@ -165,6 +174,7 @@ git reset --hard HEAD
 ## 📱 Intégration avec Task Master AI
 
 ### Workflow recommandé
+
 1. Créer une branche feature pour chaque tâche Task Master AI
 2. Développer la fonctionnalité
 3. Mettre à jour la tâche avec le statut "in-progress"
@@ -173,6 +183,7 @@ git reset --hard HEAD
 6. Fusionner la branche
 
 ### Exemple pour la tâche #1
+
 ```bash
 git checkout -b feature/setup-project-infrastructure
 # Développer...
@@ -185,16 +196,19 @@ git push origin feature/setup-project-infrastructure
 ## 🔄 Rollback et récupération
 
 ### Annuler le dernier commit
+
 ```bash
 git reset --soft HEAD~1
 ```
 
 ### Revenir à un commit spécifique
+
 ```bash
 git reset --hard <commit-hash>
 ```
 
 ### Créer un point de sauvegarde
+
 ```bash
 git tag -a backup-v1.0.0 -m "Sauvegarde avant refactoring"
 ```

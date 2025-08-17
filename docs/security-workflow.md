@@ -7,17 +7,20 @@ Puisque les protections de branches GitHub ne sont pas disponibles sur les repos
 ## 🛡️ Règles de sécurité
 
 ### 1. Branche `main` - Code de production
+
 - **NE JAMAIS** pousser directement sur `main`
 - **NE JAMAIS** faire de commits directs sur `main`
 - **TOUJOURS** utiliser des Pull Requests
 - **TOUJOURS** merger depuis `develop`
 
 ### 2. Branche `develop` - Intégration
+
 - **NE JAMAIS** pousser directement sur `develop`
 - **TOUJOURS** utiliser des Pull Requests depuis les features
 - **TOUJOURS** tester avant de merger
 
 ### 3. Branches `feature/*` - Développement
+
 - **TOUJOURS** créer depuis `develop`
 - **TOUJOURS** merger vers `develop` via Pull Request
 - **TOUJOURS** supprimer après merge
@@ -25,6 +28,7 @@ Puisque les protections de branches GitHub ne sont pas disponibles sur les repos
 ## 🚀 Workflow sécurisé
 
 ### Commencer une fonctionnalité
+
 ```bash
 # 1. Basculer sur develop
 git checkout develop
@@ -44,6 +48,7 @@ git push -u origin feature/nom-de-la-fonctionnalite
 ```
 
 ### Finaliser une fonctionnalité
+
 ```bash
 # 1. Créer Pull Request sur GitHub
 # - Aller sur GitHub
@@ -59,6 +64,7 @@ git branch -d feature/nom-de-la-fonctionnalite
 ```
 
 ### Release vers production
+
 ```bash
 # 1. Créer Pull Request develop → main
 # 2. Review et validation
@@ -73,6 +79,7 @@ git push origin v1.0.0
 ## 🔍 Checklist de sécurité
 
 ### Avant chaque commit
+
 - [ ] Code testé localement
 - [ ] Linting passé (`npm run lint`)
 - [ ] Tests passés (`npm run test`)
@@ -80,6 +87,7 @@ git push origin v1.0.0
 - [ ] Commit message conventionnel
 
 ### Avant chaque Pull Request
+
 - [ ] Branche à jour avec develop
 - [ ] Tests automatisés passés
 - [ ] Code review effectuée
@@ -87,6 +95,7 @@ git push origin v1.0.0
 - [ ] Design system respecté
 
 ### Avant chaque merge vers main
+
 - [ ] Tests E2E passés
 - [ ] Performance validée
 - [ ] Sécurité vérifiée
@@ -96,6 +105,7 @@ git push origin v1.0.0
 ## 🚨 Procédures d'urgence
 
 ### Rollback rapide
+
 ```bash
 # Annuler le dernier commit
 git reset --soft HEAD~1
@@ -108,6 +118,7 @@ git reset --hard <commit-hash>
 ```
 
 ### Récupération de données
+
 ```bash
 # Voir l'historique des commits
 git log --oneline
@@ -122,12 +133,14 @@ git checkout <commit-hash> -- path/to/file
 ## 📋 Monitoring manuel
 
 ### Vérifications quotidiennes
+
 1. **État des branches** : `./scripts/git-workflow.sh status`
 2. **Pull Requests en attente** : Vérifier sur GitHub
 3. **Tests de build** : Exécuter localement
 4. **Sécurité** : Vérifier les dépendances
 
 ### Alertes à surveiller
+
 - Commits directs sur main/develop
 - Branches feature non supprimées
 - Pull Requests sans review
@@ -136,6 +149,7 @@ git checkout <commit-hash> -- path/to/file
 ## 🎯 Intégration avec Task Master AI
 
 ### Workflow recommandé
+
 1. **Créer une branche feature** pour chaque tâche
 2. **Développer** la fonctionnalité
 3. **Mettre à jour** le statut de la tâche
@@ -144,6 +158,7 @@ git checkout <commit-hash> -- path/to/file
 6. **Marquer la tâche** comme terminée
 
 ### Exemple pour la tâche #1
+
 ```bash
 # 1. Commencer la tâche
 ./scripts/git-workflow.sh start-feature setup-project-infrastructure
