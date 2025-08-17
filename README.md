@@ -176,3 +176,4 @@ Ce projet est sous licence MIT. Voir le fichier [`LICENSE`](LICENSE) pour plus d
 ---
 
 Développé avec ❤️ pour une nutrition intelligente et personnalisée.
+# Force CI/CD re-run
