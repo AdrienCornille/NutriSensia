@@ -100,7 +100,28 @@ npm run dev          # Serveur de développement
 npm run build        # Build de production
 npm run start        # Serveur de production
 npm run lint         # Vérification ESLint
+npm run lint:fix     # Correction ESLint automatique
+npm run format       # Formatage Prettier
+npm run format:check # Vérification formatage
+npm run type-check   # Vérification TypeScript
+npm run quality      # Vérification complète
+npm run validate-env # Validation de l'environnement
+npm run setup        # Configuration automatique
 ```
+
+## 📖 Documentation
+
+### Guides principaux
+- [Guide d'onboarding](docs/onboarding.md) - Configuration de l'environnement pour nouveaux développeurs
+- [Guide de dépannage](docs/troubleshooting.md) - Résolution des problèmes courants
+- [Guide de qualité de code](docs/code-quality.md) - Outils et conventions de qualité
+- [Processus de contribution](docs/contribution-process.md) - Comment contribuer au projet
+- [Workflow Git](docs/git-workflow.md) - Conventions et workflow Git
+- [Configuration Supabase](docs/supabase-setup.md) - Setup de la base de données
+
+### Scripts d'automatisation
+- `scripts/validate-env.js` - Validation complète de l'environnement
+- `scripts/setup.sh` - Configuration automatique de l'environnement
 
 ## 🔧 Configuration
 
