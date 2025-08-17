@@ -168,9 +168,60 @@ git reset --hard <commit-hash>
 git tag -a backup-v1.0.0 -m "Sauvegarde avant refactoring"
 ```
 
+## 🍎 Spécificités NutriSensia
+
+### Conventions de nommage
+- **Composants** : PascalCase (ex: `UserProfile.tsx`)
+- **Hooks** : camelCase avec préfixe `use` (ex: `useAuth.ts`)
+- **Fonctions utilitaires** : camelCase (ex: `formatNutritionData.ts`)
+- **Types/Interfaces** : PascalCase (ex: `NutritionData`)
+
+### Structure des composants
+```typescript
+// 1. Imports
+import { useState } from 'react'
+import { motion } from 'framer-motion'
+
+// 2. Types/Interfaces
+interface ComponentProps {
+  // ...
+}
+
+// 3. Composant principal
+export function ComponentName({ ... }: ComponentProps) {
+  // 4. Hooks et état
+  const [state, setState] = useState()
+  
+  // 5. Fonctions utilitaires
+  const handleAction = () => {
+    // ...
+  }
+  
+  // 6. Rendu
+  return (
+    <motion.div>
+      {/* JSX */}
+    </motion.div>
+  )
+}
+```
+
+### Palette de couleurs
+Utilisez uniquement les couleurs définies dans `tailwind.config.ts` :
+- `text-primary` / `bg-primary` : #2E7D5E
+- `text-accent` / `bg-accent` : #FF6B35
+- `text-neutral` / `bg-neutral` : #6B7280
+- `bg-background` : #FAFBFC
+
+### Tests
+- Tests unitaires pour les hooks personnalisés
+- Tests d'intégration pour les composants de formulaire
+- Tests E2E pour les flux utilisateur critiques
+
 ## 📚 Ressources
 
 - [Git Workflow Documentation](docs/git-workflow.md)
+- [Supabase Setup Documentation](docs/supabase-setup.md)
 - [Design System Documentation](.taskmaster/docs/design-system-specs.md)
 - [Task Master AI Documentation](.taskmaster/docs/)
 

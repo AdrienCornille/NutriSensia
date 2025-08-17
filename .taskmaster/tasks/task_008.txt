@@ -41,3 +41,9 @@ Integrate with Resend.com API for email delivery. Create email templates for app
 ### Details:
 Integrate with Google Calendar API for two-way synchronization. Implement iCal export and import functionality. Develop timezone handling for international clients using a library like date-fns-tz. Create sync conflict resolution strategies. Implement sync frequency settings and manual sync options. Add visual indicators for synced vs. local-only appointments. Create a patient appointment history view with filtering options.
 
+## 6. Recurring Appointment Patterns and Advanced Scheduling [pending]
+### Dependencies: None
+### Description: Implement advanced recurring appointment patterns and scheduling algorithms
+### Details:
+Create a flexible recurring appointment system with various patterns (daily, weekly, monthly, custom intervals). Implement conflict detection and resolution for overlapping appointments. Add support for appointment templates and bulk scheduling. Create intelligent scheduling suggestions based on nutritionist availability and patient preferences. Implement appointment series management with individual appointment modifications. Add support for appointment dependencies and prerequisites.
+
