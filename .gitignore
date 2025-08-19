@@ -127,3 +127,6 @@ jspm_packages/
 
 # TernJS port file
 .tern-port
+
+*storybook.log
+storybook-static

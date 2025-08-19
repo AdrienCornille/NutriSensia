@@ -89,30 +89,7 @@
             "testStrategy": "Verify color values match specifications. Test typography rendering across different platforms with all specified weights. Ensure spacing scale is correctly implemented. Test dark mode toggle functionality. Verify CSS variables are properly defined and accessible."
           },
           {
-            "id": 3,
-            "title": "Accessibility Implementation",
-            "description": "Ensure all components meet WCAG 2.1 AA compliance standards with NutriSensia-specific accessibility guidelines",
-            "status": "pending",
-            "dependencies": [
-              2
-            ],
-            "details": "Implement proper ARIA attributes for all components. Ensure sufficient color contrast ratios (minimum 4.5:1 per WCAG AA). Add keyboard navigation support with logical tab order. Implement focus management with 2dp Primary Green focus indicators at 20% opacity. Ensure touch targets are minimum 44dp, with 48dp recommended. Test with screen readers. Create accessible form validation and error messaging. Implement language support with French as primary language.",
-            "testStrategy": "Accessibility testing with axe-core. Manual testing with screen readers. Keyboard navigation testing. Color contrast verification using automated tools. Touch target size verification on mobile devices. Test language support for French content."
-          },
-          {
             "id": 4,
-            "title": "Component Documentation System",
-            "description": "Create a Storybook or similar documentation system for the NutriSensia design system components",
-            "status": "pending",
-            "dependencies": [
-              2,
-              3
-            ],
-            "details": "Set up Storybook or a similar documentation system. Create stories for each component showcasing all variants and states. Document component props, usage guidelines, and accessibility considerations. Include code examples and live demos. Implement theme switching in the documentation to demonstrate dark mode. Document all feature states (MVP): Authentication flows, Dashboard states (empty, loading, populated), Patient Management interfaces, Consultation views, Meal Planning interfaces, Billing screens, Messaging components, Error states, and Mobile-specific components. Include Swiss-specific design considerations for professional styling, security indicators, and tone guidelines.",
-            "testStrategy": "Verify all components are properly documented. Test interactive examples. Ensure documentation is up-to-date with component implementations. Test documentation site responsiveness. Verify all feature states are documented with examples."
-          },
-          {
-            "id": 5,
             "title": "Responsive Layout System",
             "description": "Implement responsive layout components and utilities for consistent page structures across the NutriSensia platform",
             "status": "pending",
@@ -124,13 +101,46 @@
             "testStrategy": "Cross-browser compatibility testing. Mobile responsiveness testing across different viewport sizes. Visual regression testing for layout components. Performance testing to ensure minimal layout shifts. Test all feature states in responsive layouts."
           },
           {
-            "id": 6,
+            "id": 5,
             "title": "Theme Management and Runtime Customization",
             "description": "Implement theme management system with dark mode support and runtime customization",
             "status": "pending",
             "dependencies": [],
             "details": "Create a comprehensive theme management system with CSS custom properties for dynamic theming. Implement dark mode support with automatic detection and manual toggle. Add runtime theme customization capabilities for branding and user preferences. Create theme switching animations and smooth transitions. Implement theme persistence in user preferences and localStorage. Add support for custom color schemes and accessibility themes. Create theme documentation and developer guidelines.",
             "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Core UI Component Development",
+            "description": "Build essential reusable UI components with variants following the NutriSensia design system specifications",
+            "status": "done",
+            "dependencies": [
+              1
+            ],
+            "details": "Develop core UI components including: Buttons (Primary 48dp, Secondary 48dp, Ghost 44dp, Destructive 48dp), Cards (Primary 12dp radius, Dashboard 16dp radius, Nutrition 12dp radius), Inputs (Standard 56dp, Search 44dp, Textarea 96dp min), Navigation (Sidebar 240dp, Tabs 48dp), and Icons (Primary 24dp, Small 20dp, Navigation 28dp, Feature 32dp). Implement component props for customization while maintaining design consistency. Ensure components follow a mobile-first approach and are responsive across all viewport sizes. Implement animation standards: Standard (200ms ease-out), Emphase (300ms cubic-bezier), Micro (150ms ease-in-out), Page (350ms cubic-bezier), and Loading (1200ms linear).",
+            "testStrategy": "Component unit tests with React Testing Library. Visual regression testing with Chromatic or similar tool. Test responsive behavior across different viewport sizes. Animation timing and performance testing. Test all component states and variants."
+          },
+          {
+            "id": 7,
+            "title": "Fix ESLint errors in Storybook documentation",
+            "description": "Resolve minor ESLint errors related to unescaped apostrophes in the Storybook documentation to enable final commit",
+            "status": "pending",
+            "dependencies": [
+              4
+            ],
+            "details": "Identify and fix all instances of unescaped apostrophes in Storybook documentation files. Run ESLint with --fix option where possible. Manually review and correct any remaining issues. Ensure all documentation strings properly escape special characters. Verify fixes with a full ESLint check before committing. Update any documentation guidelines to prevent similar issues in future component documentation.",
+            "testStrategy": "Run ESLint verification on all Storybook files. Verify successful build of Storybook after fixes. Ensure documentation renders correctly with apostrophes and special characters."
+          },
+          {
+            "id": 3,
+            "title": "Accessibility Implementation",
+            "description": "Ensure all components meet WCAG 2.1 AA compliance standards with NutriSensia-specific accessibility guidelines",
+            "status": "done",
+            "dependencies": [
+              2
+            ],
+            "details": "Implement proper ARIA attributes for all components. Ensure sufficient color contrast ratios (minimum 4.5:1 per WCAG AA). Add keyboard navigation support with logical tab order. Implement focus management with 2dp Primary Green focus indicators at 20% opacity. Ensure touch targets are minimum 44dp, with 48dp recommended. Test with screen readers. Create accessible form validation and error messaging. Implement language support with French as primary language.",
+            "testStrategy": "Accessibility testing with axe-core. Manual testing with screen readers. Keyboard navigation testing. Color contrast verification using automated tools. Touch target size verification on mobile devices. Test language support for French content."
           },
           {
             "id": 2,
@@ -1980,7 +1990,7 @@
     ],
     "metadata": {
       "created": "2025-08-17T13:10:23.768Z",
-      "updated": "2025-08-19T16:07:24.083Z",
+      "updated": "2025-08-19T16:21:50.877Z",
       "description": "Tasks for master context"
     }
   }
