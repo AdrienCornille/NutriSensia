@@ -64,10 +64,14 @@ export default function AccessibilityTest() {
   // Test de contraste des couleurs
   const ContrastTest = () => (
     <div className='space-y-32dp'>
-      <h2 className='text-h2 text-neutral-dark'>Test de Contraste WCAG AA</h2>
+      <h2 className='text-h2 text-neutral-dark accessibility-test-text'>
+        Test de Contraste WCAG AA
+      </h2>
 
       <div className='space-y-16dp'>
-        <h3 className='text-h3 text-neutral-dark'>Texte sur fond coloré</h3>
+        <h3 className='text-h3 text-neutral-dark accessibility-test-text'>
+          Texte sur fond coloré
+        </h3>
 
         {/* Test des couleurs primaires */}
         <div className='grid grid-cols-1 md:grid-cols-2 gap-16dp'>
@@ -102,7 +106,7 @@ export default function AccessibilityTest() {
             <p className='text-caption'>Contraste: 4.5:1 minimum requis</p>
           </div>
 
-          <div className='bg-neutral-light text-neutral-dark p-24dp rounded-8dp'>
+          <div className='bg-neutral-light text-neutral-dark p-24dp rounded-8dp accessibility-test-card'>
             <p className='text-body'>Texte gris foncé sur gris clair</p>
             <p className='text-caption'>Contraste: 4.5:1 minimum requis</p>
           </div>
@@ -114,16 +118,20 @@ export default function AccessibilityTest() {
   // Test des états de focus
   const FocusTest = () => (
     <div className='space-y-32dp'>
-      <h2 className='text-h2 text-neutral-dark'>Test des États de Focus</h2>
+      <h2 className='text-h2 text-neutral-dark accessibility-test-text'>
+        Test des États de Focus
+      </h2>
 
       <div className='space-y-16dp'>
-        <h3 className='text-h3 text-neutral-dark'>
+        <h3 className='text-h3 text-neutral-dark accessibility-test-text'>
           Focus visible sur tous les éléments interactifs
         </h3>
 
         {/* Test des boutons */}
         <div className='space-y-16dp'>
-          <h4 className='text-h4 text-neutral-dark'>Boutons</h4>
+          <h4 className='text-h4 text-neutral-dark accessibility-test-text'>
+            Boutons
+          </h4>
           <div className='flex flex-wrap gap-16dp'>
             <PrimaryButton>Bouton Primaire</PrimaryButton>
             <SecondaryButton>Bouton Secondaire</SecondaryButton>
@@ -134,7 +142,9 @@ export default function AccessibilityTest() {
 
         {/* Test des inputs */}
         <div className='space-y-16dp'>
-          <h4 className='text-h4 text-neutral-dark'>Champs de saisie</h4>
+          <h4 className='text-h4 text-neutral-dark accessibility-test-text'>
+            Champs de saisie
+          </h4>
           <div className='space-y-16dp max-w-md'>
             <StandardInput
               label='Champ standard'
@@ -154,7 +164,9 @@ export default function AccessibilityTest() {
 
         {/* Test des cartes cliquables */}
         <div className='space-y-16dp'>
-          <h4 className='text-h4 text-neutral-dark'>Cartes cliquables</h4>
+          <h4 className='text-h4 text-neutral-dark accessibility-test-text'>
+            Cartes cliquables
+          </h4>
           <div className='grid grid-cols-1 md:grid-cols-2 gap-16dp'>
             <Card
               clickable
@@ -162,9 +174,10 @@ export default function AccessibilityTest() {
               tabIndex={0}
               role='button'
               aria-label='Carte cliquable 1'
+              className='accessibility-test-card'
             >
               <CardContent>
-                <p className='text-body text-neutral-medium'>
+                <p className='text-body text-neutral-medium accessibility-test-subtitle'>
                   Carte cliquable avec focus visible
                 </p>
               </CardContent>
@@ -176,9 +189,10 @@ export default function AccessibilityTest() {
               tabIndex={0}
               role='button'
               aria-label='Carte cliquable 2'
+              className='accessibility-test-card'
             >
               <CardContent>
-                <p className='text-body text-neutral-medium'>
+                <p className='text-body text-neutral-medium accessibility-test-subtitle'>
                   Autre carte cliquable avec focus visible
                 </p>
               </CardContent>
@@ -192,16 +206,18 @@ export default function AccessibilityTest() {
   // Test de navigation clavier
   const KeyboardTest = () => (
     <div className='space-y-32dp'>
-      <h2 className='text-h2 text-neutral-dark'>Test de Navigation Clavier</h2>
+      <h2 className='text-h2 text-neutral-dark accessibility-test-text'>
+        Test de Navigation Clavier
+      </h2>
 
       <div className='space-y-16dp'>
-        <h3 className='text-h3 text-neutral-dark'>
+        <h3 className='text-h3 text-neutral-dark accessibility-test-text'>
           Ordre de tabulation logique
         </h3>
 
         {/* Instructions */}
-        <div className='bg-background-accent p-24dp rounded-8dp'>
-          <p className='text-body text-neutral-dark'>
+        <div className='bg-background-accent p-24dp rounded-8dp accessibility-test-accent'>
+          <p className='text-body text-neutral-dark accessibility-test-text'>
             <strong>Instructions :</strong> Utilisez la touche Tab pour naviguer
             entre les éléments. L&apos;ordre doit être logique et prévisible.
           </p>
@@ -209,7 +225,9 @@ export default function AccessibilityTest() {
 
         {/* Formulaire de test */}
         <div className='space-y-16dp max-w-md'>
-          <h4 className='text-h4 text-neutral-dark'>Formulaire de test</h4>
+          <h4 className='text-h4 text-neutral-dark accessibility-test-text'>
+            Formulaire de test
+          </h4>
 
           <StandardInput label='Prénom' placeholder='Votre prénom' />
 
@@ -231,7 +249,9 @@ export default function AccessibilityTest() {
 
         {/* Navigation par onglets */}
         <div className='space-y-16dp'>
-          <h4 className='text-h4 text-neutral-dark'>Navigation par onglets</h4>
+          <h4 className='text-h4 text-neutral-dark accessibility-test-text'>
+            Navigation par onglets
+          </h4>
 
           <Tabs
             tabs={[
@@ -242,8 +262,8 @@ export default function AccessibilityTest() {
             activeTab='tab1'
           />
 
-          <div className='p-16dp bg-background-primary rounded-8dp'>
-            <p className='text-body text-neutral-medium'>
+          <div className='p-16dp bg-background-primary rounded-8dp accessibility-test-card'>
+            <p className='text-body text-neutral-medium accessibility-test-subtitle'>
               Contenu de l&apos;onglet sélectionné
             </p>
           </div>
@@ -255,16 +275,20 @@ export default function AccessibilityTest() {
   // Test lecteur d'écran
   const ScreenReaderTest = () => (
     <div className='space-y-32dp'>
-      <h2 className='text-h2 text-neutral-dark'>Test Lecteur d&apos;Écran</h2>
+      <h2 className='text-h2 text-neutral-dark accessibility-test-text'>
+        Test Lecteur d&apos;Écran
+      </h2>
 
       <div className='space-y-16dp'>
-        <h3 className='text-h3 text-neutral-dark'>
+        <h3 className='text-h3 text-neutral-dark accessibility-test-text'>
           Attributs ARIA et labels appropriés
         </h3>
 
         {/* Test des boutons avec aria-label */}
         <div className='space-y-16dp'>
-          <h4 className='text-h4 text-neutral-dark'>Boutons avec aria-label</h4>
+          <h4 className='text-h4 text-neutral-dark accessibility-test-text'>
+            Boutons avec aria-label
+          </h4>
           <div className='flex flex-wrap gap-16dp'>
             <Button aria-label='Ajouter un nouveau patient'>
               <PlusIcon />
@@ -282,7 +306,7 @@ export default function AccessibilityTest() {
 
         {/* Test des inputs avec aria-describedby */}
         <div className='space-y-16dp'>
-          <h4 className='text-h4 text-neutral-dark'>
+          <h4 className='text-h4 text-neutral-dark accessibility-test-text'>
             Champs avec descriptions ARIA
           </h4>
           <div className='space-y-16dp max-w-md'>
@@ -294,7 +318,7 @@ export default function AccessibilityTest() {
               />
               <p
                 id='avs-help'
-                className='text-caption text-neutral-medium mt-4dp'
+                className='text-caption text-neutral-medium mt-4dp accessibility-test-subtitle'
               >
                 Format: XXX.XXXX.XXXX.XX
               </p>
@@ -315,7 +339,7 @@ export default function AccessibilityTest() {
               />
               <p
                 id='phone-help'
-                className='text-caption text-neutral-medium mt-4dp'
+                className='text-caption text-neutral-medium mt-4dp accessibility-test-subtitle'
               >
                 Format suisse: +41 XX XXX XX XX
               </p>
@@ -325,29 +349,45 @@ export default function AccessibilityTest() {
 
         {/* Test des cartes avec rôles ARIA */}
         <div className='space-y-16dp'>
-          <h4 className='text-h4 text-neutral-dark'>Cartes avec rôles ARIA</h4>
+          <h4 className='text-h4 text-neutral-dark accessibility-test-text'>
+            Cartes avec rôles ARIA
+          </h4>
           <div className='grid grid-cols-1 md:grid-cols-2 gap-16dp'>
-            <Card role='article' aria-labelledby='card-title-1'>
+            <Card
+              role='article'
+              aria-labelledby='card-title-1'
+              className='accessibility-test-card'
+            >
               <CardHeader>
-                <h5 id='card-title-1' className='text-h4 text-neutral-dark'>
+                <h5
+                  id='card-title-1'
+                  className='text-h4 text-neutral-dark accessibility-test-text'
+                >
                   Carte avec titre accessible
                 </h5>
               </CardHeader>
               <CardContent>
-                <p className='text-body text-neutral-medium'>
+                <p className='text-body text-neutral-medium accessibility-test-subtitle'>
                   Cette carte a un titre accessible via aria-labelledby.
                 </p>
               </CardContent>
             </Card>
 
-            <Card role='article' aria-labelledby='card-title-2'>
+            <Card
+              role='article'
+              aria-labelledby='card-title-2'
+              className='accessibility-test-card'
+            >
               <CardHeader>
-                <h5 id='card-title-2' className='text-h4 text-neutral-dark'>
+                <h5
+                  id='card-title-2'
+                  className='text-h4 text-neutral-dark accessibility-test-text'
+                >
                   Autre carte accessible
                 </h5>
               </CardHeader>
               <CardContent>
-                <p className='text-body text-neutral-medium'>
+                <p className='text-body text-neutral-medium accessibility-test-subtitle'>
                   Cette carte a également un titre accessible.
                 </p>
               </CardContent>
@@ -357,7 +397,7 @@ export default function AccessibilityTest() {
 
         {/* Test des messages d'état */}
         <div className='space-y-16dp'>
-          <h4 className='text-h4 text-neutral-dark'>
+          <h4 className='text-h4 text-neutral-dark accessibility-test-text'>
             Messages d&apos;état ARIA
           </h4>
           <div className='space-y-16dp max-w-md'>
@@ -391,16 +431,18 @@ export default function AccessibilityTest() {
   // Test des cibles tactiles
   const TouchTargetsTest = () => (
     <div className='space-y-32dp'>
-      <h2 className='text-h2 text-neutral-dark'>Test des Cibles Tactiles</h2>
+      <h2 className='text-h2 text-neutral-dark accessibility-test-text'>
+        Test des Cibles Tactiles
+      </h2>
 
       <div className='space-y-16dp'>
-        <h3 className='text-h3 text-neutral-dark'>
+        <h3 className='text-h3 text-neutral-dark accessibility-test-text'>
           Cibles tactiles minimum 44dp (recommandé 48dp)
         </h3>
 
         {/* Instructions */}
-        <div className='bg-background-accent p-24dp rounded-8dp'>
-          <p className='text-body text-neutral-dark'>
+        <div className='bg-background-accent p-24dp rounded-8dp accessibility-test-accent'>
+          <p className='text-body text-neutral-dark accessibility-test-text'>
             <strong>Instructions :</strong> Tous les éléments interactifs
             doivent avoir une zone tactile d&apos;au moins 44dp x 44dp pour être
             facilement utilisables sur mobile.
@@ -409,7 +451,7 @@ export default function AccessibilityTest() {
 
         {/* Test des boutons */}
         <div className='space-y-16dp'>
-          <h4 className='text-h4 text-neutral-dark'>
+          <h4 className='text-h4 text-neutral-dark accessibility-test-text'>
             Boutons (48dp de hauteur)
           </h4>
           <div className='flex flex-wrap gap-16dp'>
@@ -422,7 +464,7 @@ export default function AccessibilityTest() {
 
         {/* Test des inputs */}
         <div className='space-y-16dp'>
-          <h4 className='text-h4 text-neutral-dark'>
+          <h4 className='text-h4 text-neutral-dark accessibility-test-text'>
             Champs de saisie (56dp de hauteur)
           </h4>
           <div className='space-y-16dp max-w-md'>
@@ -439,7 +481,9 @@ export default function AccessibilityTest() {
 
         {/* Test des cartes cliquables */}
         <div className='space-y-16dp'>
-          <h4 className='text-h4 text-neutral-dark'>Cartes cliquables</h4>
+          <h4 className='text-h4 text-neutral-dark accessibility-test-text'>
+            Cartes cliquables
+          </h4>
           <div className='grid grid-cols-1 md:grid-cols-2 gap-16dp'>
             <Card
               clickable
@@ -447,10 +491,10 @@ export default function AccessibilityTest() {
               tabIndex={0}
               role='button'
               aria-label='Carte cliquable avec zone tactile suffisante'
-              className='min-h-96dp'
+              className='min-h-96dp accessibility-test-card'
             >
               <CardContent>
-                <p className='text-body text-neutral-medium'>
+                <p className='text-body text-neutral-medium accessibility-test-subtitle'>
                   Cette carte a une zone tactile suffisante pour être facilement
                   cliquable sur mobile.
                 </p>
@@ -463,10 +507,10 @@ export default function AccessibilityTest() {
               tabIndex={0}
               role='button'
               aria-label='Autre carte cliquable'
-              className='min-h-96dp'
+              className='min-h-96dp accessibility-test-card'
             >
               <CardContent>
-                <p className='text-body text-neutral-medium'>
+                <p className='text-body text-neutral-medium accessibility-test-subtitle'>
                   Autre carte avec zone tactile appropriée.
                 </p>
               </CardContent>
@@ -476,7 +520,9 @@ export default function AccessibilityTest() {
 
         {/* Test des éléments de navigation */}
         <div className='space-y-16dp'>
-          <h4 className='text-h4 text-neutral-dark'>Éléments de navigation</h4>
+          <h4 className='text-h4 text-neutral-dark accessibility-test-text'>
+            Éléments de navigation
+          </h4>
           <div className='flex'>
             <Sidebar
               items={sidebarItems}
@@ -484,7 +530,7 @@ export default function AccessibilityTest() {
               onItemClick={item => setActiveSidebarItem(item.id)}
             />
             <div className='flex-1 p-32dp'>
-              <p className='text-body text-neutral-medium'>
+              <p className='text-body text-neutral-medium accessibility-test-subtitle'>
                 La sidebar a des éléments de navigation avec des zones tactiles
                 appropriées.
               </p>
@@ -496,7 +542,7 @@ export default function AccessibilityTest() {
   );
 
   return (
-    <div className='min-h-screen bg-background-secondary'>
+    <div className='min-h-screen bg-background-secondary accessibility-test-background'>
       <div className='flex'>
         {/* Sidebar */}
         <Sidebar
@@ -510,10 +556,10 @@ export default function AccessibilityTest() {
           <div className='max-w-6xl mx-auto space-y-64dp'>
             {/* Titre */}
             <div className='text-center'>
-              <h1 className='text-h1 text-neutral-dark mb-16dp'>
+              <h1 className='text-h1 text-neutral-dark mb-16dp accessibility-test-text'>
                 Tests d&apos;Accessibilité - Design System NutriSensia
               </h1>
-              <p className='text-body-large text-neutral-medium'>
+              <p className='text-body-large text-neutral-medium accessibility-test-subtitle'>
                 Validation de la conformité WCAG 2.1 AA
               </p>
             </div>

@@ -47,7 +47,7 @@ Les champs de saisie permettent aux utilisateurs d'entrer des informations dans 
       options: ['standard', 'search', 'textarea'],
       description: 'Variante du champ',
     },
-    size: {
+    inputSize: {
       control: { type: 'select' },
       options: ['sm', 'md', 'lg'],
       description: 'Taille du champ',
@@ -93,7 +93,7 @@ export const Default: Story = {
     label: 'Nom complet',
     placeholder: 'Entrez votre nom complet',
     variant: 'standard',
-    size: 'md',
+    inputSize: 'md',
   },
 };
 
@@ -150,21 +150,29 @@ export const AllSizes: Story = {
         <h3 className='text-h4 text-neutral-dark mb-16dp'>
           Taille Small (48dp)
         </h3>
-        <StandardInput label='Nom' placeholder='Votre nom' size='sm' />
+        <StandardInput label='Nom' placeholder='Votre nom' inputSize='sm' />
       </div>
 
       <div>
         <h3 className='text-h4 text-neutral-dark mb-16dp'>
           Taille Medium (56dp)
         </h3>
-        <StandardInput label='Prénom' placeholder='Votre prénom' size='md' />
+        <StandardInput
+          label='Prénom'
+          placeholder='Votre prénom'
+          inputSize='md'
+        />
       </div>
 
       <div>
         <h3 className='text-h4 text-neutral-dark mb-16dp'>
           Taille Large (64dp)
         </h3>
-        <StandardInput label='Email' placeholder='votre@email.com' size='lg' />
+        <StandardInput
+          label='Email'
+          placeholder='votre@email.com'
+          inputSize='lg'
+        />
       </div>
     </div>
   ),

@@ -1,6 +1,6 @@
 # Task ID: 2
 # Title: Design System Implementation
-# Status: pending
+# Status: done
 # Dependencies: 1
 # Priority: high
 # Description: Create a comprehensive design system using Tailwind CSS based on the specified color palette, typography, and spacing guidelines to ensure consistent UI across the platform for NutriSensia.
@@ -17,83 +17,29 @@ Visual regression testing with Chromatic or similar tool. Accessibility testing 
 ### Details:
 Configure tailwind.config.js to include NutriSensia's color palette: Primary (#2E7D5E, #FAFBFC, #1B4F3F), Secondary (#4A9B7B, #E8F3EF, #B8D4C7), Accent (#00A693, #7FD1C1, #F4A261), Functional (#22C55E, #EF4444, #F59E0B, #3B82F6), Neutral (#F8F9FA, #9CA3AF, #374151, #E5E7EB), Background (#FFFFFF, #F8FAFB, #F0F7F4). Set up typography with Inter for web, SF Pro for iOS, and Roboto for Android with weights 400, 500, 600, 700. Implement a comprehensive spacing scale (2dp, 4dp, 8dp, 12dp, 16dp, 24dp, 32dp, 48dp, 64dp). Configure CSS variables for theme values to enable runtime customization and dark mode support.
 
-### ✅ Réalisé le 2024-12-19:
-- ✅ Configuration complète de tailwind.config.ts avec palette de couleurs NutriSensia
-- ✅ Typographie personnalisée avec Inter, SF Pro, Roboto et tous les poids
-- ✅ Système d'espacement NutriSensia (2dp-64dp)
-- ✅ Animations et transitions standardisées
-- ✅ Accessibilité WCAG AA avec focus states et cibles tactiles
-- ✅ Mode sombre avec variables CSS
-- ✅ Support français et style professionnel suisse
-- ✅ Documentation complète (docs/tailwind-usage.md)
-- ✅ Composant de test et page de validation (/design-system)
-- ✅ Fichiers créés: tailwind.config.ts, DesignSystemTest.tsx, page.tsx, documentation
-
-## 2. Core UI Component Development [done]
+## 4. Core UI Component Development [done]
 ### Dependencies: 2.1
 ### Description: Build essential reusable UI components with variants following the NutriSensia design system specifications
 ### Details:
 Develop core UI components including: Buttons (Primary 48dp, Secondary 48dp, Ghost 44dp, Destructive 48dp), Cards (Primary 12dp radius, Dashboard 16dp radius, Nutrition 12dp radius), Inputs (Standard 56dp, Search 44dp, Textarea 96dp min), Navigation (Sidebar 240dp, Tabs 48dp), and Icons (Primary 24dp, Small 20dp, Navigation 28dp, Feature 32dp). Implement component props for customization while maintaining design consistency. Ensure components follow a mobile-first approach and are responsive across all viewport sizes. Implement animation standards: Standard (200ms ease-out), Emphase (300ms cubic-bezier), Micro (150ms ease-in-out), Page (350ms cubic-bezier), and Loading (1200ms linear).
 
-### ✅ Réalisé le 2024-12-19:
-- ✅ **Composant Button** - 4 variantes complètes (Primary, Secondary, Ghost, Destructive)
-  - Tailles: sm (44dp), md (48dp), lg (56dp)
-  - États: loading, disabled, avec icônes, plein largeur
-  - Spinner de chargement intégré
-  - Support des icônes gauche/droite
+## 5. Fix ESLint errors in Storybook documentation [done]
+### Dependencies: 2.4
+### Description: Resolve minor ESLint errors related to unescaped apostrophes in the Storybook documentation to enable final commit
+### Details:
+Identify and fix all instances of unescaped apostrophes in Storybook documentation files. Run ESLint with --fix option where possible. Manually review and correct any remaining issues. Ensure all documentation strings properly escape special characters. Verify fixes with a full ESLint check before committing. Update any documentation guidelines to prevent similar issues in future component documentation.
 
-- ✅ **Composant Card** - 3 variantes complètes (Primary, Dashboard, Nutrition)
-  - Composants: CardHeader, CardContent, CardFooter
-  - États: loading (skeleton), clickable, hover
-  - Ombres personnalisées et effets de survol
+## 7. Core UI Component Development [done]
+### Dependencies: 2.1
+### Description: Build essential reusable UI components with variants following the NutriSensia design system specifications
+### Details:
+Develop core UI components including: Buttons (Primary 48dp, Secondary 48dp, Ghost 44dp, Destructive 48dp), Cards (Primary 12dp radius, Dashboard 16dp radius, Nutrition 12dp radius), Inputs (Standard 56dp, Search 44dp, Textarea 96dp min), Navigation (Sidebar 240dp, Tabs 48dp), and Icons (Primary 24dp, Small 20dp, Navigation 28dp, Feature 32dp). Implement component props for customization while maintaining design consistency. Ensure components follow a mobile-first approach and are responsive across all viewport sizes. Implement animation standards: Standard (200ms ease-out), Emphase (300ms cubic-bezier), Micro (150ms ease-in-out), Page (350ms cubic-bezier), and Loading (1200ms linear).
 
-- ✅ **Composant Input** - 3 variantes complètes (Standard, Search, Textarea)
-  - Support: labels, helperText, error, icônes, loading
-  - Validation et états d'erreur
-  - Tailles: sm, md, lg
-  - Textarea avec redimensionnement
-
-- ✅ **Composant Navigation** - Sidebar et Tabs complets
-  - Sidebar: mode compact, sous-éléments, tooltips
-  - Tabs: orientation horizontale/verticale, tailles
-  - TabPanel pour contenu des onglets
-
-- ✅ **Système d'utilitaires** - Fonction cn() et fonctions suisses
-  - clsx + tailwind-merge pour combinaison optimale des classes
-  - Fonctions: formatDate, formatPhone, isValidAVS, etc.
-  - Support des standards suisses
-
-- ✅ **Composants de test** - Validation complète
-  - UIComponentsTest.tsx avec toutes les variantes
-  - Page de test: /ui-components
-  - Icônes SVG intégrées pour les tests
-
-- ✅ **Documentation complète** - Guide d'utilisation
-  - docs/ui-components-guide.md (500+ lignes)
-  - Exemples d'utilisation pour chaque composant
-  - Bonnes pratiques et guidelines
-
-- ✅ **Accessibilité WCAG AA** - Conformité complète
-  - Contraste minimum 4.5:1
-  - Focus states avec Primary Green
-  - Cibles tactiles minimum 44dp
-  - Attributs ARIA appropriés
-
-- ✅ **Design responsive** - Mobile-first
-  - Breakpoints: sm, md, lg, xl
-  - Espacement adaptatif
-  - Navigation optimisée mobile
-
-- ✅ **Fichiers créés:**
-  - src/components/ui/Button.tsx
-  - src/components/ui/Card.tsx
-  - src/components/ui/Input.tsx
-  - src/components/ui/Navigation.tsx
-  - src/components/ui/UIComponentsTest.tsx
-  - src/components/ui/index.ts
-  - src/lib/utils.ts
-  - src/app/ui-components/page.tsx
-  - docs/ui-components-guide.md
+## 6. Core UI Component Development [done]
+### Dependencies: 2.1
+### Description: Build essential reusable UI components with variants following the NutriSensia design system specifications
+### Details:
+Develop core UI components including: Buttons (Primary 48dp, Secondary 48dp, Ghost 44dp, Destructive 48dp), Cards (Primary 12dp radius, Dashboard 16dp radius, Nutrition 12dp radius), Inputs (Standard 56dp, Search 44dp, Textarea 96dp min), Navigation (Sidebar 240dp, Tabs 48dp), and Icons (Primary 24dp, Small 20dp, Navigation 28dp, Feature 32dp). Implement component props for customization while maintaining design consistency. Ensure components follow a mobile-first approach and are responsive across all viewport sizes. Implement animation standards: Standard (200ms ease-out), Emphase (300ms cubic-bezier), Micro (150ms ease-in-out), Page (350ms cubic-bezier), and Loading (1200ms linear).
 
 ## 3. Accessibility Implementation [done]
 ### Dependencies: 2.2
@@ -101,214 +47,15 @@ Develop core UI components including: Buttons (Primary 48dp, Secondary 48dp, Gho
 ### Details:
 Implement proper ARIA attributes for all components. Ensure sufficient color contrast ratios (minimum 4.5:1 per WCAG AA). Add keyboard navigation support with logical tab order. Implement focus management with 2dp Primary Green focus indicators at 20% opacity. Ensure touch targets are minimum 44dp, with 48dp recommended. Test with screen readers. Create accessible form validation and error messaging. Implement language support with French as primary language.
 
-### ✅ Réalisé le 2024-12-19:
-- ✅ **Composant AccessibilityTest** - Tests visuels complets d'accessibilité
-  - Tests de contraste WCAG AA (4.5:1 minimum)
-  - Tests des états de focus visibles
-  - Tests de navigation clavier
-  - Tests lecteur d'écran avec ARIA
-  - Tests des cibles tactiles (48dp minimum)
-
-- ✅ **Composant AccessibilityAudit** - Audit automatisé avec axe-core
-  - Tests WCAG 2.1 AA automatisés
-  - Détection des violations d'accessibilité
-  - Rapport détaillé avec impact et solutions
-  - Tests de contraste, structure, navigation
-
-- ✅ **Composant AccessibilityPanel** - Préférences utilisateur
-  - Taille de police (Small, Medium, Large)
-  - Espacement des lignes (Tight, Normal, Loose)
-  - Thème (Light, Dark, Auto)
-  - Animations (On/Off)
-  - Indicateur de focus (On/Off)
-
-- ✅ **Hooks personnalisés** - Gestion de l'accessibilité
-  - useAccessibility() - Détection des préférences système
-  - useKeyboardNavigation() - Gestion du focus et navigation
-  - useScreenReaderAnnouncements() - Annonces aux lecteurs d'écran
-  - useAccessibilityPreferences() - Préférences utilisateur
-
-- ✅ **Classes CSS d'accessibilité** - Support complet
-  - .sr-only - Masquage visuel avec accessibilité
-  - .focus-visible - Focus visible personnalisé
-  - .touch-target - Cibles tactiles minimales
-  - Support des préférences système (mouvement réduit, contraste)
-
-- ✅ **Pages de test** - Validation complète
-  - /accessibility - Tests visuels d'accessibilité
-  - /accessibility-audit - Audit automatisé
-
-- ✅ **Documentation complète** - Guide d'accessibilité
-  - docs/accessibility-guide.md (800+ lignes)
-  - Conformité WCAG 2.1 AA détaillée
-  - Checklist d'accessibilité
-  - Ressources et outils de test
-
-- ✅ **Conformité WCAG 2.1 AA** - Standards respectés
-  - Contraste minimum 4.5:1 pour tous les textes
-  - Navigation clavier complète et logique
-  - Focus visible sur tous les éléments interactifs
-  - Attributs ARIA appropriés
-  - Cibles tactiles 48dp minimum
-  - Support des lecteurs d'écran
-
-- ✅ **Tests automatisés** - Validation continue
-  - axe-core pour tests WCAG 2.1 AA
-  - Détection automatique des violations
-  - Rapports détaillés avec solutions
-  - Intégration dans le workflow de développement
-
-- ✅ **Support des préférences système** - Accessibilité native
-  - Mouvement réduit (prefers-reduced-motion)
-  - Contraste élevé (prefers-contrast: high)
-  - Mode sombre (prefers-color-scheme: dark)
-  - Zoom et agrandissement
-
-- ✅ **Fichiers créés:**
-  - src/components/ui/AccessibilityTest.tsx
-  - src/components/ui/AccessibilityAudit.tsx
-  - src/components/ui/AccessibilityPanel.tsx
-  - src/hooks/useAccessibility.ts
-  - src/app/accessibility/page.tsx
-  - src/app/accessibility-audit/page.tsx
-  - docs/accessibility-guide.md
-  - Classes CSS dans globals.css
-
-## 4. Component Documentation System [done]
-### Dependencies: 2.2, 2.3
-### Description: Create a Storybook or similar documentation system for the NutriSensia design system components
+## 2. Core UI Component Development [done]
+### Dependencies: 2.1
+### Description: Build essential reusable UI components with variants following the NutriSensia design system specifications
 ### Details:
-Set up Storybook or a similar documentation system. Create stories for each component showcasing all variants and states. Document component props, usage guidelines, and accessibility considerations. Include code examples and live demos. Implement theme switching in the documentation to demonstrate dark mode. Document all feature states (MVP): Authentication flows, Dashboard states (empty, loading, populated), Patient Management interfaces, Consultation views, Meal Planning interfaces, Billing screens, Messaging components, Error states, and Mobile-specific components. Include Swiss-specific design considerations for professional styling, security indicators, and tone guidelines.
+Develop core UI components including: Buttons (Primary 48dp, Secondary 48dp, Ghost 44dp, Destructive 48dp), Cards (Primary 12dp radius, Dashboard 16dp radius, Nutrition 12dp radius), Inputs (Standard 56dp, Search 44dp, Textarea 96dp min), Navigation (Sidebar 240dp, Tabs 48dp), and Icons (Primary 24dp, Small 20dp, Navigation 28dp, Feature 32dp). Implement component props for customization while maintaining design consistency. Ensure components follow a mobile-first approach and are responsive across all viewport sizes. Implement animation standards: Standard (200ms ease-out), Emphase (300ms cubic-bezier), Micro (150ms ease-in-out), Page (350ms cubic-bezier), and Loading (1200ms linear).
 
-### ✅ Réalisé le 2024-12-19:
-- ✅ **Configuration Storybook complète** - Installation et configuration
-  - Storybook v9.1.2 avec Next.js et Vite
-  - Addons: @storybook/addon-a11y (tests d'accessibilité)
-  - Addons: @storybook/addon-vitest (tests automatisés)
-  - Configuration personnalisée dans .storybook/main.ts
-  - Preview configuration avec thèmes et viewports
-
-- ✅ **Décorateurs globaux** - Thèmes et contextes
-  - withNutriSensiaTheme - Support thème clair/sombre
-  - withPadding, withCentered - Layout des stories
-  - withNavigationContext, withFormContext, withCardContext
-  - Configuration des design tokens pour light/dark
-
-- ✅ **Stories complètes pour tous les composants** - Documentation interactive
-  - Button.stories.tsx (7 stories) - Toutes variantes, tailles, états
-  - Card.stories.tsx (6 stories) - Structure complète, états, contenu riche
-  - Input.stories.tsx (7 stories) - Validation, icônes, accessibilité
-  - Navigation.stories.tsx (6 stories) - Sidebar, Tabs, états
-  - Accessibility.stories.tsx (7 stories) - Tests visuels et audit
-
-- ✅ **Configuration avancée** - Fonctionnalités complètes
-  - Support des thèmes avec design tokens
-  - Viewports responsive (mobile, tablet, desktop)
-  - Tests d'accessibilité WCAG 2.1 AA intégrés
-  - Contrôles interactifs (argTypes)
-  - Documentation détaillée pour chaque composant
-
-- ✅ **Tests d'accessibilité intégrés** - Conformité WCAG 2.1 AA
-  - Configuration addon a11y avec règles spécifiques
-  - Tests de contraste, focus, navigation clavier
-  - Stories dédiées aux tests d'accessibilité
-  - Documentation des bonnes pratiques
-
-- ✅ **Documentation complète** - Guide complet
-  - docs/component-documentation-system.md (800+ lignes)
-  - Architecture et utilisation de Storybook
-  - Guide des décorateurs et configuration
-  - Instructions de maintenance et développement
-
-- ✅ **Fichiers créés:**
-  - .storybook/main.ts, preview.ts, preview-head.html
-  - .storybook/decorators.tsx
-  - src/components/ui/*.stories.tsx (5 fichiers)
-  - docs/component-documentation-system.md
-  - Configuration Vitest pour tests dans Storybook
-
-## 5. Responsive Layout System [done]
-### Dependencies: 2.1, 2.2
-### Description: Implement responsive layout components and utilities for consistent page structures across the NutriSensia platform
-### Details:
-Create responsive container components. Implement grid and flexbox-based layout utilities. Develop responsive navigation components including Sidebar (240dp) and Tabs (48dp). Create responsive spacing utilities based on the NutriSensia spacing scale (2dp-64dp). Implement responsive typography with appropriate scaling for headings (H1-H4) and body text (Large, Standard, Small). Build responsive table solutions for data-heavy interfaces like patient lists and meal plans. Ensure layouts support all feature states defined in the MVP: Authentication, Dashboard, Patient Management, Consultations, Meal Planning, Billing, Messaging, and Error States.
-
-### ✅ Réalisé le 2024-12-19:
-- ✅ **Composants de conteneurs responsives** - Container avec variantes
-  - Container: default, narrow, wide avec tailles sm/md/lg/xl/full
-  - Padding responsive: none, sm, md, lg, xl
-  - Centrage automatique et largeurs maximales
-
-- ✅ **Système de grille et flexbox** - Grid et Flex complets
-  - Grid: colonnes responsives (1-12) avec breakpoints
-  - GridItem: span responsif avec contrôle précis
-  - Flex: direction, align, justify, wrap responsifs
-  - FlexItem: grow, shrink, basis, order
-
-- ✅ **Navigation responsive** - Sidebar et navigation mobile
-  - ResponsiveSidebar: default, compact, overlay (240dp)
-  - ResponsiveTabs: horizontal/vertical avec variantes
-  - MobileNavigation: bottom, top, drawer (72dp)
-  - Support overlay et transitions fluides
-
-- ✅ **Utilitaires d'espacement responsive** - Spacing adaptatif
-  - Spacing: padding responsive avec directions
-  - Margin: marges responsives avec breakpoints
-  - Stack: empilement vertical/horizontal avec espacement
-  - Système NutriSensia (xs-3xl) avec adaptation mobile
-
-- ✅ **Typographie responsive** - Textes adaptatifs
-  - ResponsiveHeading: H1-H4 avec tailles responsives
-  - ResponsiveText: body, caption, button, link, label
-  - ResponsiveList: ul/ol avec espacement adaptatif
-  - Support des poids et couleurs du design system
-
-- ✅ **Tableaux responsives** - Stratégies d'adaptation
-  - ResponsiveTable: scroll, stack, cards
-  - ResponsiveTableHead/Body/Row/Cell
-  - ResponsiveTableCard pour transformation mobile
-  - Labels intégrés pour accessibilité
-
-- ✅ **Composant de test complet** - Validation exhaustive
-  - ResponsiveLayoutTest.tsx avec tous les composants
-  - Page de test: /responsive-layout
-  - Tests par onglets: containers, grid, navigation, spacing, typography, tables
-  - Données de test réalistes (patients, consultations)
-
-- ✅ **Documentation complète** - Guide d'utilisation
-  - docs/responsive-layout-system.md (800+ lignes)
-  - Exemples d'utilisation pour chaque composant
-  - Stratégies d'adaptation mobile
-  - Bonnes pratiques et guidelines
-
-- ✅ **Approche Mobile First** - Optimisation mobile
-  - Breakpoints: sm (640px), md (768px), lg (1024px), xl (1280px)
-  - Styles de base pour mobile
-  - Media queries progressives
-  - Performance optimisée
-
-- ✅ **Accessibilité intégrée** - Conformité WCAG 2.1 AA
-  - Navigation clavier complète
-  - Focus states visibles
-  - Labels ARIA appropriés
-  - Cibles tactiles minimum 44dp
-
-- ✅ **Fichiers créés:**
-  - src/components/layout/Container.tsx
-  - src/components/layout/Grid.tsx
-  - src/components/layout/Flex.tsx
-  - src/components/layout/ResponsiveNavigation.tsx
-  - src/components/layout/Spacing.tsx
-  - src/components/layout/ResponsiveTypography.tsx
-  - src/components/layout/ResponsiveTable.tsx
-  - src/components/layout/ResponsiveLayoutTest.tsx
-  - src/components/layout/index.ts
-  - src/app/responsive-layout/page.tsx
-  - docs/responsive-layout-system.md
-
-## 6. Theme Management and Runtime Customization [pending]
+## 8. Theme Management System Implementation [pending]
 ### Dependencies: None
-### Description: Implement theme management system with dark mode support and runtime customization
+### Description: Système complet de gestion des thèmes avec mode sombre, personnalisation en temps réel et accessibilité WCAG 2.1 AA
 ### Details:
-Create a comprehensive theme management system with CSS custom properties for dynamic theming. Implement dark mode support with automatic detection and manual toggle. Add runtime theme customization capabilities for branding and user preferences. Create theme switching animations and smooth transitions. Implement theme persistence in user preferences and localStorage. Add support for custom color schemes and accessibility themes. Create theme documentation and developer guidelines.
+Implémentation complète du système de gestion des thèmes NutriSensia avec hook useTheme, contexte React ThemeContext, composants ThemeSelector (3 variantes), page de test /theme-management, documentation complète, support des préférences d'accessibilité, couleurs personnalisées, et intégration complète dans l'application.
 

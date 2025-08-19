@@ -249,4 +249,5 @@ export function MobileNavigation({
   );
 }
 
-export default ResponsiveNavigation;
+// Export par défaut supprimé car ResponsiveNavigation n'est pas défini
+// Les composants individuels sont exportés nommément

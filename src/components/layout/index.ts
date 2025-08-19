@@ -10,7 +10,6 @@ export { default as Flex, FlexItem } from './Flex';
 export type { FlexProps, FlexItemProps } from './Flex';
 
 // Composants de navigation responsive
-export { default as ResponsiveNavigation } from './ResponsiveNavigation';
 export {
   ResponsiveSidebar,
   ResponsiveTabs,
@@ -25,12 +24,10 @@ export type {
 } from './ResponsiveNavigation';
 
 // Composants d'espacement responsive
-export { default as Spacing } from './Spacing';
-export { Spacing, Margin, Stack } from './Spacing';
+export { default as Spacing, Margin, Stack } from './Spacing';
 export type { SpacingProps, MarginProps, StackProps } from './Spacing';
 
 // Composants de typographie responsive
-export { default as ResponsiveTypography } from './ResponsiveTypography';
 export {
   ResponsiveHeading,
   ResponsiveText,
@@ -43,9 +40,8 @@ export type {
 } from './ResponsiveTypography';
 
 // Composants de tableaux responsives
-export { default as ResponsiveTable } from './ResponsiveTable';
 export {
-  ResponsiveTable,
+  default as ResponsiveTable,
   ResponsiveTableHead,
   ResponsiveTableBody,
   ResponsiveTableRow,

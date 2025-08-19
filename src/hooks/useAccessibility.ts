@@ -125,7 +125,13 @@ export function useKeyboardNavigation() {
  * Hook pour gérer les annonces aux lecteurs d'écran
  */
 export function useScreenReaderAnnouncements() {
-  const [announcements, setAnnouncements] = useState<string[]>([]);
+  const [announcements, setAnnouncements] = useState<
+    Array<{
+      id: number;
+      message: string;
+      priority: 'polite' | 'assertive';
+    }>
+  >([]);
 
   const announce = (
     message: string,

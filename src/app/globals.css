@@ -6,11 +6,91 @@
 @layer base {
   html {
     font-family: 'Inter', system-ui, sans-serif;
+    /* Transition fluide pour les changements de thème */
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
   }
 
   body {
     background-color: #fafbfc;
     color: #1f2937;
+    /* Transition fluide pour les changements de thème */
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
+  }
+
+  /* Mode sombre */
+  .dark {
+    background-color: #1f2937;
+    color: #f9fafb;
+  }
+
+  /* Classes spécifiques pour le mode sombre */
+  .dark .text-neutral-dark {
+    color: #f9fafb; /* Blanc en mode sombre */
+  }
+
+  .dark .text-neutral-medium {
+    color: #d1d5db; /* Gris clair en mode sombre */
+  }
+
+  .dark .text-neutral-light {
+    color: #9ca3af; /* Gris moyen en mode sombre */
+  }
+
+  .dark .bg-neutral-light {
+    background-color: #374151; /* Gris foncé en mode sombre */
+  }
+
+  .dark .bg-neutral-medium {
+    background-color: #4b5563; /* Gris moyen en mode sombre */
+  }
+
+  .dark .bg-neutral-dark {
+    background-color: #1f2937; /* Très foncé en mode sombre */
+  }
+
+  .dark .border-neutral-border {
+    border-color: #4b5563; /* Gris foncé en mode sombre */
+  }
+
+  /* Préférences d'accessibilité */
+  .high-contrast {
+    --color-primary: #000000;
+    --color-primary-white: #ffffff;
+    --color-primary-dark: #000000;
+    --color-neutral-light: #ffffff;
+    --color-neutral-dark: #000000;
+    --color-neutral-border: #000000;
+  }
+
+  .reduced-motion *,
+  .reduced-motion *::before,
+  .reduced-motion *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .large-text {
+    font-size: 1.2em;
+    line-height: 1.6;
+  }
+
+  .large-text h1 {
+    font-size: 2.4em;
+  }
+  .large-text h2 {
+    font-size: 2.1em;
+  }
+  .large-text h3 {
+    font-size: 1.8em;
+  }
+  .large-text h4 {
+    font-size: 1.5em;
   }
 }
 
@@ -26,6 +106,63 @@
 
   .card {
     @apply bg-white rounded-lg shadow-md p-6 border border-gray-100;
+  }
+
+  /* Transitions de thème pour tous les éléments */
+  .theme-transition {
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease,
+      border-color 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+
+  /* Animation d'entrée pour les menus déroulants */
+  .animate-in {
+    animation: fadeIn 0.2s ease-out;
+  }
+
+  .fade-in-0 {
+    opacity: 0;
+    animation-fill-mode: forwards;
+  }
+
+  .zoom-in-95 {
+    transform: scale(0.95);
+    animation-fill-mode: forwards;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* Classes spécifiques pour les tests d'accessibilité en mode sombre */
+  .dark .accessibility-test-card {
+    background-color: #374151;
+    border-color: #4b5563;
+  }
+
+  .dark .accessibility-test-text {
+    color: #f9fafb;
+  }
+
+  .dark .accessibility-test-subtitle {
+    color: #d1d5db;
+  }
+
+  .dark .accessibility-test-background {
+    background-color: #1f2937;
+  }
+
+  .dark .accessibility-test-accent {
+    background-color: #374151;
   }
 }
 
@@ -98,6 +235,28 @@
   @media screen and (min-width: 321px) and (max-width: 480px) {
     html {
       font-size: 16px;
+    }
+  }
+
+  /* Variables CSS pour les couleurs personnalisées */
+  .custom-colors {
+    --color-primary: var(--custom-primary, #2e7d5e);
+    --color-secondary: var(--custom-secondary, #4a9b7b);
+    --color-accent-teal: var(--custom-accent, #00a693);
+  }
+
+  /* Support des préférences système */
+  @media (prefers-color-scheme: dark) {
+    .auto-theme {
+      background-color: #1f2937;
+      color: #f9fafb;
+    }
+  }
+
+  @media (prefers-color-scheme: light) {
+    .auto-theme {
+      background-color: #fafbfc;
+      color: #1f2937;
     }
   }
 }

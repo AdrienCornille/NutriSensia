@@ -183,34 +183,46 @@ export interface Database {
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error(
-    "Variables d'environnement Supabase manquantes. Vérifiez votre fichier .env.local"
-  );
-}
+// Vérifier si les clés sont des placeholders ou manquantes
+const isValidSupabaseConfig =
+  supabaseUrl &&
+  supabaseAnonKey &&
+  supabaseUrl !== 'your_supabase_project_url' &&
+  supabaseAnonKey !== 'your_supabase_anon_key';
 
 // Création du client Supabase avec types TypeScript
-export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    // Configuration pour la conformité GDPR
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: true,
-  },
-  db: {
-    schema: 'public',
-  },
-  global: {
-    headers: {
-      'X-Client-Info': 'nutrisensia-web',
+// Utiliser des valeurs par défaut si la configuration n'est pas valide (pour le développement)
+export const supabase = createClient<Database>(
+  isValidSupabaseConfig ? supabaseUrl! : 'https://placeholder.supabase.co',
+  isValidSupabaseConfig ? supabaseAnonKey! : 'placeholder-key',
+  {
+    auth: {
+      // Configuration pour la conformité GDPR
+      autoRefreshToken: isValidSupabaseConfig,
+      persistSession: isValidSupabaseConfig,
+      detectSessionInUrl: isValidSupabaseConfig,
     },
-  },
-});
+    db: {
+      schema: 'public',
+    },
+    global: {
+      headers: {
+        'X-Client-Info': 'nutrisensia-web',
+      },
+    },
+  }
+);
+
+// Flag pour indiquer si Supabase est configuré correctement
+export const isSupabaseConfigured = isValidSupabaseConfig;
 
 // Fonctions utilitaires pour l'authentification
 export const auth = {
   // Connexion avec email/mot de passe
   signIn: async (email: string, password: string) => {
+    if (!isSupabaseConfigured) {
+      return { data: null, error: { message: 'Supabase not configured' } };
+    }
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -224,6 +236,9 @@ export const auth = {
     password: string,
     metadata?: { name: string }
   ) => {
+    if (!isSupabaseConfigured) {
+      return { data: null, error: { message: 'Supabase not configured' } };
+    }
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -236,12 +251,21 @@ export const auth = {
 
   // Déconnexion
   signOut: async () => {
+    if (!isSupabaseConfigured) {
+      return { error: { message: 'Supabase not configured' } };
+    }
     const { error } = await supabase.auth.signOut();
     return { error };
   },
 
   // Récupération de l'utilisateur actuel
   getUser: async () => {
+    if (!isSupabaseConfigured) {
+      return {
+        data: { user: null },
+        error: { message: 'Supabase not configured' },
+      };
+    }
     const {
       data: { user },
       error,

@@ -58,7 +58,29 @@ export default function AccessibilityAudit() {
         },
       });
 
-      setResults(auditResults.violations);
+      // Convertir les résultats d'axe-core vers notre format
+      const convertedResults: AuditResult[] = auditResults.violations.map(
+        violation => ({
+          id: violation.id,
+          impact:
+            (violation.impact as
+              | 'minor'
+              | 'moderate'
+              | 'serious'
+              | 'critical') || 'moderate',
+          description: violation.description,
+          help: violation.help,
+          helpUrl: violation.helpUrl,
+          tags: violation.tags,
+          nodes: violation.nodes.map(node => ({
+            html: node.html,
+            target: node.target as any as string[],
+            failureSummary: node.failureSummary,
+          })),
+        })
+      );
+
+      setResults(convertedResults);
       setSummary({
         violations: auditResults.violations.length,
         passes: auditResults.passes.length,

@@ -328,4 +328,5 @@ export function ResponsiveList({
   );
 }
 
-export default ResponsiveTypography;
+// Export par défaut supprimé car ResponsiveTypography n'est pas défini
+// Les composants individuels sont exportés nommément

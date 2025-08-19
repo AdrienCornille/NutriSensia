@@ -6,6 +6,7 @@ const config: Config = {
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  darkMode: 'class', // Configuration pour détecter le mode sombre via la classe CSS
   theme: {
     extend: {
       // Palette de couleurs NutriSensia
@@ -224,16 +225,37 @@ const config: Config = {
           '--color-background-secondary': theme('colors.background.secondary'),
           '--color-background-accent': theme('colors.background.accent'),
         },
-        // Mode sombre
+        // Mode sombre - Couleurs corrigées pour une meilleure visibilité
         '.dark': {
+          // Couleurs primaires adaptées au mode sombre
           '--color-primary': '#4A9B7B',
           '--color-primary-white': '#1B4F3F',
           '--color-primary-dark': '#2E7D5E',
+
+          // Couleurs secondaires adaptées au mode sombre
+          '--color-secondary': '#7FD1C1',
+          '--color-secondary-pale': '#1F2937',
+          '--color-secondary-sage': '#374151',
+
+          // Couleurs d'accent (conservées pour la cohérence)
+          '--color-accent-teal': '#00A693',
+          '--color-accent-mint': '#7FD1C1',
+          '--color-accent-orange': '#F4A261',
+
+          // Couleurs fonctionnelles (conservées pour la cohérence)
+          '--color-functional-success': '#22C55E',
+          '--color-functional-error': '#EF4444',
+          '--color-functional-warning': '#F59E0B',
+          '--color-functional-info': '#3B82F6',
+
+          // Couleurs d'arrière-plan adaptées au mode sombre
           '--color-background-primary': '#1F2937',
           '--color-background-secondary': '#111827',
           '--color-background-accent': '#374151',
+
+          // Couleurs neutres adaptées au mode sombre pour une meilleure visibilité
           '--color-neutral-light': '#374151',
-          '--color-neutral-medium': '#6B7280',
+          '--color-neutral-medium': '#9CA3AF',
           '--color-neutral-dark': '#F9FAFB',
           '--color-neutral-border': '#4B5563',
         },

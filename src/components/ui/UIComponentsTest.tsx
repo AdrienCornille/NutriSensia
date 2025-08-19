@@ -294,9 +294,9 @@ export default function UIComponentsTest() {
                       Tailles
                     </h3>
                     <div className='space-y-16dp max-w-md'>
-                      <Input size='sm' placeholder='Petit champ' />
-                      <Input size='md' placeholder='Champ moyen' />
-                      <Input size='lg' placeholder='Grand champ' />
+                      <Input inputSize='sm' placeholder='Petit champ' />
+                      <Input inputSize='md' placeholder='Champ moyen' />
+                      <Input inputSize='lg' placeholder='Grand champ' />
                     </div>
                   </div>
                 </div>

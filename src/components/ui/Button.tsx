@@ -95,25 +95,25 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     // Classes spécifiques aux variantes
     const variantClasses = {
       primary: [
-        'h-48dp bg-primary text-white',
+        'h-48dp bg-primary text-white font-medium',
         'rounded-8dp shadow-sm',
         'hover:bg-secondary hover:shadow-md',
         'focus:ring-2 focus:ring-primary focus:ring-opacity-20',
       ],
       secondary: [
-        'h-48dp bg-transparent text-primary',
+        'h-48dp bg-transparent text-primary dark:text-primary',
         'border-2 border-primary rounded-8dp',
         'hover:bg-primary hover:text-white',
         'focus:ring-2 focus:ring-primary focus:ring-opacity-20',
       ],
       ghost: [
-        'h-44dp bg-transparent text-primary',
+        'h-44dp bg-transparent text-primary dark:text-primary',
         'rounded-8dp',
-        'hover:bg-secondary-pale',
+        'hover:bg-secondary-pale dark:hover:bg-neutral-dark',
         'focus:ring-2 focus:ring-primary focus:ring-opacity-20',
       ],
       destructive: [
-        'h-48dp bg-functional-error text-white',
+        'h-48dp bg-functional-error text-white font-medium',
         'rounded-8dp shadow-sm',
         'hover:bg-red-600 hover:shadow-md',
         'focus:ring-2 focus:ring-functional-error focus:ring-opacity-20',

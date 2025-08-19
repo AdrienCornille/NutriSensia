@@ -96,7 +96,7 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
   ) => {
     // Classes de base communes à toutes les cartes
     const baseClasses = [
-      'bg-background-primary',
+      'bg-background-primary dark:bg-background-secondary',
       'transition-all duration-standard ease-out',
       'focus:outline-none',
     ];
@@ -106,17 +106,17 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
       primary: [
         'rounded-12dp',
         'shadow-card-primary',
-        'border border-neutral-border',
+        'border border-neutral-border dark:border-neutral-medium',
       ],
       dashboard: [
         'rounded-16dp',
         'shadow-card-dashboard',
-        'border border-neutral-border',
+        'border border-neutral-border dark:border-neutral-medium',
       ],
       nutrition: [
         'rounded-12dp',
-        'bg-background-accent',
-        'border border-secondary-sage',
+        'bg-background-accent dark:bg-neutral-dark',
+        'border border-secondary-sage dark:border-neutral-medium',
       ],
     };
 
@@ -159,10 +159,10 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
     return (
       <div ref={ref} className={cardClasses} {...props}>
         {loading ? (
-          <div className='p-20dp'>
-            <div className='h-4 bg-neutral-light rounded-4dp mb-12dp animate-pulse' />
-            <div className='h-3 bg-neutral-light rounded-4dp mb-8dp animate-pulse' />
-            <div className='h-3 bg-neutral-light rounded-4dp w-2/3 animate-pulse' />
+          <div className='p-24dp'>
+            <div className='h-4 bg-neutral-light dark:bg-neutral-dark rounded-4dp mb-12dp animate-pulse' />
+            <div className='h-3 bg-neutral-light dark:bg-neutral-dark rounded-4dp mb-8dp animate-pulse' />
+            <div className='h-3 bg-neutral-light dark:bg-neutral-dark rounded-4dp w-2/3 animate-pulse' />
           </div>
         ) : (
           children
@@ -180,7 +180,7 @@ Card.displayName = 'Card';
 export const CardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(
   ({ className, children, ...props }, ref) => {
     return (
-      <div ref={ref} className={cn('p-20dp pb-12dp', className)} {...props}>
+      <div ref={ref} className={cn('p-24dp pb-16dp', className)} {...props}>
         {children}
       </div>
     );
@@ -195,7 +195,7 @@ CardHeader.displayName = 'CardHeader';
 export const CardContent = React.forwardRef<HTMLDivElement, CardContentProps>(
   ({ className, children, ...props }, ref) => {
     return (
-      <div ref={ref} className={cn('p-20dp', className)} {...props}>
+      <div ref={ref} className={cn('p-24dp', className)} {...props}>
         {children}
       </div>
     );
@@ -213,7 +213,7 @@ export const CardFooter = React.forwardRef<HTMLDivElement, CardFooterProps>(
       <div
         ref={ref}
         className={cn(
-          'p-20dp pt-12dp border-t border-neutral-border',
+          'p-24dp pt-16dp border-t border-neutral-border dark:border-neutral-medium',
           className
         )}
         {...props}

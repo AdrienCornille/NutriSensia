@@ -25,7 +25,7 @@ export interface InputProps
   /**
    * Taille de l'input
    */
-  size?: InputSize;
+  inputSize?: InputSize;
   /**
    * Label de l'input
    */
@@ -134,7 +134,7 @@ const InputWrapper: React.FC<InputWrapperProps> = ({
       {label && (
         <label
           htmlFor={inputId}
-          className='block text-label font-medium text-neutral-dark'
+          className='block text-label font-medium text-neutral-dark dark:text-neutral-light'
         >
           {label}
           {required && <span className='text-functional-error ml-4dp'>*</span>}
@@ -148,7 +148,9 @@ const InputWrapper: React.FC<InputWrapperProps> = ({
       {(helperText || error) && (
         <div className='space-y-4dp'>
           {helperText && (
-            <p className='text-caption text-neutral-medium'>{helperText}</p>
+            <p className='text-caption text-neutral-medium dark:text-neutral-medium'>
+              {helperText}
+            </p>
           )}
           {error && (
             <p className='text-caption text-functional-error'>{error}</p>
@@ -190,7 +192,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     {
       className,
       variant = 'standard',
-      size = 'md',
+      inputSize = 'md',
       label,
       helperText,
       error,
@@ -216,18 +218,29 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     // Classes spécifiques aux variantes
     const variantClasses = {
       standard: [
-        'h-56dp border-2 border-neutral-border',
-        'rounded-8dp bg-background-primary',
+        'h-56dp border-2 border-neutral-border dark:border-neutral-medium',
+        'rounded-8dp bg-background-primary dark:bg-background-secondary',
         'focus:border-primary focus:shadow-focus',
-        'hover:border-neutral-dark',
+        'hover:border-neutral-dark dark:hover:border-neutral-light',
         'px-16dp',
+        'text-neutral-dark dark:text-neutral-light',
       ],
       search: [
-        'h-44dp bg-background-secondary',
+        'h-44dp bg-background-secondary dark:bg-neutral-dark',
         'rounded-22dp border-none',
-        'focus:bg-background-primary focus:shadow-focus',
-        'hover:bg-background-accent',
+        'focus:bg-background-primary dark:focus:bg-background-secondary focus:shadow-focus',
+        'hover:bg-background-accent dark:hover:bg-neutral-medium',
         'px-16dp',
+        'text-neutral-dark dark:text-neutral-light',
+      ],
+      textarea: [
+        'min-h-120dp border-2 border-neutral-border dark:border-neutral-medium',
+        'rounded-8dp bg-background-primary dark:bg-background-secondary',
+        'focus:border-primary focus:shadow-focus',
+        'hover:border-neutral-dark dark:hover:border-neutral-light',
+        'px-16dp py-12dp',
+        'resize-vertical',
+        'text-neutral-dark dark:text-neutral-light',
       ],
     };
 
@@ -253,7 +266,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const inputClasses = cn(
       baseClasses,
       variantClasses[variant],
-      sizeClasses[size],
+      sizeClasses[inputSize],
       widthClasses,
       errorClasses,
       loadingClasses,
@@ -267,7 +280,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <div className={containerClasses}>
         {/* Icône gauche */}
         {leftIcon && (
-          <div className='absolute left-16dp top-1/2 transform -translate-y-1/2 text-neutral-medium'>
+          <div className='absolute left-16dp top-1/2 transform -translate-y-1/2 text-neutral-medium dark:text-neutral-medium'>
             {leftIcon}
           </div>
         )}
@@ -287,7 +300,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
         {/* Icône droite */}
         {rightIcon && (
-          <div className='absolute right-16dp top-1/2 transform -translate-y-1/2 text-neutral-medium'>
+          <div className='absolute right-16dp top-1/2 transform -translate-y-1/2 text-neutral-medium dark:text-neutral-medium'>
             {rightIcon}
           </div>
         )}
@@ -296,7 +309,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {loading && (
           <div className='absolute right-16dp top-1/2 transform -translate-y-1/2'>
             <svg
-              className='animate-spin h-5 w-5 text-neutral-medium'
+              className='animate-spin h-5 w-5 text-neutral-medium dark:text-neutral-medium'
               xmlns='http://www.w3.org/2000/svg'
               fill='none'
               viewBox='0 0 24 24'
@@ -363,16 +376,17 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
   ) => {
     // Classes de base pour le textarea
     const baseClasses = [
-      'min-h-96dp border-2 border-neutral-border',
-      'rounded-8dp bg-background-primary',
+      'min-h-96dp border-2 border-neutral-border dark:border-neutral-medium',
+      'rounded-8dp bg-background-primary dark:bg-background-secondary',
       'transition-all duration-standard ease-out',
       'focus:outline-none focus:border-primary focus:shadow-focus',
-      'hover:border-neutral-dark',
+      'hover:border-neutral-dark dark:hover:border-neutral-light',
       'disabled:opacity-50 disabled:cursor-not-allowed',
-      'placeholder:text-neutral-medium',
+      'placeholder:text-neutral-medium dark:text-neutral-medium',
       'resize-y',
       'p-16dp',
       'text-body',
+      'text-neutral-dark dark:text-neutral-light',
     ];
 
     // Classes pour la largeur
