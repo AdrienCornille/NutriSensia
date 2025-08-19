@@ -89,17 +89,6 @@
             "testStrategy": "Verify color values match specifications. Test typography rendering across different platforms with all specified weights. Ensure spacing scale is correctly implemented. Test dark mode toggle functionality. Verify CSS variables are properly defined and accessible."
           },
           {
-            "id": 2,
-            "title": "Core UI Component Development",
-            "description": "Build essential reusable UI components with variants following the NutriSensia design system specifications",
-            "status": "pending",
-            "dependencies": [
-              1
-            ],
-            "details": "Develop core UI components including: Buttons (Primary 48dp, Secondary 48dp, Ghost 44dp, Destructive 48dp), Cards (Primary 12dp radius, Dashboard 16dp radius, Nutrition 12dp radius), Inputs (Standard 56dp, Search 44dp, Textarea 96dp min), Navigation (Sidebar 240dp, Tabs 48dp), and Icons (Primary 24dp, Small 20dp, Navigation 28dp, Feature 32dp). Implement component props for customization while maintaining design consistency. Ensure components follow a mobile-first approach and are responsive across all viewport sizes. Implement animation standards: Standard (200ms ease-out), Emphase (300ms cubic-bezier), Micro (150ms ease-in-out), Page (350ms cubic-bezier), and Loading (1200ms linear).",
-            "testStrategy": "Component unit tests with React Testing Library. Visual regression testing with Chromatic or similar tool. Test responsive behavior across different viewport sizes. Animation timing and performance testing. Test all component states and variants."
-          },
-          {
             "id": 3,
             "title": "Accessibility Implementation",
             "description": "Ensure all components meet WCAG 2.1 AA compliance standards with NutriSensia-specific accessibility guidelines",
@@ -138,10 +127,21 @@
             "id": 6,
             "title": "Theme Management and Runtime Customization",
             "description": "Implement theme management system with dark mode support and runtime customization",
-            "details": "Create a comprehensive theme management system with CSS custom properties for dynamic theming. Implement dark mode support with automatic detection and manual toggle. Add runtime theme customization capabilities for branding and user preferences. Create theme switching animations and smooth transitions. Implement theme persistence in user preferences and localStorage. Add support for custom color schemes and accessibility themes. Create theme documentation and developer guidelines.",
             "status": "pending",
             "dependencies": [],
-            "parentTaskId": 2
+            "details": "Create a comprehensive theme management system with CSS custom properties for dynamic theming. Implement dark mode support with automatic detection and manual toggle. Add runtime theme customization capabilities for branding and user preferences. Create theme switching animations and smooth transitions. Implement theme persistence in user preferences and localStorage. Add support for custom color schemes and accessibility themes. Create theme documentation and developer guidelines.",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Core UI Component Development",
+            "description": "Build essential reusable UI components with variants following the NutriSensia design system specifications",
+            "status": "done",
+            "dependencies": [
+              1
+            ],
+            "details": "Develop core UI components including: Buttons (Primary 48dp, Secondary 48dp, Ghost 44dp, Destructive 48dp), Cards (Primary 12dp radius, Dashboard 16dp radius, Nutrition 12dp radius), Inputs (Standard 56dp, Search 44dp, Textarea 96dp min), Navigation (Sidebar 240dp, Tabs 48dp), and Icons (Primary 24dp, Small 20dp, Navigation 28dp, Feature 32dp). Implement component props for customization while maintaining design consistency. Ensure components follow a mobile-first approach and are responsive across all viewport sizes. Implement animation standards: Standard (200ms ease-out), Emphase (300ms cubic-bezier), Micro (150ms ease-in-out), Page (350ms cubic-bezier), and Loading (1200ms linear).",
+            "testStrategy": "Component unit tests with React Testing Library. Visual regression testing with Chromatic or similar tool. Test responsive behavior across different viewport sizes. Animation timing and performance testing. Test all component states and variants."
           }
         ]
       },
@@ -1980,7 +1980,7 @@
     ],
     "metadata": {
       "created": "2025-08-17T13:10:23.768Z",
-      "updated": "2025-08-18T18:56:16.647Z",
+      "updated": "2025-08-19T16:07:24.083Z",
       "description": "Tasks for master context"
     }
   }

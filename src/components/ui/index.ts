@@ -44,3 +44,6 @@ export type {
 // Composants de test
 export { default as DesignSystemTest } from './DesignSystemTest';
 export { default as UIComponentsTest } from './UIComponentsTest';
+export { default as AccessibilityTest } from './AccessibilityTest';
+export { default as AccessibilityAudit } from './AccessibilityAudit';
+export { default as AccessibilityPanel } from './AccessibilityPanel';
