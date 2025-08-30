@@ -1,241 +1,232 @@
 # Configuration Supabase pour NutriSensia
 
-## Vue d'ensemble
+Ce guide vous explique comment configurer Supabase pour l'authentification et la gestion des données dans NutriSensia.
 
-Ce document décrit la configuration de Supabase pour le projet NutriSensia, incluant l'hébergement EU-West pour la conformité GDPR.
+## Table des matières
 
-## Prérequis
+1. [Création d'un projet Supabase](#création-dun-projet-supabase)
+2. [Configuration de l'authentification](#configuration-de-lauthentification)
+3. [Configuration Google OAuth](#configuration-google-oauth)
+4. [Configuration des variables d'environnement](#configuration-des-variables-denvironnement)
+5. [Structure de la base de données](#structure-de-la-base-de-données)
+6. [Sécurité et bonnes pratiques](#sécurité-et-bonnes-pratiques)
 
-1. Compte Supabase (https://supabase.com)
-2. Projet Supabase créé avec la région EU-West
+## Création d'un projet Supabase
 
-## Configuration du projet Supabase
+### 1. Créer un compte Supabase
 
-### 1. Création du projet
+1. Allez sur [https://supabase.com](https://supabase.com)
+2. Cliquez sur "Start your project"
+3. Connectez-vous avec GitHub ou créez un compte
 
-1. Connectez-vous à votre compte Supabase
-2. Cliquez sur "New Project"
-3. Choisissez la région **EU-West (Ireland)** pour la conformité GDPR
-4. Nommez votre projet "nutrisensia"
-5. Créez le projet
+### 2. Créer un nouveau projet
 
-### 2. Configuration de la base de données
+1. Cliquez sur "New Project"
+2. Choisissez votre organisation
+3. Donnez un nom à votre projet (ex: "nutrisensia")
+4. Créez un mot de passe pour la base de données
+5. Choisissez une région proche de vos utilisateurs
+6. Cliquez sur "Create new project"
 
-#### Tables à créer
+### 3. Récupérer les clés d'API
 
-##### Table `users`
+1. Une fois le projet créé, allez dans **Settings > API**
+2. Copiez les valeurs suivantes :
+   - **Project URL** : `https://your-project-ref.supabase.co`
+   - **anon public key** : `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...`
 
-```sql
-CREATE TABLE users (
-  id UUID REFERENCES auth.users(id) PRIMARY KEY,
-  email TEXT UNIQUE NOT NULL,
-  name TEXT NOT NULL,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  preferences JSONB DEFAULT NULL
-);
+## Configuration de l'authentification
 
--- Trigger pour mettre à jour updated_at
-CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = NOW();
-    RETURN NEW;
-END;
-$$ language 'plpgsql';
+### 1. Activer l'authentification par email/mot de passe
 
-CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON users
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+1. Allez dans **Authentication > Settings**
+2. Activez "Enable email confirmations" pour la sécurité
+3. Configurez les templates d'emails si nécessaire
+
+### 2. Configuration des URLs de redirection
+
+Dans **Authentication > URL Configuration**, ajoutez :
+
+**Site URL :**
+
+- Développement : `http://localhost:3000`
+- Production : `https://votre-domaine.com`
+
+**Redirect URLs :**
+
+- `http://localhost:3000/auth/callback`
+- `http://localhost:3000/auth/reset-password`
+- `https://votre-domaine.com/auth/callback` (production)
+- `https://votre-domaine.com/auth/reset-password` (production)
+
+## Configuration Google OAuth
+
+### 1. Créer un projet Google Cloud
+
+1. Allez sur [Google Cloud Console](https://console.cloud.google.com/)
+2. Créez un nouveau projet ou sélectionnez un existant
+3. Activez l'API Google+
+
+### 2. Créer des identifiants OAuth 2.0
+
+1. Allez dans **APIs & Services > Credentials**
+2. Cliquez sur "Create Credentials" > "OAuth 2.0 Client IDs"
+3. Sélectionnez "Web application"
+4. Configurez les URLs autorisées :
+   - **Authorized JavaScript origins :**
+     - `http://localhost:3000` (développement)
+     - `https://votre-domaine.com` (production)
+   - **Authorized redirect URIs :**
+     - `https://your-project-ref.supabase.co/auth/v1/callback`
+
+### 3. Configurer Google dans Supabase
+
+1. Dans votre dashboard Supabase, allez dans **Authentication > Providers**
+2. Activez Google
+3. Ajoutez votre **Client ID** et **Client Secret** de Google
+4. Sauvegardez la configuration
+
+## Configuration des variables d'environnement
+
+### 1. Créer le fichier .env.local
+
+```bash
+cp .env.example .env.local
 ```
 
-##### Table `meals`
-
-```sql
-CREATE TABLE meals (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  name TEXT NOT NULL,
-  description TEXT,
-  ingredients JSONB NOT NULL,
-  total_calories INTEGER NOT NULL,
-  total_protein DECIMAL(5,2) NOT NULL,
-  total_carbs DECIMAL(5,2) NOT NULL,
-  total_fat DECIMAL(5,2) NOT NULL,
-  meal_type TEXT CHECK (meal_type IN ('breakfast', 'lunch', 'dinner', 'snack')) NOT NULL,
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
-CREATE TRIGGER update_meals_updated_at BEFORE UPDATE ON meals
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-```
-
-##### Table `meal_plans`
-
-```sql
-CREATE TABLE meal_plans (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  name TEXT NOT NULL,
-  description TEXT,
-  meals UUID[] NOT NULL,
-  total_calories INTEGER NOT NULL,
-  total_protein DECIMAL(5,2) NOT NULL,
-  total_carbs DECIMAL(5,2) NOT NULL,
-  total_fat DECIMAL(5,2) NOT NULL,
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
-CREATE TRIGGER update_meal_plans_updated_at BEFORE UPDATE ON meal_plans
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-```
-
-### 3. Configuration des politiques de sécurité (RLS)
-
-#### Politique pour la table `users`
-
-```sql
--- Activer RLS
-ALTER TABLE users ENABLE ROW LEVEL SECURITY;
-
--- Politique : les utilisateurs ne peuvent voir que leurs propres données
-CREATE POLICY "Users can view own data" ON users
-  FOR SELECT USING (auth.uid() = id);
-
--- Politique : les utilisateurs peuvent mettre à jour leurs propres données
-CREATE POLICY "Users can update own data" ON users
-  FOR UPDATE USING (auth.uid() = id);
-
--- Politique : les utilisateurs peuvent insérer leurs propres données
-CREATE POLICY "Users can insert own data" ON users
-  FOR INSERT WITH CHECK (auth.uid() = id);
-```
-
-#### Politique pour la table `meals`
-
-```sql
--- Activer RLS
-ALTER TABLE meals ENABLE ROW LEVEL SECURITY;
-
--- Politique : les utilisateurs ne peuvent voir que leurs propres repas
-CREATE POLICY "Users can view own meals" ON meals
-  FOR SELECT USING (auth.uid() = user_id);
-
--- Politique : les utilisateurs peuvent créer leurs propres repas
-CREATE POLICY "Users can create own meals" ON meals
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
-
--- Politique : les utilisateurs peuvent mettre à jour leurs propres repas
-CREATE POLICY "Users can update own meals" ON meals
-  FOR UPDATE USING (auth.uid() = user_id);
-
--- Politique : les utilisateurs peuvent supprimer leurs propres repas
-CREATE POLICY "Users can delete own meals" ON meals
-  FOR DELETE USING (auth.uid() = user_id);
-```
-
-#### Politique pour la table `meal_plans`
-
-```sql
--- Activer RLS
-ALTER TABLE meal_plans ENABLE ROW LEVEL SECURITY;
-
--- Politique : les utilisateurs ne peuvent voir que leurs propres plans
-CREATE POLICY "Users can view own meal plans" ON meal_plans
-  FOR SELECT USING (auth.uid() = user_id);
-
--- Politique : les utilisateurs peuvent créer leurs propres plans
-CREATE POLICY "Users can create own meal plans" ON meal_plans
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
-
--- Politique : les utilisateurs peuvent mettre à jour leurs propres plans
-CREATE POLICY "Users can update own meal plans" ON meal_plans
-  FOR UPDATE USING (auth.uid() = user_id);
-
--- Politique : les utilisateurs peuvent supprimer leurs propres plans
-CREATE POLICY "Users can delete own meal plans" ON meal_plans
-  FOR DELETE USING (auth.uid() = user_id);
-```
-
-## Configuration de l'application
-
-### 1. Variables d'environnement
-
-Créez un fichier `.env.local` à la racine du projet :
+### 2. Configurer les variables
 
 ```env
-# Supabase Configuration
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+# Configuration Supabase
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
-# Configuration de l'environnement
-NODE_ENV=development
+# Configuration Google OAuth (optionnel)
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id
+NEXT_PUBLIC_GOOGLE_CLIENT_SECRET=your_google_client_secret
 
-# Autres variables d'environnement pour NutriSensia
+# Configuration de l'application
 NEXT_PUBLIC_APP_NAME=NutriSensia
 NEXT_PUBLIC_APP_VERSION=0.1.0
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
-### 2. Récupération des clés Supabase
+## Structure de la base de données
 
-1. Dans votre projet Supabase, allez dans Settings > API
-2. Copiez l'URL du projet et la clé anon/public
-3. Remplacez les valeurs dans `.env.local`
+### Table `profiles`
 
-### 3. Configuration de l'authentification
+Cette table stocke les informations des utilisateurs avec leurs rôles :
 
-Dans Supabase Dashboard > Authentication > Settings :
+```sql
+CREATE TABLE public.profiles (
+  id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
+  email TEXT UNIQUE NOT NULL,
+  full_name TEXT,
+  role TEXT CHECK (role IN ('nutritionist', 'patient', 'admin')) DEFAULT 'patient',
+  avatar_url TEXT,
+  phone TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  email_verified BOOLEAN DEFAULT FALSE,
+  two_factor_enabled BOOLEAN DEFAULT FALSE,
+  last_sign_in_at TIMESTAMP WITH TIME ZONE
+);
+```
 
-1. **Site URL** : `http://localhost:3000` (développement)
-2. **Redirect URLs** :
-   - `http://localhost:3000/auth/callback`
-   - `http://localhost:3000/dashboard`
+### Politiques RLS (Row Level Security)
 
-## Test de la configuration
+```sql
+-- Activer RLS
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
-Utilisez le composant `SupabaseTest` pour vérifier que la configuration fonctionne :
+-- Politique pour permettre aux utilisateurs de voir leur propre profil
+CREATE POLICY "Users can view own profile" ON public.profiles
+  FOR SELECT USING (auth.uid() = id);
 
-1. Lancez l'application : `npm run dev`
-2. Naviguez vers la page de test
-3. Cliquez sur "Tester la connexion"
-4. Cliquez sur "Tester l'authentification"
+-- Politique pour permettre aux utilisateurs de modifier leur propre profil
+CREATE POLICY "Users can update own profile" ON public.profiles
+  FOR UPDATE USING (auth.uid() = id);
 
-## Conformité GDPR
+-- Politique pour permettre aux nutritionnistes de voir les profils des patients
+CREATE POLICY "Nutritionists can view patient profiles" ON public.profiles
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM public.profiles
+      WHERE id = auth.uid() AND role = 'nutritionist'
+    ) OR auth.uid() = id
+  );
+```
 
-### Hébergement EU-West
+### Trigger pour créer automatiquement un profil
 
-- Le projet est configuré dans la région EU-West (Ireland)
-- Les données sont stockées conformément au RGPD
-- Les utilisateurs européens bénéficient d'une latence optimale
+```sql
+-- Fonction pour créer un profil lors de l'inscription
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.profiles (id, email, full_name, role)
+  VALUES (
+    NEW.id,
+    NEW.email,
+    COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.raw_user_meta_data->>'name'),
+    COALESCE(NEW.raw_user_meta_data->>'role', 'patient')
+  );
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
-### Politiques de confidentialité
+-- Trigger pour appeler la fonction lors de l'inscription
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+```
 
-1. **Minimisation des données** : Seules les données nécessaires sont collectées
-2. **Consentement** : Les utilisateurs doivent accepter les conditions d'utilisation
-3. **Droit à l'oubli** : Les utilisateurs peuvent supprimer leurs données
-4. **Portabilité** : Les utilisateurs peuvent exporter leurs données
+## Sécurité et bonnes pratiques
+
+### 1. Gestion des erreurs
+
+- Toutes les erreurs d'authentification sont traduites en français
+- Les messages d'erreur sont génériques pour éviter la fuite d'informations
+- Logging des tentatives de connexion échouées
+
+### 2. Configuration des cookies
+
+- Cookies sécurisés avec `sameSite: 'lax'`
+- Durée de vie limitée (7 jours)
+- Configuration différente pour développement et production
+
+### 3. Validation des données
+
+- Validation côté client avec Zod
+- Validation côté serveur avec les politiques RLS
+- Sanitisation des entrées utilisateur
+
+### 4. Monitoring
+
+- Surveillance des tentatives de connexion
+- Alertes en cas d'activité suspecte
+- Logs d'audit pour les actions sensibles
 
 ## Dépannage
 
-### Erreurs courantes
+### Problèmes courants
 
-1. **"Variables d'environnement Supabase manquantes"**
-   - Vérifiez que `.env.local` existe et contient les bonnes valeurs
-   - Redémarrez le serveur de développement
+1. **Erreur "Supabase not configured"**
+   - Vérifiez que vos variables d'environnement sont correctement définies
+   - Redémarrez votre serveur de développement
 
-2. **"Erreur de connexion"**
-   - Vérifiez que l'URL et la clé Supabase sont correctes
-   - Vérifiez que le projet Supabase est actif
+2. **Erreur de redirection OAuth**
+   - Vérifiez que l'URL de redirection est correctement configurée dans Google Cloud Console
+   - Assurez-vous que l'URL correspond exactement à celle dans Supabase
 
-3. **"Erreur d'authentification"**
-   - Vérifiez la configuration des URLs de redirection
-   - Vérifiez que l'authentification est activée dans Supabase
+3. **Erreur "Invalid login credentials"**
+   - Vérifiez que l'utilisateur existe dans la base de données
+   - Assurez-vous que l'email est confirmé si la confirmation est activée
 
 ### Support
 
-Pour plus d'aide, consultez :
+Pour plus d'aide :
 
 - [Documentation Supabase](https://supabase.com/docs)
-- [Guide de migration](https://supabase.com/docs/guides/migrations)
-- [Politiques de sécurité](https://supabase.com/docs/guides/auth/row-level-security)
+- [Documentation Google OAuth](https://developers.google.com/identity/protocols/oauth2)
+- [Issues GitHub du projet](https://github.com/votre-repo/nutrisensia/issues)

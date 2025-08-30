@@ -10,11 +10,7 @@ export { default as AccessibilityAudit } from './AccessibilityAudit';
 export { default as AccessibilityPanel } from './AccessibilityPanel';
 
 // Composants de gestion des thèmes
-export {
-  ThemeSelector,
-  ThemeDemo,
-  AccessibilityPreferences,
-} from './ThemeSelector';
+export { default as ThemeSelector } from './ThemeSelector';
 export { ThemeManagementTest } from './ThemeManagementTest';
 
 // Composants de test
@@ -22,3 +18,6 @@ export { default as UIComponentsTest } from './UIComponentsTest';
 export { default as DesignSystemTest } from './DesignSystemTest';
 export { AnimatedCard } from './AnimatedCard';
 export { FormField } from './FormField';
+
+// Composants d'authentification
+export * from '../auth';
