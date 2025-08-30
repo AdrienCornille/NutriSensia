@@ -2,11 +2,7 @@
 
 import React, { useState } from 'react';
 import { useThemeContext } from '@/contexts/ThemeContext';
-import {
-  ThemeSelector,
-  ThemeDemo,
-  AccessibilityPreferences,
-} from './ThemeSelector';
+import ThemeSelector from './ThemeSelector';
 import { Button } from './Button';
 import { Card, CardHeader, CardContent, CardFooter } from './Card';
 import { Input } from './Input';
@@ -105,8 +101,6 @@ export function ThemeManagementTest() {
           {/* Onglet Démonstration */}
           {activeTab === 'demo' && (
             <div className='space-y-8'>
-              <ThemeDemo />
-
               {/* Exemples de composants avec différents thèmes */}
               <div className='space-y-6'>
                 <h3 className='text-2xl font-semibold text-neutral-dark dark:text-neutral-light'>
@@ -325,8 +319,6 @@ export function ThemeManagementTest() {
           {/* Onglet Accessibilité */}
           {activeTab === 'accessibility' && (
             <div className='space-y-8'>
-              <AccessibilityPreferences />
-
               {/* Tests d'accessibilité */}
               <Card variant='primary'>
                 <CardHeader>
