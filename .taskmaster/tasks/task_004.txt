@@ -1,0 +1,49 @@
+# Task ID: 4
+# Title: User Profile Management
+# Status: done
+# Dependencies: 3
+# Priority: high
+# Description: Create customizable user profiles with Zod validation for both nutritionists and patients, including profile completion tracking and role-specific fields.
+# Details:
+Design database schema for user profiles with Supabase, including common fields and role-specific fields. Create Zod schemas for validation of profile data with strict typing. Implement profile edit forms with React Hook Form + Zod integration. Add profile picture upload functionality using Supabase Storage. Create profile completion percentage calculation for onboarding guidance. For nutritionists, include fields for ASCA/RME credentials, specialties, and professional information. For patients, include health metrics, dietary preferences, and goals. Implement profile privacy settings with granular control over visible information. Use TanStack Query for efficient data fetching and caching of profile data.
+
+# Test Strategy:
+Unit tests for Zod validation schemas. Integration tests for form submission and error handling. Storage tests for profile picture uploads. E2E tests for complete profile editing flows. Test edge cases like partial form submissions and validation errors.
+
+# Subtasks:
+## 1. Design Database Schema for User Profiles [done]
+### Dependencies: None
+### Description: Create Supabase database schema for user profiles with common and role-specific fields for nutritionists and patients
+### Details:
+Design and implement database tables for user profiles in Supabase. Include common fields (name, email, contact info, profile picture URL) and separate tables for role-specific fields. For nutritionists: credentials, specialties, professional information, availability. For patients: health metrics, dietary preferences, goals, allergies. Implement proper relationships between tables and set up appropriate indexes and constraints.
+
+## 2. Implement Zod Validation Schemas [done]
+### Dependencies: 4.1
+### Description: Create comprehensive Zod schemas for validating user profile data with strict typing for both user types
+### Details:
+Develop Zod validation schemas that match the database structure. Create separate schemas for common fields, nutritionist-specific fields, and patient-specific fields. Implement strict validation rules for each field type including email format, credential formats, and required fields. Add custom error messages for validation failures. Create TypeScript types derived from Zod schemas for use throughout the application.
+
+## 3. Build Profile Edit Forms with React Hook Form [done]
+### Dependencies: 4.2
+### Description: Create profile editing interfaces with React Hook Form and Zod integration for both user types
+### Details:
+Implement profile edit forms using React Hook Form with Zod resolver for validation. Create separate form components for common fields and role-specific fields. Add field-level validation feedback. Implement form submission handlers that connect to Supabase. Create responsive layouts for forms that work on mobile and desktop. Add unsaved changes detection and confirmation dialogs.
+
+## 4. Implement Profile Picture Upload Functionality [done]
+### Dependencies: 4.1
+### Description: Add profile picture upload and management using Supabase Storage with image optimization
+### Details:
+Implement profile picture upload functionality using Supabase Storage. Create image upload component with drag-and-drop support. Add client-side image resizing and optimization before upload. Implement image cropping functionality. Create proper storage bucket policies in Supabase. Generate and store different image sizes for various UI contexts. Add image deletion and replacement functionality.
+
+## 5. Create Profile Completion Tracking System [done]
+### Dependencies: 4.2, 4.3
+### Description: Implement profile completion percentage calculation and guidance system for onboarding
+### Details:
+Develop an algorithm to calculate profile completion percentage based on filled fields and their importance. Create visual indicators for completion status. Implement guided onboarding that highlights incomplete sections. Add personalized recommendations for profile improvement based on user role. Implement TanStack Query for efficient profile data fetching and caching. Create privacy settings interface with granular control over visible information.
+
+## 6. Data Export and Portability Features [done]
+### Dependencies: None
+### Description: Implement GDPR-compliant data export and portability features
+### Details:
+Create data export functionality allowing users to download their profile data in JSON and CSV formats. Implement data portability features for GDPR compliance. Create data export scheduling and automation. Add support for selective data export based on user preferences. Implement data export history and audit trails. Create data import functionality for user data migration. Add support for data export encryption and secure delivery.
+

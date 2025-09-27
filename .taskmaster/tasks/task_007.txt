@@ -1,0 +1,49 @@
+# Task ID: 7
+# Title: Nutritionist Dashboard Overview
+# Status: pending
+# Dependencies: 3, 4, 5
+# Priority: high
+# Description: Create a comprehensive dashboard for nutritionists showing patient overview cards with status and upcoming appointments.
+# Details:
+Design a responsive dashboard layout with Tailwind CSS grid system. Implement patient overview cards showing key information: name, status, next appointment, compliance rate. Create a summary statistics section showing active patients, upcoming appointments, and revenue metrics. Use TanStack Query for efficient data fetching with caching and background updates. Implement filtering and sorting options for patient lists. Add quick action buttons for common tasks (message patient, schedule appointment, etc.). Create skeleton loading states for improved UX during data fetching. Implement real-time updates using Supabase Realtime subscriptions for appointment changes. Add date range selectors for viewing different time periods. Create mobile-optimized views for dashboard access on the go.
+
+# Test Strategy:
+Component testing with React Testing Library. Integration tests for data fetching and state management. Performance testing for large patient lists. Realtime subscription testing. Responsive design testing across breakpoints. User testing with actual nutritionists for UX feedback.
+
+# Subtasks:
+## 1. Design Responsive Dashboard Layout [pending]
+### Dependencies: None
+### Description: Create the responsive dashboard layout using Tailwind CSS grid system with appropriate breakpoints for desktop and mobile views.
+### Details:
+Implement a responsive grid layout using Tailwind CSS that adapts to different screen sizes. Create container components for the main dashboard sections: summary statistics area, patient list area, and quick actions panel. Define appropriate breakpoints for desktop, tablet, and mobile views. Ensure proper spacing and alignment between dashboard elements. Implement a mobile-optimized view that reorganizes content for smaller screens.
+
+## 2. Implement Patient Overview Cards [pending]
+### Dependencies: 7.1
+### Description: Create patient overview cards displaying key information including name, status, next appointment, and compliance rate.
+### Details:
+Design and implement reusable patient card components with consistent styling. Display essential patient information: full name, profile image, current status (active/inactive), next appointment date and time, and compliance rate percentage. Add visual indicators for compliance status (good/warning/poor). Include hover states and focus styles for improved accessibility. Ensure cards maintain proper layout at all screen sizes.
+
+## 3. Create Summary Statistics Section [pending]
+### Dependencies: 7.1
+### Description: Develop a summary statistics section showing active patients, upcoming appointments, and revenue metrics.
+### Details:
+Design and implement statistics cards for key metrics: total active patients, appointments scheduled for today/this week, revenue metrics (current month, comparison to previous month). Create visual representations using appropriate icons and color coding. Implement number formatting for currency and percentages. Add tooltips for additional context on each metric. Ensure the statistics section is prominently positioned at the top of the dashboard.
+
+## 4. Implement Data Fetching with TanStack Query [pending]
+### Dependencies: 7.1, 7.2, 7.3
+### Description: Set up efficient data fetching with TanStack Query including caching, background updates, and loading states.
+### Details:
+Configure TanStack Query for fetching dashboard data with appropriate caching strategies. Implement query hooks for patient data, appointment data, and statistics data. Set up background refetching to keep dashboard data current. Create skeleton loading states for all dashboard components during initial load and refetching. Implement error handling and retry logic for failed queries. Add query invalidation triggers for real-time updates.
+
+## 5. Add Filtering, Sorting and Quick Actions [pending]
+### Dependencies: 7.2, 7.4
+### Description: Implement filtering and sorting options for patient lists along with quick action buttons for common tasks.
+### Details:
+Create filter controls for patient status, appointment date range, and compliance levels. Implement sorting functionality for patient lists by name, next appointment, and compliance rate. Add quick action buttons on patient cards for common tasks: message patient, schedule appointment, view details, etc. Implement action confirmation dialogs where appropriate. Create date range selectors for filtering dashboard data by time period. Ensure all controls are accessible and mobile-friendly.
+
+## 6. Dashboard Customization and Personalization [pending]
+### Dependencies: None
+### Description: Implement dashboard customization features for nutritionists
+### Details:
+Create dashboard customization interface allowing nutritionists to personalize their layout. Implement drag-and-drop dashboard builder for custom layouts. Add support for choosing which metrics and patient information to display. Create dashboard template system with predefined layouts. Implement dashboard preferences saving and synchronization. Add support for role-based dashboard customization. Create dashboard analytics to track usage patterns and optimization opportunities.
+

@@ -1,0 +1,49 @@
+# Task ID: 6
+# Title: Landing Page and Marketing Site
+# Status: pending
+# Dependencies: 1, 2
+# Priority: high
+# Description: Develop a conversion-optimized homepage with hero section, clear value proposition, and role-specific content for patients and nutritionists.
+# Details:
+Create a Next.js-based landing page with static generation for optimal performance. Implement a compelling hero section with clear value proposition and CTA. Design separate sections for patients (explaining packages, consultation process, insurance FAQ) and nutritionists (platform benefits, pricing, demo request). Implement responsive design with mobile-first approach. Add contact forms with React Hook Form and Zod validation, storing submissions in Supabase. Implement SEO optimization for Swiss French market with next-seo package. Create a blog section with MDX for content marketing. Set up Google Analytics and conversion tracking. Implement structured data for rich search results. Add testimonials section with carousel component.
+
+# Test Strategy:
+Lighthouse performance testing targeting >90 scores. Cross-browser and device testing. Form submission validation and error handling tests. SEO audit with tools like Screaming Frog. A/B testing of different CTAs and hero messages. User flow analysis with heatmaps (Hotjar).
+
+# Subtasks:
+## 1. Hero Section and Value Proposition [pending]
+### Dependencies: None
+### Description: Design and implement a compelling hero section with clear value proposition and call-to-action buttons
+### Details:
+Create a visually appealing hero section using Next.js with static generation. Craft a concise value proposition that clearly communicates the platform's benefits. Implement primary and secondary CTAs with tracking capabilities. Ensure the hero section is responsive across all devices with a mobile-first approach. Use high-quality imagery that resonates with both patients and nutritionists.
+
+## 2. Role-Specific Content Sections [pending]
+### Dependencies: 6.1
+### Description: Develop separate content sections tailored for patients and nutritionists with relevant information for each audience
+### Details:
+Create patient-focused sections explaining consultation packages, the nutrition consultation process, and insurance FAQs. Design nutritionist-focused sections highlighting platform benefits, pricing structure, and demo request functionality. Implement smooth scrolling between sections with anchor links. Use compelling visuals and concise copy to maintain engagement. Ensure consistent styling while differentiating the sections visually.
+
+## 3. Contact Forms with Validation [pending]
+### Dependencies: 6.2
+### Description: Implement contact forms with React Hook Form and Zod validation, storing submissions in Supabase
+### Details:
+Create separate contact forms for general inquiries, patient questions, and nutritionist partnership requests. Implement form validation using React Hook Form with Zod schema validation. Set up Supabase tables to store form submissions securely. Add honeypot fields and rate limiting to prevent spam. Implement success/error notifications and form reset after submission. Ensure forms are fully accessible with proper ARIA attributes.
+
+## 4. SEO Optimization and Blog Section [pending]
+### Dependencies: 6.1, 6.2
+### Description: Implement SEO optimization for Swiss French market and create a blog section with MDX for content marketing
+### Details:
+Set up next-seo package with optimized meta tags, Open Graph data, and structured data for rich search results. Implement localized SEO targeting the Swiss French market with appropriate keywords. Create a blog section using MDX for content marketing with categories and tags. Implement blog post previews on the homepage. Set up sitemap generation and robots.txt. Ensure proper canonical URLs and meta descriptions for all pages.
+
+## 5. Analytics and Conversion Tracking [pending]
+### Dependencies: 6.1, 6.2, 6.3, 6.4
+### Description: Set up Google Analytics, conversion tracking, and implement a testimonials section with carousel component
+### Details:
+Implement Google Analytics 4 with custom events for key user interactions. Set up conversion tracking for form submissions and CTA clicks. Create a testimonials section with a responsive carousel component showcasing client success stories. Implement structured data for testimonials to enhance SEO. Add privacy-compliant cookie consent banner. Set up goal tracking in Google Analytics to measure conversion rates.
+
+## 6. Internationalization (i18n) Support [pending]
+### Dependencies: None
+### Description: Implement internationalization support with French as primary language
+### Details:
+Set up internationalization framework with French as primary language and English as secondary. Implement language detection and switching functionality. Create translation management system for all user-facing content. Add support for regional formatting (dates, numbers, currencies). Implement RTL language support for future expansion. Create translation workflow and content management tools. Add support for dynamic content translation and user-generated content localization.
+

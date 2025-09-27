@@ -1,0 +1,49 @@
+# Task ID: 11
+# Title: Real-time Messaging System
+# Status: pending
+# Dependencies: 3, 4
+# Priority: medium
+# Description: Implement a GDPR-compliant real-time messaging system between nutritionists and patients with message history and notifications.
+# Details:
+Leverage Supabase Realtime for WebSocket-based messaging. Design database schema for messages with proper indexing. Implement end-to-end encryption for message content using TweetNaCl.js or similar library. Create conversation UI with message history, typing indicators, and read receipts. Add file and image sharing capabilities with Supabase Storage. Implement push notifications for new messages using web push API. Create message search functionality. Add message retention policies for GDPR compliance. Implement conversation archiving and deletion. Create admin monitoring tools for abuse prevention. Add rate limiting to prevent spam. Implement offline message queueing for mobile use.
+
+# Test Strategy:
+Unit tests for encryption/decryption functions. Integration tests for message sending and receiving. Realtime subscription testing. E2E tests for complete messaging flows. Security testing for encryption implementation. Performance testing with high message volumes. Test offline behavior and message queueing.
+
+# Subtasks:
+## 1. Database Schema and Supabase Realtime Setup [pending]
+### Dependencies: None
+### Description: Design and implement the database schema for messages with proper indexing and set up Supabase Realtime for WebSocket-based messaging
+### Details:
+Create tables for conversations, messages, and participants with appropriate relationships. Implement indexes for efficient querying by conversation, sender, timestamp, and content. Configure Supabase Realtime channels for real-time message delivery. Set up proper access policies for secure data access. Include metadata fields for read status, delivery status, and message types.
+
+## 2. End-to-End Encryption Implementation [pending]
+### Dependencies: 11.1
+### Description: Implement end-to-end encryption for message content using TweetNaCl.js or similar library to ensure GDPR compliance
+### Details:
+Research and select appropriate encryption library (TweetNaCl.js recommended). Implement key generation and exchange protocol. Create encryption/decryption utilities for message content. Store encrypted messages in the database. Implement secure key storage on client devices. Document the encryption approach for GDPR compliance documentation.
+
+## 3. Conversation UI with Message History [pending]
+### Dependencies: 11.1, 11.2
+### Description: Create the conversation UI with message history, typing indicators, and read receipts
+### Details:
+Design and implement the chat interface with message bubbles, timestamps, and sender information. Add real-time typing indicators using Supabase presence. Implement read receipts functionality. Create infinite scrolling for message history. Add message grouping by time periods. Implement UI for different message types (text, files, images).
+
+## 4. File Sharing and Push Notifications [pending]
+### Dependencies: 11.3
+### Description: Implement file and image sharing capabilities with Supabase Storage and push notifications for new messages
+### Details:
+Set up Supabase Storage buckets with appropriate access policies. Implement file upload and download functionality. Add image preview and compression. Create file type validation and size limits. Implement the Web Push API for browser notifications. Set up service workers for background notification handling. Create notification preferences management for users.
+
+## 5. GDPR Compliance and Admin Tools [pending]
+### Dependencies: 11.1, 11.2, 11.3, 11.4
+### Description: Implement message retention policies, conversation archiving/deletion, and admin monitoring tools for GDPR compliance
+### Details:
+Create configurable message retention policies. Implement automatic and manual message purging. Add conversation archiving functionality. Create data export tools for GDPR data requests. Implement conversation deletion with proper data cleanup. Build admin dashboard for monitoring system usage and potential abuse. Add rate limiting to prevent spam. Implement audit logging for compliance purposes.
+
+## 6. Offline Message Handling and Synchronization [pending]
+### Dependencies: None
+### Description: Implement offline message handling and synchronization for the messaging system
+### Details:
+Create offline message storage using IndexedDB or similar local storage solution. Implement message queuing for offline scenarios with automatic retry mechanisms. Add conflict resolution for messages sent while offline. Create synchronization logic to merge offline and online messages. Implement offline status indicators and connection monitoring. Add support for partial message synchronization and incremental updates. Create user notifications for offline message delivery status.
+
