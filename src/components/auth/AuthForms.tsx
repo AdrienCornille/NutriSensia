@@ -27,9 +27,7 @@ const signUpSchema = z
         'Le mot de passe doit contenir au moins une minuscule, une majuscule et un chiffre'
       ),
     confirmPassword: z.string(),
-    role: z.enum(['patient', 'nutritionist'], {
-      required_error: 'Veuillez sélectionner un rôle',
-    }),
+    role: z.enum(['patient', 'nutritionist']),
   })
   .refine(data => data.password === data.confirmPassword, {
     message: 'Les mots de passe ne correspondent pas',
@@ -89,6 +87,13 @@ export const SignUpForm: React.FC = () => {
 
       if (error) {
         throw error;
+      }
+
+      // L'inscription a réussi - l'entrée dans la table nutritionists/patients
+      // sera créée automatiquement lors de la première connexion ou de l'onboarding
+      if (authData.user) {
+        console.log(`✅ Inscription réussie pour l'utilisateur ${data.role}:`, authData.user.id);
+        console.log('ℹ️  L\'entrée dans la table correspondante sera créée lors de la première connexion');
       }
 
       setMessage({
@@ -225,6 +230,65 @@ export const SignUpForm: React.FC = () => {
   );
 };
 
+
+/**
+ * Vérifie si c'est un nouveau compte (créé récemment ou sans 2FA configuré)
+ */
+const checkIfNewAccount = async (user: any): Promise<boolean> => {
+  try {
+    // Récupérer les informations du profil
+    const { data: profileData } = await supabase
+      .from('profiles')
+      .select('created_at, two_factor_enabled, last_sign_in_at')
+      .eq('id', user.id)
+      .single();
+
+    if (!profileData) return true; // Profil pas encore créé = nouveau compte
+
+    // Vérifier si le compte a été créé récemment (moins de 10 minutes)
+    const accountAge = Date.now() - new Date(profileData.created_at).getTime();
+    const isRecentAccount = accountAge < 10 * 60 * 1000; // 10 minutes
+
+    // Vérifier si c'est la première connexion
+    const isFirstSignIn = !profileData.last_sign_in_at;
+
+    // Vérifier si 2FA n'est pas configuré
+    const no2FAConfigured = !profileData.two_factor_enabled;
+
+    console.log('🔍 AuthForms - Analyse nouveau compte:', {
+      userId: user.id,
+      userEmail: user.email,
+      accountAge: `${Math.round(accountAge / 1000 / 60)} minutes`,
+      isRecentAccount,
+      isFirstSignIn,
+      no2FAConfigured,
+      createdAt: profileData.created_at,
+      lastSignIn: profileData.last_sign_in_at
+    });
+
+    // PRIORITÉ : Si 2FA est déjà configuré, ce n'est PAS un nouveau compte
+    if (profileData.two_factor_enabled === true) {
+      console.log('✅ 2FA déjà configuré - Compte existant confirmé');
+      return false;
+    }
+
+    // C'est un nouveau compte si : récent OU première connexion OU pas de 2FA
+    const isNewAccount = isRecentAccount || isFirstSignIn || no2FAConfigured;
+    
+    console.log('🔍 AuthForms - Décision finale nouveau compte:', {
+      isNewAccount,
+      raison: isRecentAccount ? 'compte récent' : 
+              isFirstSignIn ? 'première connexion' : 
+              no2FAConfigured ? 'pas de 2FA' : 'aucune'
+    });
+    
+    return isNewAccount;
+  } catch (error) {
+    console.error('Erreur vérification nouveau compte:', error);
+    return true; // En cas d'erreur, traiter comme nouveau compte par sécurité
+  }
+};
+
 /**
  * Composant de connexion avec validation
  */
@@ -259,15 +323,185 @@ export const SignInForm: React.FC = () => {
         throw error;
       }
 
-      setMessage({
-        type: 'success',
-        text: 'Connexion réussie ! Redirection en cours...',
+      // Vérifier le statut 2FA après connexion réussie
+      const { data: mfaData, error: mfaError } =
+        await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+
+      if (mfaError) {
+        console.error('Erreur lors de la vérification 2FA:', mfaError);
+        // En cas d'erreur, rediriger vers la page d'accueil
+        setMessage({
+          type: 'success',
+          text: 'Connexion réussie ! Redirection en cours...',
+        });
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 1000);
+        return;
+      }
+
+      // Récupérer le rôle de l'utilisateur
+      const userRole = authData.user?.user_metadata?.role || 'patient';
+
+      // PRIORITÉ 1: Vérifier si c'est un nouveau compte
+      const isNewAccount = await checkIfNewAccount(authData.user);
+      
+      if (isNewAccount) {
+        console.log('🆕 NOUVEAU COMPTE DÉTECTÉ - Redirection obligatoire vers 2FA');
+        setMessage({
+          type: 'success',
+          text: 'Connexion réussie ! Configuration de sécurité requise...',
+        });
+        setTimeout(() => {
+          window.location.href = '/auth/enroll-mfa';
+        }, 1000);
+        return;
+      }
+
+      // PRIORITÉ 2: Pour les comptes existants, analyser le niveau d'assurance
+      const { currentLevel, nextLevel } = mfaData;
+      
+      console.log('🔍 Analyse des niveaux AAL:', {
+        userRole,
+        currentLevel,
+        nextLevel,
+        mfaData,
+        userEmail: authData.user?.email
       });
 
-      // Redirection vers le dashboard après connexion
-      setTimeout(() => {
-        window.location.href = '/dashboard';
-      }, 1000);
+      if (userRole === 'nutritionist') {
+        // Les nutritionnistes ont TOUJOURS besoin de AAL2
+        if (nextLevel === 'aal2' && currentLevel === 'aal1') {
+          // Le nutritionniste doit configurer ou vérifier le 2FA
+          setMessage({
+            type: 'success',
+            text: 'Connexion réussie ! Configuration de la sécurité requise...',
+          });
+
+          // Vérifier s'il a déjà des facteurs configurés (Supabase Auth + Base de données)
+          const { data: factorsData } = await supabase.auth.mfa.listFactors();
+          const hasVerifiedFactorsInAuth =
+            factorsData?.totp?.some(f => f.status === 'verified') ||
+            factorsData?.phone?.some(f => f.status === 'verified');
+
+          // Vérifier aussi dans la base de données
+          const { data: profileData, error: profileError } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', authData.user?.id)
+            .single();
+
+          const twoFactorEnabledInDB = profileData ? (profileData as any).two_factor_enabled : false;
+          const hasVerifiedFactors = hasVerifiedFactorsInAuth && twoFactorEnabledInDB;
+          
+          console.log('🔍 Diagnostic MFA (AuthForms):', {
+            userId: authData.user?.id,
+            hasVerifiedFactorsInAuth,
+            twoFactorEnabledInDB,
+            hasVerifiedFactors,
+            factorsData
+          });
+
+          setTimeout(() => {
+            if (hasVerifiedFactors) {
+              // Le nutritionniste a déjà configuré le 2FA, rediriger vers la vérification
+              window.location.href = '/auth/verify-mfa';
+            } else {
+              // Le nutritionniste n'a pas encore configuré le 2FA, rediriger vers l'enrôlement
+              window.location.href = '/auth/enroll-mfa';
+            }
+          }, 1000);
+        } else if (currentLevel === 'aal2') {
+          // Le nutritionniste est déjà au niveau AAL2 requis
+          setMessage({
+            type: 'success',
+            text: 'Connexion réussie ! Redirection en cours...',
+          });
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 1000);
+        } else {
+          // Cas par défaut pour les nutritionnistes
+          setMessage({
+            type: 'success',
+            text: 'Connexion réussie ! Configuration de la sécurité requise...',
+          });
+          setTimeout(() => {
+            window.location.href = '/auth/enroll-mfa';
+          }, 1000);
+        }
+      } else {
+        // Les patients DOIVENT utiliser le 2FA comme les nutritionnistes
+        console.log('👤 Utilisateur patient connecté, vérification 2FA obligatoire...');
+        
+        // FORCER le 2FA pour tous les patients, indépendamment de nextLevel
+        if (currentLevel === 'aal1') {
+          // Le patient doit configurer ou vérifier le 2FA
+          setMessage({
+            type: 'success',
+            text: 'Connexion réussie ! Configuration de la sécurité en cours...',
+          });
+
+          // Vérifier s'il a déjà des facteurs configurés (Supabase Auth + Base de données)
+          const { data: factorsData } = await supabase.auth.mfa.listFactors();
+          const hasVerifiedFactorsInAuth =
+            factorsData?.totp?.some(f => f.status === 'verified') ||
+            factorsData?.phone?.some(f => f.status === 'verified');
+
+          // Vérifier aussi dans la base de données
+          const { data: profileData, error: profileError } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', authData.user?.id)
+            .single();
+
+          const twoFactorEnabledInDB = profileData ? (profileData as any).two_factor_enabled : false;
+          const hasVerifiedFactors = hasVerifiedFactorsInAuth && twoFactorEnabledInDB;
+          
+          console.log('🔍 Diagnostic MFA Patient (AuthForms):', {
+            userId: authData.user?.id,
+            userRole,
+            hasVerifiedFactorsInAuth,
+            twoFactorEnabledInDB,
+            hasVerifiedFactors,
+            factorsData,
+            currentLevel,
+            nextLevel
+          });
+
+          setTimeout(() => {
+            if (hasVerifiedFactors) {
+              // Le patient a déjà configuré le 2FA, rediriger vers la vérification
+              console.log('🔐 Patient avec 2FA configuré -> /auth/verify-mfa');
+              window.location.href = '/auth/verify-mfa';
+            } else {
+              // Le patient n'a pas encore configuré le 2FA, rediriger vers l'enrôlement
+              console.log('📱 Patient sans 2FA -> /auth/enroll-mfa');
+              window.location.href = '/auth/enroll-mfa';
+            }
+          }, 1000);
+        } else if (currentLevel === 'aal2') {
+          // Le patient est déjà au niveau AAL2 requis
+          console.log('✅ Patient déjà au niveau AAL2, redirection dashboard');
+          setMessage({
+            type: 'success',
+            text: 'Connexion réussie ! Redirection vers votre espace...',
+          });
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 1000);
+        } else {
+          // Cas par défaut : redirection vers l'accueil
+          console.log('🏠 Patient - redirection par défaut vers l\'accueil');
+          setMessage({
+            type: 'success',
+            text: 'Connexion réussie ! Redirection vers votre espace...',
+          });
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 1000);
+        }
+      }
     } catch (error: any) {
       setMessage({
         type: 'error',

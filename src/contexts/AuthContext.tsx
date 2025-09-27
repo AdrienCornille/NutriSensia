@@ -144,7 +144,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     } = auth.onAuthStateChange(async (event, session) => {
       if (!mounted) return;
 
-      console.log('Auth state changed:', event, session?.user?.email);
+      // Auth state changed
 
       setSession(session);
       setUser(session?.user ?? null);

@@ -1,11 +1,11 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useAuthRedirect } from '@/hooks/useAuthRedirect';
 import { MFAVerification } from '@/components/auth/MFAVerification';
 import { Card } from '@/components/ui/Card';
 
 export default function VerifyMFAPage() {
-  const router = useRouter();
+  const { redirectToHome, redirectToSignIn } = useAuthRedirect();
 
   return (
     <div className='min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4'>
@@ -38,12 +38,12 @@ export default function VerifyMFAPage() {
 
           <MFAVerification
             onSuccess={() => {
-              // Redirection automatique après succès
-              router.push('/');
+              // Redirection automatique après vérification réussie
+              redirectToHome();
             }}
             onCancel={() => {
               // Redirection vers la page de connexion
-              router.push('/auth/signin');
+              redirectToSignIn();
             }}
           />
         </Card>
