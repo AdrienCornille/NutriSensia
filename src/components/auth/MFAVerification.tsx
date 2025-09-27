@@ -269,7 +269,7 @@ export function MFAVerification({
           </Button>
           <Button
             type='button'
-            variant='outline'
+            variant='secondary'
             onClick={regenerateChallenge}
             disabled={isLoading || isLocked}
             className='flex-1'

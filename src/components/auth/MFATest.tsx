@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/contexts/AuthContext';
 import { useMFA } from '@/hooks/useMFA';
 import { MFAEnrollment } from './MFAEnrollment';
 import { MFAVerification } from './MFAVerification';

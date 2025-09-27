@@ -40,3 +40,5 @@ export { AuthCallback } from './AuthCallback';
 export { MFASignInForm } from './MFASignInForm';
 
 export { AuthGuard } from './AuthGuard';
+
+export { MFAProtection } from './MFAProtection';
