@@ -203,8 +203,8 @@ export const PlatformTrainingStep: React.FC<PlatformTrainingStepProps> = ({
 
   // Vue détaillée d'un module
   if (currentModule) {
-    const module = TRAINING_MODULES.find(m => m.id === currentModule);
-    if (!module) return null;
+    const trainingModule = TRAINING_MODULES.find(m => m.id === currentModule);
+    if (!trainingModule) return null;
 
     return (
       <motion.div
