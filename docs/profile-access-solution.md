@@ -7,12 +7,15 @@ Les utilisateurs connectés ne pouvaient pas accéder à la page `/profile` et �
 ## 🔍 **Causes du problème**
 
 ### 1. **Détection de session côté serveur**
+
 Le middleware Next.js ne détectait pas toujours la session Supabase côté serveur, même quand elle existait côté client.
 
 ### 2. **Boucles de redirection**
+
 Le middleware redirigeait vers `/auth/signin`, mais la page de profil vérifiait aussi l'authentification côté client, créant des conflits.
 
 ### 3. **Timing des vérifications**
+
 Les vérifications d'authentification se faisaient trop rapidement, avant que Supabase ait eu le temps de récupérer la session.
 
 ## ✅ **Solutions implémentées**
@@ -20,6 +23,7 @@ Les vérifications d'authentification se faisaient trop rapidement, avant que Su
 ### 1. **Amélioration du middleware**
 
 **Avant :**
+
 ```typescript
 // Le middleware bloquait systématiquement si pas de session détectée
 if (!user && (isProtectedRoute || isAuthenticatedRoute)) {
@@ -28,10 +32,13 @@ if (!user && (isProtectedRoute || isAuthenticatedRoute)) {
 ```
 
 **Après :**
+
 ```typescript
 // Le middleware permet l'accès aux routes authentifiées pour vérification côté client
 if (isAuthenticatedRoute && !user) {
-  console.log(`⚠️ Middleware: Session non détectée pour ${pathname}, mais permettant l'accès pour vérification côté client`);
+  console.log(
+    `⚠️ Middleware: Session non détectée pour ${pathname}, mais permettant l'accès pour vérification côté client`
+  );
   // On laisse passer pour permettre à la page de gérer l'authentification côté client
 }
 ```
@@ -41,7 +48,10 @@ if (isAuthenticatedRoute && !user) {
 Création d'un composant AuthGuard spécifique pour la page de profil :
 
 ```typescript
-export function ProfileAuthGuard({ children, fallback }: ProfileAuthGuardProps) {
+export function ProfileAuthGuard({
+  children,
+  fallback,
+}: ProfileAuthGuardProps) {
   // Vérification robuste de l'authentification
   // Gestion des erreurs et des cas limites
   // Redirection intelligente
@@ -49,6 +59,7 @@ export function ProfileAuthGuard({ children, fallback }: ProfileAuthGuardProps) 
 ```
 
 **Fonctionnalités :**
+
 - ✅ Vérification de session avec délai
 - ✅ Vérification de l'utilisateur
 - ✅ Vérification du profil en base
@@ -61,6 +72,7 @@ export function ProfileAuthGuard({ children, fallback }: ProfileAuthGuardProps) 
 Création d'une page de diagnostic complète (`/profile-diagnostic`) :
 
 **Fonctionnalités :**
+
 - 🔍 Analyse complète de l'état d'authentification
 - 📊 Résumé visuel du diagnostic
 - 🛡️ Simulation de la logique du middleware
@@ -81,7 +93,9 @@ const authenticatedRoutes = [
 
 // SOLUTION: Pour les routes authentifiées, permettre l'accès même si le middleware ne détecte pas la session
 if (isAuthenticatedRoute && !user) {
-  console.log(`⚠️ Middleware: Session non détectée pour ${pathname}, mais permettant l'accès pour vérification côté client`);
+  console.log(
+    `⚠️ Middleware: Session non détectée pour ${pathname}, mais permettant l'accès pour vérification côté client`
+  );
   // On laisse passer pour permettre à la page de gérer l'authentification côté client
 }
 ```
@@ -104,13 +118,17 @@ export default function ProfilePage() {
 const checkAuthentication = async () => {
   // Attendre un peu pour laisser le temps à Supabase de récupérer la session
   await new Promise(resolve => setTimeout(resolve, 200));
-  
+
   // Vérifier la session
-  const { data: { session } } = await supabase.auth.getSession();
-  
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
   // Vérifier l'utilisateur
-  const { data: { user } } = await supabase.auth.getUser();
-  
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   // Vérifier le profil en base
   const { data: profile } = await supabase
     .from('profiles')
@@ -139,6 +157,7 @@ const checkAuthentication = async () => {
 ### **Tests manuels**
 
 1. **Connexion normale** :
+
    ```bash
    # Connectez-vous à l'application
    # Cliquez sur "Mon profil"
@@ -146,6 +165,7 @@ const checkAuthentication = async () => {
    ```
 
 2. **Test avec session expirée** :
+
    ```bash
    # Attendez l'expiration de la session
    # Essayez d'accéder au profil
@@ -163,11 +183,11 @@ const checkAuthentication = async () => {
 
 ### **Niveaux de sécurité conservés**
 
-| Route | Authentification | 2FA | Accès |
-|-------|------------------|-----|-------|
-| **`/profile`** | ✅ Requis | ⚠️ Recommandé | ✅ Tous les utilisateurs connectés |
-| **`/dashboard`** | ✅ Requis | ✅ Obligatoire (nutritionnistes) | ✅ Utilisateurs avec 2FA |
-| **`/admin`** | ✅ Requis | ✅ Obligatoire | ✅ Admins uniquement |
+| Route            | Authentification | 2FA                              | Accès                              |
+| ---------------- | ---------------- | -------------------------------- | ---------------------------------- |
+| **`/profile`**   | ✅ Requis        | ⚠️ Recommandé                    | ✅ Tous les utilisateurs connectés |
+| **`/dashboard`** | ✅ Requis        | ✅ Obligatoire (nutritionnistes) | ✅ Utilisateurs avec 2FA           |
+| **`/admin`**     | ✅ Requis        | ✅ Obligatoire                   | ✅ Admins uniquement               |
 
 ### **Mesures de sécurité**
 
@@ -180,12 +200,14 @@ const checkAuthentication = async () => {
 ## 📊 **Résultats**
 
 ### **Avant la correction :**
+
 - ❌ Utilisateurs bloqués sur `/auth/signin`
 - ❌ Boucles de redirection
 - ❌ Sessions non détectées par le middleware
 - ❌ Expérience utilisateur dégradée
 
 ### **Après la correction :**
+
 - ✅ Accès au profil fonctionnel
 - ✅ Vérification robuste de l'authentification
 - ✅ Gestion intelligente des cas limites
@@ -195,16 +217,19 @@ const checkAuthentication = async () => {
 ## 🚀 **Utilisation**
 
 ### **Pour les utilisateurs :**
+
 1. Connectez-vous normalement
 2. Cliquez sur "Mon profil"
 3. Accédez à votre profil sans problème
 
 ### **Pour les développeurs :**
+
 1. **Diagnostic** : Utilisez `/profile-diagnostic` pour analyser les problèmes
 2. **Debug** : Consultez les logs de la console pour les détails
 3. **Tests** : Utilisez les pages de test pour valider les fonctionnalités
 
 ### **En cas de problème persistant :**
+
 1. Accédez à `/profile-diagnostic`
 2. Analysez le diagnostic automatique
 3. Suivez les recommandations affichées
@@ -213,12 +238,14 @@ const checkAuthentication = async () => {
 ## 🔄 **Maintenance**
 
 ### **Surveillance recommandée :**
+
 - ✅ Logs d'authentification
 - ✅ Erreurs de session
 - ✅ Accès aux pages de profil
 - ✅ Performance des vérifications
 
 ### **Mises à jour futures :**
+
 - Amélioration de la détection de session côté serveur
 - Optimisation des délais de vérification
 - Ajout de métriques de performance
@@ -227,4 +254,3 @@ const checkAuthentication = async () => {
 ---
 
 **Cette solution résout le problème d'accès au profil tout en maintenant la sécurité de l'application et en fournissant des outils de diagnostic pour les problèmes futurs.**
-

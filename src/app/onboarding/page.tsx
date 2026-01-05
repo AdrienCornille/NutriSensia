@@ -17,16 +17,25 @@ export default function OnboardingPage() {
 
   useEffect(() => {
     const redirectToCorrectOnboarding = () => {
-      console.log('🔍 [Onboarding] Vérification du rôle - authLoading:', authLoading, 'user:', !!user);
-      
+      console.log(
+        '🔍 [Onboarding] Vérification du rôle - authLoading:',
+        authLoading,
+        'user:',
+        !!user
+      );
+
       // Attendre que l'authentification soit chargée
       if (authLoading) {
-        console.log('⏳ [Onboarding] En attente du chargement de l\'authentification...');
+        console.log(
+          "⏳ [Onboarding] En attente du chargement de l'authentification..."
+        );
         return;
       }
 
       if (!user) {
-        console.log('🚫 [Onboarding] Aucun utilisateur connecté - redirection vers signin');
+        console.log(
+          '🚫 [Onboarding] Aucun utilisateur connecté - redirection vers signin'
+        );
         router.push('/auth/signin?redirect=/onboarding');
         return;
       }
@@ -37,7 +46,9 @@ export default function OnboardingPage() {
 
       switch (userRole) {
         case 'nutritionist':
-          console.log('🔄 [Onboarding] Redirection vers onboarding nutritionniste');
+          console.log(
+            '🔄 [Onboarding] Redirection vers onboarding nutritionniste'
+          );
           router.push('/onboarding/nutritionist');
           break;
         case 'patient':
@@ -49,7 +60,11 @@ export default function OnboardingPage() {
           router.push('/dashboard/admin');
           break;
         default:
-          console.log('❓ [Onboarding] Rôle inconnu:', userRole, '- redirection vers dashboard');
+          console.log(
+            '❓ [Onboarding] Rôle inconnu:',
+            userRole,
+            '- redirection vers dashboard'
+          );
           router.push('/dashboard');
           break;
       }
@@ -60,10 +75,10 @@ export default function OnboardingPage() {
 
   // Affichage de chargement
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-        <p className="text-gray-600">Redirection vers votre onboarding...</p>
+    <div className='min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center'>
+      <div className='text-center'>
+        <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4'></div>
+        <p className='text-gray-600'>Redirection vers votre onboarding...</p>
       </div>
     </div>
   );

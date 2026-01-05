@@ -56,19 +56,23 @@ const analyticsConfig = {
   version: '1.0.0',
   plugins: [
     // Plugin Simple Analytics (seulement si configuré)
-    ...(process.env.NEXT_PUBLIC_SIMPLE_ANALYTICS_DOMAIN ? [
-      simpleAnalyticsPlugin({
-        // Configuration Simple Analytics
-        customDomain: process.env.NEXT_PUBLIC_SIMPLE_ANALYTICS_DOMAIN,
-      })
-    ] : []),
-    
+    ...(process.env.NEXT_PUBLIC_SIMPLE_ANALYTICS_DOMAIN
+      ? [
+          simpleAnalyticsPlugin({
+            // Configuration Simple Analytics
+            customDomain: process.env.NEXT_PUBLIC_SIMPLE_ANALYTICS_DOMAIN,
+          }),
+        ]
+      : []),
+
     // Plugin Google Analytics (si configuré)
-    ...(process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ? [
-      googleAnalyticsPlugin({
-        measurementIds: [process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID],
-      })
-    ] : []),
+    ...(process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID
+      ? [
+          googleAnalyticsPlugin({
+            measurementIds: [process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID],
+          }),
+        ]
+      : []),
   ],
 };
 
@@ -113,7 +117,10 @@ export class OnboardingAnalytics {
         });
       }
     } catch (error) {
-      console.warn(`⚠️ Erreur lors du tracking de l'événement ${eventName}:`, error);
+      console.warn(
+        `⚠️ Erreur lors du tracking de l'événement ${eventName}:`,
+        error
+      );
     }
   }
 
@@ -131,14 +138,17 @@ export class OnboardingAnalytics {
         });
       }
     } catch (error) {
-      console.warn('⚠️ Erreur lors de l\'identification analytics:', error);
+      console.warn("⚠️ Erreur lors de l'identification analytics:", error);
     }
   }
 
   /**
    * Track le début de l'onboarding
    */
-  trackOnboardingStarted(role: 'nutritionist' | 'patient' | 'admin', userId?: string) {
+  trackOnboardingStarted(
+    role: 'nutritionist' | 'patient' | 'admin',
+    userId?: string
+  ) {
     const event: OnboardingEvent = {
       event: 'Onboarding Started',
       properties: {
@@ -159,14 +169,14 @@ export class OnboardingAnalytics {
    * Track le début d'une étape
    */
   trackStepStarted(
-    step: string, 
-    stepNumber: number, 
-    totalSteps: number, 
+    step: string,
+    stepNumber: number,
+    totalSteps: number,
     role: 'nutritionist' | 'patient' | 'admin',
     userId?: string
   ) {
     this.stepStartTimes.set(step, Date.now());
-    
+
     const event: OnboardingEvent = {
       event: 'Onboarding Step Started',
       properties: {
@@ -199,7 +209,7 @@ export class OnboardingAnalytics {
   ) {
     const stepStartTime = this.stepStartTimes.get(step);
     const timeSpent = stepStartTime ? Date.now() - stepStartTime : 0;
-    
+
     const event: OnboardingEvent = {
       event: 'Onboarding Step Completed',
       properties: {
@@ -234,7 +244,7 @@ export class OnboardingAnalytics {
   ) {
     const stepStartTime = this.stepStartTimes.get(step);
     const timeSpent = stepStartTime ? Date.now() - stepStartTime : 0;
-    
+
     const event: OnboardingEvent = {
       event: 'Onboarding Step Skipped',
       properties: {
@@ -357,7 +367,7 @@ export class OnboardingAnalytics {
     userId?: string
   ) {
     const totalTimeSpent = Date.now() - this.startTime;
-    
+
     const event: OnboardingEvent = {
       event: 'Onboarding Abandoned',
       properties: {
@@ -395,7 +405,7 @@ export class OnboardingAnalytics {
    */
   private getDeviceType(): 'mobile' | 'tablet' | 'desktop' {
     if (typeof window === 'undefined') return 'desktop';
-    
+
     const width = window.innerWidth;
     if (width < 768) return 'mobile';
     if (width < 1024) return 'tablet';
@@ -407,7 +417,7 @@ export class OnboardingAnalytics {
    */
   private getBrowser(): string {
     if (typeof window === 'undefined') return 'unknown';
-    
+
     const userAgent = window.navigator.userAgent;
     if (userAgent.includes('Chrome')) return 'Chrome';
     if (userAgent.includes('Firefox')) return 'Firefox';

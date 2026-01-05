@@ -1,6 +1,6 @@
 /**
  * Page d'index pour la section admin
- * 
+ *
  * Redirige automatiquement vers le dashboard admin
  */
 

@@ -15,5 +15,3 @@ export {
   AnimatedToast,
   CelebrationAnimation,
 } from './OnboardingAnimations';
-
-

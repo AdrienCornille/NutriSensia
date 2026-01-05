@@ -31,7 +31,8 @@ export default function EnrollMFAPage() {
               Configuration de sécurité
             </h1>
             <p className='text-gray-600'>
-              Configurez l'authentification à deux facteurs pour sécuriser votre compte.
+              Configurez l'authentification à deux facteurs pour sécuriser votre
+              compte.
             </p>
           </div>
 
@@ -50,4 +51,3 @@ export default function EnrollMFAPage() {
     </div>
   );
 }
-

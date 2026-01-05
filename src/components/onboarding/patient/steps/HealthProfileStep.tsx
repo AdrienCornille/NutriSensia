@@ -58,11 +58,14 @@ const calculateAge = (dateOfBirth: string): number => {
   const birthDate = new Date(dateOfBirth);
   let age = today.getFullYear() - birthDate.getFullYear();
   const monthDiff = today.getMonth() - birthDate.getMonth();
-  
-  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+
+  if (
+    monthDiff < 0 ||
+    (monthDiff === 0 && today.getDate() < birthDate.getDate())
+  ) {
     age--;
   }
-  
+
   return age;
 };
 
@@ -78,7 +81,8 @@ const calculateBMI = (weight: number, height: number): number => {
  * Obtenir la catégorie IMC
  */
 const getBMICategory = (bmi: number): { category: string; color: string } => {
-  if (bmi < 18.5) return { category: 'Insuffisance pondérale', color: 'text-blue-600' };
+  if (bmi < 18.5)
+    return { category: 'Insuffisance pondérale', color: 'text-blue-600' };
   if (bmi < 25) return { category: 'Poids normal', color: 'text-green-600' };
   if (bmi < 30) return { category: 'Surpoids', color: 'text-orange-600' };
   return { category: 'Obésité', color: 'text-red-600' };
@@ -94,9 +98,10 @@ export const HealthProfileStep: React.FC<HealthProfileStepProps> = ({
   onPrevious,
   isSubmitting = false,
 }) => {
-  
-  const [selectedGender, setSelectedGender] = useState<string>(data.gender || '');
-  
+  const [selectedGender, setSelectedGender] = useState<string>(
+    data.gender || ''
+  );
+
   // Configuration du formulaire
   const {
     register,
@@ -121,7 +126,8 @@ export const HealthProfileStep: React.FC<HealthProfileStepProps> = ({
 
   // Calculer l'âge et l'IMC si les données sont disponibles
   const age = dateOfBirth ? calculateAge(dateOfBirth) : null;
-  const bmi = height && currentWeight ? calculateBMI(currentWeight, height) : null;
+  const bmi =
+    height && currentWeight ? calculateBMI(currentWeight, height) : null;
   const bmiCategory = bmi ? getBMICategory(bmi) : null;
 
   // Pas de useEffect automatique pour éviter les boucles infinies
@@ -147,49 +153,48 @@ export const HealthProfileStep: React.FC<HealthProfileStepProps> = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div className='space-y-6'>
       {/* En-tête */}
       <motion.div
-        className="text-center space-y-2"
+        className='text-center space-y-2'
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="mx-auto w-16 h-16 bg-gradient-to-br from-red-500 to-pink-600 rounded-full flex items-center justify-center mb-4">
-          <Heart className="h-8 w-8 text-white" />
+        <div className='mx-auto w-16 h-16 bg-gradient-to-br from-red-500 to-pink-600 rounded-full flex items-center justify-center mb-4'>
+          <Heart className='h-8 w-8 text-white' />
         </div>
-        
-        <h1 className="text-3xl font-bold text-gray-900">
-          Votre profil santé
-        </h1>
-        
-        <p className="text-gray-600">
-          Ces informations nous aident à personnaliser vos recommandations nutritionnelles
+
+        <h1 className='text-3xl font-bold text-gray-900'>Votre profil santé</h1>
+
+        <p className='text-gray-600'>
+          Ces informations nous aident à personnaliser vos recommandations
+          nutritionnelles
         </p>
       </motion.div>
 
       {/* Formulaire */}
       <motion.form
         onSubmit={handleSubmit(onSubmit)}
-        className="space-y-6"
+        className='space-y-6'
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
       >
         {/* Date de naissance */}
-        <div className="space-y-2">
+        <div className='space-y-2'>
           <FormField
-            label="Date de naissance *"
-            type="date"
+            label='Date de naissance *'
+            type='date'
             {...register('dateOfBirth')}
             error={errors.dateOfBirth?.message}
-            leftIcon={<Calendar className="h-4 w-4" />}
+            leftIcon={<Calendar className='h-4 w-4' />}
             max={new Date().toISOString().split('T')[0]} // Pas de date future
           />
-          
+
           {age && (
             <motion.p
-              className="text-sm text-gray-600 ml-10"
+              className='text-sm text-gray-600 ml-10'
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
             >
@@ -199,17 +204,17 @@ export const HealthProfileStep: React.FC<HealthProfileStepProps> = ({
         </div>
 
         {/* Genre */}
-        <div className="space-y-3">
-          <label className="block text-sm font-medium text-gray-700">
-            <User className="h-4 w-4 inline mr-2" />
+        <div className='space-y-3'>
+          <label className='block text-sm font-medium text-gray-700'>
+            <User className='h-4 w-4 inline mr-2' />
             Genre *
           </label>
-          
-          <div className="grid grid-cols-2 gap-3">
-            {GENDER_OPTIONS.map((option) => (
+
+          <div className='grid grid-cols-2 gap-3'>
+            {GENDER_OPTIONS.map(option => (
               <motion.button
                 key={option.value}
-                type="button"
+                type='button'
                 onClick={() => handleGenderSelect(option.value)}
                 className={`p-4 rounded-lg border-2 transition-all ${
                   selectedGender === option.value
@@ -219,62 +224,62 @@ export const HealthProfileStep: React.FC<HealthProfileStepProps> = ({
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <div className="text-2xl mb-2">{option.icon}</div>
-                <div className="text-sm font-medium">{option.label}</div>
+                <div className='text-2xl mb-2'>{option.icon}</div>
+                <div className='text-sm font-medium'>{option.label}</div>
               </motion.button>
             ))}
           </div>
-          
+
           {errors.gender && (
-            <p className="text-sm text-red-600">{errors.gender.message}</p>
+            <p className='text-sm text-red-600'>{errors.gender.message}</p>
           )}
         </div>
 
         {/* Taille et poids */}
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className='grid md:grid-cols-2 gap-4'>
           <FormField
-            label="Taille (cm)"
-            type="number"
-            placeholder="170"
+            label='Taille (cm)'
+            type='number'
+            placeholder='170'
             {...register('height', { valueAsNumber: true })}
             error={errors.height?.message}
-            leftIcon={<Ruler className="h-4 w-4" />}
+            leftIcon={<Ruler className='h-4 w-4' />}
             helperText="Optionnel - Aide au calcul de l'IMC"
           />
-          
+
           <FormField
-            label="Poids actuel (kg)"
-            type="number"
-            placeholder="70"
-            step="0.1"
+            label='Poids actuel (kg)'
+            type='number'
+            placeholder='70'
+            step='0.1'
             {...register('currentWeight', { valueAsNumber: true })}
             error={errors.currentWeight?.message}
-            leftIcon={<Weight className="h-4 w-4" />}
-            helperText="Optionnel - Pour le suivi des progrès"
+            leftIcon={<Weight className='h-4 w-4' />}
+            helperText='Optionnel - Pour le suivi des progrès'
           />
         </div>
 
         {/* Calcul IMC */}
         {bmi && bmiCategory && (
           <motion.div
-            className="p-4 bg-gray-50 rounded-lg"
+            className='p-4 bg-gray-50 rounded-lg'
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <div className="flex items-center justify-between">
+            <div className='flex items-center justify-between'>
               <div>
-                <p className="text-sm font-medium text-gray-700">
+                <p className='text-sm font-medium text-gray-700'>
                   Indice de Masse Corporelle (IMC)
                 </p>
                 <p className={`text-lg font-bold ${bmiCategory.color}`}>
                   {bmi.toFixed(1)} - {bmiCategory.category}
                 </p>
               </div>
-              <div className="text-3xl">📊</div>
+              <div className='text-3xl'>📊</div>
             </div>
-            
-            <p className="text-xs text-gray-500 mt-2">
-              L'IMC est un indicateur général. Votre nutritionniste vous donnera 
+
+            <p className='text-xs text-gray-500 mt-2'>
+              L'IMC est un indicateur général. Votre nutritionniste vous donnera
               une évaluation plus précise.
             </p>
           </motion.div>
@@ -286,25 +291,26 @@ export const HealthProfileStep: React.FC<HealthProfileStepProps> = ({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
         >
-          <WizardTip type="privacy" title="Confidentialité de vos données">
-            <p className="text-sm">
-              Toutes vos informations de santé sont <strong>strictement confidentielles</strong> 
-              et protégées selon les normes RGPD. Seul votre nutritionniste assigné y aura accès 
-              pour personnaliser votre suivi.
+          <WizardTip type='privacy' title='Confidentialité de vos données'>
+            <p className='text-sm'>
+              Toutes vos informations de santé sont{' '}
+              <strong>strictement confidentielles</strong>
+              et protégées selon les normes RGPD. Seul votre nutritionniste
+              assigné y aura accès pour personnaliser votre suivi.
             </p>
           </WizardTip>
         </motion.div>
 
         {/* Boutons de navigation */}
         <motion.div
-          className="flex justify-between pt-6"
+          className='flex justify-between pt-6'
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.6 }}
         >
           <Button
-            type="button"
-            variant="secondary"
+            type='button'
+            variant='secondary'
             onClick={onPrevious}
             disabled={isSubmitting}
           >
@@ -312,7 +318,7 @@ export const HealthProfileStep: React.FC<HealthProfileStepProps> = ({
           </Button>
 
           <Button
-            type="submit"
+            type='submit'
             disabled={!isValid || isSubmitting}
             loading={isSubmitting}
           >
@@ -323,17 +329,17 @@ export const HealthProfileStep: React.FC<HealthProfileStepProps> = ({
 
       {/* Indicateur de progression */}
       <motion.div
-        className="mt-8 text-center text-sm text-gray-500"
+        className='mt-8 text-center text-sm text-gray-500'
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.8 }}
       >
         <p>Étape 3 sur 9 • Environ 10 minutes restantes</p>
-        
+
         {/* Barre de progression */}
-        <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
+        <div className='mt-2 w-full bg-gray-200 rounded-full h-2'>
           <motion.div
-            className="bg-gradient-to-r from-green-500 to-teal-600 h-2 rounded-full"
+            className='bg-gradient-to-r from-green-500 to-teal-600 h-2 rounded-full'
             initial={{ width: '22%' }}
             animate={{ width: '33%' }}
             transition={{ duration: 0.8, delay: 0.5 }}

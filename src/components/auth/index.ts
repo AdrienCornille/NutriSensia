@@ -6,6 +6,15 @@ export {
   UpdatePasswordForm,
 } from './AuthForms';
 
+// Nouveau formulaire de connexion avec layout split
+export { LoginForm } from './LoginForm';
+
+// Formulaire de réinitialisation de mot de passe
+export { ForgotPasswordForm } from './ForgotPasswordForm';
+
+// Layout d'authentification split screen
+export { AuthSplitLayout } from './AuthSplitLayout';
+
 // Composants OAuth
 export {
   GoogleOAuthButton,
@@ -26,14 +35,6 @@ export { MFAEnrollment } from './MFAEnrollment';
 export { MFAVerification } from './MFAVerification';
 
 export { MFAManagement } from './MFAManagement';
-
-export { MFATest } from './MFATest';
-
-export { MFADiagnostic } from './MFADiagnostic';
-
-export { MFACleanup } from './MFACleanup';
-
-export { MFAFixer } from './MFAFixer';
 
 export { AuthCallback } from './AuthCallback';
 

@@ -1,22 +1,11 @@
-import type { Metadata } from 'next';
-import './globals.css';
-import { Providers } from './providers';
+import React from 'react';
 
-export const metadata: Metadata = {
-  title: 'NutriSensia - Test Simple',
-  description: 'Version simplifiée pour tester',
-};
-
+// Layout racine pour next-intl
+// Ce layout minimal est requis quand on a un fichier not-found.tsx à la racine
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <html lang='fr'>
-      <body className='antialiased'>
-        <Providers>{children}</Providers>
-      </body>
-    </html>
-  );
+  return children;
 }

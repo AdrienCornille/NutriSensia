@@ -10,23 +10,26 @@ import { useRouter } from 'next/navigation';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Heart, 
-  User, 
-  Target, 
-  Utensils, 
+import {
+  Heart,
+  User,
+  Target,
+  Utensils,
   Stethoscope,
   Activity,
   Smartphone,
   CheckCircle,
   ArrowLeft,
   ArrowRight,
-  X
+  X,
 } from 'lucide-react';
 
 import { WizardLayout, WizardStep } from '../WizardLayout';
 import { useSimpleOnboarding } from '@/hooks/useOnboardingProgressSimple';
-import { PatientOnboardingStep, PatientOnboardingData } from '@/types/onboarding';
+import {
+  PatientOnboardingStep,
+  PatientOnboardingData,
+} from '@/types/onboarding';
 import { PatientOnboardingSchema } from '@/lib/onboarding-schemas';
 
 // Import des étapes individuelles
@@ -60,7 +63,7 @@ const PATIENT_ONBOARDING_STEPS: WizardStep<PatientOnboardingStep>[] = [
     id: 'welcome',
     title: 'Bienvenue',
     description: 'Découvrez votre parcours nutritionnel personnalisé',
-    icon: <Heart className="h-6 w-6" />,
+    icon: <Heart className='h-6 w-6' />,
     canSkip: false,
     estimatedDuration: 60, // en secondes
   },
@@ -68,7 +71,7 @@ const PATIENT_ONBOARDING_STEPS: WizardStep<PatientOnboardingStep>[] = [
     id: 'personal-info',
     title: 'Informations personnelles',
     description: 'Parlez-nous de vous',
-    icon: <User className="h-6 w-6" />,
+    icon: <User className='h-6 w-6' />,
     canSkip: false,
     estimatedDuration: 120,
   },
@@ -76,7 +79,7 @@ const PATIENT_ONBOARDING_STEPS: WizardStep<PatientOnboardingStep>[] = [
     id: 'health-profile',
     title: 'Profil santé',
     description: 'Informations de base sur votre santé',
-    icon: <Stethoscope className="h-6 w-6" />,
+    icon: <Stethoscope className='h-6 w-6' />,
     canSkip: false,
     estimatedDuration: 90,
   },
@@ -84,7 +87,7 @@ const PATIENT_ONBOARDING_STEPS: WizardStep<PatientOnboardingStep>[] = [
     id: 'health-goals',
     title: 'Objectifs santé',
     description: 'Définissez vos objectifs nutritionnels',
-    icon: <Target className="h-6 w-6" />,
+    icon: <Target className='h-6 w-6' />,
     canSkip: false,
     estimatedDuration: 180,
   },
@@ -92,7 +95,7 @@ const PATIENT_ONBOARDING_STEPS: WizardStep<PatientOnboardingStep>[] = [
     id: 'dietary-info',
     title: 'Habitudes alimentaires',
     description: 'Restrictions et préférences alimentaires',
-    icon: <Utensils className="h-6 w-6" />,
+    icon: <Utensils className='h-6 w-6' />,
     canSkip: false,
     estimatedDuration: 150,
   },
@@ -100,7 +103,7 @@ const PATIENT_ONBOARDING_STEPS: WizardStep<PatientOnboardingStep>[] = [
     id: 'medical-info',
     title: 'Informations médicales',
     description: 'Conditions et traitements en cours',
-    icon: <Stethoscope className="h-6 w-6" />,
+    icon: <Stethoscope className='h-6 w-6' />,
     canSkip: true,
     estimatedDuration: 120,
   },
@@ -108,15 +111,15 @@ const PATIENT_ONBOARDING_STEPS: WizardStep<PatientOnboardingStep>[] = [
     id: 'lifestyle',
     title: 'Style de vie',
     description: 'Activité physique et habitudes quotidiennes',
-    icon: <Activity className="h-6 w-6" />,
+    icon: <Activity className='h-6 w-6' />,
     canSkip: false,
     estimatedDuration: 120,
   },
   {
     id: 'app-tour',
-    title: 'Découverte de l\'app',
+    title: "Découverte de l'app",
     description: 'Explorez les fonctionnalités principales',
-    icon: <Smartphone className="h-6 w-6" />,
+    icon: <Smartphone className='h-6 w-6' />,
     canSkip: true,
     estimatedDuration: 180,
   },
@@ -124,7 +127,7 @@ const PATIENT_ONBOARDING_STEPS: WizardStep<PatientOnboardingStep>[] = [
     id: 'completion',
     title: 'Félicitations !',
     description: 'Votre profil est maintenant configuré',
-    icon: <CheckCircle className="h-6 w-6" />,
+    icon: <CheckCircle className='h-6 w-6' />,
     canSkip: false,
     estimatedDuration: 60,
   },
@@ -133,11 +136,9 @@ const PATIENT_ONBOARDING_STEPS: WizardStep<PatientOnboardingStep>[] = [
 /**
  * Assistant d'onboarding pour les patients
  */
-export const PatientOnboardingWizard: React.FC<PatientOnboardingWizardProps> = ({
-  onComplete,
-  initialData = {},
-  compact = false,
-}) => {
+export const PatientOnboardingWizard: React.FC<
+  PatientOnboardingWizardProps
+> = ({ onComplete, initialData = {}, compact = false }) => {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
@@ -154,7 +155,7 @@ export const PatientOnboardingWizard: React.FC<PatientOnboardingWizardProps> = (
     isLastStep,
     submitOnboarding,
     isLoading,
-    error
+    error,
   } = useOnboardingProgress<PatientOnboardingData, PatientOnboardingStep>(
     'patient',
     PatientOnboardingSchema
@@ -172,7 +173,9 @@ export const PatientOnboardingWizard: React.FC<PatientOnboardingWizardProps> = (
 
   // Synchroniser l'index de l'étape actuelle
   useEffect(() => {
-    const stepIndex = PATIENT_ONBOARDING_STEPS.findIndex(step => step.id === currentStep);
+    const stepIndex = PATIENT_ONBOARDING_STEPS.findIndex(
+      step => step.id === currentStep
+    );
     if (stepIndex !== -1) {
       setCurrentStepIndex(stepIndex);
     }
@@ -188,10 +191,10 @@ export const PatientOnboardingWizard: React.FC<PatientOnboardingWizardProps> = (
     try {
       // Valider les données actuelles
       const formData = methods.getValues();
-      
+
       // Mettre à jour les données
       await updateData(formData);
-      
+
       // Passer à l'étape suivante ou finaliser
       if (!isLastStep) {
         await nextStep();
@@ -227,13 +230,15 @@ export const PatientOnboardingWizard: React.FC<PatientOnboardingWizardProps> = (
    * Passer une étape
    */
   const handleSkip = async () => {
-    const currentStepConfig = PATIENT_ONBOARDING_STEPS.find(step => step.id === currentStep);
-    
+    const currentStepConfig = PATIENT_ONBOARDING_STEPS.find(
+      step => step.id === currentStep
+    );
+
     if (currentStepConfig?.canSkip) {
       try {
         await nextStep();
       } catch (error) {
-        console.error('Erreur lors du passage d\'étape:', error);
+        console.error("Erreur lors du passage d'étape:", error);
         // Note: Les erreurs seront gérées par le composant parent
       }
     }
@@ -246,15 +251,15 @@ export const PatientOnboardingWizard: React.FC<PatientOnboardingWizardProps> = (
     setIsSubmitting(true);
     try {
       const formData = methods.getValues();
-      
+
       // Soumettre l'onboarding
       await submitOnboarding(formData);
-      
+
       // Marquer l'onboarding comme terminé
       if (onComplete) {
         await onComplete(formData as PatientOnboardingData);
       }
-      
+
       // Rediriger vers le tableau de bord patient
       router.push('/dashboard/patient');
     } catch (error) {
@@ -282,7 +287,11 @@ export const PatientOnboardingWizard: React.FC<PatientOnboardingWizardProps> = (
    * Fermer l'onboarding (avec confirmation)
    */
   const handleClose = () => {
-    if (window.confirm('Êtes-vous sûr de vouloir quitter l\'onboarding ? Votre progression sera sauvegardée.')) {
+    if (
+      window.confirm(
+        "Êtes-vous sûr de vouloir quitter l'onboarding ? Votre progression sera sauvegardée."
+      )
+    ) {
       router.push('/dashboard');
     }
   };
@@ -292,7 +301,7 @@ export const PatientOnboardingWizard: React.FC<PatientOnboardingWizardProps> = (
    */
   const handleHelp = () => {
     // Note: L'aide sera implémentée dans une version future
-    console.log('Aide demandée pour l\'étape:', currentStep);
+    console.log("Aide demandée pour l'étape:", currentStep);
   };
 
   /**
@@ -310,35 +319,35 @@ export const PatientOnboardingWizard: React.FC<PatientOnboardingWizardProps> = (
     switch (currentStep) {
       case 'welcome':
         return <WelcomeStep {...commonProps} />;
-      
+
       case 'personal-info':
         return <PersonalInfoStep {...commonProps} />;
-      
+
       case 'health-profile':
         return <HealthProfileStep {...commonProps} />;
-      
+
       case 'health-goals':
         return <HealthGoalsStep {...commonProps} />;
-      
+
       case 'dietary-info':
         return <DietaryInfoStep {...commonProps} />;
-      
+
       case 'medical-info':
         return <MedicalInfoStep {...commonProps} />;
-      
+
       case 'lifestyle':
         return <LifestyleStep {...commonProps} />;
-      
+
       case 'app-tour':
         return <AppTourStep {...commonProps} />;
-      
+
       case 'completion':
         return <CompletionStep {...commonProps} />;
-      
+
       default:
         return (
-          <div className="text-center py-8">
-            <p className="text-gray-500">Étape non trouvée: {currentStep}</p>
+          <div className='text-center py-8'>
+            <p className='text-gray-500'>Étape non trouvée: {currentStep}</p>
           </div>
         );
     }
@@ -347,10 +356,10 @@ export const PatientOnboardingWizard: React.FC<PatientOnboardingWizardProps> = (
   // Affichage de chargement
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-100 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Chargement de votre profil...</p>
+      <div className='min-h-screen bg-gradient-to-br from-green-50 to-teal-100 flex items-center justify-center'>
+        <div className='text-center'>
+          <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4'></div>
+          <p className='text-gray-600'>Chargement de votre profil...</p>
         </div>
       </div>
     );
@@ -359,7 +368,7 @@ export const PatientOnboardingWizard: React.FC<PatientOnboardingWizardProps> = (
   const currentStepConfig = PATIENT_ONBOARDING_STEPS[currentStepIndex];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-100">
+    <div className='min-h-screen bg-gradient-to-br from-green-50 to-teal-100'>
       <FormProvider {...methods}>
         <WizardLayout
           title={currentStepConfig?.title || 'Onboarding Patient'}
@@ -377,16 +386,16 @@ export const PatientOnboardingWizard: React.FC<PatientOnboardingWizardProps> = (
           onHelp={handleHelp}
           compact={compact}
           nextButtonText={isLastStep ? 'Terminer' : 'Continuer'}
-          skipButtonText="Passer cette étape"
+          skipButtonText='Passer cette étape'
         >
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode='wait'>
             <motion.div
               key={currentStep}
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.3 }}
-              className="w-full"
+              className='w-full'
             >
               {renderStepContent()}
             </motion.div>
@@ -397,9 +406,9 @@ export const PatientOnboardingWizard: React.FC<PatientOnboardingWizardProps> = (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg"
+              className='mt-4 p-4 bg-red-50 border border-red-200 rounded-lg'
             >
-              <p className="text-red-600 text-sm">{error}</p>
+              <p className='text-red-600 text-sm'>{error}</p>
             </motion.div>
           )}
         </WizardLayout>

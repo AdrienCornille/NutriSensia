@@ -6,14 +6,14 @@
 'use client';
 
 import React, { useState, useCallback } from 'react';
-import Joyride, { 
-  CallBackProps, 
-  STATUS, 
-  EVENTS, 
+import Joyride, {
+  CallBackProps,
+  STATUS,
+  EVENTS,
   ACTIONS,
   Step,
   TooltipRenderProps,
-  Styles
+  Styles,
 } from 'react-joyride';
 import { motion } from 'framer-motion';
 import { X, ArrowLeft, ArrowRight, SkipForward } from 'lucide-react';
@@ -43,7 +43,8 @@ const tourStyles: Partial<Styles> = {
   },
   tooltip: {
     borderRadius: '12px',
-    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+    boxShadow:
+      '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
     padding: '20px',
   },
   tooltipContainer: {
@@ -108,56 +109,65 @@ const tourStyles: Partial<Styles> = {
 const nutritionistSteps: Step[] = [
   {
     target: '.onboarding-welcome',
-    content: 'Bienvenue dans votre parcours d\'onboarding ! Ce tour vous guidera à travers toutes les étapes pour configurer votre profil professionnel.',
+    content:
+      "Bienvenue dans votre parcours d'onboarding ! Ce tour vous guidera à travers toutes les étapes pour configurer votre profil professionnel.",
     title: 'Bienvenue ! 👋',
     placement: 'center',
     disableBeacon: true,
   },
   {
     target: '.onboarding-progress',
-    content: 'Suivez votre progression ici. Chaque étape complétée vous rapproche de l\'activation de votre compte professionnel.',
+    content:
+      "Suivez votre progression ici. Chaque étape complétée vous rapproche de l'activation de votre compte professionnel.",
     title: 'Suivi de progression',
     placement: 'bottom',
   },
   {
     target: '.onboarding-personal-info',
-    content: 'Commencez par renseigner vos informations personnelles de base. Ces informations seront visibles sur votre profil public.',
+    content:
+      'Commencez par renseigner vos informations personnelles de base. Ces informations seront visibles sur votre profil public.',
     title: 'Informations personnelles',
     placement: 'right',
   },
   {
     target: '.onboarding-credentials',
-    content: 'Vos identifiants professionnels (ASCA, RME, EAN) sont essentiels pour valider votre statut de professionnel de santé.',
+    content:
+      'Vos identifiants professionnels (ASCA, RME, EAN) sont essentiels pour valider votre statut de professionnel de santé.',
     title: 'Identifiants professionnels',
     placement: 'right',
   },
   {
     target: '.onboarding-practice-details',
-    content: 'Configurez les détails de votre cabinet : adresse, tarifs, types de consultations et langues parlées.',
+    content:
+      'Configurez les détails de votre cabinet : adresse, tarifs, types de consultations et langues parlées.',
     title: 'Détails du cabinet',
     placement: 'right',
   },
   {
     target: '.onboarding-specializations',
-    content: 'Mettez en avant vos spécialisations et votre expérience pour attirer les patients qui correspondent à votre expertise.',
+    content:
+      'Mettez en avant vos spécialisations et votre expérience pour attirer les patients qui correspondent à votre expertise.',
     title: 'Spécialisations',
     placement: 'right',
   },
   {
     target: '.onboarding-platform-training',
-    content: 'Découvrez les fonctionnalités de la plateforme qui vous aideront à gérer vos patients et consultations.',
+    content:
+      'Découvrez les fonctionnalités de la plateforme qui vous aideront à gérer vos patients et consultations.',
     title: 'Formation plateforme',
     placement: 'right',
   },
   {
     target: '.onboarding-navigation',
-    content: 'Utilisez ces boutons pour naviguer entre les étapes. Vous pouvez revenir en arrière à tout moment.',
+    content:
+      'Utilisez ces boutons pour naviguer entre les étapes. Vous pouvez revenir en arrière à tout moment.',
     title: 'Navigation',
     placement: 'top',
   },
   {
     target: '.onboarding-help',
-    content: 'Besoin d\'aide ? Cliquez ici à tout moment pour obtenir de l\'assistance ou des explications supplémentaires.',
+    content:
+      "Besoin d'aide ? Cliquez ici à tout moment pour obtenir de l'assistance ou des explications supplémentaires.",
     title: 'Aide disponible',
     placement: 'left',
   },
@@ -169,50 +179,58 @@ const nutritionistSteps: Step[] = [
 const patientSteps: Step[] = [
   {
     target: '.onboarding-welcome',
-    content: 'Bienvenue ! Ce parcours vous aidera à configurer votre profil pour recevoir des conseils nutritionnels personnalisés.',
+    content:
+      'Bienvenue ! Ce parcours vous aidera à configurer votre profil pour recevoir des conseils nutritionnels personnalisés.',
     title: 'Bienvenue ! 🌟',
     placement: 'center',
     disableBeacon: true,
   },
   {
     target: '.onboarding-progress',
-    content: 'Votre progression s\'affiche ici. Plus vous complétez d\'informations, plus vos recommandations seront précises.',
+    content:
+      "Votre progression s'affiche ici. Plus vous complétez d'informations, plus vos recommandations seront précises.",
     title: 'Suivi de progression',
     placement: 'bottom',
   },
   {
     target: '.onboarding-personal-info',
-    content: 'Commencez par vos informations de base. Ces données nous aident à personnaliser votre expérience.',
+    content:
+      'Commencez par vos informations de base. Ces données nous aident à personnaliser votre expérience.',
     title: 'Vos informations',
     placement: 'right',
   },
   {
     target: '.onboarding-health-profile',
-    content: 'Votre profil santé nous permet de comprendre votre situation actuelle et vos besoins spécifiques.',
+    content:
+      'Votre profil santé nous permet de comprendre votre situation actuelle et vos besoins spécifiques.',
     title: 'Profil santé',
     placement: 'right',
   },
   {
     target: '.onboarding-health-goals',
-    content: 'Définissez vos objectifs santé pour que nous puissions vous proposer un accompagnement adapté.',
+    content:
+      'Définissez vos objectifs santé pour que nous puissions vous proposer un accompagnement adapté.',
     title: 'Objectifs santé',
     placement: 'right',
   },
   {
     target: '.onboarding-dietary-info',
-    content: 'Vos habitudes alimentaires actuelles nous aident à créer des recommandations réalistes et durables.',
+    content:
+      'Vos habitudes alimentaires actuelles nous aident à créer des recommandations réalistes et durables.',
     title: 'Habitudes alimentaires',
     placement: 'right',
   },
   {
     target: '.onboarding-app-tour',
-    content: 'Découvrez les fonctionnalités qui vous accompagneront dans votre parcours santé au quotidien.',
-    title: 'Découverte de l\'app',
+    content:
+      'Découvrez les fonctionnalités qui vous accompagneront dans votre parcours santé au quotidien.',
+    title: "Découverte de l'app",
     placement: 'right',
   },
   {
     target: '.onboarding-navigation',
-    content: 'Naviguez facilement entre les étapes avec ces boutons. Prenez votre temps !',
+    content:
+      'Naviguez facilement entre les étapes avec ces boutons. Prenez votre temps !',
     title: 'Navigation',
     placement: 'top',
   },
@@ -236,13 +254,13 @@ const CustomTooltip: React.FC<TooltipRenderProps> = ({
     <motion.div
       initial={{ opacity: 0, scale: 0.9, y: 10 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
-      transition={{ duration: 0.2, ease: "easeOut" }}
-      className="bg-white rounded-xl shadow-2xl p-6 max-w-sm"
+      transition={{ duration: 0.2, ease: 'easeOut' }}
+      className='bg-white rounded-xl shadow-2xl p-6 max-w-sm'
       {...tooltipProps}
     >
       {/* Close button */}
       <motion.button
-        className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+        className='absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors'
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         {...closeProps}
@@ -252,24 +270,24 @@ const CustomTooltip: React.FC<TooltipRenderProps> = ({
 
       {/* Title */}
       {step.title && (
-        <h3 className="text-lg font-semibold text-gray-800 mb-3 pr-6">
+        <h3 className='text-lg font-semibold text-gray-800 mb-3 pr-6'>
           {step.title}
         </h3>
       )}
 
       {/* Content */}
-      <div className="text-gray-600 text-sm leading-relaxed mb-6">
+      <div className='text-gray-600 text-sm leading-relaxed mb-6'>
         {step.content}
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-between">
+      <div className='flex items-center justify-between'>
         {/* Step indicator */}
-        <div className="flex items-center space-x-2">
-          <span className="text-xs text-gray-400">
+        <div className='flex items-center space-x-2'>
+          <span className='text-xs text-gray-400'>
             Étape {index + 1} sur {size}
           </span>
-          <div className="flex space-x-1">
+          <div className='flex space-x-1'>
             {Array.from({ length: size }, (_, i) => (
               <div
                 key={i}
@@ -282,11 +300,11 @@ const CustomTooltip: React.FC<TooltipRenderProps> = ({
         </div>
 
         {/* Action buttons */}
-        <div className="flex items-center space-x-2">
+        <div className='flex items-center space-x-2'>
           {/* Skip button */}
           {!continuous && (
             <motion.button
-              className="text-gray-400 hover:text-gray-600 text-sm transition-colors flex items-center space-x-1"
+              className='text-gray-400 hover:text-gray-600 text-sm transition-colors flex items-center space-x-1'
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               {...skipProps}
@@ -299,7 +317,7 @@ const CustomTooltip: React.FC<TooltipRenderProps> = ({
           {/* Back button */}
           {index > 0 && (
             <motion.button
-              className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+              className='flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors'
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               {...backProps}
@@ -312,7 +330,7 @@ const CustomTooltip: React.FC<TooltipRenderProps> = ({
           {/* Next/Finish button */}
           {continuous && (
             <motion.button
-              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className='flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               {...primaryProps}
@@ -339,21 +357,24 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({
   const [stepIndex, setStepIndex] = useState(0);
   const steps = role === 'nutritionist' ? nutritionistSteps : patientSteps;
 
-  const handleJoyrideCallback = useCallback((data: CallBackProps) => {
-    const { action, index, status, type } = data;
+  const handleJoyrideCallback = useCallback(
+    (data: CallBackProps) => {
+      const { action, index, status, type } = data;
 
-    if (type === EVENTS.STEP_AFTER || type === EVENTS.TARGET_NOT_FOUND) {
-      // Mettre à jour l'index de l'étape
-      setStepIndex(index + (action === ACTIONS.PREV ? -1 : 1));
-    } else if (status === STATUS.FINISHED || status === STATUS.SKIPPED) {
-      // Tour terminé ou ignoré
-      if (status === STATUS.FINISHED) {
-        onComplete();
-      } else {
-        onSkip();
+      if (type === EVENTS.STEP_AFTER || type === EVENTS.TARGET_NOT_FOUND) {
+        // Mettre à jour l'index de l'étape
+        setStepIndex(index + (action === ACTIONS.PREV ? -1 : 1));
+      } else if (status === STATUS.FINISHED || status === STATUS.SKIPPED) {
+        // Tour terminé ou ignoré
+        if (status === STATUS.FINISHED) {
+          onComplete();
+        } else {
+          onSkip();
+        }
       }
-    }
-  }, [onComplete, onSkip]);
+    },
+    [onComplete, onSkip]
+  );
 
   if (!isActive) {
     return null;

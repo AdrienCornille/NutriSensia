@@ -1,6 +1,6 @@
 /**
  * Point d'entrée pour tous les composants d'export et d'import de données
- * 
+ *
  * Ce fichier exporte tous les composants, hooks et utilitaires
  * liés à la portabilité des données et à la conformité RGPD.
  */
@@ -12,13 +12,13 @@ export { ExportHistory } from './ExportHistory';
 export { DataPortabilityDashboard } from './DataPortabilityDashboard';
 
 // Hooks
-export { 
+export {
   useDataExport,
   useDataImport,
   useExportHistory,
   useAvailableExportSections,
   useImportValidation,
-  useDownloadManager
+  useDownloadManager,
 } from '@/hooks/useDataExport';
 
 // Types et utilitaires
@@ -27,14 +27,11 @@ export type {
   ImportOptions,
   ExportResult,
   ExportHistoryEntry,
-  ExportSection
+  ExportSection,
 } from '@/lib/data-export';
 
 export {
   DataExportService,
   DataImportService,
-  dataExportUtils
+  dataExportUtils,
 } from '@/lib/data-export';
-
-
-

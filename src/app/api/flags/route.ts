@@ -1,6 +1,6 @@
 /**
  * API Route pour la découverte des feature flags
- * 
+ *
  * Cette route expose les feature flags configurés pour l'interface Vercel Flags
  * et permet la gestion des tests A/B depuis le dashboard.
  */
@@ -19,36 +19,36 @@ export async function GET(request: NextRequest) {
         'onboarding-variant': {
           value: 'control',
           metadata: {
-            description: 'Variante d\'onboarding à afficher',
+            description: "Variante d'onboarding à afficher",
             type: 'string',
             options: ['control', 'simplified', 'gamified', 'guided'],
-            default: 'control'
-          }
+            default: 'control',
+          },
         },
         'show-progress-indicator': {
           value: true,
           metadata: {
-            description: 'Afficher l\'indicateur de progression',
+            description: "Afficher l'indicateur de progression",
             type: 'boolean',
-            default: true
-          }
+            default: true,
+          },
         },
         'enable-gamification': {
           value: false,
           metadata: {
             description: 'Activer les éléments de gamification',
             type: 'boolean',
-            default: false
-          }
+            default: false,
+          },
         },
         'show-help-tooltips': {
           value: true,
           metadata: {
-            description: 'Afficher les tooltips d\'aide',
+            description: "Afficher les tooltips d'aide",
             type: 'boolean',
-            default: true
-          }
-        }
+            default: true,
+          },
+        },
       },
       metadata: {
         environment: process.env.NODE_ENV || 'development',
@@ -64,21 +64,21 @@ export async function GET(request: NextRequest) {
     };
 
     return NextResponse.json(demoFlags, {
-      headers: { 
+      headers: {
         'x-flags-sdk-version': '1.0.0',
         'cache-control': 'no-cache, no-store, must-revalidate',
-        'pragma': 'no-cache',
-        'expires': '0',
+        pragma: 'no-cache',
+        expires: '0',
       },
     });
   } catch (error) {
-    console.error('Erreur dans l\'endpoint de découverte des flags:', error);
-    
+    console.error("Erreur dans l'endpoint de découverte des flags:", error);
+
     return NextResponse.json(
-      { 
-        error: 'Internal server error', 
-        message: 'Failed to retrieve feature flags data' 
-      }, 
+      {
+        error: 'Internal server error',
+        message: 'Failed to retrieve feature flags data',
+      },
       { status: 500 }
     );
   }
@@ -88,11 +88,14 @@ export async function GET(request: NextRequest) {
  * Handler OPTIONS pour CORS
  */
 export async function OPTIONS() {
-  return NextResponse.json({}, {
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Authorization, Content-Type',
-    },
-  });
+  return NextResponse.json(
+    {},
+    {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, OPTIONS',
+        'Access-Control-Allow-Headers': 'Authorization, Content-Type',
+      },
+    }
+  );
 }

@@ -57,7 +57,7 @@ const stepTransition = {
   initial: { opacity: 0, x: 20 },
   animate: { opacity: 1, x: 0 },
   exit: { opacity: 0, x: -20 },
-  transition: { duration: 0.3, ease: [0.4, 0, 0.2, 1] }
+  transition: { duration: 0.3, ease: [0.4, 0, 0.2, 1] },
 };
 
 /**
@@ -88,32 +88,34 @@ export const WizardLayout: React.FC<WizardLayoutProps> = ({
   skipButtonText = 'Passer',
 }) => {
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-background-accent to-secondary-pale dark:from-background-secondary dark:to-background-accent ${compact ? 'p-2' : 'p-4'}`}>
+    <div
+      className={`min-h-screen bg-gradient-to-br from-background-accent to-secondary-pale dark:from-background-secondary dark:to-background-accent ${compact ? 'p-2' : 'p-4'}`}
+    >
       <div className={`mx-auto ${compact ? 'max-w-4xl' : 'max-w-7xl'}`}>
         {/* En-tête avec titre et boutons d'action */}
-        <div className="flex items-center justify-end mb-6">
-          <div className="flex items-center space-x-2">
+        <div className='flex items-center justify-end mb-6'>
+          <div className='flex items-center space-x-2'>
             {/* Bouton d'aide */}
             {onHelp && (
               <Button
-                variant="ghost"
-                size="sm"
+                variant='ghost'
+                size='sm'
                 onClick={onHelp}
-                className="text-neutral-medium hover:text-neutral-dark dark:text-neutral-medium dark:hover:text-neutral-light"
+                className='text-neutral-medium hover:text-neutral-dark dark:text-neutral-medium dark:hover:text-neutral-light'
               >
-                <HelpCircle className="h-5 w-5" />
+                <HelpCircle className='h-5 w-5' />
               </Button>
             )}
-            
+
             {/* Bouton de fermeture */}
             {onClose && (
               <Button
-                variant="ghost"
-                size="sm"
+                variant='ghost'
+                size='sm'
                 onClick={onClose}
-                className="text-neutral-medium hover:text-neutral-dark dark:text-neutral-medium dark:hover:text-neutral-light"
+                className='text-neutral-medium hover:text-neutral-dark dark:text-neutral-medium dark:hover:text-neutral-light'
               >
-                <X className="h-5 w-5" />
+                <X className='h-5 w-5' />
               </Button>
             )}
           </div>
@@ -121,7 +123,7 @@ export const WizardLayout: React.FC<WizardLayoutProps> = ({
 
         {/* Indicateur de progression des étapes */}
         {showStepIndicator && (
-          <div className="mb-8">
+          <div className='mb-8'>
             <StepIndicator
               currentStep={currentStep}
               progress={progress}
@@ -133,19 +135,17 @@ export const WizardLayout: React.FC<WizardLayoutProps> = ({
         )}
 
         {/* Contenu principal avec animation améliorée */}
-        <Card className={`${compact ? 'min-h-[400px]' : 'min-h-[500px]'} shadow-lg`}>
-          <CardContent className="p-8">
-            <StepTransition 
-              stepKey={currentStep} 
-              direction="forward"
-            >
+        <Card
+          className={`${compact ? 'min-h-[400px]' : 'min-h-[500px]'} shadow-lg`}
+        >
+          <CardContent className='p-8'>
+            <StepTransition stepKey={currentStep} direction='forward'>
               {children}
             </StepTransition>
           </CardContent>
         </Card>
 
         {/* Navigation gérée par le contenu de chaque étape */}
-
       </div>
     </div>
   );
@@ -178,18 +178,20 @@ export const WizardStep: React.FC<WizardStepProps> = ({
   return (
     <div className={`space-y-6 ${className}`}>
       {/* En-tête de l'étape */}
-      <div className="text-center space-y-2">
-        <h2 className="text-h3 font-semibold text-neutral-dark dark:text-neutral-light">{title}</h2>
-        
+      <div className='text-center space-y-2'>
+        <h2 className='text-h3 font-semibold text-neutral-dark dark:text-neutral-light'>
+          {title}
+        </h2>
+
         {description && (
-          <p className="text-body text-neutral-medium dark:text-neutral-medium max-w-2xl mx-auto">{description}</p>
+          <p className='text-body text-neutral-medium dark:text-neutral-medium max-w-2xl mx-auto'>
+            {description}
+          </p>
         )}
       </div>
 
       {/* Contenu de l'étape */}
-      <div className="max-w-4xl mx-auto">
-        {children}
-      </div>
+      <div className='max-w-4xl mx-auto'>{children}</div>
     </div>
   );
 };
@@ -222,13 +224,11 @@ export const WizardTip: React.FC<WizardTipProps> = ({
   };
 
   return (
-    <div className={`border rounded-lg ${compact ? 'p-3' : 'p-4'} ${typeStyles[type]}`}>
-      {title && (
-        <h4 className="font-medium mb-2">{title}</h4>
-      )}
-      <div className={`${compact ? 'text-sm' : ''}`}>
-        {children}
-      </div>
+    <div
+      className={`border rounded-lg ${compact ? 'p-3' : 'p-4'} ${typeStyles[type]}`}
+    >
+      {title && <h4 className='font-medium mb-2'>{title}</h4>}
+      <div className={`${compact ? 'text-sm' : ''}`}>{children}</div>
     </div>
   );
 };

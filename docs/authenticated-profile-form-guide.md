@@ -7,16 +7,19 @@ Le formulaire de profil authentifié (`AuthenticatedProfileForm`) est une versio
 ## ✨ Fonctionnalités
 
 ### 🔐 Authentification Requise
+
 - **Protection automatique** : Le formulaire vérifie automatiquement l'authentification
 - **Redirection intelligente** : Redirige vers la page de connexion si non authentifié
 - **Gestion des rôles** : Affiche les champs appropriés selon le rôle utilisateur
 
 ### 📊 Données Réelles
+
 - **Chargement automatique** : Récupère les vraies données depuis Supabase
 - **Mise à jour en temps réel** : Met à jour la base de données lors de la sauvegarde
 - **Gestion des erreurs** : Affiche les erreurs de chargement et de sauvegarde
 
 ### 🎯 Interface Utilisateur
+
 - **Design responsive** : Fonctionne sur mobile et desktop
 - **Animations fluides** : Transitions avec Framer Motion
 - **Feedback visuel** : États de chargement et messages d'erreur
@@ -25,26 +28,24 @@ Le formulaire de profil authentifié (`AuthenticatedProfileForm`) est une versio
 ## 🚀 Utilisation
 
 ### Page d'Édition de Profil
+
 ```tsx
 // src/app/profile/edit/page.tsx
 import { AuthenticatedProfileForm } from '@/components/forms/AuthenticatedProfileForm';
 
 export default function EditProfilePage() {
-  return (
-    <AuthenticatedProfileForm
-      redirectAfterSave="/profile"
-    />
-  );
+  return <AuthenticatedProfileForm redirectAfterSave='/profile' />;
 }
 ```
 
 ### Page de Test
+
 ```tsx
 // src/app/profile/authenticated-test/page.tsx
 import { AuthenticatedProfileForm } from '@/components/forms/AuthenticatedProfileForm';
 
 export default function TestPage() {
-  const handleSave = async (data) => {
+  const handleSave = async data => {
     // Logique personnalisée
     console.log('Données sauvegardées:', data);
   };
@@ -52,7 +53,7 @@ export default function TestPage() {
   return (
     <AuthenticatedProfileForm
       onSave={handleSave}
-      redirectAfterSave="/profile"
+      redirectAfterSave='/profile'
     />
   );
 }
@@ -62,11 +63,11 @@ export default function TestPage() {
 
 ### Props Disponibles
 
-| Prop | Type | Description | Défaut |
-|------|------|-------------|---------|
-| `onSave` | `Function` | Fonction personnalisée de sauvegarde | `undefined` |
-| `onCancel` | `Function` | Fonction appelée lors de l'annulation | `undefined` |
-| `redirectAfterSave` | `string` | URL de redirection après sauvegarde | `undefined` |
+| Prop                | Type       | Description                           | Défaut      |
+| ------------------- | ---------- | ------------------------------------- | ----------- |
+| `onSave`            | `Function` | Fonction personnalisée de sauvegarde  | `undefined` |
+| `onCancel`          | `Function` | Fonction appelée lors de l'annulation | `undefined` |
+| `redirectAfterSave` | `string`   | URL de redirection après sauvegarde   | `undefined` |
 
 ### Hook Personnalisé
 
@@ -74,13 +75,13 @@ Le formulaire utilise le hook `useUserProfile` qui gère :
 
 ```tsx
 const {
-  profile,           // Données du profil
-  loading,           // État de chargement
-  error,             // Erreurs éventuelles
-  updateProfile,     // Fonction de mise à jour
-  updateAvatar,      // Mise à jour de l'avatar
-  removeAvatar,      // Suppression de l'avatar
-  refreshProfile,    // Rafraîchissement du profil
+  profile, // Données du profil
+  loading, // État de chargement
+  error, // Erreurs éventuelles
+  updateProfile, // Fonction de mise à jour
+  updateAvatar, // Mise à jour de l'avatar
+  removeAvatar, // Suppression de l'avatar
+  refreshProfile, // Rafraîchissement du profil
 } = useUserProfile();
 ```
 
@@ -108,6 +109,7 @@ src/
 ## 🔄 Flux de Données
 
 ### 1. Chargement Initial
+
 ```
 AuthenticatedProfileForm
     ↓
@@ -119,6 +121,7 @@ Formulaire initialisé avec données réelles
 ```
 
 ### 2. Sauvegarde
+
 ```
 Utilisateur soumet le formulaire
     ↓
@@ -136,16 +139,19 @@ Redirection (si configurée)
 ## 🛡️ Sécurité
 
 ### Authentification
+
 - Vérification automatique de l'authentification
 - Protection des routes avec `AuthGuard`
 - Gestion des sessions expirées
 
 ### Autorisations
+
 - Vérification des rôles utilisateur
 - Accès limité aux données personnelles
 - Politiques RLS Supabase
 
 ### Validation
+
 - Validation côté client avec Zod
 - Validation côté serveur avec Supabase
 - Protection contre les injections
@@ -153,32 +159,39 @@ Redirection (si configurée)
 ## 🎨 Personnalisation
 
 ### Styles
+
 Le formulaire utilise Tailwind CSS et peut être personnalisé :
 
 ```tsx
 <AuthenticatedProfileForm
-  className="custom-form-styles"
+  className='custom-form-styles'
   // ... autres props
 />
 ```
 
 ### Messages
+
 Les messages d'erreur et de succès peuvent être personnalisés dans le hook `useUserProfile`.
 
 ### Champs
+
 Les champs spécifiques au rôle peuvent être modifiés dans :
+
 - `NutritionistProfileFields.tsx`
 - `PatientProfileFields.tsx`
 
 ## 🧪 Tests
 
 ### Page de Test
+
 Accédez à `/profile/authenticated-test` pour tester le formulaire avec :
+
 - Données réelles de l'utilisateur connecté
 - Mise à jour en temps réel
 - Gestion des erreurs
 
 ### Développement
+
 Pour le développement, utilisez `/profile/edit` qui est la version de production.
 
 ## 🐛 Dépannage
@@ -198,7 +211,9 @@ Pour le développement, utilisez `/profile/edit` qui est la version de productio
    - Vérifiez les contraintes de la base de données
 
 ### Logs de Débogage
+
 Activez les logs dans la console pour voir :
+
 - Les données chargées
 - Les erreurs de validation
 - Les erreurs de sauvegarde

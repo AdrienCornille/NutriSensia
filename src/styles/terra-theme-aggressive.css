@@ -1,0 +1,389 @@
+/**
+ * PALETTE "TERRA NATURA" - CSS Agressif pour Page de Test
+ * =========================================================
+ *
+ * Remplace les couleurs vertes par des tons terre et naturels
+ *
+ * MAPPING DES COULEURS :
+ * ======================
+ *
+ * VERTS → TONS TERRE
+ * ------------------
+ * #3f6655 (Vert principal)     → #8B6F47 (Terre cuite)
+ * #2E7D5E (Vert primaire)      → #8B6F47 (Terre cuite)
+ * #1B4F3F (Vert sombre)        → #5C4A33 (Chocolat)
+ * #4A9B7B (Vert secondaire)    → #A6855A (Sable doré)
+ * #E8F3EF (Vert très pâle)     → #F5F1E8 (Crème)
+ * #B8D4C7 (Sage vert)          → #D4C4B0 (Beige sable)
+ * #d7e1ce (Shadow)             → #E8DDD0 (Ombre sable)
+ * #9461bc (Purple accent)      → #C17A58 (Terracotta)
+ * #5e69bd (Bleu CTA)           → #C17A58 (Terracotta)
+ */
+
+/* ============================================ */
+/* RESET DES BACKGROUNDS                        */
+/* ============================================ */
+
+[style*='background-color: #3f6655'],
+[style*='background-color:#3f6655'],
+[style*="backgroundColor: '#3f6655'"],
+[style*='backgroundColor: "#3f6655"'] {
+  background-color: #8b6f47 !important;
+}
+
+[style*='background-color: #2E7D5E'],
+[style*='background-color:#2E7D5E'],
+[style*='background-color: #2e7d5e'],
+[style*='background-color:#2e7d5e'] {
+  background-color: #8b6f47 !important;
+}
+
+[style*='background-color: #1B4F3F'],
+[style*='background-color:#1B4F3F'],
+[style*='background-color: #1b4f3f'],
+[style*='background-color:#1b4f3f'] {
+  background-color: #5c4a33 !important;
+}
+
+[style*='background-color: #2f5645'],
+[style*='background-color:#2f5645'] {
+  background-color: #5c4a33 !important;
+}
+
+[style*='background-color: #2d5042'],
+[style*='background-color:#2d5042'] {
+  background-color: #4a3829 !important;
+}
+
+[style*='background-color: #b6ccae'],
+[style*='background-color:#b6ccae'] {
+  background-color: #d4c4b0 !important;
+}
+
+[style*='background-color: #a6bc9e'],
+[style*='background-color:#a6bc9e'] {
+  background-color: #c4b49f !important;
+}
+
+[style*='background-color: #4A9B7B'],
+[style*='background-color:#4A9B7B'],
+[style*='background-color: #4a9b7b'],
+[style*='background-color:#4a9b7b'] {
+  background-color: #a6855a !important;
+}
+
+[style*='background-color: #E8F3EF'],
+[style*='background-color:#E8F3EF'],
+[style*='background-color: #e8f3ef'],
+[style*='background-color:#e8f3ef'] {
+  background-color: #f5f1e8 !important;
+}
+
+[style*='background-color: #f8f7ef'],
+[style*='background-color:#f8f7ef'] {
+  background-color: #faf8f3 !important;
+}
+
+/* ============================================ */
+/* RESET DES COULEURS DE TEXTE                  */
+/* ============================================ */
+
+[style*='color: #3f6655'],
+[style*='color:#3f6655'],
+[style*="color: '#3f6655'"],
+[style*='color: "#3f6655"'] {
+  color: #8b6f47 !important;
+}
+
+[style*='color: #2E7D5E'],
+[style*='color:#2E7D5E'],
+[style*='color: #2e7d5e'],
+[style*='color:#2e7d5e'] {
+  color: #8b6f47 !important;
+}
+
+[style*='color: #41556b'],
+[style*='color:#41556b'] {
+  color: #5c5248 !important;
+}
+
+/* ============================================ */
+/* RESET DES BORDERS                            */
+/* ============================================ */
+
+[style*='border-color: #3f6655'],
+[style*='border-color:#3f6655'],
+[style*="borderColor: '#3f6655'"],
+[style*='borderColor: "#3f6655"'] {
+  border-color: #8b6f47 !important;
+}
+
+[style*='border: 1px solid #3f6655'],
+[style*='border:1px solid #3f6655'],
+[style*='border: 2px solid #3f6655'],
+[style*='border:2px solid #3f6655'] {
+  border-color: #8b6f47 !important;
+}
+
+[style*='border-bottom: 1px solid #b2c2bb'],
+[style*='border-bottom:1px solid #b2c2bb'],
+[style*="borderBottom: '1px solid #b2c2bb'"],
+[style*='borderBottom: "1px solid #b2c2bb"'] {
+  border-bottom-color: #d4c4b0 !important;
+}
+
+/* ============================================ */
+/* RESET DES BOX SHADOWS                        */
+/* ============================================ */
+
+[style*='box-shadow: 8px 8px 0 #d7e1ce'],
+[style*='box-shadow:8px 8px 0 #d7e1ce'],
+[style*="boxShadow: '8px 8px 0 #d7e1ce'"],
+[style*='boxShadow: "8px 8px 0 #d7e1ce"'],
+[style*='box-shadow: 8px 8px 0px #d7e1ce'],
+[style*='box-shadow:8px 8px 0px #d7e1ce'] {
+  box-shadow: 8px 8px 0 #e8ddd0 !important;
+}
+
+[style*='box-shadow: 10px 10px 0 #d7e1ce'],
+[style*='box-shadow:10px 10px 0 #d7e1ce'] {
+  box-shadow: 10px 10px 0 #e8ddd0 !important;
+}
+
+[style*='box-shadow: 4px 4px 0 #d7e1ce'],
+[style*='box-shadow:4px 4px 0 #d7e1ce'],
+[style*="boxShadow: '4px 4px 0 #d7e1ce'"],
+[style*='boxShadow: "4px 4px 0 #d7e1ce"'] {
+  box-shadow: 4px 4px 0 #e8ddd0 !important;
+}
+
+[style*='box-shadow: 5px 5px 0 #d7e1ce'],
+[style*='box-shadow:5px 5px 0 #d7e1ce'],
+[style*="boxShadow: '5px 5px 0 #d7e1ce'"],
+[style*='boxShadow: "5px 5px 0 #d7e1ce"'] {
+  box-shadow: 5px 5px 0 #e8ddd0 !important;
+}
+
+[style*='rgb(215, 225, 206)'],
+[style*='rgb(215,225,206)'] {
+  box-shadow: 8px 8px 0 #e8ddd0 !important;
+}
+
+[style*='box-shadow'][style*='215'],
+[style*='boxShadow'][style*='215'] {
+  box-shadow: 8px 8px 0 rgb(232, 221, 208) !important;
+}
+
+/* ============================================ */
+/* RGBA OVERLAYS ET TRANSPARENCES               */
+/* ============================================ */
+
+[style*='background-color: rgba(63, 102, 85, 0.2)'],
+[style*='background-color:rgba(63, 102, 85, 0.2)'],
+[style*="backgroundColor: 'rgba(63, 102, 85, 0.2)'"],
+[style*='backgroundColor: "rgba(63, 102, 85, 0.2)"'] {
+  background-color: rgba(139, 111, 71, 0.2) !important;
+}
+
+[style*='background-color: rgba(63, 102, 85, 0.4)'],
+[style*='background-color:rgba(63, 102, 85, 0.4)'] {
+  background-color: rgba(139, 111, 71, 0.4) !important;
+}
+
+/* ============================================ */
+/* CLASSES TAILWIND                             */
+/* ============================================ */
+
+.bg-primary,
+.bg-\[#2E7D5E\],
+.bg-\[#3f6655\] {
+  background-color: #8b6f47 !important;
+}
+
+.bg-primary-dark,
+.bg-\[#1B4F3F\],
+.bg-\[#1b4f3f\] {
+  background-color: #5c4a33 !important;
+}
+
+.bg-secondary,
+.bg-\[#4A9B7B\],
+.bg-\[#4a9b7b\] {
+  background-color: #a6855a !important;
+}
+
+.bg-secondary-pale,
+.bg-\[#E8F3EF\],
+.bg-\[#e8f3ef\] {
+  background-color: #f5f1e8 !important;
+}
+
+.text-primary,
+.text-\[#3f6655\],
+.text-\[#2E7D5E\] {
+  color: #8b6f47 !important;
+}
+
+.text-primary-dark,
+.text-\[#1B4F3F\] {
+  color: #5c4a33 !important;
+}
+
+.border-primary,
+.border-\[#3f6655\] {
+  border-color: #8b6f47 !important;
+}
+
+/* ============================================ */
+/* SÉLECTEURS PAR CLASSE DE COMPOSANT           */
+/* ============================================ */
+
+.hero-section h2,
+.hero-section .hero-subtitle {
+  color: #8b6f47 !important;
+  border-bottom-color: #d4c4b0 !important;
+}
+
+.hero-section .hero-btn,
+.hero-section button {
+  background-color: #8b6f47 !important;
+}
+
+.hero-section .hero-btn:hover,
+.hero-section button:hover {
+  background-color: #5c4a33 !important;
+}
+
+header {
+  background-color: #faf8f3 !important;
+}
+
+header [style*="backgroundColor: '#3f6655'"],
+header [style*='backgroundColor: "#3f6655"'],
+header [style*='background-color: #3f6655'] {
+  background-color: #8b6f47 !important;
+}
+
+header [style*='color: #3f6655'],
+header [style*="color: '#3f6655'"],
+header [style*='color: "#3f6655"'] {
+  color: #8b6f47 !important;
+}
+
+nav a[style*='color: #3f6655'],
+nav a[style*='color:#3f6655'] {
+  color: #8b6f47 !important;
+}
+
+nav a[style*='color: #41556b'],
+nav a[style*='color:#41556b'] {
+  color: #5c5248 !important;
+}
+
+/* ============================================ */
+/* ACCENTS TERRACOTTA                           */
+/* ============================================ */
+
+/* Top bar - Terracotta */
+[style*='background-color: #9461bc'],
+[style*="backgroundColor: '#9461bc'"],
+div[style*='#9461bc'] {
+  background-color: #c17a58 !important;
+}
+
+/* CTA Banner - Terracotta */
+section[style*='background-color: #5e69bd'],
+section[style*="backgroundColor: '#5e69bd'"],
+[style*='#5e69bd'] {
+  background-color: #c17a58 !important;
+}
+
+div:has(> :contains('Découvrez nos ressources')) {
+  background-color: #c17a58 !important;
+}
+
+[style*='rgb(148, 97, 188)'],
+[style*='rgb(148,97,188)'] {
+  background-color: #c17a58 !important;
+}
+
+/* Buttons */
+button[style*='background-color: #3f6655'],
+button[style*="backgroundColor: '#3f6655'"],
+button[style*='backgroundColor: "#3f6655"'],
+a[style*='background-color: #3f6655'] {
+  background-color: #8b6f47 !important;
+}
+
+button[style*='background-color: #b6ccae'],
+button[style*="backgroundColor: '#b6ccae'"],
+a[style*='background-color: #b6ccae'] {
+  background-color: #d4c4b0 !important;
+}
+
+button[style*='color: #3f6655'],
+button[style*="color: '#3f6655'"],
+a[style*='color: #3f6655'] {
+  color: #8b6f47 !important;
+}
+
+/* Cards */
+[class*='card'][style*='border: 1px solid #3f6655'],
+[class*='card'][style*='border:1px solid #3f6655'] {
+  border-color: #8b6f47 !important;
+}
+
+section[style*='background-color: #f8f7ef'],
+section[style*="backgroundColor: '#f8f7ef'"] {
+  background-color: #faf8f3 !important;
+}
+
+/* ============================================ */
+/* PSEUDO-ELEMENTS                              */
+/* ============================================ */
+
+.nav-link-active::after {
+  background-color: #8b6f47 !important;
+}
+
+.nav-link-hover::after {
+  background-color: #c17a58 !important;
+}
+
+/* ============================================ */
+/* TAILWIND CLASSES UTILITAIRES                 */
+/* ============================================ */
+
+.hover\:bg-primary:hover {
+  background-color: #8b6f47 !important;
+}
+
+.hover\:bg-primary-dark:hover {
+  background-color: #5c4a33 !important;
+}
+
+.hover\:text-primary:hover {
+  color: #8b6f47 !important;
+}
+
+.focus\:ring-primary:focus {
+  --tw-ring-color: #8b6f47 !important;
+}
+
+.focus\:border-primary:focus {
+  border-color: #8b6f47 !important;
+}
+
+/* ============================================ */
+/* MODE SOMBRE (si activé)                      */
+/* ============================================ */
+
+.dark [style*='background-color: #3f6655'],
+.dark [style*="backgroundColor: '#3f6655'"] {
+  background-color: #a6855a !important;
+}
+
+.dark [style*='color: #3f6655'],
+.dark [style*="color: '#3f6655'"] {
+  color: #c9a573 !important;
+}

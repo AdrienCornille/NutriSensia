@@ -1,6 +1,6 @@
 /**
  * Contexte et utilitaires pour les feature flags
- * 
+ *
  * Ce fichier fournit les outils pour créer le contexte nécessaire
  * aux feature flags, incluant les informations utilisateur et de session.
  */
@@ -50,16 +50,18 @@ export const getOrGenerateVisitorId = dedupe(
 export const getAuthenticatedUser = dedupe(async () => {
   try {
     const supabase = await createClient();
-    const { data: { user }, error } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
+
     if (error || !user) {
       return null;
     }
 
     // Récupération du rôle utilisateur depuis les métadonnées
-    const userRole = user.user_metadata?.role || 
-                    user.app_metadata?.role || 
-                    'patient'; // Rôle par défaut
+    const userRole =
+      user.user_metadata?.role || user.app_metadata?.role || 'patient'; // Rôle par défaut
 
     return {
       id: user.id,
@@ -68,7 +70,7 @@ export const getAuthenticatedUser = dedupe(async () => {
       isNewUser: isNewUser(user.created_at),
     };
   } catch (error) {
-    console.error('Erreur lors de la récupération de l\'utilisateur:', error);
+    console.error("Erreur lors de la récupération de l'utilisateur:", error);
     return null;
   }
 });
@@ -80,13 +82,14 @@ export async function createFeatureFlagContext(): Promise<FeatureFlagContext> {
   // Récupération des informations utilisateur
   const user = await getAuthenticatedUser();
   const visitor = await getOrGenerateVisitorId();
-  
+
   // Récupération des headers de requête
   const headersList = await headers();
   const userAgent = headersList.get('user-agent') || '';
-  const country = headersList.get('cf-ipcountry') || 
-                 headersList.get('x-vercel-ip-country') || 
-                 'unknown';
+  const country =
+    headersList.get('cf-ipcountry') ||
+    headersList.get('x-vercel-ip-country') ||
+    'unknown';
 
   // Détection du type d'appareil basé sur le user-agent
   const deviceType = detectDeviceType(userAgent);
@@ -129,7 +132,7 @@ function isNewUser(createdAt: string): boolean {
   const creationDate = new Date(createdAt);
   const now = new Date();
   const hoursDiff = (now.getTime() - creationDate.getTime()) / (1000 * 60 * 60);
-  
+
   return hoursDiff < 24;
 }
 
@@ -138,15 +141,15 @@ function isNewUser(createdAt: string): boolean {
  */
 function detectDeviceType(userAgent: string): 'mobile' | 'tablet' | 'desktop' {
   const ua = userAgent.toLowerCase();
-  
+
   if (ua.includes('mobile') && !ua.includes('tablet')) {
     return 'mobile';
   }
-  
+
   if (ua.includes('tablet') || ua.includes('ipad')) {
     return 'tablet';
   }
-  
+
   return 'desktop';
 }
 
@@ -155,7 +158,7 @@ function detectDeviceType(userAgent: string): 'mobile' | 'tablet' | 'desktop' {
  */
 export async function createFlagContext(): Promise<Map<string, any>> {
   const context = await createFeatureFlagContext();
-  
+
   const flagContext = new Map();
   flagContext.set('userId', context.userId);
   flagContext.set('userRole', context.userRole);
@@ -166,7 +169,7 @@ export async function createFlagContext(): Promise<Map<string, any>> {
   flagContext.set('isNewUser', context.isNewUser);
   flagContext.set('onboardingStep', context.onboardingStep);
   flagContext.set('deviceType', context.deviceType);
-  
+
   return flagContext;
 }
 

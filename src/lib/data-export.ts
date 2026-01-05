@@ -1,6 +1,6 @@
 /**
  * Utilitaires d'export et de portabilité des données conformes au RGPD
- * 
+ *
  * Ce module fournit des fonctionnalités pour :
  * - Export des données utilisateur (JSON, CSV, XML)
  * - Conformité RGPD (droit à la portabilité)
@@ -10,10 +10,10 @@
  */
 
 import { supabase } from '@/lib/supabase';
-import type { 
-  NutritionistProfile, 
-  PatientProfile, 
-  UserRole 
+import type {
+  NutritionistProfile,
+  PatientProfile,
+  UserRole,
 } from '@/lib/database-types';
 
 /**
@@ -34,16 +34,16 @@ export interface ExportOptions {
   includeFiles?: boolean;
 }
 
-export type ExportSection = 
-  | 'profile'           // Données de profil de base
-  | 'professional'      // Informations professionnelles (nutritionnistes)
-  | 'medical'          // Informations médicales (patients)
-  | 'preferences'      // Préférences utilisateur
-  | 'activity'         // Historique d'activité
-  | 'files'           // Fichiers uploadés
-  | 'privacy'         // Paramètres de confidentialité
-  | 'subscription'    // Informations d'abonnement
-  | 'audit';          // Logs d'audit
+export type ExportSection =
+  | 'profile' // Données de profil de base
+  | 'professional' // Informations professionnelles (nutritionnistes)
+  | 'medical' // Informations médicales (patients)
+  | 'preferences' // Préférences utilisateur
+  | 'activity' // Historique d'activité
+  | 'files' // Fichiers uploadés
+  | 'privacy' // Paramètres de confidentialité
+  | 'subscription' // Informations d'abonnement
+  | 'audit'; // Logs d'audit
 
 /**
  * Résultat d'un export
@@ -122,7 +122,7 @@ export class DataExportService {
   async exportUserData(options: ExportOptions): Promise<ExportResult> {
     // Générer un ID unique pour cet export
     const exportId = `export_${this.userId}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
+
     try {
       // Enregistrer la demande d'export dans l'historique
       await this.logExportRequest(exportId, options);
@@ -131,12 +131,17 @@ export class DataExportService {
       const exportData = await this.collectUserData(options.sections);
 
       // Formatter selon le format demandé
-      const formattedData = await this.formatData(exportData, options.format, options.includeMetadata);
+      const formattedData = await this.formatData(
+        exportData,
+        options.format,
+        options.includeMetadata
+      );
 
       // Chiffrer si demandé
-      const finalData = options.encrypt && options.password
-        ? await this.encryptData(formattedData, options.password)
-        : formattedData;
+      const finalData =
+        options.encrypt && options.password
+          ? await this.encryptData(formattedData, options.password)
+          : formattedData;
 
       // Générer le fichier et l'uploader
       const result = await this.createExportFile(exportId, finalData, options);
@@ -145,10 +150,14 @@ export class DataExportService {
       await this.updateExportStatus(exportId, 'completed', result);
 
       return result;
-
     } catch (error) {
       // Enregistrer l'erreur
-      await this.updateExportStatus(exportId, 'failed', undefined, error.message);
+      await this.updateExportStatus(
+        exportId,
+        'failed',
+        undefined,
+        error.message
+      );
       throw new Error(`Erreur lors de l'export des données: ${error.message}`);
     }
   }
@@ -156,7 +165,9 @@ export class DataExportService {
   /**
    * Collecte toutes les données utilisateur selon les sections demandées
    */
-  private async collectUserData(sections: ExportSection[]): Promise<Record<string, any>> {
+  private async collectUserData(
+    sections: ExportSection[]
+  ): Promise<Record<string, any>> {
     const data: Record<string, any> = {};
 
     // Données de profil de base
@@ -259,7 +270,7 @@ export class DataExportService {
     return {
       locale: profileData?.locale,
       timezone: profileData?.timezone,
-      notification_preferences: profileData?.notification_preferences || {}
+      notification_preferences: profileData?.notification_preferences || {},
     };
   }
 
@@ -283,14 +294,14 @@ export class DataExportService {
    */
   private async getFilesData() {
     const files = [];
-    
+
     // Récupérer l'avatar si présent
     const profileData = await this.getProfileData();
     if (profileData?.avatar_url) {
       files.push({
         type: 'avatar',
         url: profileData.avatar_url,
-        uploaded_at: profileData.updated_at
+        uploaded_at: profileData.updated_at,
       });
     }
 
@@ -306,7 +317,7 @@ export class DataExportService {
           name: file.name,
           size: file.metadata?.size,
           uploaded_at: file.created_at,
-          path: `${this.userId}/${file.name}`
+          path: `${this.userId}/${file.name}`,
         });
       });
     }
@@ -324,12 +335,12 @@ export class DataExportService {
       profile_visibility: 'professionals_only',
       contact_permissions: {
         allow_direct_contact: true,
-        allow_appointment_requests: true
+        allow_appointment_requests: true,
       },
       data_sharing: {
         allow_analytics: true,
-        allow_research_participation: false
-      }
+        allow_research_participation: false,
+      },
     };
   }
 
@@ -345,7 +356,7 @@ export class DataExportService {
         subscription_status: medicalData?.subscription_status,
         subscription_start_date: medicalData?.subscription_start_date,
         subscription_end_date: medicalData?.subscription_end_date,
-        package_credits: medicalData?.package_credits
+        package_credits: medicalData?.package_credits,
       };
     }
     return null;
@@ -367,7 +378,7 @@ export class DataExportService {
     if (!data) return data;
 
     const sanitized = { ...data };
-    
+
     // Retirer les champs sensibles système
     delete sanitized.password;
     delete sanitized.password_hash;
@@ -382,7 +393,7 @@ export class DataExportService {
    * Formate les données selon le format demandé
    */
   private async formatData(
-    data: Record<string, any>, 
+    data: Record<string, any>,
     format: 'json' | 'csv' | 'xml',
     includeMetadata: boolean = true
   ): Promise<string> {
@@ -395,20 +406,20 @@ export class DataExportService {
         user_role: this.userRole,
         gdpr_compliant: true,
         data_retention_policy: 'https://nutrisensia.com/privacy',
-        contact_info: 'privacy@nutrisensia.com'
+        contact_info: 'privacy@nutrisensia.com',
       };
     }
 
     switch (format) {
       case 'json':
         return JSON.stringify(data, null, 2);
-      
+
       case 'csv':
         return this.convertToCSV(data);
-      
+
       case 'xml':
         return this.convertToXML(data);
-      
+
       default:
         throw new Error(`Format non supporté: ${format}`);
     }
@@ -419,23 +430,25 @@ export class DataExportService {
    */
   private convertToCSV(data: Record<string, any>): string {
     const csvLines: string[] = [];
-    
+
     // En-tête CSV
     csvLines.push('Section,Field,Value,Type');
-    
+
     // Parcourir récursivement les données
     const flattenData = (obj: any, prefix: string = '') => {
       Object.entries(obj).forEach(([key, value]) => {
         const fullKey = prefix ? `${prefix}.${key}` : key;
-        
+
         if (value && typeof value === 'object' && !Array.isArray(value)) {
           flattenData(value, fullKey);
         } else {
-          const csvValue = Array.isArray(value) 
-            ? `"${value.join(', ')}"` 
+          const csvValue = Array.isArray(value)
+            ? `"${value.join(', ')}"`
             : `"${String(value || '').replace(/"/g, '""')}"`;
-          
-          csvLines.push(`"${prefix || 'root'}","${key}",${csvValue},"${typeof value}"`);
+
+          csvLines.push(
+            `"${prefix || 'root'}","${key}",${csvValue},"${typeof value}"`
+          );
         }
       });
     };
@@ -451,13 +464,13 @@ export class DataExportService {
     const xmlLines: string[] = [];
     xmlLines.push('<?xml version="1.0" encoding="UTF-8"?>');
     xmlLines.push('<user_data>');
-    
+
     const convertToXMLRecursive = (obj: any, depth: number = 1) => {
       const indent = '  '.repeat(depth);
-      
+
       Object.entries(obj).forEach(([key, value]) => {
         const safeKey = key.replace(/[^a-zA-Z0-9_]/g, '_');
-        
+
         if (value && typeof value === 'object' && !Array.isArray(value)) {
           xmlLines.push(`${indent}<${safeKey}>`);
           convertToXMLRecursive(value, depth + 1);
@@ -465,11 +478,15 @@ export class DataExportService {
         } else if (Array.isArray(value)) {
           xmlLines.push(`${indent}<${safeKey}>`);
           value.forEach((item, index) => {
-            xmlLines.push(`${indent}  <item index="${index}">${this.escapeXML(String(item))}</item>`);
+            xmlLines.push(
+              `${indent}  <item index="${index}">${this.escapeXML(String(item))}</item>`
+            );
           });
           xmlLines.push(`${indent}</${safeKey}>`);
         } else {
-          xmlLines.push(`${indent}<${safeKey}>${this.escapeXML(String(value || ''))}</${safeKey}>`);
+          xmlLines.push(
+            `${indent}<${safeKey}>${this.escapeXML(String(value || ''))}</${safeKey}>`
+          );
         }
       });
     };
@@ -517,7 +534,7 @@ export class DataExportService {
     const combined = new Uint8Array(iv.length + encrypted.byteLength);
     combined.set(iv);
     combined.set(new Uint8Array(encrypted), iv.length);
-    
+
     return btoa(String.fromCharCode(...combined));
   }
 
@@ -525,19 +542,19 @@ export class DataExportService {
    * Crée le fichier d'export et retourne les informations
    */
   private async createExportFile(
-    exportId: string, 
-    data: string, 
+    exportId: string,
+    data: string,
     options: ExportOptions
   ): Promise<ExportResult> {
     // Calculer la taille et le checksum
     const fileSize = new Blob([data]).size;
     const checksum = await this.calculateChecksum(data);
-    
+
     // Générer le nom de fichier
     const timestamp = new Date().toISOString().split('T')[0];
     const extension = options.format;
     const fileName = `nutrisensia_export_${this.userId}_${timestamp}.${extension}`;
-    
+
     // Upload vers Supabase Storage
     const { data: uploadData, error } = await supabase.storage
       .from('exports')
@@ -547,8 +564,8 @@ export class DataExportService {
           exportId,
           userId: this.userId,
           sections: options.sections.join(','),
-          encrypted: options.encrypt?.toString() || 'false'
-        }
+          encrypted: options.encrypt?.toString() || 'false',
+        },
       });
 
     if (error) throw error;
@@ -568,7 +585,7 @@ export class DataExportService {
       expiresAt: new Date(Date.now() + expiresIn * 1000),
       format: options.format,
       sections: options.sections,
-      encrypted: options.encrypt || false
+      encrypted: options.encrypt || false,
     };
   }
 
@@ -577,7 +594,10 @@ export class DataExportService {
    */
   private async calculateChecksum(data: string): Promise<string> {
     const encoder = new TextEncoder();
-    const hashBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(data));
+    const hashBuffer = await crypto.subtle.digest(
+      'SHA-256',
+      encoder.encode(data)
+    );
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
   }
@@ -587,10 +607,14 @@ export class DataExportService {
    */
   private getContentType(format: string): string {
     switch (format) {
-      case 'json': return 'application/json';
-      case 'csv': return 'text/csv';
-      case 'xml': return 'application/xml';
-      default: return 'application/octet-stream';
+      case 'json':
+        return 'application/json';
+      case 'csv':
+        return 'text/csv';
+      case 'xml':
+        return 'application/xml';
+      default:
+        return 'application/octet-stream';
     }
   }
 
@@ -603,7 +627,7 @@ export class DataExportService {
       userId: this.userId,
       format: options.format,
       sections: options.sections,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -611,8 +635,8 @@ export class DataExportService {
    * Met à jour le statut d'un export
    */
   private async updateExportStatus(
-    exportId: string, 
-    status: string, 
+    exportId: string,
+    status: string,
     result?: ExportResult,
     error?: string
   ) {
@@ -621,7 +645,7 @@ export class DataExportService {
       status,
       result: result ? 'success' : 'error',
       error,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -646,8 +670,8 @@ export class DataExportService {
         lastDownloadAt: new Date(Date.now() - 86400000 + 60000),
         ipAddress: '192.168.1.1',
         userAgent: 'Mozilla/5.0...',
-        expiresAt: new Date(Date.now() + 6 * 86400000) // Dans 6 jours
-      }
+        expiresAt: new Date(Date.now() + 6 * 86400000), // Dans 6 jours
+      },
     ];
   }
 
@@ -677,7 +701,10 @@ export class DataImportService {
   /**
    * Importe des données depuis un fichier d'export
    */
-  async importUserData(fileContent: string, options: ImportOptions): Promise<void> {
+  async importUserData(
+    fileContent: string,
+    options: ImportOptions
+  ): Promise<void> {
     try {
       // Créer une sauvegarde si demandé
       if (options.createBackup) {
@@ -685,7 +712,7 @@ export class DataImportService {
         await exportService.exportUserData({
           format: 'json',
           sections: ['profile', 'professional', 'medical', 'preferences'],
-          includeMetadata: true
+          includeMetadata: true,
         });
       }
 
@@ -699,7 +726,6 @@ export class DataImportService {
 
       // Importer les données selon la stratégie de conflit
       await this.processImportData(importData, options.conflictStrategy);
-
     } catch (error) {
       throw new Error(`Erreur lors de l'import: ${error.message}`);
     }
@@ -727,12 +753,14 @@ export class DataImportService {
   private async validateImportData(data: any): Promise<void> {
     // Vérifier la structure et les types
     if (!data || typeof data !== 'object') {
-      throw new Error('Données d\'import invalides');
+      throw new Error("Données d'import invalides");
     }
 
     // Vérifier la compatibilité avec le rôle utilisateur
     if (this.userRole === 'nutritionist' && !data.professional) {
-      console.warn('Données professionnelles manquantes pour un nutritionniste');
+      console.warn(
+        'Données professionnelles manquantes pour un nutritionniste'
+      );
     }
 
     if (this.userRole === 'patient' && !data.medical) {
@@ -743,10 +771,18 @@ export class DataImportService {
   /**
    * Traite l'import selon la stratégie de conflit
    */
-  private async processImportData(data: any, strategy: 'overwrite' | 'merge' | 'skip'): Promise<void> {
+  private async processImportData(
+    data: any,
+    strategy: 'overwrite' | 'merge' | 'skip'
+  ): Promise<void> {
     // Récupérer les données actuelles
     const exportService = new DataExportService(this.userId, this.userRole);
-    const currentData = await exportService.collectUserData(['profile', 'professional', 'medical', 'preferences']);
+    const currentData = await exportService.collectUserData([
+      'profile',
+      'professional',
+      'medical',
+      'preferences',
+    ]);
 
     // Appliquer la stratégie
     switch (strategy) {
@@ -776,10 +812,13 @@ export class DataImportService {
     await this.overwriteData(merged);
   }
 
-  private async skipConflictingData(current: any, imported: any): Promise<void> {
+  private async skipConflictingData(
+    current: any,
+    imported: any
+  ): Promise<void> {
     // Importer seulement les nouvelles données
     const toImport = { ...imported };
-    
+
     // Retirer les données qui existent déjà
     Object.keys(current).forEach(key => {
       if (current[key] && toImport[key]) {
@@ -807,13 +846,13 @@ export const dataExportUtils = {
   /**
    * Crée une instance du service d'export pour un utilisateur
    */
-  createExportService: (userId: string, userRole: UserRole) => 
+  createExportService: (userId: string, userRole: UserRole) =>
     new DataExportService(userId, userRole),
 
   /**
    * Crée une instance du service d'import pour un utilisateur
    */
-  createImportService: (userId: string, userRole: UserRole) => 
+  createImportService: (userId: string, userRole: UserRole) =>
     new DataImportService(userId, userRole),
 
   /**
@@ -823,7 +862,7 @@ export const dataExportUtils = {
     const errors: string[] = [];
 
     if (!options.format || !['json', 'csv', 'xml'].includes(options.format)) {
-      errors.push('Format d\'export invalide');
+      errors.push("Format d'export invalide");
     }
 
     if (!options.sections || options.sections.length === 0) {
@@ -841,17 +880,20 @@ export const dataExportUtils = {
    * Retourne les sections disponibles selon le rôle
    */
   getAvailableSections: (userRole: UserRole): ExportSection[] => {
-    const commonSections: ExportSection[] = ['profile', 'preferences', 'activity', 'files', 'privacy'];
-    
+    const commonSections: ExportSection[] = [
+      'profile',
+      'preferences',
+      'activity',
+      'files',
+      'privacy',
+    ];
+
     if (userRole === 'nutritionist') {
       return [...commonSections, 'professional', 'audit'];
     } else if (userRole === 'patient') {
       return [...commonSections, 'medical', 'subscription'];
     }
-    
+
     return commonSections;
-  }
+  },
 };
-
-
-

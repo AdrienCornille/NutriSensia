@@ -64,3 +64,6 @@ export { UserNav } from './UserNav';
 
 // Composant de header
 export { Header } from './Header';
+
+// Composant de footer
+export { Footer } from './Footer';

@@ -30,4 +30,3 @@ export {
   practiceDetailsSchema,
   consultationRatesSchema,
 } from '@/lib/onboarding-schemas';
-

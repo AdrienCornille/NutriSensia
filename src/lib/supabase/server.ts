@@ -1,6 +1,6 @@
 /**
  * Client Supabase pour le serveur (Server-Side Rendering)
- * 
+ *
  * Ce fichier exporte le client Supabase configuré pour être utilisé
  * dans les API routes et les Server Components de Next.js.
  */
@@ -32,7 +32,8 @@ export function createClient() {
   return createSupabaseClient<Database>(
     isValidSupabaseConfig ? supabaseUrl! : 'https://placeholder.supabase.co',
     // Utiliser la clé de service pour les opérations côté serveur
-    supabaseServiceKey || (isValidSupabaseConfig ? supabaseAnonKey! : 'placeholder-key'),
+    supabaseServiceKey ||
+      (isValidSupabaseConfig ? supabaseAnonKey! : 'placeholder-key'),
     {
       auth: {
         // Configuration pour le serveur
@@ -117,7 +118,8 @@ export function createServerClient() {
 export function createAdminClient() {
   return createSupabaseClient<Database>(
     isValidSupabaseConfig ? supabaseUrl! : 'https://placeholder.supabase.co',
-    supabaseServiceKey || (isValidSupabaseConfig ? supabaseAnonKey! : 'placeholder-key'),
+    supabaseServiceKey ||
+      (isValidSupabaseConfig ? supabaseAnonKey! : 'placeholder-key'),
     {
       auth: {
         // Configuration pour les opérations administratives
@@ -163,11 +165,13 @@ export const handleServerError = (error: any): SupabaseServerError => {
   // Messages d'erreur traduits en français pour le serveur
   const errorMessages: { [key: string]: string } = {
     'Invalid login credentials': 'Email ou mot de passe incorrect',
-    'Email not confirmed': 'Veuillez confirmer votre email avant de vous connecter',
+    'Email not confirmed':
+      'Veuillez confirmer votre email avant de vous connecter',
     'Too many requests': 'Trop de tentatives. Veuillez réessayer plus tard',
     'User not found': 'Aucun compte trouvé avec cet email',
     'User already registered': 'Un compte existe déjà avec cet email',
-    'Password should be at least 6 characters': 'Le mot de passe doit contenir au moins 6 caractères',
+    'Password should be at least 6 characters':
+      'Le mot de passe doit contenir au moins 6 caractères',
     'Invalid email': 'Adresse email invalide',
     'Unable to validate email address': "Impossible de valider l'adresse email",
     'JWT expired': 'Session expirée. Veuillez vous reconnecter',
@@ -177,7 +181,8 @@ export const handleServerError = (error: any): SupabaseServerError => {
   };
 
   return {
-    message: errorMessages[error.message] || error.message || 'Erreur côté serveur',
+    message:
+      errorMessages[error.message] || error.message || 'Erreur côté serveur',
     status: error.status,
     code: error.code || error.name || 'SERVER_ERROR',
   };

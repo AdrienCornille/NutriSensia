@@ -6,9 +6,10 @@ Lorsqu'un utilisateur connecté cliquait sur "Mon profil", il était redirigé v
 
 ## 🔍 **Cause du problème**
 
-Le middleware de sécurité (`src/middleware.ts`) classait la page `/profile` dans les **routes protégées** qui nécessitent un niveau d'assurance AAL2 (2FA vérifié). 
+Le middleware de sécurité (`src/middleware.ts`) classait la page `/profile` dans les **routes protégées** qui nécessitent un niveau d'assurance AAL2 (2FA vérifié).
 
 ### Configuration précédente :
+
 ```typescript
 // Routes protégées qui nécessitent une authentification complète (AAL2)
 const protectedRoutes = [
@@ -49,6 +50,7 @@ const authenticatedRoutes = [
 ### 2. **Logique de vérification mise à jour**
 
 Le middleware vérifie maintenant :
+
 - **Routes protégées** : 2FA obligatoire pour les nutritionnistes et admins
 - **Routes authentifiées** : Connexion requise, 2FA recommandé mais non obligatoire
 
@@ -76,6 +78,7 @@ if (isAuthenticatedRoute && userRole === 'nutritionist' && aal !== 'aal2') {
 Une page de debug (`/debug-auth`) a été créée pour diagnostiquer les problèmes d'authentification :
 
 ### Fonctionnalités :
+
 - **Informations de session** : État de connexion, email, rôle
 - **Données MFA** : Niveau d'assurance actuel et requis
 - **Facteurs MFA** : Facteurs configurés et leur statut
@@ -83,18 +86,21 @@ Une page de debug (`/debug-auth`) a été créée pour diagnostiquer les problè
 - **Actions de test** : Boutons pour tester l'accès et configurer 2FA
 
 ### Accès :
+
 - **Page d'accueil** → Section "Tests et développement" → "Debug authentification"
 - **URL directe** : `http://localhost:3000/debug-auth`
 
 ## 🔄 **Flux utilisateur corrigé**
 
 ### **Avant la correction :**
+
 1. Utilisateur connecté → Clic sur "Mon profil"
 2. Middleware détecte route protégée → Vérification AAL2
 3. 2FA non configuré → Redirection vers `/auth/signin`
 4. ❌ **Problème** : Utilisateur bloqué
 
 ### **Après la correction :**
+
 1. Utilisateur connecté → Clic sur "Mon profil"
 2. Middleware détecte route authentifiée → Vérification AAL1
 3. Connexion valide → Accès direct au profil
@@ -104,14 +110,15 @@ Une page de debug (`/debug-auth`) a été créée pour diagnostiquer les problè
 
 ### **Niveaux de sécurité conservés :**
 
-| Route | Authentification | 2FA | Accès |
-|-------|------------------|-----|-------|
-| **`/profile`** | ✅ Requis | ⚠️ Recommandé | ✅ Tous les utilisateurs connectés |
-| **`/dashboard`** | ✅ Requis | ✅ Obligatoire (nutritionnistes) | ✅ Utilisateurs avec 2FA |
-| **`/admin`** | ✅ Requis | ✅ Obligatoire | ✅ Admins uniquement |
-| **`/nutritionist`** | ✅ Requis | ✅ Obligatoire | ✅ Nutritionnistes uniquement |
+| Route               | Authentification | 2FA                              | Accès                              |
+| ------------------- | ---------------- | -------------------------------- | ---------------------------------- |
+| **`/profile`**      | ✅ Requis        | ⚠️ Recommandé                    | ✅ Tous les utilisateurs connectés |
+| **`/dashboard`**    | ✅ Requis        | ✅ Obligatoire (nutritionnistes) | ✅ Utilisateurs avec 2FA           |
+| **`/admin`**        | ✅ Requis        | ✅ Obligatoire                   | ✅ Admins uniquement               |
+| **`/nutritionist`** | ✅ Requis        | ✅ Obligatoire                   | ✅ Nutritionnistes uniquement      |
 
 ### **Recommandations de sécurité :**
+
 - **Patients** : 2FA recommandé pour plus de sécurité
 - **Nutritionnistes** : 2FA fortement recommandé (accès aux données patients)
 - **Admins** : 2FA obligatoire (accès système)
@@ -119,12 +126,14 @@ Une page de debug (`/debug-auth`) a été créée pour diagnostiquer les problè
 ## 🧪 **Tests disponibles**
 
 ### **Pages de test créées :**
+
 1. **`/debug-auth`** - Diagnostic complet de l'authentification
 2. **`/auth-flow-test`** - Test du flux d'authentification
 3. **`/role-test`** - Test des rôles et exigences 2FA
 4. **`/navigation-test`** - Test de la navigation utilisateur
 
 ### **Comment tester :**
+
 1. **Connectez-vous** à l'application
 2. **Cliquez sur "Mon profil"** - devrait fonctionner maintenant
 3. **Utilisez `/debug-auth`** pour diagnostiquer si problème persiste
@@ -133,22 +142,26 @@ Une page de debug (`/debug-auth`) a été créée pour diagnostiquer les problè
 ## 🔧 **Configuration technique**
 
 ### **Middleware mis à jour :**
+
 - **Routes protégées** : AAL2 requis pour nutritionnistes/admins
 - **Routes authentifiées** : AAL1 suffisant, 2FA recommandé
 - **Logs de debug** : Traçabilité des accès et redirections
 
 ### **Variables d'environnement :**
+
 Aucune modification requise. Le système utilise la configuration Supabase existante.
 
 ## 📊 **Impact de la correction**
 
 ### **Avantages :**
+
 - ✅ **Accès au profil** : Utilisateurs connectés peuvent accéder à leur profil
 - ✅ **Sécurité maintenue** : 2FA toujours recommandé pour les données sensibles
 - ✅ **Flexibilité** : Différenciation selon les rôles et niveaux de sécurité
 - ✅ **Debugging** : Outils de diagnostic pour résoudre les problèmes futurs
 
 ### **Comportement attendu :**
+
 - **Patients** : Accès au profil sans 2FA obligatoire
 - **Nutritionnistes** : Accès au profil avec recommandation 2FA
 - **Admins** : Accès au profil avec 2FA obligatoire
@@ -156,12 +169,14 @@ Aucune modification requise. Le système utilise la configuration Supabase exist
 ## 🚀 **Prochaines étapes**
 
 ### **Améliorations possibles :**
+
 1. **Notifications** : Avertissement pour les nutritionnistes sans 2FA
 2. **Configuration flexible** : Permettre de rendre 2FA obligatoire par rôle
 3. **Audit trail** : Logs détaillés des accès aux pages sensibles
 4. **Interface utilisateur** : Indicateurs visuels du niveau de sécurité
 
 ### **Maintenance :**
+
 - Surveiller les logs de sécurité
 - Tester régulièrement les flux d'authentification
 - Mettre à jour la documentation selon les évolutions
@@ -169,6 +184,7 @@ Aucune modification requise. Le système utilise la configuration Supabase exist
 ## 📞 **Support**
 
 Pour toute question ou problème :
+
 1. **Utilisez `/debug-auth`** pour diagnostiquer
 2. **Vérifiez la console** du navigateur pour les erreurs
 3. **Consultez les logs** du middleware

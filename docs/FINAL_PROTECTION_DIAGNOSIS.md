@@ -7,39 +7,48 @@ Les composants de protection d'accès (`AdminProtection` et `SimpleAdminProtecti
 ## 🔧 **Diagnostic effectué**
 
 ### **1. API d'authentification fonctionnelle**
+
 - ✅ L'API `/api/auth/me` retourne les bons rôles
 - ✅ Test avec `?role=nutritionist` → Rôle nutritionniste
 - ✅ Test avec `?role=admin` → Rôle administrateur
 
 ### **2. Composants de protection non fonctionnels**
+
 - ❌ `AdminProtection` ne bloque pas l'accès
 - ❌ `SimpleAdminProtection` ne bloque pas l'accès
 - ❌ Les pages retournent toujours HTTP 200
 
 ### **3. Logs de debug manquants**
+
 - ❌ Aucun log de debug visible dans la console
 - ❌ Les composants ne s'exécutent pas correctement
 
 ## 🎯 **Causes possibles**
 
 ### **1. Problème de rendu côté serveur**
+
 Les composants `'use client'` ne s'exécutent pas correctement dans Next.js App Router.
 
 ### **2. Problème de hydration**
+
 Les composants ne s'hydratent pas correctement côté client.
 
 ### **3. Problème de logique de vérification**
+
 La logique de vérification des rôles ne fonctionne pas.
 
 ## 🚀 **Solutions proposées**
 
 ### **Solution 1 : Middleware de protection**
+
 Créer un middleware Next.js pour protéger les routes côté serveur.
 
 ### **Solution 2 : Protection côté serveur**
+
 Utiliser `getServerSideProps` ou des Server Components pour vérifier les permissions.
 
 ### **Solution 3 : Redirection côté serveur**
+
 Rediriger les utilisateurs non-autorisés avant le rendu de la page.
 
 ## 🔧 **Implémentation de la solution**
@@ -57,12 +66,12 @@ export function middleware(request: NextRequest) {
     // Vérifier les permissions (à implémenter)
     // Rediriger si non autorisé
   }
-  
+
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: '/testing/:path*'
+  matcher: '/testing/:path*',
 };
 ```
 
@@ -75,11 +84,11 @@ import { redirect } from 'next/navigation';
 export default async function ABTestingDemoPage() {
   // Vérifier les permissions côté serveur
   const user = await getUser();
-  
+
   if (user.role !== 'admin') {
     redirect('/access-denied');
   }
-  
+
   return <ABTestingDemo />;
 }
 ```
@@ -111,16 +120,19 @@ export default function AccessDeniedPage() {
 ## 📋 **Plan d'action**
 
 ### **Phase 1 : Diagnostic**
+
 - [x] Identifier le problème
 - [x] Tester l'API d'authentification
 - [x] Vérifier les composants de protection
 
 ### **Phase 2 : Solution**
+
 - [ ] Implémenter le middleware de protection
 - [ ] Créer la protection côté serveur
 - [ ] Tester avec différents rôles
 
 ### **Phase 3 : Validation**
+
 - [ ] Tester l'accès administrateur
 - [ ] Tester l'accès nutritionniste
 - [ ] Tester l'accès utilisateur standard

@@ -1,0 +1,61 @@
+<svg width="500" height="500" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="500" height="500" fill="#F8F9FA"/>
+  
+  <!-- Header -->
+  <rect x="20" y="20" width="460" height="60" rx="12" fill="#2E7D5E"/>
+  <circle cx="50" cy="50" r="15" fill="white"/>
+  <rect x="80" y="40" width="120" height="8" rx="4" fill="white"/>
+  <rect x="80" y="55" width="80" height="6" rx="3" fill="rgba(255,255,255,0.7)"/>
+  
+  <!-- Navigation -->
+  <rect x="350" y="35" width="40" height="30" rx="6" fill="rgba(255,255,255,0.2)"/>
+  <rect x="400" y="35" width="40" height="30" rx="6" fill="rgba(255,255,255,0.2)"/>
+  <rect x="450" y="35" width="20" height="30" rx="6" fill="rgba(255,255,255,0.2)"/>
+  
+  <!-- Main Content Area -->
+  <rect x="20" y="100" width="460" height="380" rx="12" fill="white"/>
+  
+  <!-- Dashboard Cards -->
+  <rect x="40" y="120" width="200" height="100" rx="8" fill="#E8F3EF"/>
+  <rect x="50" y="135" width="30" height="30" rx="6" fill="#2E7D5E"/>
+  <rect x="90" y="135" width="80" height="8" rx="4" fill="#2E7D5E"/>
+  <rect x="90" y="150" width="60" height="6" rx="3" fill="#9CA3AF"/>
+  <rect x="50" y="175" width="120" height="6" rx="3" fill="#374151"/>
+  <rect x="50" y="190" width="100" height="6" rx="3" fill="#9CA3AF"/>
+  
+  <rect x="260" y="120" width="200" height="100" rx="8" fill="#F0F7F4"/>
+  <rect x="270" y="135" width="30" height="30" rx="6" fill="#4A9B7B"/>
+  <rect x="310" y="135" width="80" height="8" rx="4" fill="#2E7D5E"/>
+  <rect x="310" y="150" width="60" height="6" rx="3" fill="#9CA3AF"/>
+  
+  <!-- Progress Bars -->
+  <rect x="270" y="175" width="120" height="4" rx="2" fill="#E5E7EB"/>
+  <rect x="270" y="175" width="80" height="4" rx="2" fill="#2E7D5E"/>
+  <rect x="270" y="185" width="120" height="4" rx="2" fill="#E5E7EB"/>
+  <rect x="270" y="185" width="60" height="4" rx="2" fill="#4A9B7B"/>
+  
+  <!-- Charts Area -->
+  <rect x="40" y="240" width="420" height="150" rx="8" fill="#F8F9FA"/>
+  
+  <!-- Chart Lines -->
+  <path d="M60 350 L120 320 L180 340 L240 300 L300 280 L360 270 L420 250" stroke="#2E7D5E" stroke-width="3" fill="none"/>
+  <path d="M60 370 L120 360 L180 380 L240 350 L300 340 L360 330 L420 310" stroke="#4A9B7B" stroke-width="2" fill="none" stroke-dasharray="5,5"/>
+  
+  <!-- Chart Points -->
+  <circle cx="60" cy="350" r="4" fill="#2E7D5E"/>
+  <circle cx="120" cy="320" r="4" fill="#2E7D5E"/>
+  <circle cx="180" cy="340" r="4" fill="#2E7D5E"/>
+  <circle cx="240" cy="300" r="4" fill="#2E7D5E"/>
+  <circle cx="300" cy="280" r="4" fill="#2E7D5E"/>
+  <circle cx="360" cy="270" r="4" fill="#2E7D5E"/>
+  <circle cx="420" cy="250" r="4" fill="#2E7D5E"/>
+  
+  <!-- Chart Labels -->
+  <rect x="50" y="410" width="40" height="20" rx="4" fill="#2E7D5E"/>
+  <rect x="100" y="410" width="40" height="20" rx="4" fill="#4A9B7B"/>
+  <rect x="150" y="410" width="40" height="20" rx="4" fill="#E8F3EF"/>
+  
+  <!-- Title -->
+  <text x="250" y="15" text-anchor="middle" fill="#2E7D5E" font-family="Arial, sans-serif" font-size="14" font-weight="bold">Dashboard Principal</text>
+</svg>

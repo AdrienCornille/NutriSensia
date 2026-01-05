@@ -1,159 +1,95 @@
-'use client';
-
-import React from 'react';
+import * as React from 'react';
+import { ButtonHTMLAttributes, ReactNode } from 'react';
+import { Slot } from '@radix-ui/react-slot';
+import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
-/**
- * Variantes de boutons disponibles selon le design system NutriSensia
- */
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'destructive';
+// Variantes de style pour le Button (shadcn compatible)
+const buttonVariants = cva(
+  'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+  {
+    variants: {
+      variant: {
+        default: 'bg-primary text-white hover:bg-primary-dark',
+        destructive: 'bg-red-500 text-white hover:bg-red-600',
+        outline:
+          'border border-primary text-primary hover:bg-primary hover:text-white',
+        secondary: 'bg-secondary text-text hover:bg-secondary-dark',
+        ghost: 'hover:bg-accent hover:text-accent-foreground',
+        link: 'text-primary underline-offset-4 hover:underline',
+        primary: 'bg-primary text-white hover:bg-primary-dark focus:ring-primary',
+        accent: 'bg-accent text-white hover:bg-accent-dark focus:ring-accent',
+      },
+      size: {
+        default: 'h-10 px-4 py-2',
+        sm: 'h-9 rounded-md px-3',
+        lg: 'h-11 rounded-md px-8',
+        md: 'px-6 py-3',
+        icon: 'h-10 w-10',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+      size: 'default',
+    },
+  }
+);
 
-/**
- * Tailles de boutons disponibles
- */
-export type ButtonSize = 'sm' | 'md' | 'lg';
-
-/**
- * Props du composant Button
- */
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  /**
-   * Variante du bouton selon le design system
-   */
-  variant?: ButtonVariant;
-  /**
-   * Taille du bouton
-   */
-  size?: ButtonSize;
-  /**
-   * Contenu du bouton
-   */
-  children: React.ReactNode;
-  /**
-   * État de chargement
-   */
-  loading?: boolean;
-  /**
-   * Icône à afficher avant le texte
-   */
-  leftIcon?: React.ReactNode;
-  /**
-   * Icône à afficher après le texte
-   */
-  rightIcon?: React.ReactNode;
-  /**
-   * Bouton plein largeur
-   */
+// Interface étendue pour supporter à la fois l'API existante et shadcn
+interface ButtonProps
+  extends ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  children: ReactNode;
   fullWidth?: boolean;
+  loading?: boolean;
+  asChild?: boolean;
 }
 
 /**
- * Composant Button réutilisable selon le design system NutriSensia
+ * Composant Button pour le Design System 2025
  *
- * @example
- * ```tsx
- * <Button variant="primary" size="md">
- *   Mon Bouton
- * </Button>
+ * Ce composant applique automatiquement les styles, couleurs et animations
+ * selon les spécifications du design system.
+ * Compatible avec shadcn/ui et l'API existante.
  *
- * <Button variant="secondary" loading>
- *   Chargement...
- * </Button>
- *
- * <Button variant="ghost" leftIcon={<Icon />}>
- *   Avec Icône
- * </Button>
- * ```
+ * @param children - Contenu du bouton
+ * @param variant - Style du bouton (primary, secondary, accent, outline, ghost, link, default, destructive)
+ * @param size - Taille du bouton (sm, md, lg, icon, default)
+ * @param fullWidth - Bouton en pleine largeur
+ * @param loading - État de chargement
+ * @param asChild - Si true, délègue le rendu à l'enfant (pour shadcn compat)
  */
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
-      className,
-      variant = 'primary',
-      size = 'md',
-      loading = false,
-      leftIcon,
-      rightIcon,
-      fullWidth = false,
-      disabled,
       children,
+      variant,
+      size,
+      fullWidth = false,
+      loading = false,
+      asChild = false,
+      className,
+      disabled,
       ...props
     },
     ref
   ) => {
-    // Classes de base communes à tous les boutons
-    const baseClasses = [
-      'inline-flex items-center justify-center',
-      'font-medium text-button',
-      'transition-all duration-standard ease-out',
-      'focus:outline-none focus:shadow-focus',
-      'disabled:opacity-50 disabled:cursor-not-allowed',
-      'active:scale-95',
-    ];
-
-    // Classes spécifiques aux variantes
-    const variantClasses = {
-      primary: [
-        'h-48dp bg-primary text-white font-medium',
-        'rounded-8dp shadow-sm',
-        'hover:bg-secondary hover:shadow-md',
-        'focus:ring-2 focus:ring-primary focus:ring-opacity-20',
-      ],
-      secondary: [
-        'h-48dp bg-transparent text-primary dark:text-primary',
-        'border-2 border-primary rounded-8dp',
-        'hover:bg-primary hover:text-white',
-        'focus:ring-2 focus:ring-primary focus:ring-opacity-20',
-      ],
-      ghost: [
-        'h-44dp bg-transparent text-primary dark:text-primary',
-        'rounded-8dp',
-        'hover:bg-secondary-pale dark:hover:bg-neutral-dark',
-        'focus:ring-2 focus:ring-primary focus:ring-opacity-20',
-      ],
-      destructive: [
-        'h-48dp bg-functional-error text-white font-medium',
-        'rounded-8dp shadow-sm',
-        'hover:bg-red-600 hover:shadow-md',
-        'focus:ring-2 focus:ring-functional-error focus:ring-opacity-20',
-      ],
-    };
-
-    // Classes spécifiques aux tailles
-    const sizeClasses = {
-      sm: ['px-16dp py-8dp text-body-small'],
-      md: ['px-24dp py-12dp text-button'],
-      lg: ['px-32dp py-16dp text-body-large'],
-    };
-
-    // Classes pour la largeur
-    const widthClasses = fullWidth ? ['w-full'] : [];
-
-    // Classes pour l'état de chargement
-    const loadingClasses = loading ? ['cursor-wait'] : [];
-
-    // Combinaison de toutes les classes
-    const buttonClasses = cn(
-      baseClasses,
-      variantClasses[variant],
-      sizeClasses[size],
-      widthClasses,
-      loadingClasses,
-      className
-    );
+    const Comp = asChild ? Slot : 'button';
 
     return (
-      <button
+      <Comp
         ref={ref}
-        className={buttonClasses}
+        className={cn(
+          buttonVariants({ variant, size, className }),
+          fullWidth && 'w-full',
+          loading && 'cursor-wait'
+        )}
         disabled={disabled || loading}
         {...props}
       >
-        {/* Spinner de chargement */}
         {loading && (
           <svg
-            className='animate-spin -ml-4dp mr-8dp h-5 w-5'
+            className='animate-spin -ml-1 mr-2 h-4 w-4'
             xmlns='http://www.w3.org/2000/svg'
             fill='none'
             viewBox='0 0 24 24'
@@ -173,49 +109,40 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             />
           </svg>
         )}
-
-        {/* Icône gauche */}
-        {!loading && leftIcon && (
-          <span className='mr-8dp flex-shrink-0'>{leftIcon}</span>
-        )}
-
-        {/* Contenu du bouton */}
-        <span className='flex items-center'>{children}</span>
-
-        {/* Icône droite */}
-        {!loading && rightIcon && (
-          <span className='ml-8dp flex-shrink-0'>{rightIcon}</span>
-        )}
-      </button>
+        {children}
+      </Comp>
     );
   }
 );
 
 Button.displayName = 'Button';
 
+// Export les variantes pour utilisation externe si nécessaire
+export { buttonVariants };
+
 /**
- * Composants de boutons pré-configurés pour un usage rapide
+ * Composant ButtonGroup pour grouper des boutons
  */
-export const PrimaryButton = React.forwardRef<
-  HTMLButtonElement,
-  Omit<ButtonProps, 'variant'>
->((props, ref) => <Button ref={ref} variant='primary' {...props} />);
-PrimaryButton.displayName = 'PrimaryButton';
-
-export const SecondaryButton = React.forwardRef<
-  HTMLButtonElement,
-  Omit<ButtonProps, 'variant'>
->((props, ref) => <Button ref={ref} variant='secondary' {...props} />);
-SecondaryButton.displayName = 'SecondaryButton';
-
-export const GhostButton = React.forwardRef<
-  HTMLButtonElement,
-  Omit<ButtonProps, 'variant'>
->((props, ref) => <Button ref={ref} variant='ghost' {...props} />);
-GhostButton.displayName = 'GhostButton';
-
-export const DestructiveButton = React.forwardRef<
-  HTMLButtonElement,
-  Omit<ButtonProps, 'variant'>
->((props, ref) => <Button ref={ref} variant='destructive' {...props} />);
-DestructiveButton.displayName = 'DestructiveButton';
+export function ButtonGroup({
+  children,
+  className = '',
+  orientation = 'horizontal',
+}: {
+  children: ReactNode;
+  className?: string;
+  orientation?: 'horizontal' | 'vertical';
+}) {
+  return (
+    <div
+      className={cn(
+        'flex',
+        orientation === 'vertical'
+          ? 'flex-col space-y-2'
+          : 'flex-row space-x-2',
+        className
+      )}
+    >
+      {children}
+    </div>
+  );
+}

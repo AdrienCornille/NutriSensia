@@ -7,7 +7,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ArrowLeft, ArrowRight, SkipForward, HelpCircle } from 'lucide-react';
+import {
+  X,
+  ArrowLeft,
+  ArrowRight,
+  SkipForward,
+  HelpCircle,
+} from 'lucide-react';
 
 /**
  * Interface pour les étapes du tour
@@ -36,13 +42,15 @@ const nutritionistTourSteps: TourStep[] = [
   {
     target: '.onboarding-welcome',
     title: 'Bienvenue ! 👋',
-    content: 'Ce tour vous guidera à travers toutes les étapes pour configurer votre profil professionnel.',
+    content:
+      'Ce tour vous guidera à travers toutes les étapes pour configurer votre profil professionnel.',
     placement: 'center',
   },
   {
     target: '.onboarding-progress',
     title: 'Suivi de progression',
-    content: 'Suivez votre progression ici. Chaque étape complétée vous rapproche de l\'activation de votre compte.',
+    content:
+      "Suivez votre progression ici. Chaque étape complétée vous rapproche de l'activation de votre compte.",
     placement: 'bottom',
   },
   {
@@ -54,7 +62,8 @@ const nutritionistTourSteps: TourStep[] = [
   {
     target: '.onboarding-credentials',
     title: 'Identifiants professionnels',
-    content: 'Vos identifiants ASCA, RME, EAN sont essentiels pour valider votre statut professionnel.',
+    content:
+      'Vos identifiants ASCA, RME, EAN sont essentiels pour valider votre statut professionnel.',
     placement: 'right',
   },
 ];
@@ -66,13 +75,15 @@ const patientTourSteps: TourStep[] = [
   {
     target: '.onboarding-welcome',
     title: 'Bienvenue ! 🌟',
-    content: 'Ce parcours vous aidera à configurer votre profil pour des conseils nutritionnels personnalisés.',
+    content:
+      'Ce parcours vous aidera à configurer votre profil pour des conseils nutritionnels personnalisés.',
     placement: 'center',
   },
   {
     target: '.onboarding-progress',
     title: 'Suivi de progression',
-    content: 'Votre progression s\'affiche ici. Plus vous complétez d\'informations, plus vos recommandations seront précises.',
+    content:
+      "Votre progression s'affiche ici. Plus vous complétez d'informations, plus vos recommandations seront précises.",
     placement: 'bottom',
   },
   {
@@ -101,7 +112,7 @@ export const SimpleTour: React.FC<SimpleTourProps> = ({
   // Fonction pour calculer la transformation CSS du tooltip
   const getTooltipTransform = () => {
     if (!currentStep) return 'translate(-50%, -50%)';
-    
+
     switch (currentStep.placement) {
       case 'top':
         return 'translate(-50%, 0%)';
@@ -124,20 +135,24 @@ export const SimpleTour: React.FC<SimpleTourProps> = ({
     const element = document.querySelector(currentStep.target) as HTMLElement;
     if (element) {
       setTargetElement(element);
-      
+
       const rect = element.getBoundingClientRect();
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
-      
+      const scrollTop =
+        window.pageYOffset || document.documentElement.scrollTop;
+      const scrollLeft =
+        window.pageXOffset || document.documentElement.scrollLeft;
+
       // Dimensions du tooltip adaptatives selon la taille d'écran
       const isSmallScreen = window.innerWidth < 640; // sm breakpoint
-      const tooltipWidth = isSmallScreen ? Math.min(350, window.innerWidth - 40) : 420;
+      const tooltipWidth = isSmallScreen
+        ? Math.min(350, window.innerWidth - 40)
+        : 420;
       const tooltipHeight = 250;
-      
+
       let x = rect.left + scrollLeft;
       let y = rect.top + scrollTop;
       let finalPlacement = currentStep.placement;
-      
+
       // Ajuster la position selon le placement initial
       switch (currentStep.placement) {
         case 'top':
@@ -162,10 +177,10 @@ export const SimpleTour: React.FC<SimpleTourProps> = ({
           y = window.innerHeight / 2;
           break;
       }
-      
+
       // Vérifier les limites de l'écran et ajuster si nécessaire
       const margin = 20; // Marge de sécurité
-      
+
       // Si le tooltip dépasse à droite, le positionner à gauche
       if (x + tooltipWidth / 2 > window.innerWidth - margin) {
         if (currentStep.placement === 'right') {
@@ -175,7 +190,7 @@ export const SimpleTour: React.FC<SimpleTourProps> = ({
           x = window.innerWidth - tooltipWidth - margin;
         }
       }
-      
+
       // Si le tooltip dépasse à gauche, le repositionner
       if (x - tooltipWidth / 2 < margin) {
         if (currentStep.placement === 'left') {
@@ -200,7 +215,7 @@ export const SimpleTour: React.FC<SimpleTourProps> = ({
           finalPlacement = 'left';
         }
       }
-      
+
       // Si le tooltip dépasse en haut
       if (y < margin) {
         if (currentStep.placement === 'top') {
@@ -210,7 +225,7 @@ export const SimpleTour: React.FC<SimpleTourProps> = ({
           y = margin;
         }
       }
-      
+
       // Si le tooltip dépasse en bas
       if (y + tooltipHeight > window.innerHeight - margin) {
         if (currentStep.placement === 'bottom') {
@@ -220,9 +235,9 @@ export const SimpleTour: React.FC<SimpleTourProps> = ({
           y = window.innerHeight - tooltipHeight - margin;
         }
       }
-      
+
       setTooltipPosition({ x, y });
-      
+
       // Scroll vers l'élément
       if (currentStep.placement !== 'center') {
         element.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -236,7 +251,9 @@ export const SimpleTour: React.FC<SimpleTourProps> = ({
 
     const handleResize = () => {
       // Forcer le recalcul de la position
-      const element = document.querySelector(currentStep?.target || '') as HTMLElement;
+      const element = document.querySelector(
+        currentStep?.target || ''
+      ) as HTMLElement;
       if (element) {
         setTargetElement(element);
       }
@@ -277,7 +294,7 @@ export const SimpleTour: React.FC<SimpleTourProps> = ({
     <>
       {/* Overlay sombre */}
       <motion.div
-        className="fixed inset-0 bg-black bg-opacity-40 z-40"
+        className='fixed inset-0 bg-black bg-opacity-40 z-40'
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -287,7 +304,7 @@ export const SimpleTour: React.FC<SimpleTourProps> = ({
       {/* Spotlight sur l'élément cible */}
       {targetElement && currentStep.placement !== 'center' && (
         <motion.div
-          className="fixed z-50 pointer-events-none"
+          className='fixed z-50 pointer-events-none'
           style={{
             left: targetElement.getBoundingClientRect().left - 4,
             top: targetElement.getBoundingClientRect().top - 4,
@@ -298,19 +315,22 @@ export const SimpleTour: React.FC<SimpleTourProps> = ({
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.3 }}
         >
-          <div className="w-full h-full border-4 border-blue-500 rounded-lg bg-white bg-opacity-10" />
+          <div className='w-full h-full border-4 border-blue-500 rounded-lg bg-white bg-opacity-10' />
         </motion.div>
       )}
 
       {/* Tooltip */}
       <AnimatePresence>
         <motion.div
-          className="fixed z-50"
+          className='fixed z-50'
           style={{
             left: tooltipPosition.x,
             top: tooltipPosition.y,
             transform: getTooltipTransform(),
-            width: window.innerWidth < 640 ? `${Math.min(350, window.innerWidth - 40)}px` : '420px',
+            width:
+              window.innerWidth < 640
+                ? `${Math.min(350, window.innerWidth - 40)}px`
+                : '420px',
             minHeight: '200px',
             maxWidth: '90vw', // Limite la largeur sur très petits écrans
           }}
@@ -319,31 +339,31 @@ export const SimpleTour: React.FC<SimpleTourProps> = ({
           exit={{ opacity: 0, scale: 0.9, y: 10 }}
           transition={{ duration: 0.2 }}
         >
-          <div className="bg-white rounded-xl shadow-2xl p-6 border border-gray-200 w-full">
+          <div className='bg-white rounded-xl shadow-2xl p-6 border border-gray-200 w-full'>
             {/* Header */}
-            <div className="flex items-start justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-800 pr-4">
+            <div className='flex items-start justify-between mb-4'>
+              <h3 className='text-lg font-semibold text-gray-800 pr-4'>
                 {currentStep.title}
               </h3>
               <button
                 onClick={handleClose}
-                className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
+                className='text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0'
               >
                 <X size={18} />
               </button>
             </div>
 
             {/* Content */}
-            <div className="text-gray-600 text-sm leading-relaxed mb-6">
+            <div className='text-gray-600 text-sm leading-relaxed mb-6'>
               {currentStep.content}
             </div>
 
             {/* Step indicator */}
-            <div className="flex items-center justify-center space-x-2 mb-4">
-              <span className="text-xs text-gray-400">
+            <div className='flex items-center justify-center space-x-2 mb-4'>
+              <span className='text-xs text-gray-400'>
                 Étape {currentStepIndex + 1} sur {steps.length}
               </span>
-              <div className="flex space-x-1">
+              <div className='flex space-x-1'>
                 {steps.map((_, index) => (
                   <div
                     key={index}
@@ -356,14 +376,14 @@ export const SimpleTour: React.FC<SimpleTourProps> = ({
             </div>
 
             {/* Action buttons - Réorganisés sur plusieurs lignes si nécessaire */}
-            <div className="space-y-3">
+            <div className='space-y-3'>
               {/* Ligne principale avec boutons principaux */}
-              <div className="flex items-center justify-between space-x-3">
+              <div className='flex items-center justify-between space-x-3'>
                 {/* Back button */}
                 {currentStepIndex > 0 && (
                   <button
                     onClick={handlePrevious}
-                    className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors text-sm flex-1"
+                    className='flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors text-sm flex-1'
                   >
                     <ArrowLeft size={16} />
                     <span>Précédent</span>
@@ -373,20 +393,24 @@ export const SimpleTour: React.FC<SimpleTourProps> = ({
                 {/* Next/Finish button */}
                 <button
                   onClick={handleNext}
-                  className="flex items-center justify-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm flex-1"
+                  className='flex items-center justify-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm flex-1'
                 >
                   <span>
-                    {currentStepIndex === steps.length - 1 ? 'Terminer' : 'Suivant'}
+                    {currentStepIndex === steps.length - 1
+                      ? 'Terminer'
+                      : 'Suivant'}
                   </span>
-                  {currentStepIndex < steps.length - 1 && <ArrowRight size={16} />}
+                  {currentStepIndex < steps.length - 1 && (
+                    <ArrowRight size={16} />
+                  )}
                 </button>
               </div>
 
               {/* Ligne secondaire avec bouton skip */}
-              <div className="flex justify-center">
+              <div className='flex justify-center'>
                 <button
                   onClick={handleSkip}
-                  className="text-gray-400 hover:text-gray-600 text-sm transition-colors flex items-center space-x-1 px-2 py-1"
+                  className='text-gray-400 hover:text-gray-600 text-sm transition-colors flex items-center space-x-1 px-2 py-1'
                 >
                   <SkipForward size={14} />
                   <span>Passer le tour</span>
@@ -412,7 +436,8 @@ export const useSimpleTour = (role: 'nutritionist' | 'patient') => {
     return false;
   });
 
-  const steps = role === 'nutritionist' ? nutritionistTourSteps : patientTourSteps;
+  const steps =
+    role === 'nutritionist' ? nutritionistTourSteps : patientTourSteps;
 
   const startTour = () => {
     setIsActive(true);
@@ -457,10 +482,12 @@ export const useSimpleTour = (role: 'nutritionist' | 'patient') => {
 /**
  * Bouton d'aide pour démarrer le tour
  */
-export const TourHelpButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
+export const TourHelpButton: React.FC<{ onClick: () => void }> = ({
+  onClick,
+}) => (
   <motion.button
     onClick={onClick}
-    className="fixed bottom-6 right-6 z-30 bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition-colors"
+    className='fixed bottom-6 right-6 z-30 bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition-colors'
     whileHover={{ scale: 1.05 }}
     whileTap={{ scale: 0.95 }}
     initial={{ opacity: 0, scale: 0 }}
@@ -470,5 +497,3 @@ export const TourHelpButton: React.FC<{ onClick: () => void }> = ({ onClick }) =
     <HelpCircle size={24} />
   </motion.button>
 );
-
-

@@ -17,6 +17,7 @@ scripts/
 ### Prérequis
 
 1. **Variables d'environnement** configurées :
+
    ```bash
    export SUPABASE_URL="https://your-project.supabase.co"
    export SUPABASE_SERVICE_ROLE_KEY="your-service-role-key"
@@ -99,11 +100,11 @@ SELECT * FROM patient_profiles LIMIT 5;
 
 ### Variables d'Environnement
 
-| Variable | Description | Exemple |
-|----------|-------------|---------|
-| `SUPABASE_URL` | URL de votre projet Supabase | `https://abc123.supabase.co` |
+| Variable                    | Description                              | Exemple                                   |
+| --------------------------- | ---------------------------------------- | ----------------------------------------- |
+| `SUPABASE_URL`              | URL de votre projet Supabase             | `https://abc123.supabase.co`              |
 | `SUPABASE_SERVICE_ROLE_KEY` | Clé de service pour les opérations admin | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` |
-| `SUPABASE_ANON_KEY` | Clé anonyme pour les tests | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` |
+| `SUPABASE_ANON_KEY`         | Clé anonyme pour les tests               | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` |
 
 ### Fichier .env
 
@@ -155,21 +156,27 @@ Toutes les tables ont des politiques RLS activées :
 ### Erreurs Courantes
 
 #### 1. Erreur de Connexion
+
 ```
 ❌ Impossible de se connecter à Supabase
 ```
+
 **Solution** : Vérifier les variables d'environnement
 
 #### 2. Erreur de Permissions
+
 ```
 ❌ Permission denied
 ```
+
 **Solution** : Utiliser la clé de service (service_role_key)
 
 #### 3. Erreur de Contraintes
+
 ```
 ❌ Constraint violation
 ```
+
 **Solution** : Vérifier les données d'entrée et les contraintes
 
 ### Logs et Debug
@@ -222,7 +229,7 @@ ALTER TABLE profiles ADD COLUMN new_field VARCHAR(100);
 
 -- Exemple de modification de contrainte
 ALTER TABLE patients DROP CONSTRAINT IF EXISTS patients_gender_check;
-ALTER TABLE patients ADD CONSTRAINT patients_gender_check 
+ALTER TABLE patients ADD CONSTRAINT patients_gender_check
     CHECK (gender IN ('male', 'female', 'other', 'prefer_not_to_say', 'non_binary'));
 ```
 

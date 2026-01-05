@@ -92,8 +92,13 @@ export const SignUpForm: React.FC = () => {
       // L'inscription a réussi - l'entrée dans la table nutritionists/patients
       // sera créée automatiquement lors de la première connexion ou de l'onboarding
       if (authData.user) {
-        console.log(`✅ Inscription réussie pour l'utilisateur ${data.role}:`, authData.user.id);
-        console.log('ℹ️  L\'entrée dans la table correspondante sera créée lors de la première connexion');
+        console.log(
+          `✅ Inscription réussie pour l'utilisateur ${data.role}:`,
+          authData.user.id
+        );
+        console.log(
+          "ℹ️  L'entrée dans la table correspondante sera créée lors de la première connexion"
+        );
       }
 
       setMessage({
@@ -230,7 +235,6 @@ export const SignUpForm: React.FC = () => {
   );
 };
 
-
 /**
  * Vérifie si c'est un nouveau compte (créé récemment ou sans 2FA configuré)
  */
@@ -263,7 +267,7 @@ const checkIfNewAccount = async (user: any): Promise<boolean> => {
       isFirstSignIn,
       no2FAConfigured,
       createdAt: profileData.created_at,
-      lastSignIn: profileData.last_sign_in_at
+      lastSignIn: profileData.last_sign_in_at,
     });
 
     // PRIORITÉ : Si 2FA est déjà configuré, ce n'est PAS un nouveau compte
@@ -274,14 +278,18 @@ const checkIfNewAccount = async (user: any): Promise<boolean> => {
 
     // C'est un nouveau compte si : récent OU première connexion OU pas de 2FA
     const isNewAccount = isRecentAccount || isFirstSignIn || no2FAConfigured;
-    
+
     console.log('🔍 AuthForms - Décision finale nouveau compte:', {
       isNewAccount,
-      raison: isRecentAccount ? 'compte récent' : 
-              isFirstSignIn ? 'première connexion' : 
-              no2FAConfigured ? 'pas de 2FA' : 'aucune'
+      raison: isRecentAccount
+        ? 'compte récent'
+        : isFirstSignIn
+          ? 'première connexion'
+          : no2FAConfigured
+            ? 'pas de 2FA'
+            : 'aucune',
     });
-    
+
     return isNewAccount;
   } catch (error) {
     console.error('Erreur vérification nouveau compte:', error);
@@ -345,9 +353,11 @@ export const SignInForm: React.FC = () => {
 
       // PRIORITÉ 1: Vérifier si c'est un nouveau compte
       const isNewAccount = await checkIfNewAccount(authData.user);
-      
+
       if (isNewAccount) {
-        console.log('🆕 NOUVEAU COMPTE DÉTECTÉ - Redirection obligatoire vers 2FA');
+        console.log(
+          '🆕 NOUVEAU COMPTE DÉTECTÉ - Redirection obligatoire vers 2FA'
+        );
         setMessage({
           type: 'success',
           text: 'Connexion réussie ! Configuration de sécurité requise...',
@@ -360,13 +370,13 @@ export const SignInForm: React.FC = () => {
 
       // PRIORITÉ 2: Pour les comptes existants, analyser le niveau d'assurance
       const { currentLevel, nextLevel } = mfaData;
-      
+
       console.log('🔍 Analyse des niveaux AAL:', {
         userRole,
         currentLevel,
         nextLevel,
         mfaData,
-        userEmail: authData.user?.email
+        userEmail: authData.user?.email,
       });
 
       if (userRole === 'nutritionist') {
@@ -391,15 +401,18 @@ export const SignInForm: React.FC = () => {
             .eq('id', authData.user?.id)
             .single();
 
-          const twoFactorEnabledInDB = profileData ? (profileData as any).two_factor_enabled : false;
-          const hasVerifiedFactors = hasVerifiedFactorsInAuth && twoFactorEnabledInDB;
-          
+          const twoFactorEnabledInDB = profileData
+            ? (profileData as any).two_factor_enabled
+            : false;
+          const hasVerifiedFactors =
+            hasVerifiedFactorsInAuth && twoFactorEnabledInDB;
+
           console.log('🔍 Diagnostic MFA (AuthForms):', {
             userId: authData.user?.id,
             hasVerifiedFactorsInAuth,
             twoFactorEnabledInDB,
             hasVerifiedFactors,
-            factorsData
+            factorsData,
           });
 
           setTimeout(() => {
@@ -432,8 +445,10 @@ export const SignInForm: React.FC = () => {
         }
       } else {
         // Les patients DOIVENT utiliser le 2FA comme les nutritionnistes
-        console.log('👤 Utilisateur patient connecté, vérification 2FA obligatoire...');
-        
+        console.log(
+          '👤 Utilisateur patient connecté, vérification 2FA obligatoire...'
+        );
+
         // FORCER le 2FA pour tous les patients, indépendamment de nextLevel
         if (currentLevel === 'aal1') {
           // Le patient doit configurer ou vérifier le 2FA
@@ -455,9 +470,12 @@ export const SignInForm: React.FC = () => {
             .eq('id', authData.user?.id)
             .single();
 
-          const twoFactorEnabledInDB = profileData ? (profileData as any).two_factor_enabled : false;
-          const hasVerifiedFactors = hasVerifiedFactorsInAuth && twoFactorEnabledInDB;
-          
+          const twoFactorEnabledInDB = profileData
+            ? (profileData as any).two_factor_enabled
+            : false;
+          const hasVerifiedFactors =
+            hasVerifiedFactorsInAuth && twoFactorEnabledInDB;
+
           console.log('🔍 Diagnostic MFA Patient (AuthForms):', {
             userId: authData.user?.id,
             userRole,
@@ -466,7 +484,7 @@ export const SignInForm: React.FC = () => {
             hasVerifiedFactors,
             factorsData,
             currentLevel,
-            nextLevel
+            nextLevel,
           });
 
           setTimeout(() => {
@@ -492,7 +510,7 @@ export const SignInForm: React.FC = () => {
           }, 1000);
         } else {
           // Cas par défaut : redirection vers l'accueil
-          console.log('🏠 Patient - redirection par défaut vers l\'accueil');
+          console.log("🏠 Patient - redirection par défaut vers l'accueil");
           setMessage({
             type: 'success',
             text: 'Connexion réussie ! Redirection vers votre espace...',

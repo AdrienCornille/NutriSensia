@@ -1,0 +1,459 @@
+/**
+ * PALETTE "DEEP OCEAN" - CSS Agressif pour Page de Test
+ * =======================================================
+ *
+ * Ce fichier remplace TOUTES les couleurs vertes par des bleus marines
+ * en utilisant des sélecteurs CSS très spécifiques et !important.
+ *
+ * MAPPING DES COULEURS :
+ * ======================
+ *
+ * VERTS → BLEUS MARINES
+ * ---------------------
+ * #3f6655 (Vert principal)     → #2C5282 (Bleu marine)
+ * #2E7D5E (Vert primaire)      → #2C5282 (Bleu marine)
+ * #1B4F3F (Vert sombre)        → #1E3A5F (Bleu nuit)
+ * #2f5645 (Vert hover)         → #1E3A5F (Bleu nuit)
+ * #2d5042 (Vert hover dark)    → #1A3551 (Bleu très sombre)
+ * #4A9B7B (Vert secondaire)    → #5A7BA6 (Bleu clair)
+ * #E8F3EF (Vert très pâle)     → #E8EEF5 (Bleu très pâle)
+ * #B8D4C7 (Sage vert)          → #B8C8DC (Bleu-gris)
+ * #b6ccae (Boutons light)      → #B8C8DC (Bleu-gris)
+ * #a6bc9e (Hover light)        → #A0B4CC (Bleu-gris hover)
+ * #b2c2bb (Borders)            → #B8C8DC (Bleu-gris)
+ * #d7e1ce (Shadow)             → #CBD6E8 (Bleu-gris très clair)
+ * #9461bc (Purple accent)      → #3B7EA1 (Teal-blue)
+ * #f8f7ef (Beige)              → #F5F8FA (Blanc bleuté)
+ * #41556b (Text gray)          → #3A4A5C (Text bleu-gris)
+ *
+ * USAGE :
+ * =======
+ * Import ce fichier dans la page de test uniquement
+ */
+
+/* ============================================ */
+/* RESET DES BACKGROUNDS                        */
+/* ============================================ */
+
+/* Remplace tous les backgrounds verts par des bleus */
+[style*='background-color: #3f6655'],
+[style*='background-color:#3f6655'],
+[style*="backgroundColor: '#3f6655'"],
+[style*='backgroundColor: "#3f6655"'] {
+  background-color: #2c5282 !important;
+}
+
+[style*='background-color: #2E7D5E'],
+[style*='background-color:#2E7D5E'],
+[style*='background-color: #2e7d5e'],
+[style*='background-color:#2e7d5e'] {
+  background-color: #2c5282 !important;
+}
+
+[style*='background-color: #1B4F3F'],
+[style*='background-color:#1B4F3F'],
+[style*='background-color: #1b4f3f'],
+[style*='background-color:#1b4f3f'] {
+  background-color: #1e3a5f !important;
+}
+
+[style*='background-color: #2f5645'],
+[style*='background-color:#2f5645'] {
+  background-color: #1e3a5f !important;
+}
+
+[style*='background-color: #2d5042'],
+[style*='background-color:#2d5042'] {
+  background-color: #1a3551 !important;
+}
+
+[style*='background-color: #b6ccae'],
+[style*='background-color:#b6ccae'] {
+  background-color: #b8c8dc !important;
+}
+
+[style*='background-color: #a6bc9e'],
+[style*='background-color:#a6bc9e'] {
+  background-color: #a0b4cc !important;
+}
+
+[style*='background-color: #4A9B7B'],
+[style*='background-color:#4A9B7B'],
+[style*='background-color: #4a9b7b'],
+[style*='background-color:#4a9b7b'] {
+  background-color: #5a7ba6 !important;
+}
+
+[style*='background-color: #E8F3EF'],
+[style*='background-color:#E8F3EF'],
+[style*='background-color: #e8f3ef'],
+[style*='background-color:#e8f3ef'] {
+  background-color: #e8eef5 !important;
+}
+
+[style*='background-color: #9461bc'],
+[style*='background-color:#9461bc'] {
+  background-color: #3b7ea1 !important;
+}
+
+[style*='background-color: #f8f7ef'],
+[style*='background-color:#f8f7ef'] {
+  background-color: #f5f8fa !important;
+}
+
+/* ============================================ */
+/* RESET DES COULEURS DE TEXTE                  */
+/* ============================================ */
+
+[style*='color: #3f6655'],
+[style*='color:#3f6655'],
+[style*="color: '#3f6655'"],
+[style*='color: "#3f6655"'] {
+  color: #2c5282 !important;
+}
+
+[style*='color: #2E7D5E'],
+[style*='color:#2E7D5E'],
+[style*='color: #2e7d5e'],
+[style*='color:#2e7d5e'] {
+  color: #2c5282 !important;
+}
+
+[style*='color: #41556b'],
+[style*='color:#41556b'] {
+  color: #3a4a5c !important;
+}
+
+/* ============================================ */
+/* RESET DES BORDERS                            */
+/* ============================================ */
+
+[style*='border-color: #3f6655'],
+[style*='border-color:#3f6655'],
+[style*="borderColor: '#3f6655'"],
+[style*='borderColor: "#3f6655"'] {
+  border-color: #2c5282 !important;
+}
+
+[style*='border: 1px solid #3f6655'],
+[style*='border:1px solid #3f6655'],
+[style*='border: 2px solid #3f6655'],
+[style*='border:2px solid #3f6655'] {
+  border-color: #2c5282 !important;
+}
+
+[style*='border-bottom: 1px solid #b2c2bb'],
+[style*='border-bottom:1px solid #b2c2bb'],
+[style*="borderBottom: '1px solid #b2c2bb'"],
+[style*='borderBottom: "1px solid #b2c2bb"'] {
+  border-bottom-color: #b8c8dc !important;
+}
+
+[style*='border: 1px solid #e5e5e5'],
+[style*='border:1px solid #e5e5e5'] {
+  border-color: #e5e5e5 !important; /* Conservé */
+}
+
+/* ============================================ */
+/* RESET DES BOX SHADOWS                        */
+/* ============================================ */
+
+/* Shadow signature : 8px 8px 0 #d7e1ce → 8px 8px 0 #CBD6E8 */
+[style*='box-shadow: 8px 8px 0 #d7e1ce'],
+[style*='box-shadow:8px 8px 0 #d7e1ce'],
+[style*="boxShadow: '8px 8px 0 #d7e1ce'"],
+[style*='boxShadow: "8px 8px 0 #d7e1ce"'],
+[style*='box-shadow: 8px 8px 0px #d7e1ce'],
+[style*='box-shadow:8px 8px 0px #d7e1ce'] {
+  box-shadow: 8px 8px 0 #cbd6e8 !important;
+}
+
+[style*='box-shadow: 10px 10px 0 #d7e1ce'],
+[style*='box-shadow:10px 10px 0 #d7e1ce'] {
+  box-shadow: 10px 10px 0 #cbd6e8 !important;
+}
+
+[style*='box-shadow: 4px 4px 0 #d7e1ce'],
+[style*='box-shadow:4px 4px 0 #d7e1ce'],
+[style*="boxShadow: '4px 4px 0 #d7e1ce'"],
+[style*='boxShadow: "4px 4px 0 #d7e1ce"'] {
+  box-shadow: 4px 4px 0 #cbd6e8 !important;
+}
+
+[style*='box-shadow: 5px 5px 0 #d7e1ce'],
+[style*='box-shadow:5px 5px 0 #d7e1ce'],
+[style*="boxShadow: '5px 5px 0 #d7e1ce'"],
+[style*='boxShadow: "5px 5px 0 #d7e1ce"'] {
+  box-shadow: 5px 5px 0 #cbd6e8 !important;
+}
+
+/* Box-shadows avec rgb() - les navigateurs convertissent parfois les hex en rgb */
+[style*='rgb(215, 225, 206)'],
+[style*='rgb(215,225,206)'] {
+  box-shadow: 8px 8px 0 #cbd6e8 !important;
+}
+
+/* Catch-all pour toutes les shadows vertes converties en RGB */
+[style*='box-shadow'][style*='215'],
+[style*='boxShadow'][style*='215'] {
+  box-shadow: 8px 8px 0 rgb(203, 214, 232) !important;
+}
+
+/* ============================================ */
+/* RGBA OVERLAYS ET TRANSPARENCES               */
+/* ============================================ */
+
+/* Overlay vert sur image hero → overlay bleu */
+[style*='background-color: rgba(63, 102, 85, 0.2)'],
+[style*='background-color:rgba(63, 102, 85, 0.2)'],
+[style*="backgroundColor: 'rgba(63, 102, 85, 0.2)'"],
+[style*='backgroundColor: "rgba(63, 102, 85, 0.2)"'] {
+  background-color: rgba(44, 82, 130, 0.2) !important;
+}
+
+[style*='background-color: rgba(63, 102, 85, 0.4)'],
+[style*='background-color:rgba(63, 102, 85, 0.4)'] {
+  background-color: rgba(44, 82, 130, 0.4) !important;
+}
+
+/* ============================================ */
+/* CLASSES TAILWIND                             */
+/* ============================================ */
+
+.bg-primary,
+.bg-\[#2E7D5E\],
+.bg-\[#3f6655\] {
+  background-color: #2c5282 !important;
+}
+
+.bg-primary-dark,
+.bg-\[#1B4F3F\],
+.bg-\[#1b4f3f\] {
+  background-color: #1e3a5f !important;
+}
+
+.bg-secondary,
+.bg-\[#4A9B7B\],
+.bg-\[#4a9b7b\] {
+  background-color: #5a7ba6 !important;
+}
+
+.bg-secondary-pale,
+.bg-\[#E8F3EF\],
+.bg-\[#e8f3ef\] {
+  background-color: #e8eef5 !important;
+}
+
+.text-primary,
+.text-\[#3f6655\],
+.text-\[#2E7D5E\] {
+  color: #2c5282 !important;
+}
+
+.text-primary-dark,
+.text-\[#1B4F3F\] {
+  color: #1e3a5f !important;
+}
+
+.border-primary,
+.border-\[#3f6655\] {
+  border-color: #2c5282 !important;
+}
+
+/* ============================================ */
+/* SÉLECTEURS PAR CLASSE DE COMPOSANT           */
+/* ============================================ */
+
+/* Hero Section */
+.hero-section h2,
+.hero-section .hero-subtitle {
+  color: #2c5282 !important;
+  border-bottom-color: #b8c8dc !important;
+}
+
+.hero-section .hero-btn,
+.hero-section button {
+  background-color: #2c5282 !important;
+}
+
+.hero-section .hero-btn:hover,
+.hero-section button:hover {
+  background-color: #1e3a5f !important;
+}
+
+/* Header */
+header {
+  background-color: #f5f8fa !important;
+}
+
+header [style*="backgroundColor: '#3f6655'"],
+header [style*='backgroundColor: "#3f6655"'],
+header [style*='background-color: #3f6655'] {
+  background-color: #2c5282 !important;
+}
+
+header [style*='color: #3f6655'],
+header [style*="color: '#3f6655'"],
+header [style*='color: "#3f6655"'] {
+  color: #2c5282 !important;
+}
+
+/* Navigation links */
+nav a[style*='color: #3f6655'],
+nav a[style*='color:#3f6655'] {
+  color: #2c5282 !important;
+}
+
+nav a[style*='color: #41556b'],
+nav a[style*='color:#41556b'] {
+  color: #3a4a5c !important;
+}
+
+/* ============================================ */
+/* ÉLÉMENTS EN ORANGE COMPLÉMENTAIRE            */
+/* ============================================ */
+
+/* Top bar (annonce) - Orange Vif */
+[style*='background-color: #9461bc'],
+[style*="backgroundColor: '#9461bc'"],
+div[style*='#9461bc'] {
+  background-color: #e67e22 !important; /* Orange vif - complémentaire énergique */
+}
+
+/* CTA Banner - Orange Vif Principal */
+section[style*='background-color: #5e69bd'],
+section[style*="backgroundColor: '#5e69bd'"],
+[style*='#5e69bd'] {
+  background-color: #e67e22 !important; /* Orange vif - complémentaire principal */
+}
+
+/* Alternative : cibler par contenu ou classe si nécessaire */
+div:has(> :contains('Découvrez nos ressources')) {
+  background-color: #e67e22 !important;
+}
+
+/* Tout élément avec le fond violet → orange */
+[style*='rgb(148, 97, 188)'],
+[style*='rgb(148,97,188)'] {
+  background-color: #e67e22 !important;
+}
+
+/* Buttons génériques */
+button[style*='background-color: #3f6655'],
+button[style*="backgroundColor: '#3f6655'"],
+button[style*='backgroundColor: "#3f6655"'],
+a[style*='background-color: #3f6655'] {
+  background-color: #2c5282 !important;
+}
+
+button[style*='background-color: #b6ccae'],
+button[style*="backgroundColor: '#b6ccae'"],
+a[style*='background-color: #b6ccae'] {
+  background-color: #b8c8dc !important;
+}
+
+button[style*='color: #3f6655'],
+button[style*="color: '#3f6655'"],
+a[style*='color: #3f6655'] {
+  color: #2c5282 !important;
+}
+
+/* Cards */
+[class*='card'][style*='border: 1px solid #3f6655'],
+[class*='card'][style*='border:1px solid #3f6655'] {
+  border-color: #2c5282 !important;
+}
+
+/* Sections */
+section[style*='background-color: #f8f7ef'],
+section[style*="backgroundColor: '#f8f7ef'"] {
+  background-color: #f5f8fa !important;
+}
+
+/* ============================================ */
+/* ANIMATIONS & TRANSITIONS (preserve)          */
+/* ============================================ */
+
+/* On conserve les transitions mais on change les couleurs cibles */
+
+/* ============================================ */
+/* PSEUDO-ELEMENTS                              */
+/* ============================================ */
+
+.nav-link-active::after {
+  background-color: #2c5282 !important;
+}
+
+.nav-link-hover::after {
+  background-color: #3b7ea1 !important; /* Teal-blue au lieu de purple */
+}
+
+/* ============================================ */
+/* OVERRIDE JAVASCRIPT INLINE STYLES            */
+/* ============================================ */
+
+/*
+ * NOTE: On ne force PAS de transitions globales pour éviter
+ * d'interférer avec les animations existantes (Framer Motion, etc.)
+ * Le JavaScript color-replacer.tsx s'occupera des changements dynamiques
+ */
+
+/* ============================================ */
+/* TAILWIND CLASSES UTILITAIRES                 */
+/* ============================================ */
+
+.hover\:bg-primary:hover {
+  background-color: #2c5282 !important;
+}
+
+.hover\:bg-primary-dark:hover {
+  background-color: #1e3a5f !important;
+}
+
+.hover\:text-primary:hover {
+  color: #2c5282 !important;
+}
+
+.focus\:ring-primary:focus {
+  --tw-ring-color: #2c5282 !important;
+}
+
+.focus\:border-primary:focus {
+  border-color: #2c5282 !important;
+}
+
+/* ============================================ */
+/* DEBUGGING (optionnel - pour voir l'effet)    */
+/* ============================================ */
+
+/*
+[style*="#3f6655"],
+[style*="#2E7D5E"],
+[style*="#1B4F3F"] {
+  outline: 2px dashed red !important;
+}
+*/
+
+/* ============================================ */
+/* MODE SOMBRE (si activé)                      */
+/* ============================================ */
+
+.dark [style*='background-color: #3f6655'],
+.dark [style*="backgroundColor: '#3f6655'"] {
+  background-color: #5a7ba6 !important;
+}
+
+.dark [style*='color: #3f6655'],
+.dark [style*="color: '#3f6655'"] {
+  color: #7fa9c9 !important;
+}
+
+/**
+ * FIN DU FICHIER
+ * ==============
+ *
+ * Ce fichier est volontairement agressif avec !important
+ * pour surcharger tous les styles inline JavaScript.
+ *
+ * À utiliser UNIQUEMENT sur la page de test.
+ */

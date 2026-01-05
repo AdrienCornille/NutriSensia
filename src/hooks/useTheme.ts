@@ -209,13 +209,15 @@ export function useTheme() {
   // Initialisation au montage
   useEffect(() => {
     loadPreferences();
+    setIsLoading(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-    // Application du thème initial
+  // Application du thème quand il change
+  useEffect(() => {
     const effectiveMode = getEffectiveMode(theme);
     applyTheme(effectiveMode);
-
-    setIsLoading(false);
-  }, [loadPreferences, getEffectiveMode, applyTheme, theme]);
+  }, [theme, getEffectiveMode, applyTheme]);
 
   // Fonctions utilitaires
   const toggleTheme = useCallback(() => {

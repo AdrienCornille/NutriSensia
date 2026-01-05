@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
 
     if (!supabaseUrl || !supabaseAnonKey || !serviceKey) {
       return NextResponse.json(
-        { error: 'Variables d\'environnement Supabase manquantes' },
+        { error: "Variables d'environnement Supabase manquantes" },
         { status: 500 }
       );
     }
@@ -24,8 +24,8 @@ export async function GET(request: NextRequest) {
     const supabaseService = createClient(supabaseUrl, serviceKey, {
       auth: {
         autoRefreshToken: false,
-        persistSession: false
-      }
+        persistSession: false,
+      },
     });
 
     // Récupérer les données des utilisateurs
@@ -34,7 +34,10 @@ export async function GET(request: NextRequest) {
       .select('*');
 
     if (profilesError) {
-      console.error('❌ [API Dashboard] Erreur récupération profils:', profilesError);
+      console.error(
+        '❌ [API Dashboard] Erreur récupération profils:',
+        profilesError
+      );
       return NextResponse.json(
         { error: 'Erreur lors de la récupération des profils' },
         { status: 500 }
@@ -43,19 +46,24 @@ export async function GET(request: NextRequest) {
 
     // Calculer les statistiques des utilisateurs
     const totalUsers = profiles?.length || 0;
-    const byRole = profiles?.reduce((acc, user) => {
-      acc[user.role as keyof typeof acc] = (acc[user.role as keyof typeof acc] || 0) + 1;
-      return acc;
-    }, { admin: 0, nutritionist: 0, patient: 0 }) || { admin: 0, nutritionist: 0, patient: 0 };
+    const byRole = profiles?.reduce(
+      (acc, user) => {
+        acc[user.role as keyof typeof acc] =
+          (acc[user.role as keyof typeof acc] || 0) + 1;
+        return acc;
+      },
+      { admin: 0, nutritionist: 0, patient: 0 }
+    ) || { admin: 0, nutritionist: 0, patient: 0 };
 
     // Calculer les utilisateurs récents (30 derniers jours)
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-    const recentUsers = profiles?.filter(profile => {
-      const createdAt = new Date(profile.created_at);
-      return createdAt >= thirtyDaysAgo;
-    }).length || 0;
+    const recentUsers =
+      profiles?.filter(profile => {
+        const createdAt = new Date(profile.created_at);
+        return createdAt >= thirtyDaysAgo;
+      }).length || 0;
 
     // Récupérer les données des sessions
     const { data: sessions, error: sessionsError } = await supabaseService
@@ -79,9 +87,12 @@ export async function GET(request: NextRequest) {
     }
 
     // Calculer le taux de conversion
-    const conversionRate = sessionStats.total > 0 
-      ? Math.round((sessionStats.completed / sessionStats.total) * 100 * 100) / 100 
-      : 0;
+    const conversionRate =
+      sessionStats.total > 0
+        ? Math.round(
+            (sessionStats.completed / sessionStats.total) * 100 * 100
+          ) / 100
+        : 0;
 
     // Retourner les données du dashboard
     const dashboardData = {
@@ -112,7 +123,6 @@ export async function GET(request: NextRequest) {
     });
 
     return NextResponse.json(dashboardData);
-
   } catch (error: any) {
     console.error('❌ [API Dashboard] Erreur générale:', error);
     return NextResponse.json(

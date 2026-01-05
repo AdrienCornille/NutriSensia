@@ -4,7 +4,7 @@
 
 // Types de base pour l'onboarding
 export type OnboardingStep = string;
-export type NutritionistOnboardingStep = 
+export type NutritionistOnboardingStep =
   | 'welcome'
   | 'personal-info'
   | 'credentials'
@@ -14,7 +14,7 @@ export type NutritionistOnboardingStep =
   | 'platform-training'
   | 'completion';
 
-export type PatientOnboardingStep = 
+export type PatientOnboardingStep =
   | 'welcome'
   | 'personal-info'
   | 'health-profile'
@@ -27,7 +27,7 @@ export interface NutritionistOnboardingData {
   // Étape de bienvenue
   welcomeViewed?: boolean;
   onboardingStartedAt?: string;
-  
+
   // Informations personnelles (PersonalInfoStep)
   firstName?: string;
   lastName?: string;
@@ -35,12 +35,12 @@ export interface NutritionistOnboardingData {
   phone?: string;
   locale?: string; // Langue préférée
   avatar_url?: string | null; // URL de l'avatar
-  
+
   // Identifiants professionnels (CredentialsStep)
   ascaNumber?: string;
   rmeNumber?: string;
   eanCode?: string;
-  
+
   // Détails du cabinet (PracticeDetailsStep)
   practiceAddress?: {
     street?: string;
@@ -57,20 +57,20 @@ export interface NutritionistOnboardingData {
   maxPatients?: number;
   consultationTypes?: string[]; // ['in-person', 'online', 'home-visit']
   availableLanguages?: string[]; // ['fr', 'de', 'it', 'en']
-  
+
   // Spécialisations (SpecializationsStep)
   specializations?: string[];
   bio?: string;
   yearsOfExperience?: number; // Années d'expérience (0-50)
   certifications?: string[]; // Liste des certifications et formations
   continuingEducation?: boolean; // Engagement formation continue
-  
+
   // Formation à la plateforme (PlatformTrainingStep)
   platformTraining?: {
     completed?: boolean;
     completedModules?: string[];
   };
-  
+
   // Finalisation (CompletionStep)
   completed?: boolean;
   completedAt?: string;
@@ -84,7 +84,7 @@ export interface PatientOnboardingData {
   // Étape de bienvenue
   welcomeViewed?: boolean;
   onboardingStartedAt?: string;
-  
+
   // Informations personnelles
   firstName?: string;
   lastName?: string;
@@ -92,33 +92,51 @@ export interface PatientOnboardingData {
   phone?: string;
   dateOfBirth?: string;
   gender?: 'male' | 'female' | 'other' | 'prefer-not-to-say';
-  
+
   // Profil de santé
   healthProfile?: {
     height?: number;
     weight?: number;
-    activityLevel?: 'sedentary' | 'light' | 'moderate' | 'active' | 'very-active';
+    activityLevel?:
+      | 'sedentary'
+      | 'light'
+      | 'moderate'
+      | 'active'
+      | 'very-active';
     medicalConditions?: string[];
     medications?: string[];
     allergies?: string[];
   };
-  
+
   // Préférences alimentaires
   dietaryPreferences?: {
-    dietType?: 'omnivore' | 'vegetarian' | 'vegan' | 'pescatarian' | 'keto' | 'paleo' | 'other';
+    dietType?:
+      | 'omnivore'
+      | 'vegetarian'
+      | 'vegan'
+      | 'pescatarian'
+      | 'keto'
+      | 'paleo'
+      | 'other';
     restrictions?: string[];
     dislikes?: string[];
     culturalConsiderations?: string[];
   };
-  
+
   // Objectifs
   goals?: {
-    primaryGoal?: 'weight-loss' | 'weight-gain' | 'maintenance' | 'muscle-gain' | 'health-improvement' | 'other';
+    primaryGoal?:
+      | 'weight-loss'
+      | 'weight-gain'
+      | 'maintenance'
+      | 'muscle-gain'
+      | 'health-improvement'
+      | 'other';
     targetWeight?: number;
     timeframe?: string;
     motivation?: string;
   };
-  
+
   // Finalisation
   completed?: boolean;
   completedAt?: string;
@@ -189,9 +207,10 @@ export const NUTRITION_SPECIALIZATIONS = [
 ] as const;
 
 // Types dérivés des constantes
-export type AvailableLanguage = typeof AVAILABLE_LANGUAGES[number]['value'];
-export type SwissCanton = typeof SWISS_CANTONS[number]['value'];
-export type NutritionSpecialization = typeof NUTRITION_SPECIALIZATIONS[number]['value'];
+export type AvailableLanguage = (typeof AVAILABLE_LANGUAGES)[number]['value'];
+export type SwissCanton = (typeof SWISS_CANTONS)[number]['value'];
+export type NutritionSpecialization =
+  (typeof NUTRITION_SPECIALIZATIONS)[number]['value'];
 
 // =====================================================
 // TYPES POUR LA NOUVELLE ARCHITECTURE OPTIMISÉE
@@ -270,7 +289,12 @@ export interface PatientProfile {
   weight_kg?: number;
   age?: number;
   gender?: 'male' | 'female' | 'other';
-  activity_level?: 'sedentary' | 'lightly_active' | 'moderately_active' | 'very_active' | 'extremely_active';
+  activity_level?:
+    | 'sedentary'
+    | 'lightly_active'
+    | 'moderately_active'
+    | 'very_active'
+    | 'extremely_active';
   dietary_restrictions: string[];
   allergies: string[];
   goals: string[];
@@ -289,5 +313,9 @@ export interface PatientProfile {
 }
 
 // Types combinés pour les vues complètes
-export interface CompleteNutritionistProfile extends BaseProfile, Omit<NutritionistProfile, 'id'> {}
-export interface CompletePatientProfile extends BaseProfile, Omit<PatientProfile, 'id'> {}
+export interface CompleteNutritionistProfile
+  extends BaseProfile,
+    Omit<NutritionistProfile, 'id'> {}
+export interface CompletePatientProfile
+  extends BaseProfile,
+    Omit<PatientProfile, 'id'> {}

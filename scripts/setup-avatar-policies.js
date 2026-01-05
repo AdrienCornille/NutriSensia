@@ -10,7 +10,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseServiceKey) {
-  console.error('❌ Variables d\'environnement Supabase manquantes');
+  console.error("❌ Variables d'environnement Supabase manquantes");
   process.exit(1);
 }
 
@@ -57,41 +57,51 @@ async function setupAvatarPolicies() {
 
     // Exécuter le SQL
     const { error } = await supabase.rpc('exec_sql', { sql: policiesSQL });
-    
+
     if (error) {
       // Si la fonction exec_sql n'existe pas, on utilise une approche différente
-      console.log('⚠️  Fonction exec_sql non disponible, utilisation d\'une approche alternative...');
-      
+      console.log(
+        "⚠️  Fonction exec_sql non disponible, utilisation d'une approche alternative..."
+      );
+
       // Créer les politiques une par une
       const policies = [
         {
-          name: "Avatar images are publicly accessible",
-          sql: `CREATE POLICY "Avatar images are publicly accessible" ON storage.objects FOR SELECT USING (bucket_id = 'avatars')`
+          name: 'Avatar images are publicly accessible',
+          sql: `CREATE POLICY "Avatar images are publicly accessible" ON storage.objects FOR SELECT USING (bucket_id = 'avatars')`,
         },
         {
-          name: "Authenticated users can upload avatars", 
-          sql: `CREATE POLICY "Authenticated users can upload avatars" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'avatars' AND auth.role() = 'authenticated' AND (storage.foldername(name))[1] = 'avatars')`
+          name: 'Authenticated users can upload avatars',
+          sql: `CREATE POLICY "Authenticated users can upload avatars" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'avatars' AND auth.role() = 'authenticated' AND (storage.foldername(name))[1] = 'avatars')`,
         },
         {
-          name: "Users can update their own avatars",
-          sql: `CREATE POLICY "Users can update their own avatars" ON storage.objects FOR UPDATE USING (bucket_id = 'avatars' AND auth.uid()::text = (storage.foldername(name))[2])`
+          name: 'Users can update their own avatars',
+          sql: `CREATE POLICY "Users can update their own avatars" ON storage.objects FOR UPDATE USING (bucket_id = 'avatars' AND auth.uid()::text = (storage.foldername(name))[2])`,
         },
         {
-          name: "Users can delete their own avatars",
-          sql: `CREATE POLICY "Users can delete their own avatars" ON storage.objects FOR DELETE USING (bucket_id = 'avatars' AND auth.uid()::text = (storage.foldername(name))[2])`
-        }
+          name: 'Users can delete their own avatars',
+          sql: `CREATE POLICY "Users can delete their own avatars" ON storage.objects FOR DELETE USING (bucket_id = 'avatars' AND auth.uid()::text = (storage.foldername(name))[2])`,
+        },
       ];
 
       for (const policy of policies) {
         try {
-          const { error: policyError } = await supabase.rpc('exec_sql', { sql: policy.sql });
+          const { error: policyError } = await supabase.rpc('exec_sql', {
+            sql: policy.sql,
+          });
           if (policyError) {
-            console.warn(`⚠️  Erreur pour la politique ${policy.name}:`, policyError.message);
+            console.warn(
+              `⚠️  Erreur pour la politique ${policy.name}:`,
+              policyError.message
+            );
           } else {
             console.log(`✅ Politique ${policy.name} créée`);
           }
         } catch (err) {
-          console.warn(`⚠️  Impossible de créer la politique ${policy.name}:`, err.message);
+          console.warn(
+            `⚠️  Impossible de créer la politique ${policy.name}:`,
+            err.message
+          );
         }
       }
     } else {
@@ -106,16 +116,18 @@ async function setupAvatarPolicies() {
       .like('policyname', '%avatar%');
 
     if (!listError && policies) {
-      console.log('📋 Politiques d\'avatars configurées:');
+      console.log("📋 Politiques d'avatars configurées:");
       policies.forEach(policy => {
         console.log(`  - ${policy.policyname} (${policy.cmd})`);
       });
     }
 
     console.log('🎉 Configuration des politiques terminée!');
-
   } catch (error) {
-    console.error('❌ Erreur lors de la configuration des politiques:', error.message);
+    console.error(
+      '❌ Erreur lors de la configuration des politiques:',
+      error.message
+    );
     process.exit(1);
   }
 }

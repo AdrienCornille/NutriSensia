@@ -16,11 +16,13 @@ Ce guide vous explique comment configurer le stockage Supabase pour gérer les a
 ### **Méthode 1 : Interface Web Supabase (Recommandée pour débutants)**
 
 #### **Étape 1 : Accéder à votre projet**
+
 1. Allez sur [supabase.com](https://supabase.com)
 2. Connectez-vous à votre compte
 3. Sélectionnez votre projet NutriSensia
 
 #### **Étape 2 : Créer le bucket avatars**
+
 1. Dans le menu de gauche, cliquez sur **"Storage"**
 2. Cliquez sur **"New bucket"**
 3. Remplissez les informations :
@@ -29,6 +31,7 @@ Ce guide vous explique comment configurer le stockage Supabase pour gérer les a
    - Cliquez sur **"Create bucket"**
 
 #### **Étape 3 : Configurer les politiques**
+
 1. Cliquez sur le bucket `avatars` créé
 2. Allez dans l'onglet **"Policies"**
 3. Cliquez sur **"New policy"**
@@ -38,33 +41,40 @@ Ce guide vous explique comment configurer le stockage Supabase pour gérer les a
 ### **Méthode 2 : Scripts Automatisés (Recommandée pour développeurs)**
 
 #### **Étape 1 : Vérifier les variables d'environnement**
+
 Assurez-vous que votre fichier `.env.local` contient :
+
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=votre_url_supabase
 SUPABASE_SERVICE_ROLE_KEY=votre_clé_service
 ```
 
 #### **Étape 2 : Exécuter le script de vérification**
+
 ```bash
 node scripts/check-storage-buckets.js
 ```
 
 Ce script va :
+
 - ✅ Vérifier si le bucket `avatars` existe
 - ✅ Le créer automatiquement s'il n'existe pas
 - ✅ Configurer les paramètres de sécurité
 - ✅ Créer d'autres buckets utiles (`documents`, `temp`)
 
 #### **Étape 3 : Configurer les politiques de sécurité**
+
 1. Allez dans l'éditeur SQL de votre projet Supabase
 2. Copiez et exécutez le contenu de `scripts/setup-storage-policies.sql`
 
 #### **Étape 4 : Tester la configuration**
+
 ```bash
 node scripts/test-storage-upload.js
 ```
 
 Ce script va :
+
 - ✅ Tester l'upload d'un fichier de test
 - ✅ Vérifier la génération d'URL publique
 - ✅ Tester la liste et suppression de fichiers
@@ -99,18 +109,21 @@ temp/             # Fichiers temporaires (privé)
 ### **Politiques de Sécurité**
 
 #### **Bucket Avatars (Public)**
+
 - ✅ **Lecture** : Tout le monde peut voir les avatars
 - ✅ **Upload** : Utilisateurs authentifiés uniquement
 - ✅ **Mise à jour** : Propriétaire uniquement
 - ✅ **Suppression** : Propriétaire uniquement
 
 #### **Bucket Documents (Privé)**
+
 - ✅ **Lecture** : Propriétaire uniquement
 - ✅ **Upload** : Utilisateurs authentifiés uniquement
 - ✅ **Mise à jour** : Propriétaire uniquement
 - ✅ **Suppression** : Propriétaire uniquement
 
 #### **Bucket Temp (Temporaire)**
+
 - ✅ **Lecture** : Propriétaire uniquement
 - ✅ **Upload** : Utilisateurs authentifiés uniquement
 - ✅ **Suppression** : Propriétaire uniquement
@@ -121,6 +134,7 @@ temp/             # Fichiers temporaires (privé)
 ### **Test Manuel via l'Interface**
 
 1. **Accédez à la page de profil** :
+
    ```
    http://localhost:3000/profile
    ```
@@ -144,15 +158,16 @@ node scripts/check-storage-buckets.js
 ### **Vérification des Politiques**
 
 Dans l'éditeur SQL de Supabase :
+
 ```sql
 -- Vérifier que toutes les politiques sont en place
-SELECT 
+SELECT
   policyname,
   permissive,
   cmd,
   qual
-FROM pg_policies 
-WHERE tablename = 'objects' 
+FROM pg_policies
+WHERE tablename = 'objects'
   AND schemaname = 'storage'
 ORDER BY policyname;
 ```
@@ -171,13 +186,15 @@ ORDER BY policyname;
 
 ```javascript
 // Avatars
-['image/jpeg', 'image/png', 'image/webp', 'image/gif']
-
-// Documents
-['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']
+['image/jpeg', 'image/png', 'image/webp', 'image/gif'][
+  // Documents
+  ('application/pdf',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+];
 
 // Taille maximale
-maxFileSize: 5 * 1024 * 1024 // 5MB (configurable)
+maxFileSize: 5 * 1024 * 1024; // 5MB (configurable)
 ```
 
 ## 🚨 Dépannage
@@ -185,24 +202,28 @@ maxFileSize: 5 * 1024 * 1024 // 5MB (configurable)
 ### **Erreurs Courantes**
 
 #### **"Bucket not found"**
+
 ```bash
 # Solution : Créer le bucket
 node scripts/check-storage-buckets.js
 ```
 
 #### **"Access denied"**
+
 ```bash
 # Solution : Vérifier les politiques
 # Exécuter le script SQL de configuration
 ```
 
 #### **"File too large"**
+
 ```bash
 # Solution : Vérifier la limite de taille
 # Modifier maxFileSize dans le composant ImageUpload
 ```
 
 #### **"Invalid file type"**
+
 ```bash
 # Solution : Vérifier les types MIME autorisés
 # Ajouter le type manquant dans acceptedTypes

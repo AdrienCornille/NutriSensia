@@ -9,12 +9,14 @@
 ## 🔍 Diagnostic détaillé
 
 ### ❌ **Symptômes observés**
+
 1. Erreur 406 dans la console du navigateur
 2. Code d'erreur PGRST116
 3. Table `nutritionists` inaccessible en lecture et écriture
 4. Formulaire ne peut pas sauvegarder les données spécifiques au rôle
 
 ### 🎯 **Causes possibles**
+
 1. **Politiques RLS mal configurées** - Accès bloqué par Row Level Security
 2. **Structure de table corrompue** - Problème de types de données
 3. **Permissions insuffisantes** - Droits d'accès manquants
@@ -25,13 +27,16 @@
 ### **Étape 1 : Diagnostic et correction de la base de données**
 
 #### 1.1 Exécuter le script de diagnostic
+
 ```sql
 -- Dans votre dashboard Supabase → SQL Editor
 -- Exécutez le script : scripts/diagnostic-complet-nutritionists.sql
 ```
 
 #### 1.2 Vérifier les résultats
+
 Le script va :
+
 - ✅ Vérifier l'existence et la structure de la table
 - ✅ Analyser les politiques RLS
 - ✅ Vérifier les permissions
@@ -39,12 +44,13 @@ Le script va :
 - ✅ Tester l'accès à la table
 
 #### 1.3 Résultats attendus
+
 ```
 ✅ Politiques supprimées. Vérification:
 (0 rows)
 
 ✅ Test de lecture:
- id | asca_number | rme_number 
+ id | asca_number | rme_number
 ----+-------------+------------
 (0 rows)
 
@@ -64,6 +70,7 @@ Le script va :
 ### **Étape 2 : Test de l'accès depuis l'application**
 
 #### 2.1 Tester avec le script JavaScript
+
 ```javascript
 // Dans votre navigateur, console de développement
 // 1. Copiez le contenu de scripts/test-acces-nutritionists.js
@@ -72,6 +79,7 @@ Le script va :
 ```
 
 #### 2.2 Vérifier les résultats
+
 ```
 🚀 Démarrage des tests d'accès à la table nutritionists...
 
@@ -105,27 +113,33 @@ Le script va :
 ### **Étape 3 : Vérification dans l'application**
 
 #### 3.1 Recharger la page de profil
+
 ```
 http://localhost:3000/profile/authenticated-test
 ```
 
 #### 3.2 Vérifier les logs de la console
+
 **Avant (erreur)** :
+
 ```
 GET https://ywshijyzpmothwjnvrxi.supabase.co/rest/v1/nutritionists?select=*&id=eq.d9fa5dd9-689b-4dc7-8ff1-4df62264442d 406 (Not Acceptable)
 ⚠️ Erreur d'accès à la table nutritionists: Cannot coerce the result to a single JSON object
 ```
 
 **Après (succès)** :
+
 ```
 ✅ Profil chargé: {...}
 ✅ Données nutritionniste chargées
 ```
 
 #### 3.3 Tester la sauvegarde
+
 1. Modifier un champ spécifique au rôle (ASCA, RME, spécialisations)
 2. Sauvegarder le formulaire
 3. Vérifier les logs :
+
 ```
 ✅ Profil de base mis à jour
 🔄 Mise à jour Supabase - Table: nutritionists
@@ -136,6 +150,7 @@ GET https://ywshijyzpmothwjnvrxi.supabase.co/rest/v1/nutritionists?select=*&id=e
 ## 🔧 Dépannage avancé
 
 ### **Problème 1 : Erreur persiste après correction**
+
 ```sql
 -- Vérifier que RLS est bien configuré
 SELECT relrowsecurity FROM pg_class WHERE relname = 'nutritionists';
@@ -144,11 +159,12 @@ SELECT relrowsecurity FROM pg_class WHERE relname = 'nutritionists';
 SELECT * FROM pg_policies WHERE tablename = 'nutritionists';
 
 -- Vérifier les permissions
-SELECT grantee, privilege_type FROM information_schema.role_table_grants 
+SELECT grantee, privilege_type FROM information_schema.role_table_grants
 WHERE table_name = 'nutritionists';
 ```
 
 ### **Problème 2 : Structure de table corrompue**
+
 ```sql
 -- Recréer la table si nécessaire
 DROP TABLE IF EXISTS nutritionists CASCADE;
@@ -165,6 +181,7 @@ CREATE TABLE nutritionists (
 ```
 
 ### **Problème 3 : Permissions insuffisantes**
+
 ```sql
 -- Donner tous les droits à l'utilisateur authentifié
 GRANT ALL ON nutritionists TO authenticated;
@@ -174,6 +191,7 @@ GRANT USAGE ON SCHEMA public TO authenticated;
 ## 📊 Vérification finale
 
 ### **Checklist de validation**
+
 - [ ] Script SQL exécuté sans erreur
 - [ ] Tests JavaScript tous passés (5/5)
 - [ ] Page de profil se charge sans erreur 406
@@ -182,6 +200,7 @@ GRANT USAGE ON SCHEMA public TO authenticated;
 - [ ] Données persistent après rechargement
 
 ### **Logs de succès attendus**
+
 ```
 ✅ Profil chargé: {...}
 ✅ Données nutritionniste chargées
@@ -200,6 +219,7 @@ GRANT USAGE ON SCHEMA public TO authenticated;
 ## 📞 Support
 
 Si le problème persiste après avoir suivi ce guide :
+
 1. Vérifiez les logs Supabase (Dashboard → Logs)
 2. Testez avec l'API REST directement
 3. Vérifiez la configuration RLS et des permissions

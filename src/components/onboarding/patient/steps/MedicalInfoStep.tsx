@@ -26,26 +26,48 @@ interface MedicalInfoStepProps {
 }
 
 const COMMON_CONDITIONS = [
-  'Diabète', 'Hypertension', 'Cholestérol élevé', 'Hypothyroïdie',
-  'Hyperthyroïdie', 'Syndrome métabolique', 'Maladie cœliaque',
-  'Syndrome de l\'intestin irritable', 'Reflux gastrique', 'Anémie'
+  'Diabète',
+  'Hypertension',
+  'Cholestérol élevé',
+  'Hypothyroïdie',
+  'Hyperthyroïdie',
+  'Syndrome métabolique',
+  'Maladie cœliaque',
+  "Syndrome de l'intestin irritable",
+  'Reflux gastrique',
+  'Anémie',
 ];
 
 export const MedicalInfoStep: React.FC<MedicalInfoStepProps> = ({
-  data, onDataChange, onNext, onPrevious, isSubmitting = false,
+  data,
+  onDataChange,
+  onNext,
+  onPrevious,
+  isSubmitting = false,
 }) => {
   const [selectedConditions, setSelectedConditions] = useState<string[]>(
     data.medicalConditions || []
   );
 
-  const { register, handleSubmit, formState: { errors, isValid }, watch, setValue } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+    watch,
+    setValue,
+  } = useForm({
     resolver: zodResolver(medicalInfoSchema),
     defaultValues: {
       medicalConditions: data.medicalConditions || [],
       medications: data.medications || [],
-      emergencyContact: data.emergencyContact || { name: '', phone: '', relationship: '' },
+      emergencyContact: data.emergencyContact || {
+        name: '',
+        phone: '',
+        relationship: '',
+      },
       hasHealthInsurance: data.hasHealthInsurance ?? true,
-      previousNutritionistExperience: data.previousNutritionistExperience ?? false,
+      previousNutritionistExperience:
+        data.previousNutritionistExperience ?? false,
     },
     mode: 'onChange',
   });
@@ -73,27 +95,40 @@ export const MedicalInfoStep: React.FC<MedicalInfoStepProps> = ({
   };
 
   return (
-    <div className="space-y-6">
-      <motion.div className="text-center space-y-2" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <div className="mx-auto w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center mb-4">
-          <Stethoscope className="h-8 w-8 text-white" />
+    <div className='space-y-6'>
+      <motion.div
+        className='text-center space-y-2'
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <div className='mx-auto w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center mb-4'>
+          <Stethoscope className='h-8 w-8 text-white' />
         </div>
-        <h1 className="text-3xl font-bold text-gray-900">Informations médicales</h1>
-        <p className="text-gray-600">Ces informations nous aident à personnaliser votre suivi (optionnel)</p>
+        <h1 className='text-3xl font-bold text-gray-900'>
+          Informations médicales
+        </h1>
+        <p className='text-gray-600'>
+          Ces informations nous aident à personnaliser votre suivi (optionnel)
+        </p>
       </motion.div>
 
-      <motion.form onSubmit={handleSubmit(onSubmit)} className="space-y-6" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-        
+      <motion.form
+        onSubmit={handleSubmit(onSubmit)}
+        className='space-y-6'
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+      >
         {/* Conditions médicales */}
-        <div className="space-y-3">
-          <h3 className="text-lg font-semibold text-gray-900">
+        <div className='space-y-3'>
+          <h3 className='text-lg font-semibold text-gray-900'>
             Conditions médicales (optionnel)
           </h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-            {COMMON_CONDITIONS.map((condition) => (
+          <div className='grid grid-cols-2 md:grid-cols-3 gap-2'>
+            {COMMON_CONDITIONS.map(condition => (
               <motion.button
                 key={condition}
-                type="button"
+                type='button'
                 onClick={() => toggleCondition(condition)}
                 className={`p-3 rounded-lg border text-sm transition-all ${
                   selectedConditions.includes(condition)
@@ -110,88 +145,101 @@ export const MedicalInfoStep: React.FC<MedicalInfoStepProps> = ({
         </div>
 
         {/* Contact d'urgence */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-            <Phone className="h-5 w-5 mr-2" />
+        <div className='space-y-4'>
+          <h3 className='text-lg font-semibold text-gray-900 flex items-center'>
+            <Phone className='h-5 w-5 mr-2' />
             Contact d'urgence (optionnel)
           </h3>
-          
-          <div className="grid md:grid-cols-2 gap-4">
+
+          <div className='grid md:grid-cols-2 gap-4'>
             <FormField
-              label="Nom complet"
-              type="text"
-              placeholder="Marie Dupont"
+              label='Nom complet'
+              type='text'
+              placeholder='Marie Dupont'
               {...register('emergencyContact.name')}
               error={errors.emergencyContact?.name?.message}
             />
-            
+
             <FormField
-              label="Relation"
-              type="text"
-              placeholder="Épouse, Mère, Ami..."
+              label='Relation'
+              type='text'
+              placeholder='Épouse, Mère, Ami...'
               {...register('emergencyContact.relationship')}
               error={errors.emergencyContact?.relationship?.message}
             />
           </div>
-          
+
           <FormField
-            label="Téléphone"
-            type="text"
-            placeholder="+41 79 123 45 67"
+            label='Téléphone'
+            type='text'
+            placeholder='+41 79 123 45 67'
             {...register('emergencyContact.phone')}
             error={errors.emergencyContact?.phone?.message}
           />
         </div>
 
         {/* Questions diverses */}
-        <div className="space-y-4">
-          <div className="flex items-center space-x-3">
+        <div className='space-y-4'>
+          <div className='flex items-center space-x-3'>
             <input
-              type="checkbox"
-              id="hasHealthInsurance"
+              type='checkbox'
+              id='hasHealthInsurance'
               {...register('hasHealthInsurance')}
-              className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+              className='h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded'
             />
-            <label htmlFor="hasHealthInsurance" className="text-sm font-medium text-gray-700">
+            <label
+              htmlFor='hasHealthInsurance'
+              className='text-sm font-medium text-gray-700'
+            >
               J'ai une assurance maladie
             </label>
           </div>
 
-          <div className="flex items-center space-x-3">
+          <div className='flex items-center space-x-3'>
             <input
-              type="checkbox"
-              id="previousNutritionistExperience"
+              type='checkbox'
+              id='previousNutritionistExperience'
               {...register('previousNutritionistExperience')}
-              className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+              className='h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded'
             />
-            <label htmlFor="previousNutritionistExperience" className="text-sm font-medium text-gray-700">
+            <label
+              htmlFor='previousNutritionistExperience'
+              className='text-sm font-medium text-gray-700'
+            >
               J'ai déjà consulté un nutritionniste
             </label>
           </div>
         </div>
 
-        <WizardTip type="privacy" title="Confidentialité médicale">
-          <p className="text-sm">
-            Toutes vos informations médicales sont <strong>strictement confidentielles</strong> 
-            et ne seront partagées qu'avec votre nutritionniste assigné pour optimiser votre suivi.
+        <WizardTip type='privacy' title='Confidentialité médicale'>
+          <p className='text-sm'>
+            Toutes vos informations médicales sont{' '}
+            <strong>strictement confidentielles</strong>
+            et ne seront partagées qu'avec votre nutritionniste assigné pour
+            optimiser votre suivi.
           </p>
         </WizardTip>
 
-        <div className="flex justify-between pt-6">
-          <Button type="button" variant="secondary" onClick={onPrevious} disabled={isSubmitting}>
+        <div className='flex justify-between pt-6'>
+          <Button
+            type='button'
+            variant='secondary'
+            onClick={onPrevious}
+            disabled={isSubmitting}
+          >
             Retour
           </Button>
-          <Button type="submit" disabled={isSubmitting} loading={isSubmitting}>
+          <Button type='submit' disabled={isSubmitting} loading={isSubmitting}>
             Continuer
           </Button>
         </div>
       </motion.form>
 
-      <div className="mt-8 text-center text-sm text-gray-500">
+      <div className='mt-8 text-center text-sm text-gray-500'>
         <p>Étape 6 sur 9 • Environ 3 minutes restantes</p>
-        <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
+        <div className='mt-2 w-full bg-gray-200 rounded-full h-2'>
           <motion.div
-            className="bg-gradient-to-r from-green-500 to-teal-600 h-2 rounded-full"
+            className='bg-gradient-to-r from-green-500 to-teal-600 h-2 rounded-full'
             initial={{ width: '55%' }}
             animate={{ width: '66%' }}
             transition={{ duration: 0.8, delay: 0.5 }}

@@ -1,0 +1,221 @@
+/**
+ * PALETTE "DEEP OCEAN" - Thème CSS Override
+ * ==========================================
+ *
+ * Ce fichier redéfinit les variables CSS pour appliquer la palette "Deep Ocean"
+ * sans modifier la configuration Tailwind. Idéal pour tester rapidement.
+ *
+ * Pour activer ce thème :
+ * 1. Importez ce fichier dans src/app/globals.css
+ * 2. Ou ajoutez-le uniquement à la page de test
+ *
+ * Pour désactiver : Supprimez simplement l'import
+ */
+
+:root {
+  /* === COULEURS PRIMAIRES === */
+  --color-primary: #2c5282 !important; /* Bleu marine profond */
+  --color-primary-white: #f5f8fa !important; /* Blanc bleuté */
+  --color-primary-dark: #1e3a5f !important; /* Bleu marine très sombre */
+
+  /* === COULEURS SECONDAIRES === */
+  --color-secondary: #5a7ba6 !important; /* Bleu clair */
+  --color-secondary-pale: #e8eef5 !important; /* Bleu très pâle */
+  --color-secondary-sage: #b8c8dc !important; /* Bleu-gris doux */
+
+  /* === COULEURS D'ACCENT === */
+  --color-accent-teal: #3b7ea1 !important; /* Teal-blue vif */
+  --color-accent-mint: #7fa9c9 !important; /* Bleu ciel */
+  --color-accent-orange: #e87a5d !important; /* Coral chaleureux */
+
+  /* === COULEURS D'ARRIÈRE-PLAN === */
+  --color-background-primary: #ffffff !important;
+  --color-background-secondary: #f8fafb !important;
+  --color-background-accent: #eef2f7 !important; /* Légèrement bleuté */
+
+  /* === COULEURS NEUTRES === */
+  --color-neutral-light: #f8f9fa !important;
+  --color-neutral-medium: #9ca3af !important;
+  --color-neutral-dark: #374151 !important;
+  --color-neutral-border: #e5e7eb !important;
+
+  /* === COULEURS FONCTIONNELLES (conservées) === */
+  --color-functional-success: #22c55e !important;
+  --color-functional-error: #ef4444 !important;
+  --color-functional-warning: #f59e0b !important;
+  --color-functional-info: #3b82f6 !important;
+}
+
+/**
+ * Classes Tailwind Override pour la palette "Deep Ocean"
+ * Ces classes remplacent les couleurs dans les composants
+ */
+
+/* === TEXTE === */
+.text-primary {
+  color: #2c5282 !important;
+}
+
+.text-primary-dark {
+  color: #1e3a5f !important;
+}
+
+.text-secondary {
+  color: #5a7ba6 !important;
+}
+
+/* === BACKGROUNDS === */
+.bg-primary {
+  background-color: #2c5282 !important;
+}
+
+.bg-primary-dark {
+  background-color: #1e3a5f !important;
+}
+
+.bg-secondary {
+  background-color: #5a7ba6 !important;
+}
+
+.bg-secondary-pale {
+  background-color: #e8eef5 !important;
+}
+
+.bg-accent-teal {
+  background-color: #3b7ea1 !important;
+}
+
+.bg-accent-mint {
+  background-color: #7fa9c9 !important;
+}
+
+.bg-accent-orange {
+  background-color: #e87a5d !important;
+}
+
+/* === BORDERS === */
+.border-primary {
+  border-color: #2c5282 !important;
+}
+
+.border-secondary {
+  border-color: #5a7ba6 !important;
+}
+
+.border-secondary-sage {
+  border-color: #b8c8dc !important;
+}
+
+/* === HOVER STATES === */
+.hover\:bg-primary:hover {
+  background-color: #2c5282 !important;
+}
+
+.hover\:bg-primary-dark:hover {
+  background-color: #1e3a5f !important;
+}
+
+.hover\:text-primary:hover {
+  color: #2c5282 !important;
+}
+
+/* === FOCUS STATES === */
+.focus\:ring-primary:focus {
+  --tw-ring-color: #2c5282 !important;
+}
+
+.focus\:border-primary:focus {
+  border-color: #2c5282 !important;
+}
+
+/**
+ * Overrides spécifiques pour les composants NutriSensia
+ */
+
+/* Hero Section */
+[class*='hero'] h1,
+[class*='hero'] h2 {
+  color: #2c5282 !important;
+}
+
+/* Buttons */
+button[class*='primary'],
+a[class*='btn-primary'] {
+  background-color: #2c5282 !important;
+}
+
+button[class*='primary']:hover,
+a[class*='btn-primary']:hover {
+  background-color: #1e3a5f !important;
+}
+
+/* Cards avec shadow signature */
+[class*='card'][class*='shadow'] {
+  box-shadow: 8px 8px 0 #b8c8dc !important;
+}
+
+[class*='card']:hover[class*='shadow'] {
+  box-shadow: 10px 10px 0 #b8c8dc !important;
+}
+
+/* Header et Navigation */
+header {
+  background-color: #f5f8fa !important;
+}
+
+nav a:hover {
+  color: #2c5282 !important;
+}
+
+/* Footer */
+footer {
+  background-color: #2c5282 !important;
+}
+
+/* CTA Banners */
+[class*='cta-banner'] {
+  background-color: #3b7ea1 !important;
+}
+
+/* Accent sections */
+[class*='accent-section'] {
+  background-color: #e8eef5 !important;
+}
+
+/**
+ * Mode Sombre - Palette "Deep Ocean"
+ */
+.dark {
+  --color-primary: #5a7ba6 !important;
+  --color-primary-white: #1e3a5f !important;
+  --color-primary-dark: #2c5282 !important;
+  --color-secondary: #7fa9c9 !important;
+  --color-secondary-pale: #1f2937 !important;
+  --color-secondary-sage: #374151 !important;
+  --color-accent-teal: #3b7ea1 !important;
+  --color-accent-mint: #7fa9c9 !important;
+  --color-accent-orange: #e87a5d !important;
+  --color-background-primary: #1f2937 !important;
+  --color-background-secondary: #111827 !important;
+  --color-background-accent: #374151 !important;
+  --color-neutral-light: #374151 !important;
+  --color-neutral-medium: #9ca3af !important;
+  --color-neutral-dark: #f9fafb !important;
+  --color-neutral-border: #4b5563 !important;
+}
+
+/**
+ * Utilisation :
+ * ============
+ *
+ * Option 1 - Test sur une seule page :
+ * Import dans le composant de test uniquement
+ * import '@/styles/ocean-theme.css';
+ *
+ * Option 2 - Test sur tout le site :
+ * Import dans src/app/globals.css
+ * @import './styles/ocean-theme.css';
+ *
+ * Option 3 - Import conditionnel :
+ * Créez un toggle dans les settings pour activer/désactiver
+ */

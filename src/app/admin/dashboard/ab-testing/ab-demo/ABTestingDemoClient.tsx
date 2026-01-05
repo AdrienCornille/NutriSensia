@@ -1,6 +1,6 @@
 /**
  * Composant client pour la démonstration des tests A/B
- * 
+ *
  * Ce composant gère l'authentification et la protection d'accès
  */
 
@@ -26,7 +26,7 @@ export default function ABTestingDemoClient() {
       isAdmin: isAdmin(),
       hasAdminRole: hasRole('admin'),
     });
-    
+
     if (!loading) {
       setIsLoading(false);
     }
@@ -35,10 +35,10 @@ export default function ABTestingDemoClient() {
   // Affichage de chargement
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Chargement...</p>
+      <div className='min-h-screen bg-gray-50 flex items-center justify-center'>
+        <div className='text-center'>
+          <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4'></div>
+          <p className='text-gray-600'>Chargement...</p>
         </div>
       </div>
     );
@@ -47,24 +47,25 @@ export default function ABTestingDemoClient() {
   // Vérification d'accès admin
   if (!isAuthenticated || !hasRole('admin')) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-red-600 text-xl font-semibold mb-2">
+      <div className='min-h-screen bg-gray-50 flex items-center justify-center'>
+        <div className='text-center'>
+          <div className='text-red-600 text-xl font-semibold mb-2'>
             Accès Refusé
           </div>
-          <p className="text-gray-600 mb-4">
-            Vous devez être administrateur pour accéder à cette page de démonstration A/B Testing.
+          <p className='text-gray-600 mb-4'>
+            Vous devez être administrateur pour accéder à cette page de
+            démonstration A/B Testing.
           </p>
-          <div className="space-x-4">
+          <div className='space-x-4'>
             <button
-              onClick={() => window.location.href = '/auth/signin'}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              onClick={() => (window.location.href = '/auth/signin')}
+              className='bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700'
             >
               Se connecter
             </button>
             <button
-              onClick={() => window.location.href = '/debug-auth-status'}
-              className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
+              onClick={() => (window.location.href = '/debug-auth-status')}
+              className='bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700'
             >
               Diagnostic
             </button>
@@ -75,32 +76,50 @@ export default function ABTestingDemoClient() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+    <div className='min-h-screen bg-gray-50 p-6'>
+      <div className='max-w-4xl mx-auto'>
+        <div className='bg-white rounded-lg shadow-sm p-6'>
+          <h1 className='text-2xl font-bold text-gray-900 mb-4'>
             🧪 Démonstration A/B Testing (Version Complète)
           </h1>
-          <p className="text-gray-600 mb-6">
-            Interface de test complète du système A/B Testing pour les administrateurs.
+          <p className='text-gray-600 mb-6'>
+            Interface de test complète du système A/B Testing pour les
+            administrateurs.
           </p>
-          
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <h3 className="font-medium text-blue-900 mb-2">📋 Fonctionnalités disponibles</h3>
-            <div className="text-sm text-blue-800 space-y-1">
-              <p>• 🎮 <strong>Simulation en temps réel</strong> - Démarrez/arrêtez des tests</p>
-              <p>• 📊 <strong>Métriques live</strong> - Utilisateurs, conversions, taux, durée</p>
-              <p>• 🎯 <strong>Prévisualisation des variantes</strong> - 4 versions d'onboarding</p>
-              <p>• 🧪 <strong>Tests interactifs</strong> - Testez différents utilisateurs</p>
-              <p>• 📥 <strong>Export de données</strong> - Téléchargez les résultats JSON</p>
+
+          <div className='bg-blue-50 border border-blue-200 rounded-lg p-4'>
+            <h3 className='font-medium text-blue-900 mb-2'>
+              📋 Fonctionnalités disponibles
+            </h3>
+            <div className='text-sm text-blue-800 space-y-1'>
+              <p>
+                • 🎮 <strong>Simulation en temps réel</strong> -
+                Démarrez/arrêtez des tests
+              </p>
+              <p>
+                • 📊 <strong>Métriques live</strong> - Utilisateurs,
+                conversions, taux, durée
+              </p>
+              <p>
+                • 🎯 <strong>Prévisualisation des variantes</strong> - 4
+                versions d'onboarding
+              </p>
+              <p>
+                • 🧪 <strong>Tests interactifs</strong> - Testez différents
+                utilisateurs
+              </p>
+              <p>
+                • 📥 <strong>Export de données</strong> - Téléchargez les
+                résultats JSON
+              </p>
             </div>
           </div>
-          
-          <div className="mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-            <h3 className="font-medium text-yellow-900 mb-2">⚠️ Note</h3>
-            <p className="text-sm text-yellow-800">
-              Cette page utilise le composant ABTestingDemo complet. 
-              Pour une version simplifiée, utilisez les autres pages de démonstration.
+
+          <div className='mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4'>
+            <h3 className='font-medium text-yellow-900 mb-2'>⚠️ Note</h3>
+            <p className='text-sm text-yellow-800'>
+              Cette page utilise le composant ABTestingDemo complet. Pour une
+              version simplifiée, utilisez les autres pages de démonstration.
             </p>
           </div>
         </div>

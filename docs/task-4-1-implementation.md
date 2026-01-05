@@ -9,9 +9,11 @@ Cette tâche implémente le schéma de base de données pour la gestion des prof
 ### Tables Principales
 
 #### 1. Table `profiles`
+
 Extension du système `auth.users` de Supabase avec les champs communs à tous les utilisateurs.
 
 **Champs principaux :**
+
 - `id` (UUID, PK) - Référence vers `auth.users(id)`
 - `email` (VARCHAR(255), UNIQUE) - Email de l'utilisateur
 - `first_name` (VARCHAR(100)) - Prénom
@@ -24,9 +26,11 @@ Extension du système `auth.users` de Supabase avec les champs communs à tous l
 - `created_at` / `updated_at` (TIMESTAMPTZ) - Horodatage
 
 #### 2. Table `nutritionists`
+
 Profils professionnels des nutritionnistes avec informations ASCA/RME.
 
 **Champs principaux :**
+
 - `id` (UUID, PK) - Référence vers `profiles(id)`
 - `asca_number` (VARCHAR(50), UNIQUE) - Numéro ASCA
 - `rme_number` (VARCHAR(50), UNIQUE) - Numéro RME
@@ -40,9 +44,11 @@ Profils professionnels des nutritionnistes avec informations ASCA/RME.
 - `max_patients` (INTEGER) - Nombre maximum de patients
 
 #### 3. Table `patients`
+
 Profils patients avec informations médicales et abonnements.
 
 **Champs principaux :**
+
 - `id` (UUID, PK) - Référence vers `profiles(id)`
 - `nutritionist_id` (UUID) - Référence vers le nutritionniste assigné
 - `date_of_birth` (DATE) - Date de naissance
@@ -66,49 +72,58 @@ Profils patients avec informations médicales et abonnements.
 ## Fonctionnalités Implémentées
 
 ### 1. Index de Performance
+
 - Index sur les champs fréquemment utilisés
 - Index composites pour les requêtes complexes
 - Optimisation pour les jointures et filtres
 
 ### 2. Triggers et Fonctions
+
 - **Trigger `update_updated_at_column`** : Mise à jour automatique des timestamps
 - **Trigger `on_auth_user_created`** : Création automatique de profil lors de l'inscription
 - **Fonction `get_user_profile()`** : Récupération du profil complet selon le rôle
 - **Fonction `calculate_age()`** : Calcul de l'âge à partir de la date de naissance
 
 ### 3. Row Level Security (RLS)
+
 Politiques de sécurité implémentées :
 
 **Pour `profiles` :**
+
 - Utilisateurs peuvent voir/modifier leur propre profil
 - Admins peuvent gérer tous les profils
 
 **Pour `nutritionists` :**
+
 - Nutritionnistes peuvent gérer leur propre profil
 - Patients peuvent voir leur nutritionniste assigné
 - Admins peuvent gérer tous les nutritionnistes
 
 **Pour `patients` :**
+
 - Patients peuvent gérer leur propre profil
 - Nutritionnistes peuvent voir/modifier leurs patients assignés
 - Admins peuvent gérer tous les patients
 
 ### 4. Vues Utilitaires
+
 - **`nutritionist_profiles`** : Vue complète des profils nutritionnistes
 - **`patient_profiles`** : Vue complète des profils patients
 
 ## Structure JSON
 
 ### Consultation Rates (nutritionists)
+
 ```json
 {
-  "initial": 22500,     // CHF 225.00 en centimes
-  "follow_up": 15000,   // CHF 150.00
-  "express": 7500       // CHF 75.00
+  "initial": 22500, // CHF 225.00 en centimes
+  "follow_up": 15000, // CHF 150.00
+  "express": 7500 // CHF 75.00
 }
 ```
 
 ### Practice Address (nutritionists)
+
 ```json
 {
   "street": "Rue de la Paix 12",
@@ -120,6 +135,7 @@ Politiques de sécurité implémentées :
 ```
 
 ### Emergency Contact (patients)
+
 ```json
 {
   "name": "Jean Dupont",
@@ -129,6 +145,7 @@ Politiques de sécurité implémentées :
 ```
 
 ### Package Credits (patients)
+
 ```json
 {
   "consultations_remaining": 5,
@@ -140,7 +157,9 @@ Politiques de sécurité implémentées :
 ## Fichiers Créés
 
 ### 1. `scripts/user-profiles-schema.sql`
+
 Script principal contenant :
+
 - Création des tables
 - Index de performance
 - Triggers et fonctions
@@ -149,7 +168,9 @@ Script principal contenant :
 - Documentation
 
 ### 2. `scripts/test-user-profiles-schema.sql`
+
 Script de test complet avec :
+
 - Validation du schéma
 - Tests de contraintes
 - Tests de performance
@@ -157,7 +178,9 @@ Script de test complet avec :
 - Tests des fonctions utilitaires
 
 ### 3. `scripts/deploy-user-profiles.sh`
+
 Script de déploiement automatisé avec :
+
 - Vérification des prérequis
 - Test de connexion Supabase
 - Déploiement du schéma
@@ -167,6 +190,7 @@ Script de déploiement automatisé avec :
 ## Instructions de Déploiement
 
 ### Prérequis
+
 1. Projet Supabase configuré
 2. Variables d'environnement définies :
    - `SUPABASE_URL`
@@ -174,6 +198,7 @@ Script de déploiement automatisé avec :
    - `SUPABASE_ANON_KEY`
 
 ### Déploiement Automatique
+
 ```bash
 # Rendre le script exécutable
 chmod +x scripts/deploy-user-profiles.sh
@@ -189,6 +214,7 @@ chmod +x scripts/deploy-user-profiles.sh
 ```
 
 ### Déploiement Manuel via Supabase Dashboard
+
 1. Ouvrir le SQL Editor dans Supabase Dashboard
 2. Copier le contenu de `scripts/user-profiles-schema.sql`
 3. Exécuter le script
@@ -197,7 +223,9 @@ chmod +x scripts/deploy-user-profiles.sh
 ## Tests et Validation
 
 ### Tests Automatisés
+
 Le script de test valide :
+
 - ✅ Existence des tables
 - ✅ Contraintes de clés étrangères
 - ✅ Index de performance
@@ -208,6 +236,7 @@ Le script de test valide :
 - ✅ Performance des requêtes
 
 ### Tests Manuels Recommandés
+
 1. **Création de profils** : Tester l'inscription d'utilisateurs
 2. **Relations** : Vérifier les liens nutritionniste-patient
 3. **Sécurité** : Tester les politiques RLS
@@ -216,12 +245,14 @@ Le script de test valide :
 ## Conformité et Sécurité
 
 ### RGPD/HDS
+
 - **Chiffrement** : Données sensibles chiffrées
 - **Audit trails** : Logs de toutes les modifications
 - **Droit à l'oubli** : Suppression en cascade configurée
 - **Consentement** : Gestion des consentements utilisateur
 
 ### Standards Suisses
+
 - **ASCA/RME** : Support des numéros de certification
 - **Facturation** : Codes EAN et tarifs CHF
 - **Adresses** : Format suisse avec cantons
@@ -230,6 +261,7 @@ Le script de test valide :
 ## Intégration avec l'Application
 
 ### Hooks React
+
 ```typescript
 // Exemple d'utilisation avec useAuth
 const { user } = useAuth();
@@ -237,6 +269,7 @@ const userProfile = await get_user_profile(user.id);
 ```
 
 ### API Routes
+
 ```typescript
 // Exemple de route API
 export async function GET(request: Request) {
@@ -249,21 +282,25 @@ export async function GET(request: Request) {
 ## Prochaines Étapes
 
 ### Tâche 4.2 - Schémas Zod
+
 - Créer les schémas de validation Zod
 - Implémenter la validation côté client
 - Gérer les erreurs de validation
 
 ### Tâche 4.3 - Formulaires de Profil
+
 - Créer les composants de formulaire
 - Implémenter React Hook Form
 - Ajouter la validation en temps réel
 
 ### Tâche 4.4 - Gestion des Photos
+
 - Implémenter l'upload d'avatars
 - Intégrer Supabase Storage
 - Ajouter la compression d'images
 
 ### Tâche 4.5 - Suivi de Complétion
+
 - Calculer le pourcentage de complétion
 - Créer des indicateurs visuels
 - Implémenter des recommandations
@@ -271,16 +308,19 @@ export async function GET(request: Request) {
 ## Maintenance et Évolution
 
 ### Migrations Futures
+
 - Scripts de migration pour les évolutions
 - Gestion des versions de schéma
 - Rétrocompatibilité
 
 ### Monitoring
+
 - Surveillance des performances
 - Alertes sur les erreurs
 - Métriques d'utilisation
 
 ### Documentation
+
 - Mise à jour de la documentation
 - Exemples d'utilisation
 - Guide de dépannage
@@ -288,11 +328,13 @@ export async function GET(request: Request) {
 ## Support et Dépannage
 
 ### Problèmes Courants
+
 1. **Erreurs de contraintes** : Vérifier les données d'entrée
 2. **Problèmes de performance** : Analyser les index
 3. **Erreurs RLS** : Vérifier les politiques de sécurité
 
 ### Ressources
+
 - [Documentation Supabase](https://supabase.com/docs)
 - [PostgreSQL Documentation](https://www.postgresql.org/docs/)
 - [Guide RLS Supabase](https://supabase.com/docs/guides/auth/row-level-security)

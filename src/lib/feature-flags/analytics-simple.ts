@@ -1,6 +1,6 @@
 /**
  * Système d'analytics A/B Testing - Version Ultra-Simplifiée
- * 
+ *
  * Cette version ne fait aucun tracking automatique pour éviter les boucles infinies.
  * Elle est conçue uniquement pour les tests de démonstration.
  */
@@ -32,12 +32,15 @@ export interface ABTestMetrics {
   conversions: number;
   conversionRate: number;
   averageDuration: number;
-  variantPerformance: Record<string, {
-    users: number;
-    conversions: number;
-    conversionRate: number;
-    averageDuration: number;
-  }>;
+  variantPerformance: Record<
+    string,
+    {
+      users: number;
+      conversions: number;
+      conversionRate: number;
+      averageDuration: number;
+    }
+  >;
 }
 
 /**
@@ -64,7 +67,9 @@ export class ABTestAnalytics {
     userRole?: string
   ): void {
     this.eventCount++;
-    console.log(`🎯 Flag Assignment: ${variant} pour ${userId} (${this.eventCount})`);
+    console.log(
+      `🎯 Flag Assignment: ${variant} pour ${userId} (${this.eventCount})`
+    );
   }
 
   /**
@@ -81,7 +86,9 @@ export class ABTestAnalytics {
     variant: string
   ): void {
     this.eventCount++;
-    console.log(`📈 Onboarding Progress: ${step} (${stepIndex}/${totalSteps}) pour ${userId} (${this.eventCount})`);
+    console.log(
+      `📈 Onboarding Progress: ${step} (${stepIndex}/${totalSteps}) pour ${userId} (${this.eventCount})`
+    );
   }
 
   /**
@@ -95,7 +102,9 @@ export class ABTestAnalytics {
     conversionType: string = 'onboarding_complete'
   ): void {
     this.eventCount++;
-    console.log(`🎉 Conversion: ${conversionType} pour ${userId} (${this.eventCount})`);
+    console.log(
+      `🎉 Conversion: ${conversionType} pour ${userId} (${this.eventCount})`
+    );
   }
 
   /**
@@ -110,7 +119,9 @@ export class ABTestAnalytics {
     step?: string
   ): void {
     this.eventCount++;
-    console.log(`❌ Error: ${errorMessage} pour ${userId} (${this.eventCount})`);
+    console.log(
+      `❌ Error: ${errorMessage} pour ${userId} (${this.eventCount})`
+    );
   }
 
   /**
@@ -125,7 +136,9 @@ export class ABTestAnalytics {
     variant?: string
   ): void {
     this.eventCount++;
-    console.log(`🖱️ Interaction: ${interactionType} pour ${userId} (${this.eventCount})`);
+    console.log(
+      `🖱️ Interaction: ${interactionType} pour ${userId} (${this.eventCount})`
+    );
   }
 
   /**
@@ -151,27 +164,27 @@ export class ABTestAnalytics {
           users: 308,
           conversions: 108,
           conversionRate: 35.1,
-          averageDuration: 195
+          averageDuration: 195,
         },
         simplified: {
           users: 310,
           conversions: 131,
           conversionRate: 42.3,
-          averageDuration: 165
+          averageDuration: 165,
         },
         gamified: {
           users: 308,
           conversions: 119,
           conversionRate: 38.6,
-          averageDuration: 185
+          averageDuration: 185,
         },
         guided: {
           users: 308,
           conversions: 127,
           conversionRate: 41.2,
-          averageDuration: 175
-        }
-      }
+          averageDuration: 175,
+        },
+      },
     };
   }
 
@@ -195,7 +208,7 @@ export class ABTestAnalytics {
         flagKey: 'onboarding-variant',
         flagValue: variant,
         variant,
-        timestamp: Date.now() - Math.random() * 86400000 // Dernières 24h
+        timestamp: Date.now() - Math.random() * 86400000, // Dernières 24h
       });
 
       // Événement de progression
@@ -210,7 +223,7 @@ export class ABTestAnalytics {
         stepIndex: 1,
         totalSteps: 5,
         duration: Math.random() * 30000,
-        timestamp: Date.now() - Math.random() * 86400000
+        timestamp: Date.now() - Math.random() * 86400000,
       });
 
       // Événement de conversion (si applicable)
@@ -223,7 +236,7 @@ export class ABTestAnalytics {
           flagValue: variant,
           variant,
           customData: { conversionType: 'onboarding_complete' },
-          timestamp: Date.now() - Math.random() * 86400000
+          timestamp: Date.now() - Math.random() * 86400000,
         });
       }
     }

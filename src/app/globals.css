@@ -1,30 +1,107 @@
+/* Import des animations personnalisées */
+@import '../styles/animations.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Styles de base personnalisés */
+/* Styles de base personnalisés - Design System 2025 */
 @layer base {
   html {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Inter', 'DM Sans', system-ui, sans-serif;
     /* Transition fluide pour les changements de thème */
     transition:
       background-color 0.3s ease,
       color 0.3s ease;
+    /* Comportement de scroll fluide avec momentum via Lenis */
+    /* NOTE: scroll-behavior: smooth est désactivé car Lenis le remplace */
+    /* scroll-behavior: smooth !important; */
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: none;
+    /* Lenis nécessite que html ne défile pas - c'est Lenis qui gère le scroll */
+    overflow-x: hidden;
+  }
+
+  /* Lenis prend le contrôle du scroll, donc on désactive le smooth scrolling CSS natif */
+  /* Force smooth scrolling sur tous les navigateurs */
+  /* * {
+    scroll-behavior: smooth !important;
+  } */
+
+  /* Lenis ajoute une classe .lenis sur html pour indiquer qu'il est actif */
+  html.lenis {
+    height: auto;
+  }
+
+  /* Wrapper pour le contenu scrollable avec Lenis */
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+
+  .lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+  }
+
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+
+  .lenis.lenis-scrolling iframe {
+    pointer-events: none;
+  }
+
+  /* Masquer la scrollbar native sur desktop pour la remplacer par notre custom scrollbar */
+  @media (min-width: 1024px) {
+    html {
+      /* Firefox */
+      scrollbar-width: none;
+      /* Safari et Chrome */
+      -ms-overflow-style: none;
+    }
+
+    html::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  * {
+    /* Smooth scrolling avec momentum pour tous les éléments */
+    -webkit-overflow-scrolling: touch;
   }
 
   body {
-    background-color: #fafbfc;
-    color: #1f2937;
+    background-color: #fbf9f7; /* Crème Méditerranéen */
+    color: #4a5568; /* Texte gris ardoise */
     /* Transition fluide pour les changements de thème */
     transition:
       background-color 0.3s ease,
       color 0.3s ease;
   }
 
-  /* Mode sombre */
+  /* Configuration des polices pour les titres */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: 'Playfair Display', 'Crimson Pro', Georgia, serif;
+    color: #1b998b; /* Turquoise Méditerranéen */
+  }
+
+  /* Mode sombre - Design System 2025 */
   .dark {
-    background-color: #1f2937;
-    color: #f9fafb;
+    background-color: #1a1a18; /* Nouvelle couleur de fond sombre */
+    color: #f5f5f3; /* Nouvelle couleur de texte sombre */
+  }
+
+  .dark h1,
+  .dark h2,
+  .dark h3,
+  .dark h4,
+  .dark h5,
+  .dark h6 {
+    color: #f5f5f3; /* Couleur de texte pour les titres en mode sombre */
   }
 
   /* Classes spécifiques pour le mode sombre */
@@ -72,7 +149,7 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+    /* scroll-behavior: auto !important; */ /* Commenté pour garder le smooth scroll */
   }
 
   .large-text {
@@ -143,6 +220,20 @@
     }
   }
 
+  /* Animation de brillance pour l'effet liquid glass */
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  .animate-shimmer {
+    animation: shimmer 3s ease-in-out infinite;
+  }
+
   /* Classes spécifiques pour les tests d'accessibilité en mode sombre */
   .dark .accessibility-test-card {
     background-color: #374151;
@@ -183,7 +274,7 @@
 
   /* Focus visible pour tous les éléments interactifs */
   .focus-visible {
-    outline: 2px solid #2e7d5e;
+    outline: 2px solid #1b998b; /* Turquoise Méditerranéen */
     outline-offset: 2px;
     border-radius: 4px;
   }
@@ -202,6 +293,10 @@
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
+    }
+
+    /* Désactive Lenis si l'utilisateur préfère un mouvement réduit */
+    html.lenis {
       scroll-behavior: auto !important;
     }
   }
@@ -238,11 +333,11 @@
     }
   }
 
-  /* Variables CSS pour les couleurs personnalisées */
+  /* Variables CSS pour les couleurs personnalisées - Méditerranée */
   .custom-colors {
-    --color-primary: var(--custom-primary, #2e7d5e);
-    --color-secondary: var(--custom-secondary, #4a9b7b);
-    --color-accent-teal: var(--custom-accent, #00a693);
+    --color-primary: var(--custom-primary, #1b998b);
+    --color-secondary: var(--custom-secondary, #e9c46a);
+    --color-accent-teal: var(--custom-accent, #2ec4b6);
   }
 
   /* Support des préférences système */
@@ -258,5 +353,179 @@
       background-color: #fafbfc;
       color: #1f2937;
     }
+  }
+
+  /* Animations modernes pour Hero Section 2025 */
+  @keyframes gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-gradient {
+    animation: gradient 8s ease infinite;
+  }
+
+  .animate-fadeIn {
+    animation: fadeIn 0.8s ease-out;
+  }
+
+  .animate-slideUp {
+    animation: slideUp 0.8s ease-out;
+  }
+
+  /* Classes utilitaires pour les animations de scroll */
+  .scroll-animate {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease-out;
+  }
+
+  .scroll-animate.animate-in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Classes pour les composants selon le design system */
+  .card-component {
+    border-radius: 12px; /* Cards */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+  }
+
+  .button-component {
+    border-radius: 8px; /* Buttons */
+    transition: all 0.3s ease;
+  }
+
+  /* Classes pour le système d'espacement */
+  .section-padding {
+    padding: 100px 0; /* Desktop */
+  }
+
+  @media (max-width: 768px) {
+    .section-padding {
+      padding: 60px 0; /* Mobile */
+    }
+  }
+
+  .container-max-width {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .grid-gap {
+    gap: 40px;
+  }
+
+  .element-margin {
+    margin: 24px;
+  }
+
+  /* Styles spécifiques pour la page plateforme */
+  .platform-mockup {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  }
+
+  .platform-floating-element {
+    filter: drop-shadow(0 4px 12px rgba(124, 152, 133, 0.15));
+  }
+
+  /* Animation personnalisée pour les éléments flottants */
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  @keyframes floatReverse {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(10px);
+    }
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-float-reverse {
+    animation: floatReverse 2.5s ease-in-out infinite;
+  }
+
+  /* Styles pour les checkmarks avec animation */
+  .checkmark-enter {
+    transform: scale(0);
+    transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  .checkmark-enter-active {
+    transform: scale(1);
+  }
+
+  /* Amélioration des animations pour les réductions de mouvement */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-spin,
+    .animate-bounce,
+    .animate-pulse,
+    .animate-float,
+    .animate-float-reverse {
+      animation: none;
+    }
+
+    .scroll-animate {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* NOTE: Lenis gère le smooth scroll, donc pas besoin de forcer ici */
+  }
+
+  /* Masquer la scrollbar pour les conteneurs horizontaux */
+  .scrollbar-hide {
+    /* Firefox */
+    scrollbar-width: none;
+    /* Internet Explorer et Edge */
+    -ms-overflow-style: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    /* Safari et Chrome */
+    display: none;
   }
 }

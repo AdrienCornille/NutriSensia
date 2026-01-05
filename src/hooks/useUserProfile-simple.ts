@@ -33,11 +33,12 @@ export const useUserProfile = () => {
       let nutritionistData = {};
       if (profileData.role === 'nutritionist') {
         try {
-          const { data: nutritionist, error: nutritionistError } = await supabase
-            .from('nutritionists')
-            .select('*')
-            .eq('id', user.id)
-            .single();
+          const { data: nutritionist, error: nutritionistError } =
+            await supabase
+              .from('nutritionists')
+              .select('*')
+              .eq('id', user.id)
+              .single();
 
           if (!nutritionistError) {
             nutritionistData = nutritionist || {};
@@ -51,7 +52,6 @@ export const useUserProfile = () => {
       // Combiner les données
       const completeProfile = { ...profileData, ...nutritionistData };
       setProfile(completeProfile);
-
     } catch (error) {
       setError(error.message);
     } finally {
@@ -60,74 +60,86 @@ export const useUserProfile = () => {
   }, [user, isAuthenticated]);
 
   // Mettre à jour le profil
-  const updateProfile = useCallback(async (updates) => {
-    if (!user || !isAuthenticated) return false;
+  const updateProfile = useCallback(
+    async updates => {
+      if (!user || !isAuthenticated) return false;
 
-    try {
-      setLoading(true);
-      setError(null);
+      try {
+        setLoading(true);
+        setError(null);
 
-      // Séparer les champs communs et spécifiques
-      const commonFields = ['first_name', 'last_name', 'phone', 'avatar_url', 'locale', 'timezone'];
-      const commonUpdates = {};
-      const roleSpecificUpdates = {};
+        // Séparer les champs communs et spécifiques
+        const commonFields = [
+          'first_name',
+          'last_name',
+          'phone',
+          'avatar_url',
+          'locale',
+          'timezone',
+        ];
+        const commonUpdates = {};
+        const roleSpecificUpdates = {};
 
-      Object.entries(updates).forEach(([key, value]) => {
-        // Ignorer les valeurs undefined ou null
-        if (value !== undefined && value !== null) {
-          if (commonFields.includes(key)) {
-            commonUpdates[key] = value;
-          } else {
-            roleSpecificUpdates[key] = value;
+        Object.entries(updates).forEach(([key, value]) => {
+          // Ignorer les valeurs undefined ou null
+          if (value !== undefined && value !== null) {
+            if (commonFields.includes(key)) {
+              commonUpdates[key] = value;
+            } else {
+              roleSpecificUpdates[key] = value;
+            }
           }
+        });
+
+        // Mettre à jour le profil de base
+        if (Object.keys(commonUpdates).length > 0) {
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .update({ ...commonUpdates, updated_at: new Date().toISOString() })
+            .eq('id', user.id);
+
+          if (profileError) throw profileError;
+          console.log('✅ Profil de base mis à jour');
         }
-      });
 
-      // Mettre à jour le profil de base
-      if (Object.keys(commonUpdates).length > 0) {
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .update({ ...commonUpdates, updated_at: new Date().toISOString() })
-          .eq('id', user.id);
+        // SOLUTION CONTEXT7: Utiliser UPDATE au lieu d'UPSERT
+        if (Object.keys(roleSpecificUpdates).length > 0) {
+          const tableName =
+            profile?.role === 'nutritionist' ? 'nutritionists' : 'patients';
 
-        if (profileError) throw profileError;
-        console.log('✅ Profil de base mis à jour');
-      }
+          console.log(
+            `🔄 Mise à jour ${tableName} avec UPDATE (solution Context7)`
+          );
+          console.log('📊 Données à sauvegarder:', roleSpecificUpdates);
 
-      // SOLUTION CONTEXT7: Utiliser UPDATE au lieu d'UPSERT
-      if (Object.keys(roleSpecificUpdates).length > 0) {
-        const tableName = profile?.role === 'nutritionist' ? 'nutritionists' : 'patients';
-        
-        console.log(`🔄 Mise à jour ${tableName} avec UPDATE (solution Context7)`);
-        console.log('📊 Données à sauvegarder:', roleSpecificUpdates);
-        
-        const { error: roleError } = await supabase
-          .from(tableName)
-          .update({
-            ...roleSpecificUpdates,
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', user.id);
+          const { error: roleError } = await supabase
+            .from(tableName)
+            .update({
+              ...roleSpecificUpdates,
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', user.id);
 
-        if (roleError) {
-          console.error(`❌ Erreur ${tableName}:`, roleError);
-          throw roleError;
+          if (roleError) {
+            console.error(`❌ Erreur ${tableName}:`, roleError);
+            throw roleError;
+          }
+
+          console.log(`✅ ${tableName} mis à jour avec succès`);
         }
-        
-        console.log(`✅ ${tableName} mis à jour avec succès`);
+
+        // Recharger le profil
+        await loadProfile();
+        return true;
+      } catch (error) {
+        setError(error.message);
+        return false;
+      } finally {
+        setLoading(false);
       }
-
-      // Recharger le profil
-      await loadProfile();
-      return true;
-
-    } catch (error) {
-      setError(error.message);
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  }, [user, isAuthenticated, profile, loadProfile]);
+    },
+    [user, isAuthenticated, profile, loadProfile]
+  );
 
   // Effet de chargement
   useEffect(() => {

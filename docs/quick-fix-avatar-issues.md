@@ -71,7 +71,7 @@ FOR SELECT TO public
 USING (bucket_id = 'avatars');
 
 -- 5. Ajouter les colonnes manquantes
-ALTER TABLE public.profiles 
+ALTER TABLE public.profiles
 ADD COLUMN IF NOT EXISTS avatar_url text,
 ADD COLUMN IF NOT EXISTS two_factor_enabled boolean DEFAULT false;
 ```
@@ -133,6 +133,7 @@ Tests réussis: 4/4
 ### Vérifications Supplémentaires
 
 1. **Variables d'environnement** :
+
    ```bash
    cat .env.local
    ```

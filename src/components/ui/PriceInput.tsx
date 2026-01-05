@@ -84,12 +84,12 @@ export const PriceInput: React.FC<PriceInputProps> = ({
     const chfValue = parseFloat(displayValue) || 0;
     const clampedValue = Math.min(Math.max(chfValue, min), max);
     const centimes = chfToCentimes(clampedValue);
-    
+
     // Mettre à jour la valeur si elle a changé
     if (centimes !== value) {
       onChange(centimes);
     }
-    
+
     // Reformater l'affichage
     setDisplayValue(clampedValue.toFixed(decimals));
   };
@@ -100,10 +100,10 @@ export const PriceInput: React.FC<PriceInputProps> = ({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsTyping(true);
     const inputValue = e.target.value;
-    
+
     // Permettre la saisie temporaire (même invalide)
     setDisplayValue(inputValue);
-    
+
     // Si c'est un nombre valide, mettre à jour immédiatement
     const chfValue = parseFloat(inputValue);
     if (!isNaN(chfValue) && chfValue >= min && chfValue <= max) {
@@ -117,17 +117,18 @@ export const PriceInput: React.FC<PriceInputProps> = ({
    */
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const input = e.target as HTMLInputElement;
-    
+
     // Si l'utilisateur tape un chiffre et tout est sélectionné, remplacer
     if (
-      e.key >= '0' && e.key <= '9' && 
-      input.selectionStart === 0 && 
+      e.key >= '0' &&
+      e.key <= '9' &&
+      input.selectionStart === 0 &&
       input.selectionEnd === input.value.length
     ) {
       e.preventDefault();
       setIsTyping(true);
       setDisplayValue(e.key);
-      
+
       const chfValue = parseFloat(e.key);
       if (!isNaN(chfValue)) {
         const centimes = chfToCentimes(chfValue);
@@ -138,9 +139,17 @@ export const PriceInput: React.FC<PriceInputProps> = ({
 
     // Touches spéciales autorisées
     const allowedKeys = [
-      'Backspace', 'Delete', 'Tab', 'Escape', 'Enter',
-      'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
-      'Home', 'End'
+      'Backspace',
+      'Delete',
+      'Tab',
+      'Escape',
+      'Enter',
+      'ArrowLeft',
+      'ArrowRight',
+      'ArrowUp',
+      'ArrowDown',
+      'Home',
+      'End',
     ];
 
     // Permettre Ctrl+A, Ctrl+C, Ctrl+V, etc.
@@ -170,11 +179,11 @@ export const PriceInput: React.FC<PriceInputProps> = ({
   };
 
   return (
-    <div className="relative">
+    <div className='relative'>
       <Input
         ref={inputRef}
-        type="text" // Utiliser text pour plus de contrôle
-        inputMode="decimal"
+        type='text' // Utiliser text pour plus de contrôle
+        inputMode='decimal'
         value={displayValue}
         onChange={handleChange}
         onFocus={handleFocus}
@@ -185,8 +194,8 @@ export const PriceInput: React.FC<PriceInputProps> = ({
         placeholder={placeholder}
         className={className}
       />
-      <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-        <span className="text-gray-500 text-sm">{currency}</span>
+      <div className='absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none'>
+        <span className='text-gray-500 text-sm'>{currency}</span>
       </div>
     </div>
   );

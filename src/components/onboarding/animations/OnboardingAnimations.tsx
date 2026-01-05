@@ -15,83 +15,83 @@ import type { Variants } from 'framer-motion';
  */
 export const fadeInUp: Variants = {
   initial: { opacity: 0, y: 20 },
-  animate: { 
-    opacity: 1, 
+  animate: {
+    opacity: 1,
     y: 0,
-    transition: { 
+    transition: {
       duration: 0.5,
-      ease: [0.4, 0, 0.2, 1]
-    }
+      ease: [0.4, 0, 0.2, 1],
+    },
   },
-  exit: { 
-    opacity: 0, 
+  exit: {
+    opacity: 0,
     y: -20,
-    transition: { 
+    transition: {
       duration: 0.3,
-      ease: [0.4, 0, 0.2, 1]
-    }
-  }
+      ease: [0.4, 0, 0.2, 1],
+    },
+  },
 };
 
 export const slideInFromRight: Variants = {
   initial: { opacity: 0, x: 100 },
-  animate: { 
-    opacity: 1, 
+  animate: {
+    opacity: 1,
     x: 0,
-    transition: { 
+    transition: {
       duration: 0.6,
-      ease: [0.4, 0, 0.2, 1]
-    }
+      ease: [0.4, 0, 0.2, 1],
+    },
   },
-  exit: { 
-    opacity: 0, 
+  exit: {
+    opacity: 0,
     x: -100,
-    transition: { 
+    transition: {
       duration: 0.4,
-      ease: [0.4, 0, 0.2, 1]
-    }
-  }
+      ease: [0.4, 0, 0.2, 1],
+    },
+  },
 };
 
 export const scaleIn: Variants = {
   initial: { opacity: 0, scale: 0.8 },
-  animate: { 
-    opacity: 1, 
+  animate: {
+    opacity: 1,
     scale: 1,
-    transition: { 
+    transition: {
       duration: 0.4,
-      ease: [0.4, 0, 0.2, 1]
-    }
+      ease: [0.4, 0, 0.2, 1],
+    },
   },
-  exit: { 
-    opacity: 0, 
+  exit: {
+    opacity: 0,
     scale: 0.8,
-    transition: { 
+    transition: {
       duration: 0.3,
-      ease: [0.4, 0, 0.2, 1]
-    }
-  }
+      ease: [0.4, 0, 0.2, 1],
+    },
+  },
 };
 
 export const staggerContainer: Variants = {
   animate: {
     transition: {
       staggerChildren: 0.1,
-      delayChildren: 0.1
-    }
-  }
+      delayChildren: 0.1,
+    },
+  },
 };
 
 export const staggerItem: Variants = {
   initial: { opacity: 0, y: 20 },
-  animate: { 
-    opacity: 1, 
+  animate: {
+    opacity: 1,
     y: 0,
-    transition: { 
+    transition: {
       duration: 0.5,
-      ease: [0.4, 0, 0.2, 1]
-    }
-  }
+      ease: [0.4, 0, 0.2, 1],
+    },
+  },
 };
 
 /**
@@ -103,42 +103,42 @@ interface StepTransitionProps {
   direction?: 'forward' | 'backward';
 }
 
-export const StepTransition: React.FC<StepTransitionProps> = ({ 
-  children, 
-  stepKey, 
-  direction = 'forward' 
+export const StepTransition: React.FC<StepTransitionProps> = ({
+  children,
+  stepKey,
+  direction = 'forward',
 }) => {
   const variants: Variants = {
-    initial: { 
-      opacity: 0, 
-      x: direction === 'forward' ? 50 : -50 
+    initial: {
+      opacity: 0,
+      x: direction === 'forward' ? 50 : -50,
     },
-    animate: { 
-      opacity: 1, 
+    animate: {
+      opacity: 1,
       x: 0,
-      transition: { 
+      transition: {
         duration: 0.5,
-        ease: [0.4, 0, 0.2, 1]
-      }
+        ease: [0.4, 0, 0.2, 1],
+      },
     },
-    exit: { 
-      opacity: 0, 
+    exit: {
+      opacity: 0,
       x: direction === 'forward' ? -50 : 50,
-      transition: { 
+      transition: {
         duration: 0.3,
-        ease: [0.4, 0, 0.2, 1]
-      }
-    }
+        ease: [0.4, 0, 0.2, 1],
+      },
+    },
   };
 
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence mode='wait'>
       <motion.div
         key={stepKey}
         variants={variants}
-        initial="initial"
-        animate="animate"
-        exit="exit"
+        initial='initial'
+        animate='animate'
+        exit='exit'
       >
         {children}
       </motion.div>
@@ -161,8 +161,8 @@ export const AnimatedProgress: React.FC<AnimatedProgressProps> = ({
   progress,
   size = 120,
   strokeWidth = 8,
-  color = "#10B981",
-  backgroundColor = "#E5E7EB"
+  color = '#10B981',
+  backgroundColor = '#E5E7EB',
 }) => {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
@@ -170,16 +170,12 @@ export const AnimatedProgress: React.FC<AnimatedProgressProps> = ({
 
   return (
     <motion.div
-      className="relative"
+      className='relative'
       variants={scaleIn}
-      initial="initial"
-      animate="animate"
+      initial='initial'
+      animate='animate'
     >
-      <svg
-        width={size}
-        height={size}
-        className="transform -rotate-90"
-      >
+      <svg width={size} height={size} className='transform -rotate-90'>
         {/* Background circle */}
         <circle
           cx={size / 2}
@@ -187,9 +183,9 @@ export const AnimatedProgress: React.FC<AnimatedProgressProps> = ({
           r={radius}
           stroke={backgroundColor}
           strokeWidth={strokeWidth}
-          fill="none"
+          fill='none'
         />
-        
+
         {/* Progress circle */}
         <motion.circle
           cx={size / 2}
@@ -197,24 +193,24 @@ export const AnimatedProgress: React.FC<AnimatedProgressProps> = ({
           r={radius}
           stroke={color}
           strokeWidth={strokeWidth}
-          fill="none"
-          strokeLinecap="round"
+          fill='none'
+          strokeLinecap='round'
           strokeDasharray={circumference}
           strokeDashoffset={strokeDashoffset}
           initial={{ strokeDashoffset: circumference }}
           animate={{ strokeDashoffset }}
-          transition={{ duration: 1, ease: "easeInOut" }}
+          transition={{ duration: 1, ease: 'easeInOut' }}
         />
       </svg>
-      
+
       {/* Percentage text */}
       <motion.div
-        className="absolute inset-0 flex items-center justify-center"
+        className='absolute inset-0 flex items-center justify-center'
         initial={{ opacity: 0, scale: 0.5 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.5, duration: 0.3 }}
       >
-        <span className="text-2xl font-bold text-gray-700">
+        <span className='text-2xl font-bold text-gray-700'>
           {Math.round(progress)}%
         </span>
       </motion.div>
@@ -240,14 +236,16 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
   variant = 'primary',
   disabled = false,
   loading = false,
-  className = ''
+  className = '',
 }) => {
-  const baseClasses = "px-6 py-3 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2";
-  
+  const baseClasses =
+    'px-6 py-3 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2';
+
   const variantClasses = {
-    primary: "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500",
-    secondary: "bg-gray-200 text-gray-700 hover:bg-gray-300 focus:ring-gray-500",
-    success: "bg-green-600 text-white hover:bg-green-700 focus:ring-green-500"
+    primary: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
+    secondary:
+      'bg-gray-200 text-gray-700 hover:bg-gray-300 focus:ring-gray-500',
+    success: 'bg-green-600 text-white hover:bg-green-700 focus:ring-green-500',
   };
 
   return (
@@ -259,27 +257,27 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
       disabled={disabled || loading}
       whileHover={disabled ? {} : { scale: 1.02, y: -1 }}
       whileTap={disabled ? {} : { scale: 0.98 }}
-      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 25 }}
     >
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode='wait'>
         {loading ? (
           <motion.div
-            key="loading"
+            key='loading'
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="flex items-center space-x-2"
+            className='flex items-center space-x-2'
           >
             <motion.div
-              className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
+              className='w-4 h-4 border-2 border-white border-t-transparent rounded-full'
               animate={{ rotate: 360 }}
-              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
             />
             <span>Chargement...</span>
           </motion.div>
         ) : (
           <motion.div
-            key="content"
+            key='content'
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -308,17 +306,18 @@ export const AnimatedStepCard: React.FC<AnimatedStepCardProps> = ({
   isActive = false,
   isCompleted = false,
   onClick,
-  className = ''
+  className = '',
 }) => {
   return (
     <motion.div
       className={`
         p-6 rounded-xl border-2 cursor-pointer transition-all duration-200
-        ${isActive 
-          ? 'border-blue-500 bg-blue-50 shadow-lg' 
-          : isCompleted 
-            ? 'border-green-500 bg-green-50 shadow-md'
-            : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-md'
+        ${
+          isActive
+            ? 'border-blue-500 bg-blue-50 shadow-lg'
+            : isCompleted
+              ? 'border-green-500 bg-green-50 shadow-md'
+              : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-md'
         }
         ${className}
       `}
@@ -326,12 +325,12 @@ export const AnimatedStepCard: React.FC<AnimatedStepCardProps> = ({
       whileHover={{ scale: 1.02, y: -2 }}
       whileTap={{ scale: 0.98 }}
       layout
-      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 25 }}
     >
       <motion.div
         variants={staggerContainer}
-        initial="initial"
-        animate="animate"
+        initial='initial'
+        animate='animate'
       >
         {children}
       </motion.div>
@@ -353,12 +352,12 @@ export const AnimatedToast: React.FC<AnimatedToastProps> = ({
   message,
   type = 'info',
   isVisible,
-  onClose
+  onClose,
 }) => {
   const typeClasses = {
     success: 'bg-green-500 text-white',
     error: 'bg-red-500 text-white',
-    info: 'bg-blue-500 text-white'
+    info: 'bg-blue-500 text-white',
   };
 
   return (
@@ -372,14 +371,14 @@ export const AnimatedToast: React.FC<AnimatedToastProps> = ({
           initial={{ opacity: 0, y: -50, scale: 0.9 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: -50, scale: 0.9 }}
-          transition={{ type: "spring", stiffness: 500, damping: 30 }}
+          transition={{ type: 'spring', stiffness: 500, damping: 30 }}
         >
-          <div className="flex items-center space-x-3">
+          <div className='flex items-center space-x-3'>
             <span>{message}</span>
             {onClose && (
               <motion.button
                 onClick={onClose}
-                className="ml-2 text-white hover:text-gray-200"
+                className='ml-2 text-white hover:text-gray-200'
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
@@ -396,12 +395,14 @@ export const AnimatedToast: React.FC<AnimatedToastProps> = ({
 /**
  * Animation de célébration avec confettis
  */
-export const CelebrationAnimation: React.FC<{ trigger: boolean }> = ({ trigger }) => {
+export const CelebrationAnimation: React.FC<{ trigger: boolean }> = ({
+  trigger,
+}) => {
   return (
     <AnimatePresence>
       {trigger && (
         <motion.div
-          className="fixed inset-0 pointer-events-none z-50"
+          className='fixed inset-0 pointer-events-none z-50'
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -409,61 +410,67 @@ export const CelebrationAnimation: React.FC<{ trigger: boolean }> = ({ trigger }
         >
           {/* Confetti particles */}
           {[...Array(30)].map((_, i) => {
-            const colors = ['#F59E0B', '#EF4444', '#3B82F6', '#10B981', '#8B5CF6'];
+            const colors = [
+              '#F59E0B',
+              '#EF4444',
+              '#3B82F6',
+              '#10B981',
+              '#8B5CF6',
+            ];
             const color = colors[i % colors.length];
-            
+
             return (
               <motion.div
                 key={i}
-                className="absolute w-3 h-3 rounded-full"
+                className='absolute w-3 h-3 rounded-full'
                 style={{ backgroundColor: color }}
                 initial={{
                   x: window.innerWidth / 2,
                   y: window.innerHeight / 2,
                   scale: 0,
-                  rotate: 0
+                  rotate: 0,
                 }}
                 animate={{
                   x: Math.random() * window.innerWidth,
                   y: window.innerHeight + 100,
                   scale: [0, 1, 0],
-                  rotate: 360 * 3
+                  rotate: 360 * 3,
                 }}
                 transition={{
                   duration: 3,
-                  ease: "easeOut",
-                  delay: i * 0.05
+                  ease: 'easeOut',
+                  delay: i * 0.05,
                 }}
               />
             );
           })}
-          
+
           {/* Success message */}
           <motion.div
-            className="absolute inset-0 flex items-center justify-center"
+            className='absolute inset-0 flex items-center justify-center'
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
-            transition={{ delay: 0.5, duration: 0.5, type: "spring" }}
+            transition={{ delay: 0.5, duration: 0.5, type: 'spring' }}
           >
-            <div className="bg-white rounded-2xl shadow-2xl p-8 text-center">
+            <div className='bg-white rounded-2xl shadow-2xl p-8 text-center'>
               <motion.div
-                className="text-6xl mb-4"
-                animate={{ 
+                className='text-6xl mb-4'
+                animate={{
                   rotate: [0, 10, -10, 0],
-                  scale: [1, 1.1, 1]
+                  scale: [1, 1.1, 1],
                 }}
-                transition={{ 
+                transition={{
                   duration: 0.6,
-                  repeat: 2
+                  repeat: 2,
                 }}
               >
                 🎉
               </motion.div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">
+              <h2 className='text-2xl font-bold text-gray-800 mb-2'>
                 Félicitations !
               </h2>
-              <p className="text-gray-600">
+              <p className='text-gray-600'>
                 Votre onboarding est terminé avec succès
               </p>
             </div>
@@ -473,5 +480,3 @@ export const CelebrationAnimation: React.FC<{ trigger: boolean }> = ({ trigger }
     </AnimatePresence>
   );
 };
-
-

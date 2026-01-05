@@ -1,23 +1,61 @@
-// Composants UI de base
-export { Button } from './Button';
-export { Card, CardHeader, CardContent, CardFooter } from './Card';
+// Composants UI pour le Design System 2025
+// Export de tous les composants selon les spécifications
+
+// Animations et scroll
+export {
+  ScrollAnimation,
+  StaggerAnimation,
+  StaggerItem,
+  AnimatedCard,
+  useHoverAnimation,
+} from './ScrollAnimation';
+export { SectionScrollbar } from './SectionScrollbar';
+export { SmoothScrollProvider } from './SmoothScrollProvider';
+export { WaveDivider, WaveDividerPresets } from './WaveDivider';
+
+// Accordion (shadcn)
+export {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from './accordion';
+
+// Layout et structure
+export { Section, Container, Grid } from './Section';
+
+// Boutons
+export { Button, ButtonGroup, buttonVariants } from './Button';
+
+// Bento Grid (shadcn)
+export { BentoGrid, BentoCard } from './bento-grid';
+
+// Cartes
+export {
+  Card,
+  CardHeader,
+  CardContent,
+  CardFooter,
+  CardTitle,
+  CardDescription,
+} from './Card';
+
+// Typographie
+export {
+  H1,
+  H2,
+  H3,
+  H4,
+  P,
+  PLarge,
+  PSmall,
+  AccentText,
+  Label,
+  Caption,
+  Lead,
+  Blockquote,
+} from './Typography';
+
+// Input et champs de formulaire
 export { Input } from './Input';
-export { Sidebar, Tabs, TabPanel } from './Navigation';
-
-// Composants d'accessibilité
-export { default as AccessibilityTest } from './AccessibilityTest';
-export { default as AccessibilityAudit } from './AccessibilityAudit';
-export { default as AccessibilityPanel } from './AccessibilityPanel';
-
-// Composants de gestion des thèmes
-export { default as ThemeSelector } from './ThemeSelector';
-export { ThemeManagementTest } from './ThemeManagementTest';
-
-// Composants de test
-export { default as UIComponentsTest } from './UIComponentsTest';
-export { default as DesignSystemTest } from './DesignSystemTest';
-export { AnimatedCard } from './AnimatedCard';
-export { FormField } from './FormField';
-
-// Composants d'authentification
-export * from '../auth';
+export type { InputProps, InputVariant, InputSize } from './Input';

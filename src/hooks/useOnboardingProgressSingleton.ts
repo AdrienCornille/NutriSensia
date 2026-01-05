@@ -4,7 +4,11 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { OnboardingProgress, OnboardingStep, StepStatus } from '@/types/onboarding';
+import {
+  OnboardingProgress,
+  OnboardingStep,
+  StepStatus,
+} from '@/types/onboarding';
 import { UserRole } from '@/lib/database-types';
 import progressStore from './useProgressStore';
 
@@ -35,7 +39,6 @@ export const useSimpleOnboardingProgress = ({
   role,
   steps,
 }: UseSimpleOnboardingProgressOptions): UseSimpleOnboardingProgressReturn => {
-  
   const [progress, setProgress] = useState<OnboardingProgress | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -43,10 +46,12 @@ export const useSimpleOnboardingProgress = ({
   // S'abonner au store au montage
   useEffect(() => {
     console.log(`🔗 Hook Simple - Abonnement au store pour userId: ${userId}`);
-    
+
     // S'abonner aux changements
-    const unsubscribe = progressStore.subscribe((newProgress) => {
-      console.log(`📡 Hook Simple - Progression reçue du store: ${newProgress?.completionPercentage || 0}%`);
+    const unsubscribe = progressStore.subscribe(newProgress => {
+      console.log(
+        `📡 Hook Simple - Progression reçue du store: ${newProgress?.completionPercentage || 0}%`
+      );
       setProgress(newProgress);
       setIsLoading(false);
     });
@@ -55,7 +60,7 @@ export const useSimpleOnboardingProgress = ({
     try {
       progressStore.initProgress(userId, role, steps);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur d\'initialisation');
+      setError(err instanceof Error ? err.message : "Erreur d'initialisation");
       setIsLoading(false);
     }
 

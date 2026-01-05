@@ -3,7 +3,11 @@
  * Persiste même si les composants se remontent
  */
 
-import { OnboardingProgress, OnboardingStep, StepStatus } from '@/types/onboarding';
+import {
+  OnboardingProgress,
+  OnboardingStep,
+  StepStatus,
+} from '@/types/onboarding';
 
 // Type pour les listeners
 type ProgressListener = (progress: OnboardingProgress | null) => void;
@@ -18,7 +22,7 @@ class ProgressStore {
     this.listeners.add(listener);
     // Envoyer immédiatement l'état actuel
     listener(this.progress);
-    
+
     // Retourner la fonction de désabonnement
     return () => {
       this.listeners.delete(listener);
@@ -33,9 +37,15 @@ class ProgressStore {
   // Initialiser la progression
   initProgress(userId: string, role: string, steps: any[]): OnboardingProgress {
     // Vérifier si on a déjà une progression pour ce même utilisateur/rôle
-    if (this.isInitialized && this.progress && 
-        this.progress.userId === userId && this.progress.userRole === role) {
-      console.log('📦 Store - Progression déjà initialisée pour ce user/rôle, retour de l\'existante');
+    if (
+      this.isInitialized &&
+      this.progress &&
+      this.progress.userId === userId &&
+      this.progress.userRole === role
+    ) {
+      console.log(
+        "📦 Store - Progression déjà initialisée pour ce user/rôle, retour de l'existante"
+      );
       return this.progress;
     }
 
@@ -59,7 +69,7 @@ class ProgressStore {
 
     // Créer une nouvelle progression
     const stepMap: Record<string, any> = {};
-    steps.forEach((step) => {
+    steps.forEach(step => {
       stepMap[step.id] = {
         id: step.id,
         title: step.title,
@@ -83,11 +93,11 @@ class ProgressStore {
 
     this.isInitialized = true;
     console.log('🆕 Store - Nouvelle progression créée');
-    
+
     // Sauvegarder immédiatement
     this.saveToLocalStorage(userId, role);
     this.notify();
-    
+
     return this.progress;
   }
 
@@ -104,7 +114,8 @@ class ProgressStore {
         [step]: {
           ...this.progress.steps[step],
           status,
-          completedAt: status === 'completed' ? new Date().toISOString() : undefined,
+          completedAt:
+            status === 'completed' ? new Date().toISOString() : undefined,
         },
       },
     };
@@ -114,10 +125,13 @@ class ProgressStore {
     const completedSteps = Object.values(updatedProgress.steps).filter(
       step => step.status === 'completed'
     ).length;
-    
-    updatedProgress.completionPercentage = totalSteps > 0 ? Math.round((completedSteps / totalSteps) * 100) : 0;
 
-    console.log(`📈 Store - Progression mise à jour: ${step} -> ${status} (${updatedProgress.completionPercentage}%)`);
+    updatedProgress.completionPercentage =
+      totalSteps > 0 ? Math.round((completedSteps / totalSteps) * 100) : 0;
+
+    console.log(
+      `📈 Store - Progression mise à jour: ${step} -> ${status} (${updatedProgress.completionPercentage}%)`
+    );
 
     this.progress = updatedProgress;
     this.saveToLocalStorage(updatedProgress.userId, updatedProgress.userRole);
@@ -127,7 +141,7 @@ class ProgressStore {
   // Sauvegarder dans localStorage
   private saveToLocalStorage(userId: string, role: string) {
     if (!this.progress) return;
-    
+
     try {
       const storageKey = `onboarding_progress_${userId}_${role}`;
       localStorage.setItem(storageKey, JSON.stringify(this.progress));

@@ -130,3 +130,30 @@ jspm_packages/
 
 *storybook.log
 storybook-static
+
+# Archives et fichiers temporaires (Nettoyage 2024-12-06)
+docs/archive/
+scripts/archive/
+*.backup
+*.old
+
+# Fichiers de debug IA
+DIAGNOSTIC_*.md
+CORRECTIONS_*.md
+*_FIX.md
+*_DEBUG.md
+*_ERROR*.md
+
+# Fichiers temporaires de scripts
+temp-*.js
+test-*.html
+test-*.js
+
+# Fichiers de test palette
+public/palette-*.html
+public/complementaires-*.html
+
+# Fichiers duplicatas macOS
+*\ 2.*
+*\ 2
+*.bak

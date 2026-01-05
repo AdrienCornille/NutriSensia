@@ -1,6 +1,6 @@
 /**
  * Client Supabase pour l'application NutriSensia
- * 
+ *
  * Ce fichier exporte le client Supabase configuré pour être utilisé
  * dans les composants React et les API routes.
  */
@@ -81,11 +81,13 @@ export const handleSupabaseError = (error: any): SupabaseError => {
   // Messages d'erreur traduits en français
   const errorMessages: { [key: string]: string } = {
     'Invalid login credentials': 'Email ou mot de passe incorrect',
-    'Email not confirmed': 'Veuillez confirmer votre email avant de vous connecter',
+    'Email not confirmed':
+      'Veuillez confirmer votre email avant de vous connecter',
     'Too many requests': 'Trop de tentatives. Veuillez réessayer plus tard',
     'User not found': 'Aucun compte trouvé avec cet email',
     'User already registered': 'Un compte existe déjà avec cet email',
-    'Password should be at least 6 characters': 'Le mot de passe doit contenir au moins 6 caractères',
+    'Password should be at least 6 characters':
+      'Le mot de passe doit contenir au moins 6 caractères',
     'Invalid email': 'Adresse email invalide',
     'Unable to validate email address': "Impossible de valider l'adresse email",
     'JWT expired': 'Session expirée. Veuillez vous reconnecter',

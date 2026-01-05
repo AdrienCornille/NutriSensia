@@ -1,0 +1,247 @@
+/* ===== ANIMATIONS GLOBALES ===== */
+
+/* GPU Acceleration pour les animations */
+.animate-gpu {
+  will-change: transform, opacity;
+}
+
+.animate-gpu-complete {
+  will-change: auto;
+}
+
+/* Animation de flottement continu pour les mockups */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 3.5s ease-in-out infinite;
+}
+
+/* Animation de pulsation subtile */
+@keyframes pulse-subtle {
+  0%,
+  100% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s ease-in-out infinite;
+}
+
+/* Animations de hover pour les cartes */
+.hover-lift {
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(44, 62, 60, 0.15);
+}
+
+/* Animations de hover pour les boutons */
+.hover-scale {
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.hover-scale:hover {
+  transform: scale(1.05) translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Animations de hover pour les icônes */
+.hover-icon {
+  transition: transform 0.3s ease;
+}
+
+.hover-icon:hover {
+  transform: scale(1.1);
+}
+
+/* Animation de rotation pour les icônes de sync */
+.hover-rotate {
+  transition: transform 0.3s ease;
+}
+
+.hover-rotate:hover {
+  transform: rotate(90deg);
+}
+
+/* Délais pour les animations staggered */
+.delay-0 {
+  animation-delay: 0ms;
+}
+.delay-50 {
+  animation-delay: 50ms;
+}
+.delay-100 {
+  animation-delay: 100ms;
+}
+.delay-150 {
+  animation-delay: 150ms;
+}
+.delay-200 {
+  animation-delay: 200ms;
+}
+.delay-250 {
+  animation-delay: 250ms;
+}
+.delay-300 {
+  animation-delay: 300ms;
+}
+.delay-400 {
+  animation-delay: 400ms;
+}
+.delay-500 {
+  animation-delay: 500ms;
+}
+.delay-600 {
+  animation-delay: 600ms;
+}
+
+/* Durées d'animation personnalisées */
+.duration-400 {
+  transition-duration: 400ms;
+}
+.duration-600 {
+  transition-duration: 600ms;
+}
+.duration-800 {
+  transition-duration: 800ms;
+}
+
+/* ===== SUPPORT PREFERS-REDUCED-MOTION ===== */
+
+/* Approche sélective : désactive les animations décoratives mais garde les fonctionnelles */
+@media (prefers-reduced-motion: reduce) {
+  /* Désactive les animations continues (flottement, pulsation) */
+  .animate-float,
+  .animate-pulse-subtle {
+    animation: none;
+  }
+
+  /* Réduit drastiquement les durées des animations de scroll */
+  .transition-all,
+  .transition-opacity,
+  .transition-transform {
+    transition-duration: 0.01ms !important;
+  }
+
+  /* Garde les transitions fonctionnelles mais les accélère */
+  .hover-lift,
+  .hover-scale,
+  .hover-icon,
+  .hover-rotate {
+    transition-duration: 0.1s !important;
+  }
+
+  /* Désactive les délais d'animation */
+  [class*='delay-'] {
+    animation-delay: 0ms !important;
+    transition-delay: 0ms !important;
+  }
+
+  /* Garde les animations d'accordion et modal mais les accélère */
+  [data-state='open'],
+  [data-state='closed'] {
+    transition-duration: 0.1s !important;
+  }
+}
+
+/* Approche alternative plus stricte (optionnelle) */
+@media (prefers-reduced-motion: reduce) {
+  .respect-motion-preference * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ===== UTILITAIRES POUR LES ANIMATIONS ===== */
+
+/* Classes pour les états d'animation */
+.animate-in {
+  animation-fill-mode: both;
+}
+
+.animate-out {
+  animation-fill-mode: both;
+  animation-direction: reverse;
+}
+
+/* Optimisations de performance */
+.will-change-transform {
+  will-change: transform;
+}
+
+.will-change-opacity {
+  will-change: opacity;
+}
+
+.will-change-auto {
+  will-change: auto;
+}
+
+/* Classes pour les animations de groupe (stagger) */
+.stagger-children > * {
+  animation-fill-mode: both;
+}
+
+.stagger-children > *:nth-child(1) {
+  animation-delay: 0ms;
+}
+.stagger-children > *:nth-child(2) {
+  animation-delay: 100ms;
+}
+.stagger-children > *:nth-child(3) {
+  animation-delay: 200ms;
+}
+.stagger-children > *:nth-child(4) {
+  animation-delay: 300ms;
+}
+.stagger-children > *:nth-child(5) {
+  animation-delay: 400ms;
+}
+.stagger-children > *:nth-child(6) {
+  animation-delay: 500ms;
+}
+
+/* Stagger plus rapide pour les listes longues */
+.stagger-fast > *:nth-child(1) {
+  animation-delay: 0ms;
+}
+.stagger-fast > *:nth-child(2) {
+  animation-delay: 50ms;
+}
+.stagger-fast > *:nth-child(3) {
+  animation-delay: 100ms;
+}
+.stagger-fast > *:nth-child(4) {
+  animation-delay: 150ms;
+}
+.stagger-fast > *:nth-child(5) {
+  animation-delay: 200ms;
+}
+.stagger-fast > *:nth-child(6) {
+  animation-delay: 250ms;
+}
+.stagger-fast > *:nth-child(7) {
+  animation-delay: 300ms;
+}
+.stagger-fast > *:nth-child(8) {
+  animation-delay: 350ms;
+}

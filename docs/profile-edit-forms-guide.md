@@ -46,7 +46,7 @@ function ProfilePage() {
 
   return (
     <ProfileEditForm
-      userType="nutritionist"
+      userType='nutritionist'
       initialData={currentProfile}
       onSave={handleSave}
       onCancel={() => router.back()}
@@ -58,6 +58,7 @@ function ProfilePage() {
 ### Données d'Exemple
 
 #### Nutritionniste
+
 ```typescript
 const nutritionistData = {
   first_name: 'Marie',
@@ -70,19 +71,20 @@ const nutritionistData = {
   consultation_rates: {
     initial: 15000, // CHF 150.00
     follow_up: 10000, // CHF 100.00
-    express: 5000 // CHF 50.00
+    express: 5000, // CHF 50.00
   },
   practice_address: {
     street: 'Rue de la Paix 123',
     postal_code: '1200',
     city: 'Genève',
     canton: 'GE',
-    country: 'CH'
-  }
+    country: 'CH',
+  },
 };
 ```
 
 #### Patient
+
 ```typescript
 const patientData = {
   first_name: 'Jean',
@@ -97,7 +99,7 @@ const patientData = {
   allergies: ['Gluten', 'Lactose'],
   dietary_restrictions: ['Végétarien'],
   medical_conditions: ['Hypertension'],
-  medications: ['Médicament A']
+  medications: ['Médicament A'],
 };
 ```
 
@@ -126,7 +128,7 @@ useEffect(() => {
       e.returnValue = '';
     }
   };
-  
+
   window.addEventListener('beforeunload', handleBeforeUnload);
   return () => window.removeEventListener('beforeunload', handleBeforeUnload);
 }, [hasUnsavedChanges]);
@@ -144,6 +146,7 @@ Le composant `AvatarUpload` offre :
 ### 4. Champs Dynamiques
 
 #### Spécialisations (Nutritionnistes)
+
 ```tsx
 const specializations = [
   'Nutrition sportive',
@@ -157,12 +160,14 @@ const specializations = [
   'Nutrition végétarienne',
   'Nutrition végane',
   'Troubles du comportement alimentaire',
-  'Nutrition préventive'
+  'Nutrition préventive',
 ];
 ```
 
 #### Allergies et Restrictions (Patients)
+
 Interface d'ajout/suppression dynamique avec tags colorés :
+
 - **Allergies** : Tags rouges
 - **Restrictions** : Tags jaunes
 - **Conditions médicales** : Tags bleus
@@ -184,10 +189,10 @@ Tous les messages d'erreur sont localisés en français :
 
 ```typescript
 // Exemples de messages d'erreur
-'Le prénom est requis'
-'Le numéro de téléphone suisse invalide'
-'L\'âge doit être compris entre 13 et 120 ans'
-'Le tarif initial doit être supérieur ou égal au tarif de suivi'
+'Le prénom est requis';
+'Le numéro de téléphone suisse invalide';
+'L\'âge doit être compris entre 13 et 120 ans';
+'Le tarif initial doit être supérieur ou égal au tarif de suivi';
 ```
 
 ### Validation Croisée
@@ -215,11 +220,11 @@ const handleSave = async (data: ProfileUpdate) => {
       .upsert({
         user_id: currentUser.id,
         ...data,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       });
 
     if (error) throw error;
-    
+
     return result;
   } catch (error) {
     console.error('Erreur lors de la sauvegarde:', error);
@@ -234,13 +239,13 @@ const handleSave = async (data: ProfileUpdate) => {
 const uploadAvatar = async (file: File) => {
   const fileExt = file.name.split('.').pop();
   const fileName = `${currentUser.id}-${Date.now()}.${fileExt}`;
-  
+
   const { data, error } = await supabase.storage
     .from('avatars')
     .upload(fileName, file);
 
   if (error) throw error;
-  
+
   return data.path;
 };
 ```
@@ -255,12 +260,12 @@ Les formulaires sont testés avec React Testing Library et Vitest :
 // Test de validation
 it('devrait valider les champs requis', async () => {
   const user = userEvent.setup();
-  
+
   render(<ProfileEditForm userType="nutritionist" />);
-  
+
   await user.clear(screen.getByLabelText('Prénom'));
   await user.click(screen.getByText('Sauvegarder'));
-  
+
   expect(screen.getByText('Le prénom est requis')).toBeInTheDocument();
 });
 ```
@@ -344,7 +349,7 @@ Le formulaire utilise le système de thèmes de NutriSensia :
 const methods = useForm({
   resolver: zodResolver(profileUpdateSchema),
   mode: 'onChange',
-  debug: true // Affiche les logs de debug
+  debug: true, // Affiche les logs de debug
 });
 ```
 
@@ -368,4 +373,3 @@ const methods = useForm({
 ## Conclusion
 
 Les formulaires d'édition de profil de NutriSensia offrent une expérience utilisateur moderne et accessible, avec une validation robuste et une architecture extensible. Ils constituent la base pour la gestion des profils utilisateurs dans l'application.
-

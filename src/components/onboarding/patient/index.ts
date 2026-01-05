@@ -18,5 +18,7 @@ export { AppTourStep } from './steps/AppTourStep';
 export { CompletionStep } from './steps/CompletionStep';
 
 // Types spécifiques aux patients
-export type { PatientOnboardingData, PatientOnboardingStep } from '@/types/onboarding';
-
+export type {
+  PatientOnboardingData,
+  PatientOnboardingStep,
+} from '@/types/onboarding';

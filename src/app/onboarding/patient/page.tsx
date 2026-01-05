@@ -21,21 +21,32 @@ export default function PatientOnboardingPage() {
   const router = useRouter();
   const { showError, showSuccess } = useNotification();
   const [isLoading, setIsLoading] = useState(true);
-  const [initialData, setInitialData] = useState<Partial<PatientOnboardingData>>({});
+  const [initialData, setInitialData] = useState<
+    Partial<PatientOnboardingData>
+  >({});
 
   // Vérifier l'authentification et le rôle
   useEffect(() => {
     const checkUserAccess = async () => {
-      console.log('🔍 [PatientOnboarding] Vérification accès - authLoading:', authLoading, 'user:', !!user);
-      
+      console.log(
+        '🔍 [PatientOnboarding] Vérification accès - authLoading:',
+        authLoading,
+        'user:',
+        !!user
+      );
+
       // Attendre que l'authentification soit chargée
       if (authLoading) {
-        console.log('⏳ [PatientOnboarding] En attente du chargement de l\'authentification...');
+        console.log(
+          "⏳ [PatientOnboarding] En attente du chargement de l'authentification..."
+        );
         return;
       }
 
       if (!user) {
-        console.log('🚫 [PatientOnboarding] Aucun utilisateur connecté - redirection vers signin');
+        console.log(
+          '🚫 [PatientOnboarding] Aucun utilisateur connecté - redirection vers signin'
+        );
         // Rediriger vers la connexion si pas d'utilisateur
         router.push('/auth/signin?redirect=/onboarding/patient');
         return;
@@ -44,11 +55,14 @@ export default function PatientOnboardingPage() {
       // Vérifier que l'utilisateur est bien un patient
       const userRole = user.user_metadata?.role;
       console.log('🔍 Rôle utilisateur détecté:', userRole);
-      
+
       if (userRole !== 'patient') {
         console.log('🚫 Accès refusé - Rôle incorrect:', userRole);
-        showError('Accès non autorisé', `Cette page est réservée aux patients. Votre rôle actuel est: ${userRole}`);
-        
+        showError(
+          'Accès non autorisé',
+          `Cette page est réservée aux patients. Votre rôle actuel est: ${userRole}`
+        );
+
         // Rediriger vers la page d'onboarding appropriée selon le rôle
         if (userRole === 'nutritionist') {
           router.push('/onboarding/nutritionist');
@@ -133,14 +147,19 @@ export default function PatientOnboardingPage() {
 
       if (onboardingError) throw onboardingError;
 
-      showSuccess('Onboarding terminé !', 'Votre profil a été configuré avec succès.');
-      
+      showSuccess(
+        'Onboarding terminé !',
+        'Votre profil a été configuré avec succès.'
+      );
+
       // Rediriger vers le tableau de bord patient
       router.push('/dashboard/patient');
-      
     } catch (error) {
-      console.error('Erreur lors de la finalisation de l\'onboarding:', error);
-      showError('Erreur de sauvegarde', 'Une erreur est survenue. Veuillez réessayer.');
+      console.error("Erreur lors de la finalisation de l'onboarding:", error);
+      showError(
+        'Erreur de sauvegarde',
+        'Une erreur est survenue. Veuillez réessayer.'
+      );
       throw error;
     }
   };
@@ -149,7 +168,11 @@ export default function PatientOnboardingPage() {
    * Gérer la fermeture de l'onboarding
    */
   const handleClose = () => {
-    if (window.confirm('Êtes-vous sûr de vouloir quitter l\'onboarding ? Votre progression sera sauvegardée.')) {
+    if (
+      window.confirm(
+        "Êtes-vous sûr de vouloir quitter l'onboarding ? Votre progression sera sauvegardée."
+      )
+    ) {
       router.push('/dashboard');
     }
   };
@@ -157,17 +180,17 @@ export default function PatientOnboardingPage() {
   // Affichage de chargement
   if (isLoading || authLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-100 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Chargement de votre profil...</p>
+      <div className='min-h-screen bg-gradient-to-br from-green-50 to-teal-100 flex items-center justify-center'>
+        <div className='text-center'>
+          <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4'></div>
+          <p className='text-gray-600'>Chargement de votre profil...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-100">
+    <div className='min-h-screen bg-gradient-to-br from-green-50 to-teal-100'>
       <PatientOnboardingWizardSimple
         onComplete={handleOnboardingComplete}
         initialData={initialData}

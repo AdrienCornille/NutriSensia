@@ -8,7 +8,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Check, Circle, ChevronRight } from 'lucide-react';
-import { OnboardingStep, OnboardingProgress, StepStatus } from '@/types/onboarding';
+import {
+  OnboardingStep,
+  OnboardingProgress,
+  StepStatus,
+} from '@/types/onboarding';
 
 interface StepIndicatorProps {
   /** Étape actuelle */
@@ -33,17 +37,17 @@ interface StepIndicatorProps {
 const getStepIcon = (status: StepStatus, isActive: boolean) => {
   switch (status) {
     case 'completed':
-      return <Check className="h-4 w-4" />;
+      return <Check className='h-4 w-4' />;
     case 'in-progress':
       return isActive ? (
-        <Circle className="h-4 w-4 animate-pulse" />
+        <Circle className='h-4 w-4 animate-pulse' />
       ) : (
-        <Circle className="h-4 w-4" />
+        <Circle className='h-4 w-4' />
       );
     case 'skipped':
-      return <ChevronRight className="h-4 w-4" />;
+      return <ChevronRight className='h-4 w-4' />;
     default:
-      return <Circle className="h-4 w-4" />;
+      return <Circle className='h-4 w-4' />;
   }
 };
 
@@ -113,12 +117,17 @@ const StepItem: React.FC<StepItemProps> = ({
 }) => {
   const styles = getStepStyles(stepInfo.status, isActive);
   const icon = getStepIcon(stepInfo.status, isActive);
-  const isClickable = allowNavigation && onClick && stepInfo.status === 'completed';
+  const isClickable =
+    allowNavigation && onClick && stepInfo.status === 'completed';
 
   return (
-    <div className={`flex ${orientation === 'vertical' ? 'flex-col' : 'items-center'}`}>
+    <div
+      className={`flex ${orientation === 'vertical' ? 'flex-col' : 'items-center'}`}
+    >
       {/* Étape */}
-      <div className={`flex ${orientation === 'vertical' ? 'flex-row items-center' : 'flex-col items-center'} ${orientation === 'vertical' ? 'mb-4' : ''}`}>
+      <div
+        className={`flex ${orientation === 'vertical' ? 'flex-row items-center' : 'flex-col items-center'} ${orientation === 'vertical' ? 'mb-4' : ''}`}
+      >
         {/* Cercle avec icône */}
         <motion.button
           className={`
@@ -135,11 +144,11 @@ const StepItem: React.FC<StepItemProps> = ({
           whileTap={isClickable ? { scale: 0.95 } : {}}
         >
           {icon}
-          
+
           {/* Indicateur d'étape active */}
           {isActive && (
             <motion.div
-              className="absolute -inset-1 rounded-full border-2 border-green-400 opacity-75"
+              className='absolute -inset-1 rounded-full border-2 border-green-400 opacity-75'
               animate={{ scale: [1, 1.2, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
             />
@@ -148,11 +157,15 @@ const StepItem: React.FC<StepItemProps> = ({
 
         {/* Texte de l'étape */}
         {!compact && (
-          <div className={`
+          <div
+            className={`
             ${orientation === 'vertical' ? 'ml-3' : 'mt-2'}
             text-center
-          `}>
-            <p className={`text-sm ${styles.text} ${orientation === 'vertical' ? 'text-left' : ''}`}>
+          `}
+          >
+            <p
+              className={`text-sm ${styles.text} ${orientation === 'vertical' ? 'text-left' : ''}`}
+            >
               {stepInfo.title}
             </p>
           </div>
@@ -179,8 +192,8 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({
   // Vérification de sécurité pour progress
   if (!progress || !progress.steps) {
     return (
-      <div className="space-y-4">
-        <div className="text-center text-sm text-gray-500">
+      <div className='space-y-4'>
+        <div className='text-center text-sm text-gray-500'>
           Chargement de la progression...
         </div>
       </div>
@@ -190,12 +203,26 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({
   // Convertir les étapes en tableau ordonné
   const orderedSteps = Object.entries(progress.steps).sort(([, a], [, b]) => {
     // Tri basé sur l'ordre logique des étapes
-    const stepOrder = ['welcome', 'personal-info', 'credentials', 'practice-details', 
-                      'specializations', 'consultation-rates', 'platform-training',
-                      'health-goals', 'dietary-restrictions', 'measurements', 
-                      'activity-level', 'app-tour', 'system-overview', 
-                      'user-management', 'analytics-setup', 'security-config', 'completion'];
-    
+    const stepOrder = [
+      'welcome',
+      'personal-info',
+      'credentials',
+      'practice-details',
+      'specializations',
+      'consultation-rates',
+      'platform-training',
+      'health-goals',
+      'dietary-restrictions',
+      'measurements',
+      'activity-level',
+      'app-tour',
+      'system-overview',
+      'user-management',
+      'analytics-setup',
+      'security-config',
+      'completion',
+    ];
+
     return stepOrder.indexOf(a.id) - stepOrder.indexOf(b.id);
   });
 
@@ -208,14 +235,16 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({
   // Debug supprimé pour éviter les warnings React
 
   return (
-    <div className="space-y-4">
+    <div className='space-y-4'>
       {/* Liste des étapes */}
-      <div className={`
+      <div
+        className={`
         flex
         ${orientation === 'vertical' ? 'flex-col' : 'flex-row justify-between'}
         ${orientation === 'vertical' ? 'space-y-0' : ''}
         w-full
-      `}>
+      `}
+      >
         {orderedSteps.map(([stepId, stepInfo], index) => (
           <StepItem
             key={stepId}
@@ -233,15 +262,15 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({
 
       {/* Barre de progression globale */}
       {showProgressBar && (
-        <div className="space-y-2">
-          <div className="flex justify-between text-sm text-gray-600">
+        <div className='space-y-2'>
+          <div className='flex justify-between text-sm text-gray-600'>
             <span>Progression</span>
             <span>{Math.round(progress.completionPercentage)}%</span>
           </div>
-          
-          <div className="w-full bg-gray-200 rounded-full h-2">
+
+          <div className='w-full bg-gray-200 rounded-full h-2'>
             <motion.div
-              className="bg-green-500 h-2 rounded-full"
+              className='bg-green-500 h-2 rounded-full'
               initial={{ width: 0 }}
               animate={{ width: `${progress.completionPercentage}%` }}
               transition={{ duration: 0.5, ease: 'easeOut' }}
@@ -249,10 +278,8 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({
           </div>
         </div>
       )}
-
     </div>
   );
 };
 
 export default StepIndicator;
-

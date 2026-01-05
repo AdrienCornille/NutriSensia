@@ -1,6 +1,6 @@
 /**
  * Script pour créer un utilisateur administrateur de test
- * 
+ *
  * Ce script crée un utilisateur avec le rôle d'administrateur
  * pour tester les pages de démonstration A/B Testing.
  */
@@ -11,7 +11,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseServiceKey) {
-  console.error('❌ Variables d\'environnement Supabase manquantes');
+  console.error("❌ Variables d'environnement Supabase manquantes");
   console.error('NEXT_PUBLIC_SUPABASE_URL:', !!supabaseUrl);
   console.error('SUPABASE_SERVICE_ROLE_KEY:', !!supabaseServiceKey);
   process.exit(1);
@@ -21,20 +21,24 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 async function createAdminUser() {
   try {
-    console.log('🔧 Création d\'un utilisateur administrateur de test...');
+    console.log("🔧 Création d'un utilisateur administrateur de test...");
 
     const testAdminEmail = 'admin@nutrisensia.test';
     const testAdminPassword = 'AdminTest123!';
 
     // Créer l'utilisateur dans Supabase Auth
-    const { data: authData, error: authError } = await supabase.auth.admin.createUser({
-      email: testAdminEmail,
-      password: testAdminPassword,
-      email_confirm: true,
-    });
+    const { data: authData, error: authError } =
+      await supabase.auth.admin.createUser({
+        email: testAdminEmail,
+        password: testAdminPassword,
+        email_confirm: true,
+      });
 
     if (authError) {
-      console.error('❌ Erreur lors de la création de l\'utilisateur Auth:', authError);
+      console.error(
+        "❌ Erreur lors de la création de l'utilisateur Auth:",
+        authError
+      );
       return;
     }
 
@@ -48,13 +52,16 @@ async function createAdminUser() {
         email: testAdminEmail,
         role: 'admin',
         created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .select()
       .single();
 
     if (userError) {
-      console.error('❌ Erreur lors de la création du profil utilisateur:', userError);
+      console.error(
+        '❌ Erreur lors de la création du profil utilisateur:',
+        userError
+      );
       return;
     }
 
@@ -64,10 +71,14 @@ async function createAdminUser() {
     console.log('📧 Email:', testAdminEmail);
     console.log('🔑 Mot de passe:', testAdminPassword);
     console.log('👤 Rôle: admin');
-    console.log('\n🔗 Vous pouvez maintenant vous connecter et accéder aux pages de démonstration A/B Testing');
-
+    console.log(
+      '\n🔗 Vous pouvez maintenant vous connecter et accéder aux pages de démonstration A/B Testing'
+    );
   } catch (error) {
-    console.error('❌ Erreur lors de la création de l\'utilisateur administrateur:', error);
+    console.error(
+      "❌ Erreur lors de la création de l'utilisateur administrateur:",
+      error
+    );
   }
 }
 

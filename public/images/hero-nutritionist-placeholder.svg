@@ -1,0 +1,80 @@
+<svg width="800" height="1000" viewBox="0 0 800 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Dégradé de fond apaisant -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#E8F3EF;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#F8FAF9;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFFFFF;stop-opacity:1" />
+    </linearGradient>
+
+    <linearGradient id="primaryGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2E7D5E;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1B4F3F;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Motif de cercles décoratifs -->
+    <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <circle cx="5" cy="5" r="2" fill="#2E7D5E" opacity="0.1"/>
+    </pattern>
+  </defs>
+
+  <!-- Fond -->
+  <rect width="800" height="1000" fill="url(#bgGradient)"/>
+  <rect width="800" height="1000" fill="url(#dots)"/>
+
+  <!-- Forme organique arrière-plan -->
+  <ellipse cx="400" cy="300" rx="350" ry="250" fill="#B8D4C7" opacity="0.2"/>
+  <ellipse cx="600" cy="700" rx="250" ry="200" fill="#7FD1C1" opacity="0.15"/>
+
+  <!-- Silhouette stylisée de nutritionniste (féminine professionnelle) -->
+  <!-- Tête -->
+  <circle cx="400" cy="250" r="80" fill="url(#primaryGradient)" opacity="0.3"/>
+
+  <!-- Corps -->
+  <path d="M 400 330 Q 350 400 340 550 Q 340 650 360 750 L 440 750 Q 460 650 460 550 Q 450 400 400 330 Z"
+        fill="url(#primaryGradient)" opacity="0.25"/>
+
+  <!-- Bras gauche avec tablette/ordinateur -->
+  <path d="M 340 400 Q 280 450 260 500 L 280 520 Q 300 470 340 430 Z"
+        fill="url(#primaryGradient)" opacity="0.2"/>
+
+  <!-- Bras droit -->
+  <path d="M 460 400 Q 520 450 540 500 L 520 520 Q 500 470 460 430 Z"
+        fill="url(#primaryGradient)" opacity="0.2"/>
+
+  <!-- Tablette/Ordinateur dans la main -->
+  <rect x="220" y="480" width="90" height="60" rx="5" fill="#2E7D5E" opacity="0.4"/>
+  <rect x="228" y="488" width="74" height="44" rx="2" fill="#FFFFFF" opacity="0.6"/>
+
+  <!-- Éléments décoratifs nutritionnels -->
+  <!-- Feuille 1 -->
+  <path d="M 150 200 Q 130 220 140 240 Q 150 260 170 250 Q 180 240 170 220 Q 160 200 150 200 Z"
+        fill="#4A9B7B" opacity="0.3"/>
+
+  <!-- Feuille 2 -->
+  <path d="M 650 150 Q 670 170 660 190 Q 650 210 630 200 Q 620 190 630 170 Q 640 150 650 150 Z"
+        fill="#7FD1C1" opacity="0.3"/>
+
+  <!-- Pomme stylisée -->
+  <circle cx="680" cy="600" r="35" fill="#F4A261" opacity="0.3"/>
+  <ellipse cx="680" cy="570" rx="8" ry="15" fill="#2E7D5E" opacity="0.3"/>
+
+  <!-- Carotte stylisée -->
+  <path d="M 120 700 L 110 760 L 130 760 Z" fill="#F4A261" opacity="0.3"/>
+  <path d="M 120 680 Q 110 690 115 700 L 125 700 Q 130 690 120 680 Z" fill="#4A9B7B" opacity="0.3"/>
+
+  <!-- Icône cœur (santé) -->
+  <path d="M 400 850 L 380 830 Q 360 810 360 785 Q 360 760 380 750 Q 400 740 400 750 Q 400 740 420 750 Q 440 760 440 785 Q 440 810 420 830 Z"
+        fill="#2E7D5E" opacity="0.3"/>
+
+  <!-- Texte placeholder -->
+  <text x="400" y="920" font-family="Playfair Display, Georgia, serif" font-size="28" font-weight="bold"
+        fill="#2C3E3C" text-anchor="middle" opacity="0.6">
+    NutriSensia
+  </text>
+
+  <text x="400" y="955" font-family="Inter, system-ui, sans-serif" font-size="16"
+        fill="#667674" text-anchor="middle" opacity="0.5">
+    Votre nutritionniste en ligne
+  </text>
+</svg>

@@ -10,7 +10,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseServiceKey) {
-  console.error('❌ Variables d\'environnement manquantes:');
+  console.error("❌ Variables d'environnement manquantes:");
   console.error('   NEXT_PUBLIC_SUPABASE_URL:', !!supabaseUrl);
   console.error('   SUPABASE_SERVICE_ROLE_KEY:', !!supabaseServiceKey);
   process.exit(1);
@@ -25,22 +25,26 @@ async function createAdminAccount() {
 
   try {
     console.log('🔄 Création du compte administrateur...');
-    
+
     // Créer l'utilisateur avec le rôle admin
-    const { data: authData, error: authError } = await supabase.auth.admin.createUser({
-      email,
-      password,
-      email_confirm: true, // Confirmer automatiquement l'email
-      user_metadata: {
-        role: 'admin',
-        full_name: fullName,
-        created_by: 'script',
-        created_at: new Date().toISOString(),
-      }
-    });
+    const { data: authData, error: authError } =
+      await supabase.auth.admin.createUser({
+        email,
+        password,
+        email_confirm: true, // Confirmer automatiquement l'email
+        user_metadata: {
+          role: 'admin',
+          full_name: fullName,
+          created_by: 'script',
+          created_at: new Date().toISOString(),
+        },
+      });
 
     if (authError) {
-      console.error('❌ Erreur lors de la création de l\'utilisateur:', authError.message);
+      console.error(
+        "❌ Erreur lors de la création de l'utilisateur:",
+        authError.message
+      );
       return;
     }
 
@@ -50,20 +54,23 @@ async function createAdminAccount() {
     console.log('👤 ID utilisateur:', authData.user.id);
 
     // Créer le profil dans la table profiles
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .insert({
-        id: authData.user.id,
-        email: email,
-        full_name: fullName,
-        role: 'admin',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      });
+    const { error: profileError } = await supabase.from('profiles').insert({
+      id: authData.user.id,
+      email: email,
+      full_name: fullName,
+      role: 'admin',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    });
 
     if (profileError) {
-      console.warn('⚠️  Erreur lors de la création du profil:', profileError.message);
-      console.log('   L\'utilisateur a été créé mais le profil pourrait être manquant.');
+      console.warn(
+        '⚠️  Erreur lors de la création du profil:',
+        profileError.message
+      );
+      console.log(
+        "   L'utilisateur a été créé mais le profil pourrait être manquant."
+      );
     } else {
       console.log('✅ Profil créé avec succès!');
     }
@@ -75,8 +82,9 @@ async function createAdminAccount() {
     console.log(`   Mot de passe: ${password}`);
     console.log('\n🔗 Vous pouvez maintenant accéder à:');
     console.log('   - http://localhost:3000/admin/analytics/onboarding');
-    console.log('   - http://localhost:3000/debug-auth-status (pour diagnostiquer)');
-
+    console.log(
+      '   - http://localhost:3000/debug-auth-status (pour diagnostiquer)'
+    );
   } catch (error) {
     console.error('❌ Erreur inattendue:', error);
   }
@@ -92,7 +100,10 @@ async function checkExistingAdmin() {
       .limit(1);
 
     if (error) {
-      console.warn('⚠️  Impossible de vérifier les comptes existants:', error.message);
+      console.warn(
+        '⚠️  Impossible de vérifier les comptes existants:',
+        error.message
+      );
       return false;
     }
 
@@ -115,11 +126,13 @@ async function main() {
 
   // Vérifier si un admin existe déjà
   const adminExists = await checkExistingAdmin();
-  
+
   if (adminExists) {
-    console.log('\n❓ Un compte admin existe déjà. Voulez-vous continuer quand même?');
+    console.log(
+      '\n❓ Un compte admin existe déjà. Voulez-vous continuer quand même?'
+    );
     console.log('   (Appuyez sur Ctrl+C pour annuler)');
-    
+
     // Attendre 5 secondes
     await new Promise(resolve => setTimeout(resolve, 5000));
   }

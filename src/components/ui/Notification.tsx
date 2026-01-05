@@ -218,32 +218,39 @@ export const useNotification = () => {
   /**
    * Ajoute une nouvelle notification
    */
-  const addNotification = useCallback((
-    notification: Omit<NotificationProps, 'onClose'>
-  ) => {
-    const id = Math.random().toString(36).substring(2);
-    const newNotification = {
-      ...notification,
-      id,
-      onClose: () => removeNotification(id),
-    };
+  const addNotification = useCallback(
+    (notification: Omit<NotificationProps, 'onClose'>) => {
+      const id = Math.random().toString(36).substring(2);
+      const newNotification = {
+        ...notification,
+        id,
+        onClose: () => removeNotification(id),
+      };
 
-    setNotifications(prev => [...prev, newNotification]);
-  }, [removeNotification]);
+      setNotifications(prev => [...prev, newNotification]);
+    },
+    [removeNotification]
+  );
 
   /**
    * Ajoute une notification de succès
    */
-  const showSuccess = useCallback((title: string, message?: string, duration?: number) => {
-    addNotification({ type: 'success', title, message, duration });
-  }, [addNotification]);
+  const showSuccess = useCallback(
+    (title: string, message?: string, duration?: number) => {
+      addNotification({ type: 'success', title, message, duration });
+    },
+    [addNotification]
+  );
 
   /**
    * Ajoute une notification d'erreur
    */
-  const showError = useCallback((title: string, message?: string, duration?: number) => {
-    addNotification({ type: 'error', title, message, duration });
-  }, [addNotification]);
+  const showError = useCallback(
+    (title: string, message?: string, duration?: number) => {
+      addNotification({ type: 'error', title, message, duration });
+    },
+    [addNotification]
+  );
 
   /**
    * Ajoute une notification d'avertissement

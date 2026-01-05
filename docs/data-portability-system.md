@@ -7,6 +7,7 @@ Le système de portabilité des données de NutriSensia est une solution complè
 ## Fonctionnalités principales
 
 ### 1. Export de données complet
+
 - **Formats multiples** : JSON (recommandé), CSV, XML
 - **Sélection granulaire** : Choix des sections de données à exporter
 - **Chiffrement optionnel** : Protection par mot de passe AES-256
@@ -14,18 +15,21 @@ Le système de portabilité des données de NutriSensia est une solution complè
 - **Liens temporaires** : Téléchargements sécurisés avec expiration
 
 ### 2. Import de données flexible
+
 - **Validation automatique** : Vérification de l'intégrité des données
 - **Gestion des conflits** : Stratégies de fusion intelligentes
 - **Prévisualisation** : Aperçu avant import
 - **Sauvegarde automatique** : Protection contre la perte de données
 
 ### 3. Historique et audit complets
+
 - **Traçabilité complète** : Enregistrement de toutes les opérations
 - **Informations techniques** : IP, user-agent, timestamps
 - **Statuts détaillés** : Suivi en temps réel des opérations
 - **Rétention conforme** : Suppression automatique après 7 jours
 
 ### 4. Sécurité renforcée
+
 - **Chiffrement en transit** : HTTPS obligatoire
 - **Chiffrement au repos** : Stockage sécurisé
 - **Authentification forte** : Vérification d'identité
@@ -52,58 +56,73 @@ src/
 ### Services backend
 
 #### DataExportService
+
 ```typescript
 class DataExportService {
   // Export complet des données utilisateur
-  async exportUserData(options: ExportOptions): Promise<ExportResult>
-  
+  async exportUserData(options: ExportOptions): Promise<ExportResult>;
+
   // Collecte des données par section
-  private async collectUserData(sections: ExportSection[]): Promise<Record<string, any>>
-  
+  private async collectUserData(
+    sections: ExportSection[]
+  ): Promise<Record<string, any>>;
+
   // Formatage selon le format demandé
-  private async formatData(data: Record<string, any>, format: string): Promise<string>
-  
+  private async formatData(
+    data: Record<string, any>,
+    format: string
+  ): Promise<string>;
+
   // Chiffrement optionnel
-  private async encryptData(data: string, password: string): Promise<string>
+  private async encryptData(data: string, password: string): Promise<string>;
 }
 ```
 
 #### DataImportService
+
 ```typescript
 class DataImportService {
   // Import de données depuis fichier
-  async importUserData(fileContent: string, options: ImportOptions): Promise<void>
-  
+  async importUserData(
+    fileContent: string,
+    options: ImportOptions
+  ): Promise<void>;
+
   // Validation des données
-  private async validateImportData(data: any): Promise<void>
-  
+  private async validateImportData(data: any): Promise<void>;
+
   // Traitement selon stratégie de conflit
-  private async processImportData(data: any, strategy: ConflictStrategy): Promise<void>
+  private async processImportData(
+    data: any,
+    strategy: ConflictStrategy
+  ): Promise<void>;
 }
 ```
 
 ### Hooks React optimisés
 
 #### useDataExport
+
 ```typescript
 const {
-  startExport,      // Démarre un export
-  isExporting,      // État de chargement
-  progress,         // Progression (0-100)
-  result,           // Résultat de l'export
-  error,           // Erreur éventuelle
-  downloadExport   // Télécharge le résultat
+  startExport, // Démarre un export
+  isExporting, // État de chargement
+  progress, // Progression (0-100)
+  result, // Résultat de l'export
+  error, // Erreur éventuelle
+  downloadExport, // Télécharge le résultat
 } = useDataExport();
 ```
 
 #### useDataImport
+
 ```typescript
 const {
-  startImport,      // Démarre un import
-  isImporting,      // État de chargement
-  progress,         // Progression (0-100)
-  isSuccess,        // Succès de l'import
-  error            // Erreur éventuelle
+  startImport, // Démarre un import
+  isImporting, // État de chargement
+  progress, // Progression (0-100)
+  isSuccess, // Succès de l'import
+  error, // Erreur éventuelle
 } = useDataImport();
 ```
 
@@ -112,6 +131,7 @@ const {
 ### Articles implémentés
 
 #### Article 15 - Droit d'accès
+
 - ✅ **Confirmation du traitement** : L'utilisateur peut confirmer que ses données sont traitées
 - ✅ **Accès aux données** : Export complet de toutes les données personnelles
 - ✅ **Informations sur le traitement** : Métadonnées incluses dans l'export
@@ -119,6 +139,7 @@ const {
 - ✅ **Durée de conservation** : Information sur la rétention des données
 
 #### Article 20 - Droit à la portabilité
+
 - ✅ **Format structuré** : JSON, CSV, XML supportés
 - ✅ **Lisible par machine** : Formats standards
 - ✅ **Transmission directe** : Possibilité d'import/export
@@ -128,6 +149,7 @@ const {
 ### Mesures de sécurité
 
 #### Technique
+
 - **Chiffrement AES-256** : Protection des données sensibles
 - **HTTPS obligatoire** : Transmission sécurisée
 - **Checksums SHA-256** : Vérification d'intégrité
@@ -135,6 +157,7 @@ const {
 - **Expiration automatique** : Suppression après 7 jours
 
 #### Organisationnelle
+
 - **Audit complet** : Traçabilité de toutes les opérations
 - **Authentification forte** : Vérification d'identité
 - **Logs sécurisés** : Enregistrement des accès
@@ -145,11 +168,13 @@ const {
 ### Installation et configuration
 
 1. **Dépendances requises** :
+
 ```bash
 npm install @tanstack/react-query framer-motion lucide-react
 ```
 
 2. **Configuration Supabase** :
+
 ```sql
 -- Bucket pour les exports (à créer dans Supabase Storage)
 CREATE BUCKET exports;
@@ -163,20 +188,24 @@ CREATE POLICY "Users can upload their own exports" ON storage.objects
 ### Utilisation de base
 
 #### Tableau de bord complet
+
 ```tsx
 import { DataPortabilityDashboard } from '@/components/data-export';
 
 function MyPage() {
   return (
-    <DataPortabilityDashboard 
-      initialView="overview"
-      onClose={() => {/* Navigation */}}
+    <DataPortabilityDashboard
+      initialView='overview'
+      onClose={() => {
+        /* Navigation */
+      }}
     />
   );
 }
 ```
 
 #### Assistant d'export uniquement
+
 ```tsx
 import { DataExportWizard } from '@/components/data-export';
 
@@ -191,22 +220,19 @@ function ExportPage() {
 ```
 
 #### Historique des exports
+
 ```tsx
 import { ExportHistory } from '@/components/data-export';
 
 function HistoryPage() {
-  return (
-    <ExportHistory 
-      pageSize={10}
-      compact={false}
-    />
-  );
+  return <ExportHistory pageSize={10} compact={false} />;
 }
 ```
 
 ### Configuration avancée
 
 #### Options d'export personnalisées
+
 ```typescript
 const customExportOptions: ExportOptions = {
   format: 'json',
@@ -214,11 +240,12 @@ const customExportOptions: ExportOptions = {
   includeMetadata: true,
   encrypt: true,
   password: 'motDePasseSecurise123!',
-  includeFiles: true
+  includeFiles: true,
 };
 ```
 
 #### Validation personnalisée
+
 ```typescript
 const { validateFile, validateImportData } = useImportValidation();
 
@@ -235,6 +262,7 @@ const dataValidation = await validateImportData(fileContent, 'json');
 ## Sections de données exportables
 
 ### Utilisateurs communs
+
 - **profile** : Données personnelles de base
 - **preferences** : Paramètres utilisateur
 - **activity** : Historique d'activité
@@ -242,16 +270,19 @@ const dataValidation = await validateImportData(fileContent, 'json');
 - **privacy** : Paramètres de confidentialité
 
 ### Nutritionnistes
+
 - **professional** : Certifications, spécialisations
 - **audit** : Logs d'activité professionnelle
 
 ### Patients
+
 - **medical** : Informations de santé
 - **subscription** : Données d'abonnement
 
 ## Formats d'export
 
 ### JSON (Recommandé)
+
 ```json
 {
   "_metadata": {
@@ -274,6 +305,7 @@ const dataValidation = await validateImportData(fileContent, 'json');
 ```
 
 ### CSV
+
 ```csv
 Section,Field,Value,Type
 profile,first_name,"Marie",string
@@ -282,6 +314,7 @@ professional,asca_number,"ASCA-12345",string
 ```
 
 ### XML
+
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <user_data>
@@ -298,17 +331,19 @@ professional,asca_number,"ASCA-12345",string
 ## Sécurité et chiffrement
 
 ### Chiffrement des exports
+
 ```typescript
 // Chiffrement automatique avec mot de passe
 const encryptedExport = await exportService.exportUserData({
   format: 'json',
   sections: ['profile'],
   encrypt: true,
-  password: 'motDePasseSecurise123!'
+  password: 'motDePasseSecurise123!',
 });
 ```
 
 ### Déchiffrement
+
 ```typescript
 // Le déchiffrement se fait côté client avec le même mot de passe
 // Implémentation utilisant Web Crypto API
@@ -322,6 +357,7 @@ const decryptedData = await crypto.subtle.decrypt(
 ## Tests et validation
 
 ### Tests unitaires
+
 ```bash
 # Tester les services d'export
 npm test src/lib/data-export.test.ts
@@ -334,6 +370,7 @@ npm test src/components/data-export/
 ```
 
 ### Tests de conformité RGPD
+
 ```bash
 # Script de validation RGPD
 npm run test:gdpr
@@ -365,12 +402,14 @@ npm run test:security
 ## Monitoring et métriques
 
 ### Métriques importantes
+
 - **Taux de succès des exports** : > 99%
 - **Temps moyen d'export** : < 30 secondes
 - **Taille moyenne des exports** : Varie selon les données
 - **Nombre d'exports par jour** : Suivi des tendances
 
 ### Alertes à configurer
+
 - Échec d'export > 1%
 - Temps d'export > 2 minutes
 - Erreurs de chiffrement
@@ -381,6 +420,7 @@ npm run test:security
 ### Problèmes courants
 
 #### Export échoue
+
 ```bash
 # Vérifier les permissions Supabase
 # Contrôler la configuration du bucket
@@ -388,6 +428,7 @@ npm run test:security
 ```
 
 #### Import impossible
+
 ```bash
 # Vérifier le format du fichier
 # Contrôler la taille (< 10MB)
@@ -395,6 +436,7 @@ npm run test:security
 ```
 
 #### Chiffrement défaillant
+
 ```bash
 # Vérifier la force du mot de passe
 # Contrôler le support Web Crypto API
@@ -404,6 +446,7 @@ npm run test:security
 ## Évolutions futures
 
 ### Fonctionnalités prévues
+
 - **Export automatique** : Programmation d'exports réguliers
 - **Formats additionnels** : PDF, Excel
 - **Intégrations tierces** : APIs externes
@@ -411,6 +454,7 @@ npm run test:security
 - **Signature numérique** : Authentification des exports
 
 ### Améliorations techniques
+
 - **Performance** : Optimisation pour gros volumes
 - **Streaming** : Export de très gros datasets
 - **Parallélisation** : Traitement concurrent
@@ -419,6 +463,3 @@ npm run test:security
 ---
 
 Ce système de portabilité des données fournit une base solide pour la conformité RGPD tout en offrant une excellente expérience utilisateur. Il peut être étendu selon les besoins spécifiques de l'application NutriSensia.
-
-
-

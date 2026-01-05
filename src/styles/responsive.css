@@ -1,0 +1,339 @@
+/* Configuration Responsive pour la page L'Approche */
+
+/* ============================================ */
+/* BREAKPOINTS SYSTÈME                          */
+/* ============================================ */
+/* Mobile: < 768px */
+/* Tablet: 768px - 1024px */
+/* Desktop: >= 1024px */
+
+/* ============================================ */
+/* TYPOGRAPHIE RESPONSIVE                       */
+/* ============================================ */
+
+/* Classes utilitaires pour la typographie responsive */
+.responsive-h1 {
+  @apply text-[3rem] leading-[1.2];
+}
+
+@media (max-width: 767px) {
+  .responsive-h1 {
+    @apply text-[2.25rem] leading-[1.2];
+  }
+}
+
+.responsive-h2 {
+  @apply text-[2.5rem] leading-[1.3];
+}
+
+@media (max-width: 767px) {
+  .responsive-h2 {
+    @apply text-[2rem] leading-[1.3];
+  }
+}
+
+@media (max-width: 480px) {
+  .responsive-h2 {
+    @apply text-[1.75rem] leading-[1.3];
+  }
+}
+
+.responsive-h3 {
+  @apply text-[1.5rem] leading-[1.3];
+}
+
+@media (max-width: 767px) {
+  .responsive-h3 {
+    @apply text-[1.25rem] leading-[1.3];
+  }
+}
+
+.responsive-body {
+  @apply text-[1.125rem] leading-[1.7];
+}
+
+@media (max-width: 767px) {
+  .responsive-body {
+    @apply text-[1rem] leading-[1.6];
+  }
+}
+
+.responsive-small {
+  @apply text-[1rem] leading-[1.6];
+}
+
+@media (max-width: 767px) {
+  .responsive-small {
+    @apply text-[0.875rem] leading-[1.5];
+  }
+}
+
+/* ============================================ */
+/* ESPACEMENT RESPONSIVE                        */
+/* ============================================ */
+
+/* Padding de section */
+.section-padding {
+  @apply py-[100px] px-10;
+}
+
+@media (max-width: 767px) {
+  .section-padding {
+    @apply py-[60px] px-6;
+  }
+}
+
+/* Padding de carte */
+.card-padding {
+  @apply p-[40px];
+}
+
+@media (max-width: 767px) {
+  .card-padding {
+    @apply p-[30px];
+  }
+}
+
+@media (max-width: 480px) {
+  .card-padding {
+    @apply p-[25px];
+  }
+}
+
+/* Gap de grille */
+.grid-gap {
+  @apply gap-10;
+}
+
+@media (max-width: 767px) {
+  .grid-gap {
+    @apply gap-6;
+  }
+}
+
+/* Marges réduites sur mobile */
+.margin-responsive {
+  @apply mb-6;
+}
+
+@media (max-width: 767px) {
+  .margin-responsive {
+    @apply mb-4;
+  }
+}
+
+/* ============================================ */
+/* CIBLES TACTILES                             */
+/* ============================================ */
+
+/* Taille minimale de 44px pour les éléments interactifs */
+.touch-target {
+  @apply min-h-[44px] min-w-[44px];
+}
+
+/* Espacement entre cibles tactiles */
+.touch-spacing {
+  @apply space-y-4;
+}
+
+@media (max-width: 767px) {
+  .touch-spacing {
+    @apply space-y-4;
+  }
+}
+
+/* Boutons responsive */
+.button-responsive {
+  @apply px-8 py-4 text-[1.125rem];
+}
+
+@media (max-width: 767px) {
+  .button-responsive {
+    @apply w-full min-h-[48px] px-6 py-3 text-[1rem];
+  }
+}
+
+/* ============================================ */
+/* LAYOUTS RESPONSIVE SPÉCIFIQUES              */
+/* ============================================ */
+
+/* Hero Section */
+.hero-responsive {
+  @apply min-h-[60vh] py-[120px] px-10;
+}
+
+@media (max-width: 767px) {
+  .hero-responsive {
+    @apply min-h-[50vh] py-[100px] px-6;
+  }
+}
+
+/* Split Layout (Image + Contenu) */
+.split-layout {
+  @apply grid grid-cols-1 lg:grid-cols-5 gap-[60px] items-center;
+}
+
+@media (max-width: 1023px) {
+  .split-layout {
+    @apply grid-cols-1 gap-8 text-center;
+  }
+}
+
+/* Timeline Layout */
+.timeline-responsive {
+  @apply flex flex-col md:flex-row items-center md:items-stretch justify-between gap-8 md:gap-10;
+}
+
+/* Grid 2x2 vers Stack */
+.grid-2x2-responsive {
+  @apply grid grid-cols-1 md:grid-cols-2 gap-10;
+}
+
+@media (max-width: 767px) {
+  .grid-2x2-responsive {
+    @apply grid-cols-1 gap-6;
+  }
+}
+
+/* Grid 3 colonnes vers Stack */
+.grid-3-responsive {
+  @apply grid grid-cols-1 md:grid-cols-3 gap-8;
+}
+
+@media (max-width: 767px) {
+  .grid-3-responsive {
+    @apply grid-cols-1 gap-6;
+  }
+}
+
+/* ============================================ */
+/* IMAGES RESPONSIVE                           */
+/* ============================================ */
+
+.image-responsive {
+  @apply w-full max-w-[400px] mx-auto;
+}
+
+@media (max-width: 767px) {
+  .image-responsive {
+    @apply w-[90%] max-w-[350px];
+  }
+}
+
+/* ============================================ */
+/* ANIMATIONS RESPONSIVE                       */
+/* ============================================ */
+
+/* Réduire les animations sur mobile si nécessaire */
+@media (max-width: 767px) {
+  .animate-reduced-mobile {
+    animation-duration: 0.4s !important;
+  }
+}
+
+/* ============================================ */
+/* UTILITAIRES SPÉCIFIQUES MOBILE             */
+/* ============================================ */
+
+/* Masquer sur mobile */
+.hidden-mobile {
+  @apply block;
+}
+
+@media (max-width: 767px) {
+  .hidden-mobile {
+    @apply hidden;
+  }
+}
+
+/* Afficher seulement sur mobile */
+.mobile-only {
+  @apply hidden;
+}
+
+@media (max-width: 767px) {
+  .mobile-only {
+    @apply block;
+  }
+}
+
+/* Stack vertical sur mobile */
+.stack-mobile {
+  @apply flex flex-col md:flex-row;
+}
+
+/* Centrer sur mobile */
+.center-mobile {
+  @apply text-left md:text-left;
+}
+
+@media (max-width: 767px) {
+  .center-mobile {
+    @apply text-center;
+  }
+}
+
+/* ============================================ */
+/* INPUTS ET FORMULAIRES                       */
+/* ============================================ */
+
+/* Prévenir le zoom iOS sur les inputs */
+.input-no-zoom {
+  font-size: 16px;
+}
+
+@media (max-width: 767px) {
+  .input-no-zoom {
+    font-size: 16px; /* Minimum pour éviter le zoom iOS */
+  }
+}
+
+/* ============================================ */
+/* NAVIGATION STICKY RESPONSIVE               */
+/* ============================================ */
+
+.header-responsive {
+  @apply h-20;
+}
+
+@media (max-width: 767px) {
+  .header-responsive {
+    @apply h-16; /* Réduire la hauteur sur mobile */
+  }
+}
+
+/* ============================================ */
+/* CONTENEURS MAX-WIDTH                        */
+/* ============================================ */
+
+.container-responsive {
+  @apply container mx-auto max-w-[1200px];
+}
+
+.container-narrow {
+  @apply container mx-auto max-w-[900px];
+}
+
+.container-wide {
+  @apply container mx-auto max-w-[1400px];
+}
+
+/* ============================================ */
+/* DÉBORDEMENTS ET SCROLL                      */
+/* ============================================ */
+
+/* Prévenir le débordement horizontal */
+.prevent-overflow {
+  @apply overflow-x-hidden;
+}
+
+/* Scroll horizontal pour les éléments larges */
+.scroll-horizontal {
+  @apply overflow-x-auto;
+}
+
+@media (max-width: 767px) {
+  .scroll-horizontal {
+    @apply -mx-6 px-6; /* Compenser le padding du container */
+  }
+}

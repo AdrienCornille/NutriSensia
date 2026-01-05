@@ -1,0 +1,94 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fond dégradé -->
+  <defs>
+    <linearGradient id="ogBgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2E7D5E;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#4A9B7B;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7FD1C1;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Motif de cercles -->
+    <pattern id="ogDots" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+      <circle cx="10" cy="10" r="3" fill="#FFFFFF" opacity="0.15"/>
+    </pattern>
+  </defs>
+
+  <!-- Fond principal -->
+  <rect width="1200" height="630" fill="url(#ogBgGradient)"/>
+  <rect width="1200" height="630" fill="url(#ogDots)"/>
+
+  <!-- Formes organiques décoratives -->
+  <ellipse cx="200" cy="150" rx="180" ry="150" fill="#FFFFFF" opacity="0.08"/>
+  <ellipse cx="1000" cy="480" rx="200" ry="160" fill="#FFFFFF" opacity="0.08"/>
+
+  <!-- Container blanc central -->
+  <rect x="100" y="80" width="1000" height="470" rx="20" fill="#FFFFFF" opacity="0.95"/>
+
+  <!-- Logo / Icône cœur -->
+  <g transform="translate(150, 150)">
+    <circle cx="40" cy="40" r="45" fill="#2E7D5E" opacity="0.15"/>
+    <path d="M 40 65 L 20 45 Q 10 35 10 22 Q 10 10 20 5 Q 30 0 40 5 Q 50 0 60 5 Q 70 10 70 22 Q 70 35 60 45 Z"
+          fill="#2E7D5E"/>
+  </g>
+
+  <!-- Titre principal -->
+  <text x="280" y="200" font-family="Playfair Display, Georgia, serif" font-size="72" font-weight="bold"
+        fill="#2C3E3C">
+    NutriSensia
+  </text>
+
+  <!-- Sous-titre -->
+  <text x="280" y="270" font-family="Inter, system-ui, sans-serif" font-size="32" font-weight="600"
+        fill="#667674">
+    Nutrition Personnalisée en Ligne
+  </text>
+
+  <!-- Badges / Points clés -->
+  <g transform="translate(280, 320)">
+    <!-- Badge 1 -->
+    <g>
+      <circle cx="12" cy="12" r="8" fill="#2E7D5E"/>
+      <path d="M 9 12 L 11 14 L 15 10" stroke="#FFFFFF" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="30" y="18" font-family="Inter, system-ui, sans-serif" font-size="22" fill="#2C3E3C">
+        Diplômée ASCA & RME
+      </text>
+    </g>
+
+    <!-- Badge 2 -->
+    <g transform="translate(0, 50)">
+      <circle cx="12" cy="12" r="8" fill="#2E7D5E"/>
+      <path d="M 9 12 L 11 14 L 15 10" stroke="#FFFFFF" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="30" y="18" font-family="Inter, system-ui, sans-serif" font-size="22" fill="#2C3E3C">
+        Consultations 100% en ligne
+      </text>
+    </g>
+
+    <!-- Badge 3 -->
+    <g transform="translate(0, 100)">
+      <circle cx="12" cy="12" r="8" fill="#2E7D5E"/>
+      <path d="M 9 12 L 11 14 L 15 10" stroke="#FFFFFF" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="30" y="18" font-family="Inter, system-ui, sans-serif" font-size="22" fill="#2C3E3C">
+        Remboursable par assurance
+      </text>
+    </g>
+  </g>
+
+  <!-- Éléments décoratifs nutritionnels (droite) -->
+  <!-- Pomme -->
+  <circle cx="950" cy="250" r="40" fill="#F4A261" opacity="0.4"/>
+  <ellipse cx="950" cy="220" rx="10" ry="18" fill="#4A9B7B" opacity="0.4"/>
+
+  <!-- Feuille -->
+  <path d="M 1020 350 Q 1000 370 1010 390 Q 1020 410 1040 400 Q 1050 390 1040 370 Q 1030 350 1020 350 Z"
+        fill="#7FD1C1" opacity="0.4"/>
+
+  <!-- Carotte -->
+  <path d="M 920 420 L 910 480 L 930 480 Z" fill="#F4A261" opacity="0.4"/>
+  <path d="M 920 400 Q 910 410 915 420 L 925 420 Q 930 410 920 400 Z" fill="#4A9B7B" opacity="0.4"/>
+
+  <!-- URL du site (bas) -->
+  <text x="600" y="580" font-family="Inter, system-ui, sans-serif" font-size="20" font-weight="500"
+        fill="#FFFFFF" text-anchor="middle" opacity="0.9">
+    nutrisensia.ch
+  </text>
+</svg>

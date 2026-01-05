@@ -5,10 +5,16 @@
 // Types de base pour les événements
 export type OnboardingRole = 'nutritionist' | 'patient' | 'admin';
 export type DeviceType = 'mobile' | 'tablet' | 'desktop';
-export type BrowserType = 'Chrome' | 'Firefox' | 'Safari' | 'Edge' | 'Other' | 'unknown';
+export type BrowserType =
+  | 'Chrome'
+  | 'Firefox'
+  | 'Safari'
+  | 'Edge'
+  | 'Other'
+  | 'unknown';
 
 // Types d'événements d'onboarding
-export type OnboardingEventType = 
+export type OnboardingEventType =
   | 'Onboarding Started'
   | 'Onboarding Step Started'
   | 'Onboarding Step Completed'
@@ -20,7 +26,7 @@ export type OnboardingEventType =
   | 'Onboarding Page View';
 
 // Types d'erreurs
-export type OnboardingErrorType = 
+export type OnboardingErrorType =
   | 'validation_error'
   | 'network_error'
   | 'server_error'
@@ -28,7 +34,7 @@ export type OnboardingErrorType =
   | 'unknown_error';
 
 // Types d'aide
-export type HelpType = 
+export type HelpType =
   | 'tooltip'
   | 'help_text'
   | 'video_tutorial'
@@ -142,7 +148,7 @@ export interface OnboardingAbandonedEvent extends BaseOnboardingEvent {
 }
 
 // Union de tous les événements
-export type OnboardingEvent = 
+export type OnboardingEvent =
   | OnboardingStartedEvent
   | OnboardingStepStartedEvent
   | OnboardingStepCompletedEvent

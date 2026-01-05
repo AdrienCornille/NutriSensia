@@ -33,15 +33,17 @@ export function AuthCallback() {
       .eq('id', userId)
       .single();
 
-    const twoFactorEnabledInDB = profileData ? (profileData as any).two_factor_enabled : false;
+    const twoFactorEnabledInDB = profileData
+      ? (profileData as any).two_factor_enabled
+      : false;
     const hasVerifiedFactors = hasVerifiedFactorsInAuth && twoFactorEnabledInDB;
-    
+
     console.log('🔍 Diagnostic MFA:', {
       userId,
       hasVerifiedFactorsInAuth,
       twoFactorEnabledInDB,
       hasVerifiedFactors,
-      factorsData
+      factorsData,
     });
 
     return hasVerifiedFactors;
@@ -62,7 +64,8 @@ export function AuthCallback() {
       if (!profileData) return true; // Profil pas encore créé = nouveau compte
 
       // Vérifier si le compte a été créé récemment (moins de 10 minutes)
-      const accountAge = Date.now() - new Date(profileData.created_at).getTime();
+      const accountAge =
+        Date.now() - new Date(profileData.created_at).getTime();
       const isRecentAccount = accountAge < 10 * 60 * 1000; // 10 minutes
 
       // Vérifier si c'est la première connexion
@@ -79,7 +82,7 @@ export function AuthCallback() {
         isFirstSignIn,
         no2FAConfigured,
         createdAt: profileData.created_at,
-        lastSignIn: profileData.last_sign_in_at
+        lastSignIn: profileData.last_sign_in_at,
       });
 
       // PRIORITÉ : Si 2FA est déjà configuré, ce n'est PAS un nouveau compte
@@ -90,14 +93,18 @@ export function AuthCallback() {
 
       // C'est un nouveau compte si : récent OU première connexion OU pas de 2FA
       const isNewAccount = isRecentAccount || isFirstSignIn || no2FAConfigured;
-      
+
       console.log('🔍 Décision finale nouveau compte:', {
         isNewAccount,
-        raison: isRecentAccount ? 'compte récent' : 
-                isFirstSignIn ? 'première connexion' : 
-                no2FAConfigured ? 'pas de 2FA' : 'aucune'
+        raison: isRecentAccount
+          ? 'compte récent'
+          : isFirstSignIn
+            ? 'première connexion'
+            : no2FAConfigured
+              ? 'pas de 2FA'
+              : 'aucune',
       });
-      
+
       return isNewAccount;
     } catch (error) {
       console.error('Erreur vérification nouveau compte:', error);
@@ -112,20 +119,24 @@ export function AuthCallback() {
     try {
       // Récupérer le rôle de l'utilisateur
       const userRole = user?.user_metadata?.role || 'patient';
-      
+
       console.log('🔍 Début redirection:', {
         userRole,
         userEmail: user.email,
         urlType,
-        userId: user.id
+        userId: user.id,
       });
 
       // PRIORITÉ 1: Vérifier si c'est un nouveau compte
       const isNew = await isNewAccount(user);
-      
+
       if (isNew) {
-        console.log('🆕 NOUVEAU COMPTE DÉTECTÉ - Redirection obligatoire vers 2FA');
-        setMessage('Configuration de sécurité requise pour les nouveaux comptes...');
+        console.log(
+          '🆕 NOUVEAU COMPTE DÉTECTÉ - Redirection obligatoire vers 2FA'
+        );
+        setMessage(
+          'Configuration de sécurité requise pour les nouveaux comptes...'
+        );
         setTimeout(() => {
           router.push('/auth/enroll-mfa');
         }, 2000);
@@ -148,13 +159,13 @@ export function AuthCallback() {
 
       // Analyser le niveau d'assurance pour déterminer la redirection selon le rôle
       const { currentLevel, nextLevel } = mfaData;
-      
+
       console.log('🔍 OAuth - Analyse des niveaux AAL:', {
         userRole,
         currentLevel,
         nextLevel,
         mfaData,
-        userEmail: user.email
+        userEmail: user.email,
       });
 
       if (userRole === 'nutritionist') {
@@ -190,8 +201,10 @@ export function AuthCallback() {
         }
       } else {
         // Les patients DOIVENT utiliser le 2FA comme les nutritionnistes
-        console.log('👤 Patient OAuth connecté, vérification 2FA obligatoire...');
-        
+        console.log(
+          '👤 Patient OAuth connecté, vérification 2FA obligatoire...'
+        );
+
         // FORCER le 2FA pour tous les patients, indépendamment de nextLevel
         if (currentLevel === 'aal1') {
           // Le patient doit configurer ou vérifier le 2FA
@@ -203,7 +216,9 @@ export function AuthCallback() {
           setTimeout(() => {
             if (hasVerifiedFactors) {
               // Le patient a déjà configuré le 2FA, rediriger vers la vérification
-              console.log('🔐 Patient OAuth avec 2FA configuré -> /auth/verify-mfa');
+              console.log(
+                '🔐 Patient OAuth avec 2FA configuré -> /auth/verify-mfa'
+              );
               router.push('/auth/verify-mfa');
             } else {
               // Le patient n'a pas encore configuré le 2FA, rediriger vers l'enrôlement
@@ -213,14 +228,18 @@ export function AuthCallback() {
           }, 2000);
         } else if (currentLevel === 'aal2') {
           // Le patient est déjà au niveau AAL2 requis
-          console.log('✅ Patient OAuth déjà au niveau AAL2, redirection dashboard');
+          console.log(
+            '✅ Patient OAuth déjà au niveau AAL2, redirection dashboard'
+          );
           setMessage('Redirection vers votre espace...');
           setTimeout(() => {
             router.push('/');
           }, 2000);
         } else {
           // Cas par défaut : redirection vers l'accueil
-          console.log('🏠 Patient OAuth - redirection par défaut vers l\'accueil');
+          console.log(
+            "🏠 Patient OAuth - redirection par défaut vers l'accueil"
+          );
           setMessage('Redirection vers votre espace...');
           setTimeout(() => {
             router.push('/');
@@ -274,7 +293,6 @@ export function AuthCallback() {
 
         // Vérifier le statut 2FA et rediriger appropriément
         await handleMFARedirection(data.session.user, type);
-        
       } catch (error: any) {
         console.error(
           "Erreur lors du traitement de l'authentification:",

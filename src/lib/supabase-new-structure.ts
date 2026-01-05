@@ -31,12 +31,12 @@ export interface NutritionistProfile {
   avatar_url?: string;
   locale?: string;
   timezone?: string;
-  
+
   // Identifiants professionnels
   asca_number?: string;
   rme_number?: string;
   ean_code?: string;
-  
+
   // Informations professionnelles
   specializations?: string[];
   bio?: string;
@@ -54,17 +54,17 @@ export interface NutritionistProfile {
   };
   consultation_types?: string[];
   available_languages?: string[];
-  
+
   // Statuts
   verified: boolean;
   is_active: boolean;
   max_patients: number;
-  
+
   // Onboarding
   onboarding_completed: number; // 0-100: pourcentage de completion
   onboarding_completed_at?: string;
   onboarding_data?: any;
-  
+
   // Timestamps
   created_at: string;
   updated_at: string;
@@ -80,26 +80,31 @@ export interface PatientProfile {
   avatar_url?: string;
   locale?: string;
   timezone?: string;
-  
+
   // Informations de santé
   date_of_birth?: string;
   gender?: 'male' | 'female' | 'other' | 'prefer-not-to-say';
   height_cm?: number;
   weight_kg?: number;
-  activity_level?: 'sedentary' | 'light' | 'moderate' | 'active' | 'very-active';
-  
+  activity_level?:
+    | 'sedentary'
+    | 'light'
+    | 'moderate'
+    | 'active'
+    | 'very-active';
+
   // Préférences et restrictions
   dietary_restrictions?: string[];
   allergies?: string[];
   medical_conditions?: string[];
   medications?: string[];
   goals?: string[];
-  
+
   // Onboarding
   onboarding_completed: number; // 0-100: pourcentage de completion
   onboarding_completed_at?: string;
   onboarding_data?: any;
-  
+
   // Timestamps
   created_at: string;
   updated_at: string;
@@ -120,7 +125,10 @@ export async function getCoreProfile(userId: string) {
   return data as ProfileCore;
 }
 
-export async function updateCoreProfile(userId: string, updates: Partial<ProfileCore>) {
+export async function updateCoreProfile(
+  userId: string,
+  updates: Partial<ProfileCore>
+) {
   const { data, error } = await supabase
     .from('profiles')
     .update(updates)
@@ -147,7 +155,10 @@ export async function getNutritionistProfile(userId: string) {
   return data as NutritionistProfile;
 }
 
-export async function createNutritionistProfile(userId: string, profileData: Partial<NutritionistProfile>) {
+export async function createNutritionistProfile(
+  userId: string,
+  profileData: Partial<NutritionistProfile>
+) {
   const { data, error } = await supabase
     .from('nutritionist_profiles')
     .insert({
@@ -161,7 +172,10 @@ export async function createNutritionistProfile(userId: string, profileData: Par
   return data as NutritionistProfile;
 }
 
-export async function updateNutritionistProfile(userId: string, updates: Partial<NutritionistProfile>) {
+export async function updateNutritionistProfile(
+  userId: string,
+  updates: Partial<NutritionistProfile>
+) {
   const { data, error } = await supabase
     .from('nutritionist_profiles')
     .update(updates)
@@ -173,7 +187,10 @@ export async function updateNutritionistProfile(userId: string, updates: Partial
   return data as NutritionistProfile;
 }
 
-export async function upsertNutritionistProfile(userId: string, profileData: Partial<NutritionistProfile>) {
+export async function upsertNutritionistProfile(
+  userId: string,
+  profileData: Partial<NutritionistProfile>
+) {
   const { data, error } = await supabase
     .from('nutritionist_profiles')
     .upsert({
@@ -202,7 +219,10 @@ export async function getPatientProfile(userId: string) {
   return data as PatientProfile;
 }
 
-export async function createPatientProfile(userId: string, profileData: Partial<PatientProfile>) {
+export async function createPatientProfile(
+  userId: string,
+  profileData: Partial<PatientProfile>
+) {
   const { data, error } = await supabase
     .from('patient_profiles')
     .insert({
@@ -216,7 +236,10 @@ export async function createPatientProfile(userId: string, profileData: Partial<
   return data as PatientProfile;
 }
 
-export async function updatePatientProfile(userId: string, updates: Partial<PatientProfile>) {
+export async function updatePatientProfile(
+  userId: string,
+  updates: Partial<PatientProfile>
+) {
   const { data, error } = await supabase
     .from('patient_profiles')
     .update(updates)
@@ -228,7 +251,10 @@ export async function updatePatientProfile(userId: string, updates: Partial<Pati
   return data as PatientProfile;
 }
 
-export async function upsertPatientProfile(userId: string, profileData: Partial<PatientProfile>) {
+export async function upsertPatientProfile(
+  userId: string,
+  profileData: Partial<PatientProfile>
+) {
   const { data, error } = await supabase
     .from('patient_profiles')
     .upsert({
@@ -247,7 +273,7 @@ export async function upsertPatientProfile(userId: string, profileData: Partial<
 // =====================================================
 
 export async function saveNutritionistOnboardingProgress(
-  userId: string, 
+  userId: string,
   data: Partial<NutritionistOnboardingData>
 ) {
   // Convertir les données d'onboarding vers la structure nutritionist_profile
@@ -265,12 +291,17 @@ export async function saveNutritionistOnboardingProgress(
   if (data.eanCode) profileUpdate.ean_code = data.eanCode;
 
   // Informations professionnelles
-  if (data.specializations) profileUpdate.specializations = data.specializations;
+  if (data.specializations)
+    profileUpdate.specializations = data.specializations;
   if (data.bio) profileUpdate.bio = data.bio;
-  if (data.consultationRates) profileUpdate.consultation_rates = data.consultationRates;
-  if (data.practiceAddress) profileUpdate.practice_address = data.practiceAddress;
-  if (data.consultationTypes) profileUpdate.consultation_types = data.consultationTypes;
-  if (data.availableLanguages) profileUpdate.available_languages = data.availableLanguages;
+  if (data.consultationRates)
+    profileUpdate.consultation_rates = data.consultationRates;
+  if (data.practiceAddress)
+    profileUpdate.practice_address = data.practiceAddress;
+  if (data.consultationTypes)
+    profileUpdate.consultation_types = data.consultationTypes;
+  if (data.availableLanguages)
+    profileUpdate.available_languages = data.availableLanguages;
   if (data.maxPatients) profileUpdate.max_patients = data.maxPatients;
 
   // Consentements légaux (RGPD)
@@ -298,12 +329,12 @@ export async function saveNutritionistOnboardingProgress(
 }
 
 export async function completeNutritionistOnboarding(
-  userId: string, 
+  userId: string,
   data: NutritionistOnboardingData
 ) {
   // Sauvegarder toutes les données + marquer comme terminé
   const profileData = await saveNutritionistOnboardingProgress(userId, data);
-  
+
   return await updateNutritionistProfile(userId, {
     onboarding_completed: true,
     onboarding_completed_at: new Date().toISOString(),
@@ -318,10 +349,10 @@ export async function completeNutritionistOnboarding(
 export async function getFullUserProfile(userId: string) {
   // Récupérer le profil core
   const coreProfile = await getCoreProfile(userId);
-  
+
   // Récupérer le profil spécifique selon le rôle
   let specificProfile = null;
-  
+
   if (coreProfile.role === 'nutritionist') {
     try {
       specificProfile = await getNutritionistProfile(userId);
@@ -355,18 +386,17 @@ export async function getAllNutritionists(filters?: {
   if (filters?.verified !== undefined) {
     query = query.eq('verified', filters.verified);
   }
-  
+
   if (filters?.active !== undefined) {
     query = query.eq('is_active', filters.active);
   }
-  
+
   if (filters?.specializations && filters.specializations.length > 0) {
     query = query.overlaps('specializations', filters.specializations);
   }
 
   const { data, error } = await query.order('created_at', { ascending: false });
-  
+
   if (error) throw error;
   return data as NutritionistProfile[];
 }
-

@@ -1,13 +1,16 @@
 /**
  * API Route pour les analytics des tests A/B
- * 
+ *
  * Cette route permet de récupérer les données analytiques
  * des tests A/B pour le dashboard de monitoring.
  */
 
 import { NextResponse, type NextRequest } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { abTestAnalytics, type ABTestResults } from '@/lib/feature-flags/analytics';
+import {
+  abTestAnalytics,
+  type ABTestResults,
+} from '@/lib/feature-flags/analytics';
 
 /**
  * Handler GET pour récupérer les analytics des tests A/B
@@ -22,11 +25,14 @@ export async function GET(request: NextRequest) {
 
     // Vérification de l'authentification
     const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
     if (authError || !user) {
       return NextResponse.json(
-        { error: 'Authentication required' }, 
+        { error: 'Authentication required' },
         { status: 401 }
       );
     }
@@ -35,43 +41,46 @@ export async function GET(request: NextRequest) {
     const userRole = user.user_metadata?.role || user.app_metadata?.role;
     if (!['admin', 'nutritionist'].includes(userRole)) {
       return NextResponse.json(
-        { error: 'Insufficient permissions' }, 
+        { error: 'Insufficient permissions' },
         { status: 403 }
       );
     }
 
-    const dateRange = startDate && endDate ? {
-      start: new Date(startDate),
-      end: new Date(endDate),
-    } : undefined;
+    const dateRange =
+      startDate && endDate
+        ? {
+            start: new Date(startDate),
+            end: new Date(endDate),
+          }
+        : undefined;
 
     switch (action) {
       case 'summary':
         return await handleSummaryRequest(flagKey, dateRange);
-      
+
       case 'results':
         return await handleResultsRequest(flagKey, dateRange);
-      
+
       case 'metrics':
         return await handleMetricsRequest(flagKey, dateRange);
-      
+
       case 'events':
         return await handleEventsRequest(flagKey, dateRange, searchParams);
-      
+
       default:
         return NextResponse.json(
-          { error: 'Invalid action parameter' }, 
+          { error: 'Invalid action parameter' },
           { status: 400 }
         );
     }
   } catch (error) {
-    console.error('Erreur dans l\'API analytics A/B:', error);
-    
+    console.error("Erreur dans l'API analytics A/B:", error);
+
     return NextResponse.json(
-      { 
-        error: 'Internal server error', 
-        message: 'Failed to retrieve analytics data' 
-      }, 
+      {
+        error: 'Internal server error',
+        message: 'Failed to retrieve analytics data',
+      },
       { status: 500 }
     );
   }
@@ -88,7 +97,10 @@ export async function POST(request: NextRequest) {
     // Validation des données requises
     if (!eventType || !userId || !flagKey || !flagValue) {
       return NextResponse.json(
-        { error: 'Missing required fields: eventType, userId, flagKey, flagValue' }, 
+        {
+          error:
+            'Missing required fields: eventType, userId, flagKey, flagValue',
+        },
         { status: 400 }
       );
     }
@@ -102,15 +114,18 @@ export async function POST(request: NextRequest) {
       ...eventData,
     });
 
-    return NextResponse.json({ success: true, message: 'Event tracked successfully' });
+    return NextResponse.json({
+      success: true,
+      message: 'Event tracked successfully',
+    });
   } catch (error) {
-    console.error('Erreur lors de l\'enregistrement d\'événement A/B:', error);
-    
+    console.error("Erreur lors de l'enregistrement d'événement A/B:", error);
+
     return NextResponse.json(
-      { 
-        error: 'Internal server error', 
-        message: 'Failed to track event' 
-      }, 
+      {
+        error: 'Internal server error',
+        message: 'Failed to track event',
+      },
       { status: 500 }
     );
   }
@@ -120,11 +135,11 @@ export async function POST(request: NextRequest) {
  * Gère les demandes de résumé des tests A/B
  */
 async function handleSummaryRequest(
-  flagKey: string | null, 
+  flagKey: string | null,
   dateRange?: { start: Date; end: Date }
 ) {
   const supabase = await createClient();
-  
+
   // Requête pour obtenir un résumé des tests actifs
   let query = supabase
     .from('ab_test_events')
@@ -155,10 +170,12 @@ async function handleSummaryRequest(
     data: summary,
     metadata: {
       totalEvents: data?.length || 0,
-      dateRange: dateRange ? {
-        start: dateRange.start.toISOString(),
-        end: dateRange.end.toISOString(),
-      } : null,
+      dateRange: dateRange
+        ? {
+            start: dateRange.start.toISOString(),
+            end: dateRange.end.toISOString(),
+          }
+        : null,
       generatedAt: new Date().toISOString(),
     },
   });
@@ -168,21 +185,24 @@ async function handleSummaryRequest(
  * Gère les demandes de résultats détaillés des tests A/B
  */
 async function handleResultsRequest(
-  flagKey: string | null, 
+  flagKey: string | null,
   dateRange?: { start: Date; end: Date }
 ) {
   if (!flagKey) {
     return NextResponse.json(
-      { error: 'flagKey parameter is required for results' }, 
+      { error: 'flagKey parameter is required for results' },
       { status: 400 }
     );
   }
 
-  const results = await abTestAnalytics.analyzeABTestResults(flagKey, dateRange);
+  const results = await abTestAnalytics.analyzeABTestResults(
+    flagKey,
+    dateRange
+  );
 
   if (!results) {
     return NextResponse.json(
-      { error: 'No test results found for the specified flag' }, 
+      { error: 'No test results found for the specified flag' },
       { status: 404 }
     );
   }
@@ -201,17 +221,20 @@ async function handleResultsRequest(
  * Gère les demandes de métriques de conversion
  */
 async function handleMetricsRequest(
-  flagKey: string | null, 
+  flagKey: string | null,
   dateRange?: { start: Date; end: Date }
 ) {
   if (!flagKey) {
     return NextResponse.json(
-      { error: 'flagKey parameter is required for metrics' }, 
+      { error: 'flagKey parameter is required for metrics' },
       { status: 400 }
     );
   }
 
-  const metrics = await abTestAnalytics.getConversionMetrics(flagKey, dateRange);
+  const metrics = await abTestAnalytics.getConversionMetrics(
+    flagKey,
+    dateRange
+  );
 
   return NextResponse.json({
     success: true,
@@ -228,7 +251,7 @@ async function handleMetricsRequest(
  * Gère les demandes d'événements bruts
  */
 async function handleEventsRequest(
-  flagKey: string | null, 
+  flagKey: string | null,
   dateRange?: { start: Date; end: Date },
   searchParams: URLSearchParams
 ) {
@@ -316,7 +339,7 @@ function aggregateTestSummary(events: any[]) {
     const variant = summary.variants.get(event.variant);
     variant.users.add(event.user_id);
     variant.events++;
-    
+
     if (event.event_type === 'conversion') {
       variant.conversions++;
     }
@@ -328,17 +351,17 @@ function aggregateTestSummary(events: any[]) {
     totalEvents: summary.totalEvents,
     uniqueUsers: summary.uniqueUsers.size,
     conversions: summary.conversions,
-    conversionRate: summary.uniqueUsers.size > 0 
-      ? summary.conversions / summary.uniqueUsers.size 
-      : 0,
+    conversionRate:
+      summary.uniqueUsers.size > 0
+        ? summary.conversions / summary.uniqueUsers.size
+        : 0,
     variants: Array.from(summary.variants.values()).map(variant => ({
       name: variant.name,
       users: variant.users.size,
       events: variant.events,
       conversions: variant.conversions,
-      conversionRate: variant.users.size > 0 
-        ? variant.conversions / variant.users.size 
-        : 0,
+      conversionRate:
+        variant.users.size > 0 ? variant.conversions / variant.users.size : 0,
     })),
     startDate: summary.startDate,
     lastActivity: summary.lastActivity,

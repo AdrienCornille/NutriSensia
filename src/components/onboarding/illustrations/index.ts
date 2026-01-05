@@ -10,5 +10,3 @@ export {
   PersonalInfoIllustration,
   HealthGoalsIllustration,
 } from './OnboardingIllustrations';
-
-

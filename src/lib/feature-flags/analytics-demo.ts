@@ -1,6 +1,6 @@
 /**
  * Système d'analytics A/B Testing - Version Démonstration
- * 
+ *
  * Cette version ne dépend pas de Supabase et est conçue pour les tests de démonstration.
  * Elle simule l'enregistrement des événements sans créer de boucles infinies.
  */
@@ -32,12 +32,15 @@ export interface ABTestMetrics {
   conversions: number;
   conversionRate: number;
   averageDuration: number;
-  variantPerformance: Record<string, {
-    users: number;
-    conversions: number;
-    conversionRate: number;
-    averageDuration: number;
-  }>;
+  variantPerformance: Record<
+    string,
+    {
+      users: number;
+      conversions: number;
+      conversionRate: number;
+      averageDuration: number;
+    }
+  >;
 }
 
 /**
@@ -190,7 +193,7 @@ export class ABTestAnalytics {
     if (this.eventQueue.length < 10) {
       this.eventQueue.push(event);
     }
-    
+
     // Flush automatique désactivé pour éviter les boucles infinies
     // if (this.eventQueue.length >= this.batchSize) {
     //   this.flushEvents();
@@ -217,13 +220,12 @@ export class ABTestAnalytics {
           user: event.userId,
           variant: event.variant,
           step: event.onboardingStep,
-          timestamp: new Date(event.timestamp).toISOString()
-        }))
+          timestamp: new Date(event.timestamp).toISOString(),
+        })),
       });
 
       // Simulation d'un enregistrement réussi
       await new Promise(resolve => setTimeout(resolve, 100));
-      
     } catch (error) {
       console.error('Erreur lors du flush des événements:', error);
       // En mode démonstration, on ne remet pas les événements dans la queue
@@ -266,27 +268,27 @@ export class ABTestAnalytics {
           users: 308,
           conversions: 108,
           conversionRate: 35.1,
-          averageDuration: 195
+          averageDuration: 195,
         },
         simplified: {
           users: 310,
           conversions: 131,
           conversionRate: 42.3,
-          averageDuration: 165
+          averageDuration: 165,
         },
         gamified: {
           users: 308,
           conversions: 119,
           conversionRate: 38.6,
-          averageDuration: 185
+          averageDuration: 185,
         },
         guided: {
           users: 308,
           conversions: 127,
           conversionRate: 41.2,
-          averageDuration: 175
-        }
-      }
+          averageDuration: 175,
+        },
+      },
     };
   }
 
@@ -310,7 +312,7 @@ export class ABTestAnalytics {
         flagKey: 'onboarding-variant',
         flagValue: variant,
         variant,
-        timestamp: Date.now() - Math.random() * 86400000 // Dernières 24h
+        timestamp: Date.now() - Math.random() * 86400000, // Dernières 24h
       });
 
       // Événement de progression
@@ -325,7 +327,7 @@ export class ABTestAnalytics {
         stepIndex: 1,
         totalSteps: 5,
         duration: Math.random() * 30000,
-        timestamp: Date.now() - Math.random() * 86400000
+        timestamp: Date.now() - Math.random() * 86400000,
       });
 
       // Événement de conversion (si applicable)
@@ -338,7 +340,7 @@ export class ABTestAnalytics {
           flagValue: variant,
           variant,
           customData: { conversionType: 'onboarding_complete' },
-          timestamp: Date.now() - Math.random() * 86400000
+          timestamp: Date.now() - Math.random() * 86400000,
         });
       }
     }

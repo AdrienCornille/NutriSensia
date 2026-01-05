@@ -1,6 +1,6 @@
 /**
  * Point d'entrée pour tous les composants de profil et de suivi de complétude
- * 
+ *
  * Ce fichier exporte tous les composants et hooks liés au système de suivi
  * de complétude du profil pour faciliter leur importation dans l'application.
  */
@@ -13,25 +13,22 @@ export { ProfilePrivacySettings } from './ProfilePrivacySettings';
 export { ProfileCompletionDashboard } from './ProfileCompletionDashboard';
 
 // Hooks
-export { 
+export {
   useProfileCompletion,
   useProfileCompletionPercentage,
   useCriticalMissingFields,
-  useProfileLevelCheck
+  useProfileLevelCheck,
 } from '@/hooks/useProfileCompletion';
 
 // Types et utilitaires
-export type { 
+export type {
   ProfileCompletion,
   UserRole,
-  ProfileData
+  ProfileData,
 } from '@/lib/profile-completion';
 
 export {
   calculateProfileCompletion,
   getRequiredFieldsForLevel,
-  estimateCompletionTime
+  estimateCompletionTime,
 } from '@/lib/profile-completion';
-
-
-

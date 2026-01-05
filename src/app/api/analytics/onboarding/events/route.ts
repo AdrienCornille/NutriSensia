@@ -16,9 +16,9 @@ import OnboardingAnalyticsDB from '@/lib/onboarding-analytics-db';
 export async function POST(req: NextRequest) {
   try {
     console.log('🔧 POST /api/analytics/onboarding/events appelé');
-    
+
     const body = await req.json();
-    
+
     // Valider les données requises
     const { event, properties } = body as OnboardingEvent;
     if (!event || !properties) {
@@ -58,44 +58,83 @@ export async function POST(req: NextRequest) {
     switch (event) {
       case 'Onboarding Started':
         result = await OnboardingAnalyticsDB.trackOnboardingStarted(
-          userId, role, sessionId, deviceType, browser
+          userId,
+          role,
+          sessionId,
+          deviceType,
+          browser
         );
         break;
 
       case 'Onboarding Step Started':
         if (!step || !stepNumber || !totalSteps) {
           return NextResponse.json(
-            { error: 'step, stepNumber et totalSteps requis pour step started' },
+            {
+              error: 'step, stepNumber et totalSteps requis pour step started',
+            },
             { status: 400 }
           );
         }
         result = await OnboardingAnalyticsDB.trackStepStarted(
-          userId, role, sessionId, step, stepNumber, totalSteps, deviceType, browser
+          userId,
+          role,
+          sessionId,
+          step,
+          stepNumber,
+          totalSteps,
+          deviceType,
+          browser
         );
         break;
 
       case 'Onboarding Step Completed':
-        if (!step || !stepNumber || !totalSteps || completionPercentage === undefined) {
+        if (
+          !step ||
+          !stepNumber ||
+          !totalSteps ||
+          completionPercentage === undefined
+        ) {
           return NextResponse.json(
-            { error: 'step, stepNumber, totalSteps et completionPercentage requis pour step completed' },
+            {
+              error:
+                'step, stepNumber, totalSteps et completionPercentage requis pour step completed',
+            },
             { status: 400 }
           );
         }
         result = await OnboardingAnalyticsDB.trackStepCompleted(
-          userId, role, sessionId, step, stepNumber, totalSteps, 
-          completionPercentage, timeSpent || 0, deviceType, browser
+          userId,
+          role,
+          sessionId,
+          step,
+          stepNumber,
+          totalSteps,
+          completionPercentage,
+          timeSpent || 0,
+          deviceType,
+          browser
         );
         break;
 
       case 'Onboarding Step Skipped':
         if (!step || !stepNumber || !totalSteps) {
           return NextResponse.json(
-            { error: 'step, stepNumber et totalSteps requis pour step skipped' },
+            {
+              error: 'step, stepNumber et totalSteps requis pour step skipped',
+            },
             { status: 400 }
           );
         }
         result = await OnboardingAnalyticsDB.trackStepSkipped(
-          userId, role, sessionId, step, stepNumber, totalSteps, reason, deviceType, browser
+          userId,
+          role,
+          sessionId,
+          step,
+          stepNumber,
+          totalSteps,
+          reason,
+          deviceType,
+          browser
         );
         break;
 
@@ -107,31 +146,56 @@ export async function POST(req: NextRequest) {
           );
         }
         result = await OnboardingAnalyticsDB.trackStepError(
-          userId, role, sessionId, step, stepNumber, errorType, errorMessage, deviceType, browser
+          userId,
+          role,
+          sessionId,
+          step,
+          stepNumber,
+          errorType,
+          errorMessage,
+          deviceType,
+          browser
         );
         break;
 
       case 'Onboarding Help Requested':
         if (!step || !stepNumber || !helpType) {
           return NextResponse.json(
-            { error: 'step, stepNumber et helpType requis pour help requested' },
+            {
+              error: 'step, stepNumber et helpType requis pour help requested',
+            },
             { status: 400 }
           );
         }
         result = await OnboardingAnalyticsDB.trackHelpRequested(
-          userId, role, sessionId, step, stepNumber, helpType, deviceType, browser
+          userId,
+          role,
+          sessionId,
+          step,
+          stepNumber,
+          helpType,
+          deviceType,
+          browser
         );
         break;
 
       case 'Onboarding Completed':
         if (!totalSteps || timeSpent === undefined) {
           return NextResponse.json(
-            { error: 'totalSteps et timeSpent requis pour onboarding completed' },
+            {
+              error: 'totalSteps et timeSpent requis pour onboarding completed',
+            },
             { status: 400 }
           );
         }
         result = await OnboardingAnalyticsDB.trackOnboardingCompleted(
-          userId, role, sessionId, totalSteps, timeSpent, deviceType, browser
+          userId,
+          role,
+          sessionId,
+          totalSteps,
+          timeSpent,
+          deviceType,
+          browser
         );
         break;
 
@@ -143,7 +207,14 @@ export async function POST(req: NextRequest) {
           );
         }
         result = await OnboardingAnalyticsDB.trackOnboardingAbandoned(
-          userId, role, sessionId, step, stepNumber, reason, deviceType, browser
+          userId,
+          role,
+          sessionId,
+          step,
+          stepNumber,
+          reason,
+          deviceType,
+          browser
         );
         break;
 
@@ -161,21 +232,29 @@ export async function POST(req: NextRequest) {
         { status: 500 }
       );
     }
-    
-    return NextResponse.json({
-      success: true, 
-      event: {
-        id: 'db-' + Date.now(),
-        event,
-        properties,
-        timestamp: new Date().toISOString()
-      }
-    }, { status: 201 });
 
-  } catch (error) {
-    console.error('❌ Erreur dans POST /api/analytics/onboarding/events:', error);
     return NextResponse.json(
-      { error: 'Erreur serveur', details: error instanceof Error ? error.message : 'Erreur inconnue' },
+      {
+        success: true,
+        event: {
+          id: 'db-' + Date.now(),
+          event,
+          properties,
+          timestamp: new Date().toISOString(),
+        },
+      },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error(
+      '❌ Erreur dans POST /api/analytics/onboarding/events:',
+      error
+    );
+    return NextResponse.json(
+      {
+        error: 'Erreur serveur',
+        details: error instanceof Error ? error.message : 'Erreur inconnue',
+      },
       { status: 500 }
     );
   }
@@ -188,7 +267,7 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   try {
     console.log('🔧 GET /api/analytics/onboarding/events appelé');
-    
+
     // Récupérer les paramètres de requête
     const { searchParams } = new URL(req.url);
     const startDate = searchParams.get('startDate');
@@ -198,7 +277,9 @@ export async function GET(req: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '100');
     const offset = parseInt(searchParams.get('offset') || '0');
 
-    console.log(`🔧 Paramètres: startDate=${startDate}, endDate=${endDate}, role=${role}, eventType=${eventType}`);
+    console.log(
+      `🔧 Paramètres: startDate=${startDate}, endDate=${endDate}, role=${role}, eventType=${eventType}`
+    );
 
     // Initialiser Supabase
     const supabase = createClient(
@@ -266,7 +347,9 @@ export async function GET(req: NextRequest) {
 
     const { count } = await countQuery;
 
-    console.log(`✅ ${events?.length || 0} événements retournés sur ${count || 0} total`);
+    console.log(
+      `✅ ${events?.length || 0} événements retournés sur ${count || 0} total`
+    );
 
     return NextResponse.json({
       success: true,
@@ -274,13 +357,18 @@ export async function GET(req: NextRequest) {
       total: count || 0,
       limit,
       offset,
-      hasMore: (offset + limit) < (count || 0)
+      hasMore: offset + limit < (count || 0),
     });
-
   } catch (error) {
-    console.error('❌ Erreur dans GET /api/analytics/onboarding/events:', error);
+    console.error(
+      '❌ Erreur dans GET /api/analytics/onboarding/events:',
+      error
+    );
     return NextResponse.json(
-      { error: 'Erreur serveur', details: error instanceof Error ? error.message : 'Erreur inconnue' },
+      {
+        error: 'Erreur serveur',
+        details: error instanceof Error ? error.message : 'Erreur inconnue',
+      },
       { status: 500 }
     );
   }

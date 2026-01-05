@@ -9,18 +9,18 @@ import React, { useState } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Heart, 
-  User, 
-  Target, 
-  Utensils, 
+import {
+  Heart,
+  User,
+  Target,
+  Utensils,
   Stethoscope,
   Activity,
   Smartphone,
   CheckCircle,
   ArrowLeft,
   ArrowRight,
-  X
+  X,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/Button';
@@ -54,28 +54,59 @@ interface PatientOnboardingWizardProps {
  * Configuration des étapes d'onboarding
  */
 const STEPS = [
-  { id: 'welcome', title: 'Bienvenue', icon: <Heart className="h-6 w-6" /> },
-  { id: 'personal-info', title: 'Informations personnelles', icon: <User className="h-6 w-6" /> },
-  { id: 'health-profile', title: 'Profil santé', icon: <Stethoscope className="h-6 w-6" /> },
-  { id: 'health-goals', title: 'Objectifs santé', icon: <Target className="h-6 w-6" /> },
-  { id: 'dietary-info', title: 'Habitudes alimentaires', icon: <Utensils className="h-6 w-6" /> },
-  { id: 'medical-info', title: 'Informations médicales', icon: <Stethoscope className="h-6 w-6" /> },
-  { id: 'lifestyle', title: 'Style de vie', icon: <Activity className="h-6 w-6" /> },
-  { id: 'app-tour', title: 'Découverte de l\'app', icon: <Smartphone className="h-6 w-6" /> },
-  { id: 'completion', title: 'Félicitations !', icon: <CheckCircle className="h-6 w-6" /> },
+  { id: 'welcome', title: 'Bienvenue', icon: <Heart className='h-6 w-6' /> },
+  {
+    id: 'personal-info',
+    title: 'Informations personnelles',
+    icon: <User className='h-6 w-6' />,
+  },
+  {
+    id: 'health-profile',
+    title: 'Profil santé',
+    icon: <Stethoscope className='h-6 w-6' />,
+  },
+  {
+    id: 'health-goals',
+    title: 'Objectifs santé',
+    icon: <Target className='h-6 w-6' />,
+  },
+  {
+    id: 'dietary-info',
+    title: 'Habitudes alimentaires',
+    icon: <Utensils className='h-6 w-6' />,
+  },
+  {
+    id: 'medical-info',
+    title: 'Informations médicales',
+    icon: <Stethoscope className='h-6 w-6' />,
+  },
+  {
+    id: 'lifestyle',
+    title: 'Style de vie',
+    icon: <Activity className='h-6 w-6' />,
+  },
+  {
+    id: 'app-tour',
+    title: "Découverte de l'app",
+    icon: <Smartphone className='h-6 w-6' />,
+  },
+  {
+    id: 'completion',
+    title: 'Félicitations !',
+    icon: <CheckCircle className='h-6 w-6' />,
+  },
 ];
 
 /**
  * Assistant d'onboarding simplifié pour les patients
  */
-export const PatientOnboardingWizardSimple: React.FC<PatientOnboardingWizardProps> = ({
-  onComplete,
-  initialData = {},
-  compact = false,
-}) => {
+export const PatientOnboardingWizardSimple: React.FC<
+  PatientOnboardingWizardProps
+> = ({ onComplete, initialData = {}, compact = false }) => {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState<Partial<PatientOnboardingData>>(initialData);
+  const [formData, setFormData] =
+    useState<Partial<PatientOnboardingData>>(initialData);
 
   const currentStep = STEPS[currentStepIndex];
   const isFirstStep = currentStepIndex === 0;
@@ -172,46 +203,52 @@ export const PatientOnboardingWizardSimple: React.FC<PatientOnboardingWizardProp
 
   return (
     <FormProvider {...methods}>
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-100">
+      <div className='min-h-screen bg-gradient-to-br from-green-50 to-teal-100'>
         {/* En-tête avec progression */}
-        <div className="bg-white shadow-sm">
-          <div className="max-w-4xl mx-auto px-4 py-4">
-            <div className="flex items-center justify-between mb-4">
-              <h1 className="text-2xl font-bold text-gray-900">
+        <div className='bg-white shadow-sm'>
+          <div className='max-w-4xl mx-auto px-4 py-4'>
+            <div className='flex items-center justify-between mb-4'>
+              <h1 className='text-2xl font-bold text-gray-900'>
                 Configuration de votre profil
               </h1>
-              <div className="text-sm text-gray-600">
+              <div className='text-sm text-gray-600'>
                 Étape {currentStepIndex + 1} sur {STEPS.length}
               </div>
             </div>
-            
+
             {/* Barre de progression */}
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div 
-                className="bg-green-600 h-2 rounded-full transition-all duration-300"
+            <div className='w-full bg-gray-200 rounded-full h-2'>
+              <div
+                className='bg-green-600 h-2 rounded-full transition-all duration-300'
                 style={{ width: `${progress}%` }}
               />
             </div>
-            
+
             {/* Indicateurs d'étapes */}
-            <div className="flex justify-between mt-4">
+            <div className='flex justify-between mt-4'>
               {STEPS.map((step, index) => (
-                <div 
-                  key={step.id} 
+                <div
+                  key={step.id}
                   className={`flex flex-col items-center ${
-                    index <= currentStepIndex ? 'text-green-600' : 'text-gray-400'
+                    index <= currentStepIndex
+                      ? 'text-green-600'
+                      : 'text-gray-400'
                   }`}
                 >
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                    index <= currentStepIndex ? 'bg-green-600 text-white' : 'bg-gray-200'
-                  }`}>
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                      index <= currentStepIndex
+                        ? 'bg-green-600 text-white'
+                        : 'bg-gray-200'
+                    }`}
+                  >
                     {index < currentStepIndex ? (
-                      <CheckCircle className="h-4 w-4" />
+                      <CheckCircle className='h-4 w-4' />
                     ) : (
                       step.icon
                     )}
                   </div>
-                  <span className="text-xs mt-1 text-center max-w-16 truncate">
+                  <span className='text-xs mt-1 text-center max-w-16 truncate'>
                     {step.title}
                   </span>
                 </div>
@@ -221,8 +258,8 @@ export const PatientOnboardingWizardSimple: React.FC<PatientOnboardingWizardProp
         </div>
 
         {/* Contenu de l'étape */}
-        <div className="max-w-4xl mx-auto px-4 py-8">
-          <AnimatePresence mode="wait">
+        <div className='max-w-4xl mx-auto px-4 py-8'>
+          <AnimatePresence mode='wait'>
             <motion.div
               key={currentStep.id}
               initial={{ opacity: 0, x: 20 }}
@@ -237,26 +274,26 @@ export const PatientOnboardingWizardSimple: React.FC<PatientOnboardingWizardProp
 
         {/* Navigation */}
         {currentStep.id !== 'welcome' && currentStep.id !== 'completion' && (
-          <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg">
-            <div className="max-w-4xl mx-auto px-4 py-4 flex justify-between">
+          <div className='fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg'>
+            <div className='max-w-4xl mx-auto px-4 py-4 flex justify-between'>
               <Button
-                variant="secondary"
+                variant='secondary'
                 onClick={handlePrev}
                 disabled={isFirstStep}
-                className="flex items-center gap-2"
+                className='flex items-center gap-2'
               >
-                <ArrowLeft className="h-4 w-4" />
+                <ArrowLeft className='h-4 w-4' />
                 Précédent
               </Button>
-              
+
               <Button
-                variant="primary"
+                variant='primary'
                 onClick={handleNext}
                 disabled={isLastStep}
-                className="flex items-center gap-2"
+                className='flex items-center gap-2'
               >
                 Suivant
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className='h-4 w-4' />
               </Button>
             </div>
           </div>
@@ -265,4 +302,3 @@ export const PatientOnboardingWizardSimple: React.FC<PatientOnboardingWizardProp
     </FormProvider>
   );
 };
-

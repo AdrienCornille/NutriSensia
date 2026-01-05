@@ -1,6 +1,6 @@
 /**
  * Analytics et métriques pour les tests A/B
- * 
+ *
  * Ce fichier gère l'enregistrement et l'analyse des événements
  * liés aux feature flags et aux tests A/B de l'onboarding.
  */
@@ -10,19 +10,19 @@ import { createClient } from '@/lib/supabase/client';
 /**
  * Types d'événements A/B testing
  */
-export type ABTestEvent = 
-  | 'flag_assignment'      // Attribution d'un flag à un utilisateur
-  | 'onboarding_start'     // Début de l'onboarding
-  | 'onboarding_step'      // Progression dans une étape
-  | 'onboarding_complete'  // Finalisation de l'onboarding
-  | 'onboarding_abandon'   // Abandon de l'onboarding
+export type ABTestEvent =
+  | 'flag_assignment' // Attribution d'un flag à un utilisateur
+  | 'onboarding_start' // Début de l'onboarding
+  | 'onboarding_step' // Progression dans une étape
+  | 'onboarding_complete' // Finalisation de l'onboarding
+  | 'onboarding_abandon' // Abandon de l'onboarding
   | 'form_validation_error' // Erreur de validation
-  | 'help_requested'       // Demande d'aide
-  | 'skip_step'           // Étape sautée
-  | 'conversion'          // Conversion (objectif atteint)
-  | 'engagement'          // Interaction avec l'interface
-  | 'error'               // Erreur technique
-  | 'performance';        // Métriques de performance
+  | 'help_requested' // Demande d'aide
+  | 'skip_step' // Étape sautée
+  | 'conversion' // Conversion (objectif atteint)
+  | 'engagement' // Interaction avec l'interface
+  | 'error' // Erreur technique
+  | 'performance'; // Métriques de performance
 
 /**
  * Interface pour les données d'événement A/B
@@ -35,24 +35,24 @@ export interface ABTestEventData {
   flagValue: string;
   variant: string;
   timestamp: number;
-  
+
   // Informations contextuelles
   userRole?: 'nutritionist' | 'patient' | 'admin';
   onboardingStep?: string;
   stepIndex?: number;
   totalSteps?: number;
-  
+
   // Métriques spécifiques
-  duration?: number;        // Durée en millisecondes
-  errorMessage?: string;    // Message d'erreur si applicable
-  formField?: string;       // Champ de formulaire concerné
+  duration?: number; // Durée en millisecondes
+  errorMessage?: string; // Message d'erreur si applicable
+  formField?: string; // Champ de formulaire concerné
   interactionType?: string; // Type d'interaction (click, focus, etc.)
-  
+
   // Informations techniques
   userAgent?: string;
   deviceType?: 'mobile' | 'tablet' | 'desktop';
   country?: string;
-  
+
   // Données personnalisées
   customData?: Record<string, any>;
 }
@@ -109,12 +109,14 @@ export class ABTestAnalytics {
   /**
    * Enregistre un événement A/B testing
    */
-  async trackEvent(eventData: Partial<ABTestEventData> & {
-    eventType: ABTestEvent;
-    userId: string;
-    flagKey: string;
-    flagValue: string;
-  }): Promise<void> {
+  async trackEvent(
+    eventData: Partial<ABTestEventData> & {
+      eventType: ABTestEvent;
+      userId: string;
+      flagKey: string;
+      flagValue: string;
+    }
+  ): Promise<void> {
     const completeEventData: ABTestEventData = {
       ...eventData,
       sessionId: eventData.sessionId || this.generateSessionId(),
@@ -276,10 +278,13 @@ export class ABTestAnalytics {
   /**
    * Récupère les métriques de conversion pour un flag
    */
-  async getConversionMetrics(flagKey: string, dateRange?: {
-    start: Date;
-    end: Date;
-  }): Promise<ConversionMetrics[]> {
+  async getConversionMetrics(
+    flagKey: string,
+    dateRange?: {
+      start: Date;
+      end: Date;
+    }
+  ): Promise<ConversionMetrics[]> {
     const { data, error } = await this.supabase
       .from('ab_test_events')
       .select('*')
@@ -298,21 +303,25 @@ export class ABTestAnalytics {
   /**
    * Analyse les résultats d'un test A/B
    */
-  async analyzeABTestResults(flagKey: string, dateRange?: {
-    start: Date;
-    end: Date;
-  }): Promise<ABTestResults | null> {
+  async analyzeABTestResults(
+    flagKey: string,
+    dateRange?: {
+      start: Date;
+      end: Date;
+    }
+  ): Promise<ABTestResults | null> {
     const metrics = await this.getConversionMetrics(flagKey, dateRange);
-    
+
     if (metrics.length === 0) {
       return null;
     }
 
     // Calcul de la significativité statistique
-    const statisticalSignificance = this.calculateStatisticalSignificance(metrics);
-    
+    const statisticalSignificance =
+      this.calculateStatisticalSignificance(metrics);
+
     // Détermination du gagnant
-    const winner = metrics.reduce((prev, current) => 
+    const winner = metrics.reduce((prev, current) =>
       current.conversionRate > prev.conversionRate ? current : prev
     );
 
@@ -331,7 +340,10 @@ export class ABTestAnalytics {
       endDate: dateRange?.end?.toISOString() || '',
       variants,
       statisticalSignificance,
-      recommendedAction: this.getRecommendedAction(variants, statisticalSignificance),
+      recommendedAction: this.getRecommendedAction(
+        variants,
+        statisticalSignificance
+      ),
     };
   }
 
@@ -345,9 +357,8 @@ export class ABTestAnalytics {
     this.eventQueue = [];
 
     try {
-      const { error } = await this.supabase
-        .from('ab_test_events')
-        .insert(events.map(event => ({
+      const { error } = await this.supabase.from('ab_test_events').insert(
+        events.map(event => ({
           event_type: event.eventType,
           user_id: event.userId,
           session_id: event.sessionId,
@@ -367,10 +378,11 @@ export class ABTestAnalytics {
           country: event.country,
           custom_data: event.customData,
           created_at: new Date(event.timestamp).toISOString(),
-        })));
+        }))
+      );
 
       if (error) {
-        console.error('Erreur lors de l\'enregistrement des événements:', error);
+        console.error("Erreur lors de l'enregistrement des événements:", error);
         // Remettre les événements dans la queue en cas d'erreur
         this.eventQueue.unshift(...events);
       }
@@ -400,12 +412,15 @@ export class ABTestAnalytics {
    * Calcule les métriques de conversion à partir des données brutes
    */
   private calculateConversionMetrics(events: any[]): ConversionMetrics[] {
-    const variants = new Map<string, {
-      users: Set<string>;
-      conversions: Set<string>;
-      durations: number[];
-      dropOffs: Map<string, number>;
-    }>();
+    const variants = new Map<
+      string,
+      {
+        users: Set<string>;
+        conversions: Set<string>;
+        durations: number[];
+        dropOffs: Map<string, number>;
+      }
+    >();
 
     // Traitement des événements
     events.forEach(event => {
@@ -440,24 +455,30 @@ export class ABTestAnalytics {
       variant: variantName,
       totalUsers: data.users.size,
       conversions: data.conversions.size,
-      conversionRate: data.users.size > 0 ? data.conversions.size / data.users.size : 0,
-      averageTimeToConversion: data.durations.length > 0 
-        ? data.durations.reduce((a, b) => a + b, 0) / data.durations.length 
-        : 0,
-      dropOffPoints: Array.from(data.dropOffs.entries()).map(([step, count]) => ({
-        step,
-        dropOffRate: data.users.size > 0 ? count / data.users.size : 0,
-      })),
+      conversionRate:
+        data.users.size > 0 ? data.conversions.size / data.users.size : 0,
+      averageTimeToConversion:
+        data.durations.length > 0
+          ? data.durations.reduce((a, b) => a + b, 0) / data.durations.length
+          : 0,
+      dropOffPoints: Array.from(data.dropOffs.entries()).map(
+        ([step, count]) => ({
+          step,
+          dropOffRate: data.users.size > 0 ? count / data.users.size : 0,
+        })
+      ),
     }));
   }
 
   /**
    * Calcule la significativité statistique
    */
-  private calculateStatisticalSignificance(metrics: ConversionMetrics[]): boolean {
+  private calculateStatisticalSignificance(
+    metrics: ConversionMetrics[]
+  ): boolean {
     // Implémentation simplifiée - dans un vrai projet, utiliser des tests statistiques appropriés
     if (metrics.length < 2) return false;
-    
+
     const totalUsers = metrics.reduce((sum, m) => sum + m.totalUsers, 0);
     return totalUsers >= 100; // Seuil minimum arbitraire
   }
@@ -477,7 +498,12 @@ export class ABTestAnalytics {
    * Détermine l'action recommandée basée sur les résultats
    */
   private getRecommendedAction(
-    variants: Array<{ name: string; users: number; conversionRate: number; confidence: number }>,
+    variants: Array<{
+      name: string;
+      users: number;
+      conversionRate: number;
+      confidence: number;
+    }>,
     statisticalSignificance: boolean
   ): 'continue' | 'stop' | 'declare_winner' | 'extend' {
     if (!statisticalSignificance) {

@@ -74,18 +74,12 @@ function OnboardingPage() {
 ```tsx
 import { useOnboardingProgress } from '@/hooks/useOnboardingProgress';
 
-const {
-  progress,
-  updateProgress,
-  completeStep,
-  skipStep,
-  isLoading,
-  error,
-} = useOnboardingProgress({
-  userId: 'user-id',
-  role: 'nutritionist',
-  steps: NUTRITIONIST_STEPS,
-});
+const { progress, updateProgress, completeStep, skipStep, isLoading, error } =
+  useOnboardingProgress({
+    userId: 'user-id',
+    role: 'nutritionist',
+    steps: NUTRITIONIST_STEPS,
+  });
 ```
 
 ## 📊 Fonctionnalités
@@ -93,6 +87,7 @@ const {
 ### ✅ Implémentées
 
 #### Onboarding Nutritionnistes
+
 - **Étape 1 - Bienvenue** : Présentation de la plateforme
 - **Étape 2 - Informations personnelles** : Nom, téléphone, langue, fuseau horaire
 - **Étape 3 - Identifiants professionnels** : Numéros ASCA, RME, EAN (optionnel)
@@ -103,6 +98,7 @@ const {
 - **Étape 8 - Finalisation** : Révision et acceptation des conditions
 
 #### Fonctionnalités Transversales
+
 - **Sauvegarde automatique** : Progression sauvée en temps réel
 - **Validation en temps réel** : Utilisation de Zod pour la validation
 - **Indicateur de progression** : Barre de progression et étapes visuelles
@@ -143,11 +139,13 @@ NEXT_PUBLIC_ANALYTICS_ID=your_analytics_id
 ### Base de Données
 
 1. Exécuter le script de migration :
+
 ```bash
 psql -f scripts/onboarding-schema.sql
 ```
 
 2. Vérifier les tables créées :
+
 ```sql
 SELECT * FROM onboarding_progress;
 SELECT * FROM user_onboarding;
@@ -185,10 +183,10 @@ SELECT * FROM onboarding_stats;
 SELECT * FROM recent_onboarding_events;
 
 -- Points d'abandon
-SELECT 
+SELECT
     step_id,
     COUNT(*) as abandons
-FROM onboarding_analytics 
+FROM onboarding_analytics
 WHERE event_type = 'ONBOARDING_ABANDONED'
 GROUP BY step_id
 ORDER BY abandons DESC;
@@ -223,7 +221,11 @@ Exemple :
 
 ```tsx
 // steps/NewStep.tsx
-export const NewStep: React.FC<StepProps> = ({ data, onDataChange, onNext }) => {
+export const NewStep: React.FC<StepProps> = ({
+  data,
+  onDataChange,
+  onNext,
+}) => {
   // Implémentation de l'étape
 };
 
@@ -234,7 +236,7 @@ const STEPS = [
     id: 'new-step',
     title: 'Nouvelle Étape',
     description: 'Description de la nouvelle étape',
-    icon: <Icon className="h-5 w-5" />,
+    icon: <Icon className='h-5 w-5' />,
     estimatedTime: 5,
     isRequired: true,
     canSkip: false,
@@ -267,16 +269,19 @@ npm run test:e2e -- cypress/integration/onboarding
 ### Problèmes Courants
 
 #### Progression Non Sauvegardée
+
 - Vérifier les permissions Supabase
 - Contrôler la connexion réseau
 - Consulter les logs de la console
 
 #### Validation Échouée
+
 - Vérifier les schémas Zod
 - Contrôler les données d'entrée
 - Tester avec des données valides
 
 #### Performance Lente
+
 - Optimiser les requêtes Supabase
 - Réduire la fréquence de sauvegarde automatique
 - Utiliser la mise en cache appropriée
@@ -295,16 +300,19 @@ if (debugMode) {
 ## 📚 Ressources
 
 ### Documentation Technique
+
 - [Types TypeScript](../src/types/onboarding.ts)
 - [Schémas de Validation](../src/lib/onboarding-schemas.ts)
 - [Hook de Progression](../src/hooks/useOnboardingProgress.ts)
 
 ### Design System
+
 - [Composants UI](../src/components/ui/)
 - [Guide Tailwind](./tailwind-usage.md)
 - [Animations Framer Motion](https://www.framer.com/motion/)
 
 ### APIs et Intégrations
+
 - [Supabase Auth](https://supabase.com/docs/guides/auth)
 - [Supabase Database](https://supabase.com/docs/guides/database)
 - [React Hook Form](https://react-hook-form.com/)
@@ -336,5 +344,4 @@ if (debugMode) {
 
 ---
 
-*Ce guide sera mis à jour régulièrement avec les nouvelles fonctionnalités et améliorations du système d'onboarding.*
-
+_Ce guide sera mis à jour régulièrement avec les nouvelles fonctionnalités et améliorations du système d'onboarding._

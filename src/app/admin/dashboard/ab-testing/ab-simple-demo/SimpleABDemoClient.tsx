@@ -1,6 +1,6 @@
 /**
  * Composant client pour la démonstration simplifiée des tests A/B
- * 
+ *
  * Ce composant gère l'authentification et la protection d'accès
  */
 
@@ -26,7 +26,7 @@ export default function SimpleABDemoClient() {
       isAdmin: isAdmin(),
       hasAdminRole: hasRole('admin'),
     });
-    
+
     if (!loading) {
       setIsLoading(false);
     }
@@ -35,10 +35,10 @@ export default function SimpleABDemoClient() {
   // Affichage de chargement
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Chargement...</p>
+      <div className='min-h-screen bg-gray-50 flex items-center justify-center'>
+        <div className='text-center'>
+          <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4'></div>
+          <p className='text-gray-600'>Chargement...</p>
         </div>
       </div>
     );
@@ -47,24 +47,25 @@ export default function SimpleABDemoClient() {
   // Vérification d'accès admin
   if (!isAuthenticated || !hasRole('admin')) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-red-600 text-xl font-semibold mb-2">
+      <div className='min-h-screen bg-gray-50 flex items-center justify-center'>
+        <div className='text-center'>
+          <div className='text-red-600 text-xl font-semibold mb-2'>
             Accès Refusé
           </div>
-          <p className="text-gray-600 mb-4">
-            Vous devez être administrateur pour accéder à cette page de démonstration A/B Testing.
+          <p className='text-gray-600 mb-4'>
+            Vous devez être administrateur pour accéder à cette page de
+            démonstration A/B Testing.
           </p>
-          <div className="space-x-4">
+          <div className='space-x-4'>
             <button
-              onClick={() => window.location.href = '/auth/signin'}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              onClick={() => (window.location.href = '/auth/signin')}
+              className='bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700'
             >
               Se connecter
             </button>
             <button
-              onClick={() => window.location.href = '/debug-auth-status'}
-              className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
+              onClick={() => (window.location.href = '/debug-auth-status')}
+              className='bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700'
             >
               Diagnostic
             </button>

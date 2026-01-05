@@ -1,6 +1,6 @@
 /**
  * Système de suivi de complétude du profil
- * 
+ *
  * Ce module fournit des fonctionnalités pour :
  * - Calculer le pourcentage de complétude d'un profil
  * - Identifier les champs manquants
@@ -41,8 +41,9 @@ const COMMON_FIELDS: FieldConfig[] = [
     weight: 10,
     priority: 'critical',
     label: 'Prénom',
-    description: 'Votre prénom est nécessaire pour personnaliser votre expérience',
-    category: 'basic'
+    description:
+      'Votre prénom est nécessaire pour personnaliser votre expérience',
+    category: 'basic',
   },
   {
     name: 'last_name',
@@ -50,7 +51,7 @@ const COMMON_FIELDS: FieldConfig[] = [
     priority: 'critical',
     label: 'Nom',
     description: 'Votre nom de famille est requis pour votre identification',
-    category: 'basic'
+    category: 'basic',
   },
   {
     name: 'phone',
@@ -58,7 +59,7 @@ const COMMON_FIELDS: FieldConfig[] = [
     priority: 'important',
     label: 'Téléphone',
     description: 'Un numéro de téléphone facilite les communications urgentes',
-    category: 'contact'
+    category: 'contact',
   },
   {
     name: 'avatar_url',
@@ -66,15 +67,15 @@ const COMMON_FIELDS: FieldConfig[] = [
     priority: 'optional',
     label: 'Photo de profil',
     description: 'Une photo aide à créer un lien de confiance',
-    category: 'basic'
+    category: 'basic',
   },
   {
     name: 'locale',
     weight: 5,
     priority: 'important',
     label: 'Langue',
-    description: 'Choisissez votre langue préférée pour l\'interface',
-    category: 'preferences'
+    description: "Choisissez votre langue préférée pour l'interface",
+    category: 'preferences',
   },
   {
     name: 'timezone',
@@ -82,8 +83,8 @@ const COMMON_FIELDS: FieldConfig[] = [
     priority: 'important',
     label: 'Fuseau horaire',
     description: 'Nécessaire pour planifier vos rendez-vous',
-    category: 'preferences'
-  }
+    category: 'preferences',
+  },
 ];
 
 /**
@@ -96,31 +97,31 @@ const NUTRITIONIST_FIELDS: FieldConfig[] = [
     priority: 'important',
     label: 'Numéro ASCA',
     description: 'Votre numéro ASCA valide votre certification professionnelle',
-    category: 'professional'
+    category: 'professional',
   },
   {
     name: 'rme_number',
     weight: 8,
     priority: 'important',
     label: 'Numéro RME',
-    description: 'Votre numéro RME pour les remboursements d\'assurance',
-    category: 'professional'
+    description: "Votre numéro RME pour les remboursements d'assurance",
+    category: 'professional',
   },
   {
     name: 'ean_code',
     weight: 6,
     priority: 'optional',
     label: 'Code EAN',
-    description: 'Code d\'identification pour la facturation électronique',
-    category: 'professional'
+    description: "Code d'identification pour la facturation électronique",
+    category: 'professional',
   },
   {
     name: 'specializations',
     weight: 9,
     priority: 'critical',
     label: 'Spécialisations',
-    description: 'Vos domaines d\'expertise aident les patients à vous trouver',
-    category: 'professional'
+    description: "Vos domaines d'expertise aident les patients à vous trouver",
+    category: 'professional',
   },
   {
     name: 'bio',
@@ -128,7 +129,7 @@ const NUTRITIONIST_FIELDS: FieldConfig[] = [
     priority: 'important',
     label: 'Biographie professionnelle',
     description: 'Présentez-vous à vos futurs patients',
-    category: 'professional'
+    category: 'professional',
   },
   {
     name: 'consultation_rates',
@@ -136,7 +137,7 @@ const NUTRITIONIST_FIELDS: FieldConfig[] = [
     priority: 'important',
     label: 'Tarifs de consultation',
     description: 'Informez vos patients de vos tarifs',
-    category: 'professional'
+    category: 'professional',
   },
   {
     name: 'practice_address',
@@ -144,8 +145,8 @@ const NUTRITIONIST_FIELDS: FieldConfig[] = [
     priority: 'critical',
     label: 'Adresse du cabinet',
     description: 'Nécessaire pour que les patients puissent vous trouver',
-    category: 'contact'
-  }
+    category: 'contact',
+  },
 ];
 
 /**
@@ -158,7 +159,7 @@ const PATIENT_FIELDS: FieldConfig[] = [
     priority: 'important',
     label: 'Date de naissance',
     description: 'Nécessaire pour calculer vos besoins nutritionnels',
-    category: 'basic'
+    category: 'basic',
   },
   {
     name: 'gender',
@@ -166,7 +167,7 @@ const PATIENT_FIELDS: FieldConfig[] = [
     priority: 'important',
     label: 'Sexe',
     description: 'Influence les recommandations nutritionnelles',
-    category: 'basic'
+    category: 'basic',
   },
   {
     name: 'height',
@@ -174,7 +175,7 @@ const PATIENT_FIELDS: FieldConfig[] = [
     priority: 'critical',
     label: 'Taille',
     description: 'Essentielle pour calculer vos besoins caloriques',
-    category: 'medical'
+    category: 'medical',
   },
   {
     name: 'initial_weight',
@@ -182,7 +183,7 @@ const PATIENT_FIELDS: FieldConfig[] = [
     priority: 'critical',
     label: 'Poids initial',
     description: 'Point de départ pour votre suivi nutritionnel',
-    category: 'medical'
+    category: 'medical',
   },
   {
     name: 'target_weight',
@@ -190,15 +191,15 @@ const PATIENT_FIELDS: FieldConfig[] = [
     priority: 'important',
     label: 'Poids cible',
     description: 'Votre objectif de poids à atteindre',
-    category: 'medical'
+    category: 'medical',
   },
   {
     name: 'activity_level',
     weight: 7,
     priority: 'important',
-    label: 'Niveau d\'activité',
+    label: "Niveau d'activité",
     description: 'Influence vos besoins énergétiques quotidiens',
-    category: 'medical'
+    category: 'medical',
   },
   {
     name: 'allergies',
@@ -206,7 +207,7 @@ const PATIENT_FIELDS: FieldConfig[] = [
     priority: 'critical',
     label: 'Allergies',
     description: 'Cruciales pour votre sécurité alimentaire',
-    category: 'medical'
+    category: 'medical',
   },
   {
     name: 'dietary_restrictions',
@@ -214,7 +215,7 @@ const PATIENT_FIELDS: FieldConfig[] = [
     priority: 'important',
     label: 'Restrictions alimentaires',
     description: 'Vos préférences et contraintes alimentaires',
-    category: 'preferences'
+    category: 'preferences',
   },
   {
     name: 'medical_conditions',
@@ -222,7 +223,7 @@ const PATIENT_FIELDS: FieldConfig[] = [
     priority: 'critical',
     label: 'Conditions médicales',
     description: 'Informations médicales importantes pour votre suivi',
-    category: 'medical'
+    category: 'medical',
   },
   {
     name: 'medications',
@@ -230,16 +231,16 @@ const PATIENT_FIELDS: FieldConfig[] = [
     priority: 'important',
     label: 'Médicaments',
     description: 'Peuvent interagir avec certains aliments',
-    category: 'medical'
+    category: 'medical',
   },
   {
     name: 'emergency_contact',
     weight: 6,
     priority: 'important',
-    label: 'Contact d\'urgence',
-    description: 'Important en cas d\'urgence médicale',
-    category: 'contact'
-  }
+    label: "Contact d'urgence",
+    description: "Important en cas d'urgence médicale",
+    category: 'contact',
+  },
 ];
 
 /**
@@ -286,7 +287,8 @@ function isFieldFilled(value: any): boolean {
  */
 function getFieldsConfig(role: UserRole): FieldConfig[] {
   const commonFields = [...COMMON_FIELDS];
-  const roleSpecificFields = role === 'nutritionist' ? NUTRITIONIST_FIELDS : PATIENT_FIELDS;
+  const roleSpecificFields =
+    role === 'nutritionist' ? NUTRITIONIST_FIELDS : PATIENT_FIELDS;
   return [...commonFields, ...roleSpecificFields];
 }
 
@@ -298,8 +300,11 @@ export function calculateProfileCompletion(
   role: UserRole
 ): ProfileCompletion {
   const fieldsConfig = getFieldsConfig(role);
-  const totalWeight = fieldsConfig.reduce((sum, field) => sum + field.weight, 0);
-  
+  const totalWeight = fieldsConfig.reduce(
+    (sum, field) => sum + field.weight,
+    0
+  );
+
   let completedWeight = 0;
   const missingFields: {
     critical: FieldConfig[];
@@ -308,7 +313,7 @@ export function calculateProfileCompletion(
   } = {
     critical: [],
     important: [],
-    optional: []
+    optional: [],
   };
 
   // Calcul par catégorie
@@ -317,14 +322,14 @@ export function calculateProfileCompletion(
     professional: { completed: 0, total: 0 },
     medical: { completed: 0, total: 0 },
     contact: { completed: 0, total: 0 },
-    preferences: { completed: 0, total: 0 }
+    preferences: { completed: 0, total: 0 },
   };
 
   // Analyser chaque champ
   fieldsConfig.forEach(field => {
     const value = (profileData as any)[field.name];
     const isFilled = isFieldFilled(value);
-    
+
     // Mettre à jour les statistiques par catégorie
     categoryStats[field.category].total += field.weight;
     if (isFilled) {
@@ -337,21 +342,42 @@ export function calculateProfileCompletion(
 
   // Calculer les pourcentages par catégorie
   const categoryBreakdown = {
-    basic: categoryStats.basic.total > 0 
-      ? Math.round((categoryStats.basic.completed / categoryStats.basic.total) * 100) 
-      : 100,
-    professional: categoryStats.professional.total > 0 
-      ? Math.round((categoryStats.professional.completed / categoryStats.professional.total) * 100) 
-      : 100,
-    medical: categoryStats.medical.total > 0 
-      ? Math.round((categoryStats.medical.completed / categoryStats.medical.total) * 100) 
-      : 100,
-    contact: categoryStats.contact.total > 0 
-      ? Math.round((categoryStats.contact.completed / categoryStats.contact.total) * 100) 
-      : 100,
-    preferences: categoryStats.preferences.total > 0 
-      ? Math.round((categoryStats.preferences.completed / categoryStats.preferences.total) * 100) 
-      : 100
+    basic:
+      categoryStats.basic.total > 0
+        ? Math.round(
+            (categoryStats.basic.completed / categoryStats.basic.total) * 100
+          )
+        : 100,
+    professional:
+      categoryStats.professional.total > 0
+        ? Math.round(
+            (categoryStats.professional.completed /
+              categoryStats.professional.total) *
+              100
+          )
+        : 100,
+    medical:
+      categoryStats.medical.total > 0
+        ? Math.round(
+            (categoryStats.medical.completed / categoryStats.medical.total) *
+              100
+          )
+        : 100,
+    contact:
+      categoryStats.contact.total > 0
+        ? Math.round(
+            (categoryStats.contact.completed / categoryStats.contact.total) *
+              100
+          )
+        : 100,
+    preferences:
+      categoryStats.preferences.total > 0
+        ? Math.round(
+            (categoryStats.preferences.completed /
+              categoryStats.preferences.total) *
+              100
+          )
+        : 100,
   };
 
   const percentage = Math.round((completedWeight / totalWeight) * 100);
@@ -364,8 +390,12 @@ export function calculateProfileCompletion(
   else level = 'excellent';
 
   // Générer des recommandations
-  const recommendations = generateRecommendations(missingFields, role, percentage);
-  
+  const recommendations = generateRecommendations(
+    missingFields,
+    role,
+    percentage
+  );
+
   // Déterminer la prochaine étape
   const nextStep = getNextStep(missingFields);
 
@@ -375,7 +405,7 @@ export function calculateProfileCompletion(
     missingFields,
     recommendations,
     nextStep,
-    level
+    level,
   };
 }
 
@@ -398,7 +428,7 @@ function generateRecommendations(
   if (percentage < 50) {
     if (role === 'nutritionist') {
       recommendations.push(
-        'Un profil complet augmente vos chances d\'être trouvé par des patients.'
+        "Un profil complet augmente vos chances d'être trouvé par des patients."
       );
     } else {
       recommendations.push(
@@ -425,22 +455,24 @@ function generateRecommendations(
 /**
  * Détermine la prochaine étape suggérée
  */
-function getNextStep(missingFields: ProfileCompletion['missingFields']): FieldConfig | null {
+function getNextStep(
+  missingFields: ProfileCompletion['missingFields']
+): FieldConfig | null {
   // Prioriser les champs critiques
   if (missingFields.critical.length > 0) {
     return missingFields.critical[0];
   }
-  
+
   // Puis les champs importants
   if (missingFields.important.length > 0) {
     return missingFields.important[0];
   }
-  
+
   // Enfin les champs optionnels
   if (missingFields.optional.length > 0) {
     return missingFields.optional[0];
   }
-  
+
   return null;
 }
 
@@ -452,13 +484,13 @@ export function getRequiredFieldsForLevel(
   targetLevel: 'basic' | 'good' | 'excellent'
 ): FieldConfig[] {
   const fieldsConfig = getFieldsConfig(role);
-  
+
   switch (targetLevel) {
     case 'basic':
       return fieldsConfig.filter(field => field.priority === 'critical');
     case 'good':
-      return fieldsConfig.filter(field => 
-        field.priority === 'critical' || field.priority === 'important'
+      return fieldsConfig.filter(
+        field => field.priority === 'critical' || field.priority === 'important'
       );
     case 'excellent':
       return fieldsConfig;
@@ -470,11 +502,13 @@ export function getRequiredFieldsForLevel(
 /**
  * Estime le temps nécessaire pour compléter le profil
  */
-export function estimateCompletionTime(missingFields: ProfileCompletion['missingFields']): number {
+export function estimateCompletionTime(
+  missingFields: ProfileCompletion['missingFields']
+): number {
   // Estimation en minutes
   const criticalTime = missingFields.critical.length * 3; // 3 min par champ critique
   const importantTime = missingFields.important.length * 2; // 2 min par champ important
   const optionalTime = missingFields.optional.length * 1; // 1 min par champ optionnel
-  
+
   return criticalTime + importantTime + optionalTime;
 }

@@ -9,7 +9,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseServiceKey) {
-  console.error('❌ Variables d\'environnement manquantes:');
+  console.error("❌ Variables d'environnement manquantes:");
   console.error('NEXT_PUBLIC_SUPABASE_URL:', !!supabaseUrl);
   console.error('SUPABASE_SERVICE_ROLE_KEY:', !!supabaseServiceKey);
   process.exit(1);
@@ -19,8 +19,8 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 async function createAnalyticsTables() {
   try {
-    console.log('🚀 Création des tables d\'analytics d\'onboarding...');
-    
+    console.log("🚀 Création des tables d'analytics d'onboarding...");
+
     // Table principale pour les événements d'onboarding
     console.log('📊 Création de la table onboarding_events...');
     const { error: eventsError } = await supabase.rpc('exec', {
@@ -48,15 +48,18 @@ async function createAnalyticsTables() {
           created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
           updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
         );
-      `
+      `,
     });
-    
+
     if (eventsError) {
-      console.log('⚠️  Erreur lors de la création de onboarding_events:', eventsError.message);
+      console.log(
+        '⚠️  Erreur lors de la création de onboarding_events:',
+        eventsError.message
+      );
     } else {
       console.log('✅ Table onboarding_events créée');
     }
-    
+
     // Table pour les sessions d'onboarding
     console.log('📊 Création de la table onboarding_sessions...');
     const { error: sessionsError } = await supabase.rpc('exec', {
@@ -80,15 +83,18 @@ async function createAnalyticsTables() {
           created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
           updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
         );
-      `
+      `,
     });
-    
+
     if (sessionsError) {
-      console.log('⚠️  Erreur lors de la création de onboarding_sessions:', sessionsError.message);
+      console.log(
+        '⚠️  Erreur lors de la création de onboarding_sessions:',
+        sessionsError.message
+      );
     } else {
       console.log('✅ Table onboarding_sessions créée');
     }
-    
+
     // Table pour les métriques d'onboarding
     console.log('📊 Création de la table onboarding_metrics...');
     const { error: metricsError } = await supabase.rpc('exec', {
@@ -114,15 +120,18 @@ async function createAnalyticsTables() {
           updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
           UNIQUE(date, role, step)
         );
-      `
+      `,
     });
-    
+
     if (metricsError) {
-      console.log('⚠️  Erreur lors de la création de onboarding_metrics:', metricsError.message);
+      console.log(
+        '⚠️  Erreur lors de la création de onboarding_metrics:',
+        metricsError.message
+      );
     } else {
       console.log('✅ Table onboarding_metrics créée');
     }
-    
+
     // Créer les index
     console.log('📊 Création des index...');
     const indexes = [
@@ -133,33 +142,39 @@ async function createAnalyticsTables() {
       'CREATE INDEX IF NOT EXISTS idx_onboarding_events_created_at ON onboarding_events(created_at);',
       'CREATE INDEX IF NOT EXISTS idx_onboarding_sessions_user_id ON onboarding_sessions(user_id);',
       'CREATE INDEX IF NOT EXISTS idx_onboarding_sessions_session_id ON onboarding_sessions(session_id);',
-      'CREATE INDEX IF NOT EXISTS idx_onboarding_sessions_status ON onboarding_sessions(status);'
+      'CREATE INDEX IF NOT EXISTS idx_onboarding_sessions_status ON onboarding_sessions(status);',
     ];
-    
+
     for (const indexSQL of indexes) {
-      const { error: indexError } = await supabase.rpc('exec', { sql: indexSQL });
+      const { error: indexError } = await supabase.rpc('exec', {
+        sql: indexSQL,
+      });
       if (indexError) {
         console.log('⚠️  Erreur index:', indexError.message);
       }
     }
-    
+
     console.log('✅ Index créés');
-    
+
     // Activer RLS
     console.log('🔒 Activation de RLS...');
-    const rlsTables = ['onboarding_events', 'onboarding_sessions', 'onboarding_metrics'];
-    
+    const rlsTables = [
+      'onboarding_events',
+      'onboarding_sessions',
+      'onboarding_metrics',
+    ];
+
     for (const table of rlsTables) {
       const { error: rlsError } = await supabase.rpc('exec', {
-        sql: `ALTER TABLE ${table} ENABLE ROW LEVEL SECURITY;`
+        sql: `ALTER TABLE ${table} ENABLE ROW LEVEL SECURITY;`,
       });
       if (rlsError) {
         console.log(`⚠️  Erreur RLS pour ${table}:`, rlsError.message);
       }
     }
-    
+
     console.log('✅ RLS activé');
-    
+
     // Créer les politiques RLS
     console.log('🔒 Création des politiques RLS...');
     const policies = [
@@ -182,21 +197,23 @@ async function createAnalyticsTables() {
       `CREATE POLICY "Admins can view onboarding metrics" ON onboarding_metrics
        FOR SELECT USING (auth.uid() IN (
          SELECT id FROM auth.users WHERE raw_user_meta_data->>'role' = 'admin'
-       ));`
+       ));`,
     ];
-    
+
     for (const policy of policies) {
-      const { error: policyError } = await supabase.rpc('exec', { sql: policy });
+      const { error: policyError } = await supabase.rpc('exec', {
+        sql: policy,
+      });
       if (policyError) {
         console.log('⚠️  Erreur politique:', policyError.message);
       }
     }
-    
+
     console.log('✅ Politiques RLS créées');
-    
+
     // Vérifier que les tables existent
     console.log('🔍 Vérification des tables...');
-    
+
     const { data: tables, error: tablesError } = await supabase.rpc('exec', {
       sql: `
         SELECT table_name 
@@ -204,17 +221,16 @@ async function createAnalyticsTables() {
         WHERE table_schema = 'public' 
         AND table_name LIKE 'onboarding_%'
         ORDER BY table_name;
-      `
+      `,
     });
-    
+
     if (tablesError) {
       console.log('⚠️  Erreur lors de la vérification:', tablesError.message);
     } else {
       console.log('✅ Tables créées:', tables);
     }
-    
-    console.log('🎉 Configuration des tables d\'analytics terminée !');
-    
+
+    console.log("🎉 Configuration des tables d'analytics terminée !");
   } catch (error) {
     console.error('❌ Erreur générale:', error);
   }

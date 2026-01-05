@@ -42,7 +42,7 @@ export default function OnboardingAnalyticsPage() {
       isAdmin: isAdmin(),
       hasAdminRole: hasRole('admin'),
     });
-    
+
     if (!loading) {
       setIsLoading(false);
     }
@@ -58,16 +58,16 @@ export default function OnboardingAnalyticsPage() {
 
   const handleExport = () => {
     // TODO: Implémenter l'export des données
-    console.log('Export des données d\'analytics');
+    console.log("Export des données d'analytics");
   };
 
   // Affichage de chargement
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Chargement...</p>
+      <div className='min-h-screen bg-gray-50 flex items-center justify-center'>
+        <div className='text-center'>
+          <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4'></div>
+          <p className='text-gray-600'>Chargement...</p>
         </div>
       </div>
     );
@@ -76,24 +76,24 @@ export default function OnboardingAnalyticsPage() {
   // Vérification directe d'accès admin (solution de contournement)
   if (!isAuthenticated || !hasRole('admin')) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-red-600 text-xl font-semibold mb-2">
+      <div className='min-h-screen bg-gray-50 flex items-center justify-center'>
+        <div className='text-center'>
+          <div className='text-red-600 text-xl font-semibold mb-2'>
             Accès Refusé
           </div>
-          <p className="text-gray-600 mb-4">
+          <p className='text-gray-600 mb-4'>
             Vous devez être administrateur pour accéder à cette page.
           </p>
-          <div className="space-x-4">
+          <div className='space-x-4'>
             <button
-              onClick={() => window.location.href = '/auth/signin'}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              onClick={() => (window.location.href = '/auth/signin')}
+              className='bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700'
             >
               Se connecter
             </button>
             <button
-              onClick={() => window.location.href = '/debug-auth-status'}
-              className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
+              onClick={() => (window.location.href = '/debug-auth-status')}
+              className='bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700'
             >
               Diagnostic
             </button>
@@ -106,149 +106,159 @@ export default function OnboardingAnalyticsPage() {
   return (
     <AdminGuard
       fallback={
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="text-center">
-            <div className="text-red-600 text-xl font-semibold mb-2">
+        <div className='min-h-screen bg-gray-50 flex items-center justify-center'>
+          <div className='text-center'>
+            <div className='text-red-600 text-xl font-semibold mb-2'>
               Accès Refusé
             </div>
-            <p className="text-gray-600">
+            <p className='text-gray-600'>
               Vous devez être administrateur pour accéder à cette page.
             </p>
           </div>
         </div>
       }
     >
-      <div className="min-h-screen bg-gray-50">
-      {/* En-tête */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="py-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900 flex items-center space-x-2">
-                  <BarChart3 className="h-8 w-8 text-blue-600" />
-                  <span>Analytics d'Onboarding</span>
-                </h1>
-                <p className="text-gray-600 mt-1">
-                  Suivi et analyse des parcours d'onboarding des utilisateurs
-                </p>
-              </div>
-              
-              <div className="flex items-center space-x-3">
-                <button
-                  onClick={handleRefresh}
-                  disabled={isRefreshing}
-                  className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
-                >
-                  <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-                  <span>Actualiser</span>
-                </button>
-                
-                <button
-                  onClick={handleExport}
-                  className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <Download className="h-4 w-4" />
-                  <span>Exporter</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Filtres */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="py-4">
-            <div className="flex items-center space-x-6">
-              {/* Filtre par période */}
-              <div className="flex items-center space-x-2">
-                <Calendar className="h-4 w-4 text-gray-500" />
-                <label className="text-sm font-medium text-gray-700">Période:</label>
-                <select
-                  value={timeframe}
-                  onChange={(e) => setTimeframe(e.target.value as any)}
-                  className="ml-2 px-3 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="1d">Dernières 24h</option>
-                  <option value="7d">7 derniers jours</option>
-                  <option value="30d">30 derniers jours</option>
-                  <option value="90d">90 derniers jours</option>
-                </select>
-              </div>
-
-              {/* Filtre par rôle */}
-              <div className="flex items-center space-x-2">
-                <Users className="h-4 w-4 text-gray-500" />
-                <label className="text-sm font-medium text-gray-700">Rôle:</label>
-                <select
-                  value={role || ''}
-                  onChange={(e) => setRole(e.target.value as OnboardingRole || undefined)}
-                  className="ml-2 px-3 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">Tous les rôles</option>
-                  <option value="nutritionist">Nutritionnistes</option>
-                  <option value="patient">Patients</option>
-                  <option value="admin">Administrateurs</option>
-                </select>
-              </div>
-
-              {/* Indicateur de filtres actifs */}
-              {(timeframe !== '7d' || role) && (
-                <div className="flex items-center space-x-2 text-sm text-blue-600">
-                  <Filter className="h-4 w-4" />
-                  <span>Filtres actifs</span>
+      <div className='min-h-screen bg-gray-50'>
+        {/* En-tête */}
+        <div className='bg-white border-b border-gray-200'>
+          <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+            <div className='py-6'>
+              <div className='flex items-center justify-between'>
+                <div>
+                  <h1 className='text-2xl font-bold text-gray-900 flex items-center space-x-2'>
+                    <BarChart3 className='h-8 w-8 text-blue-600' />
+                    <span>Analytics d'Onboarding</span>
+                  </h1>
+                  <p className='text-gray-600 mt-1'>
+                    Suivi et analyse des parcours d'onboarding des utilisateurs
+                  </p>
                 </div>
-              )}
+
+                <div className='flex items-center space-x-3'>
+                  <button
+                    onClick={handleRefresh}
+                    disabled={isRefreshing}
+                    className='flex items-center space-x-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50'
+                  >
+                    <RefreshCw
+                      className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`}
+                    />
+                    <span>Actualiser</span>
+                  </button>
+
+                  <button
+                    onClick={handleExport}
+                    className='flex items-center space-x-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                  >
+                    <Download className='h-4 w-4' />
+                    <span>Exporter</span>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Contenu principal */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <motion.div
-          key={`${timeframe}-${role}-${isRefreshing}`}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <OnboardingAnalyticsDashboard
-            timeframe={timeframe}
-            role={role}
-          />
-        </motion.div>
-      </div>
+        {/* Filtres */}
+        <div className='bg-white border-b border-gray-200'>
+          <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+            <div className='py-4'>
+              <div className='flex items-center space-x-6'>
+                {/* Filtre par période */}
+                <div className='flex items-center space-x-2'>
+                  <Calendar className='h-4 w-4 text-gray-500' />
+                  <label className='text-sm font-medium text-gray-700'>
+                    Période:
+                  </label>
+                  <select
+                    value={timeframe}
+                    onChange={e => setTimeframe(e.target.value as any)}
+                    className='ml-2 px-3 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+                  >
+                    <option value='1d'>Dernières 24h</option>
+                    <option value='7d'>7 derniers jours</option>
+                    <option value='30d'>30 derniers jours</option>
+                    <option value='90d'>90 derniers jours</option>
+                  </select>
+                </div>
 
-      {/* Informations supplémentaires */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-blue-900 mb-2">
-            À propos des analytics d'onboarding
-          </h3>
-          <div className="text-blue-800 space-y-2">
-            <p>
-              Ce tableau de bord vous permet de suivre et analyser les parcours d'onboarding 
-              de vos utilisateurs pour optimiser leur expérience.
-            </p>
-            <ul className="list-disc list-inside space-y-1 text-sm">
-              <li>
-                <strong>Funnel d'onboarding:</strong> Visualisez où les utilisateurs abandonnent
-              </li>
-              <li>
-                <strong>Erreurs par étape:</strong> Identifiez les problèmes récurrents
-              </li>
-              <li>
-                <strong>Demandes d'aide:</strong> Comprenez où les utilisateurs ont besoin d'assistance
-              </li>
-              <li>
-                <strong>Tendances temporelles:</strong> Suivez l'évolution des métriques dans le temps
-              </li>
-            </ul>
+                {/* Filtre par rôle */}
+                <div className='flex items-center space-x-2'>
+                  <Users className='h-4 w-4 text-gray-500' />
+                  <label className='text-sm font-medium text-gray-700'>
+                    Rôle:
+                  </label>
+                  <select
+                    value={role || ''}
+                    onChange={e =>
+                      setRole((e.target.value as OnboardingRole) || undefined)
+                    }
+                    className='ml-2 px-3 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+                  >
+                    <option value=''>Tous les rôles</option>
+                    <option value='nutritionist'>Nutritionnistes</option>
+                    <option value='patient'>Patients</option>
+                    <option value='admin'>Administrateurs</option>
+                  </select>
+                </div>
+
+                {/* Indicateur de filtres actifs */}
+                {(timeframe !== '7d' || role) && (
+                  <div className='flex items-center space-x-2 text-sm text-blue-600'>
+                    <Filter className='h-4 w-4' />
+                    <span>Filtres actifs</span>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+
+        {/* Contenu principal */}
+        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
+          <motion.div
+            key={`${timeframe}-${role}-${isRefreshing}`}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <OnboardingAnalyticsDashboard timeframe={timeframe} role={role} />
+          </motion.div>
+        </div>
+
+        {/* Informations supplémentaires */}
+        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8'>
+          <div className='bg-blue-50 border border-blue-200 rounded-lg p-6'>
+            <h3 className='text-lg font-semibold text-blue-900 mb-2'>
+              À propos des analytics d'onboarding
+            </h3>
+            <div className='text-blue-800 space-y-2'>
+              <p>
+                Ce tableau de bord vous permet de suivre et analyser les
+                parcours d'onboarding de vos utilisateurs pour optimiser leur
+                expérience.
+              </p>
+              <ul className='list-disc list-inside space-y-1 text-sm'>
+                <li>
+                  <strong>Funnel d'onboarding:</strong> Visualisez où les
+                  utilisateurs abandonnent
+                </li>
+                <li>
+                  <strong>Erreurs par étape:</strong> Identifiez les problèmes
+                  récurrents
+                </li>
+                <li>
+                  <strong>Demandes d'aide:</strong> Comprenez où les
+                  utilisateurs ont besoin d'assistance
+                </li>
+                <li>
+                  <strong>Tendances temporelles:</strong> Suivez l'évolution des
+                  métriques dans le temps
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
     </AdminGuard>
   );

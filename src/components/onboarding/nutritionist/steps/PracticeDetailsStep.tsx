@@ -67,23 +67,23 @@ const SWISS_CANTONS = [
  * Types de consultation disponibles
  */
 const CONSULTATION_TYPES = [
-  { 
-    id: 'in-person', 
-    label: 'En présentiel', 
+  {
+    id: 'in-person',
+    label: 'En présentiel',
     description: 'Consultations dans votre cabinet',
-    icon: <Building className="h-4 w-4" />
+    icon: <Building className='h-4 w-4' />,
   },
-  { 
-    id: 'video', 
-    label: 'Visioconférence', 
+  {
+    id: 'video',
+    label: 'Visioconférence',
     description: 'Consultations en ligne par vidéo',
-    icon: <Globe className="h-4 w-4" />
+    icon: <Globe className='h-4 w-4' />,
   },
-  { 
-    id: 'phone', 
-    label: 'Téléphone', 
+  {
+    id: 'phone',
+    label: 'Téléphone',
     description: 'Consultations par appel téléphonique',
-    icon: <Phone className="h-4 w-4" />
+    icon: <Phone className='h-4 w-4' />,
   },
 ];
 
@@ -108,7 +108,6 @@ export const PracticeDetailsStep: React.FC<PracticeDetailsStepProps> = ({
   onPrevious,
   isSubmitting = false,
 }) => {
-
   // Configuration du formulaire avec validation
   const {
     register,
@@ -160,10 +159,10 @@ export const PracticeDetailsStep: React.FC<PracticeDetailsStepProps> = ({
       ...formData,
     };
     console.log(`🚀 [PracticeDetailsStep] Soumission avec données:`, formData);
-    
+
     // Mettre à jour les données localement
     onDataChange(updatedData);
-    
+
     // Passer à l'étape suivante avec les données
     onNext(updatedData);
   };
@@ -180,7 +179,9 @@ export const PracticeDetailsStep: React.FC<PracticeDetailsStepProps> = ({
    * Formater les tarifs en centimes
    */
   const formatRate = (value: string) => {
-    const numValue = parseFloat(value.replace(/[^\d.,]/g, '').replace(',', '.'));
+    const numValue = parseFloat(
+      value.replace(/[^\d.,]/g, '').replace(',', '.')
+    );
     return isNaN(numValue) ? 0 : Math.round(numValue * 100);
   };
 
@@ -192,107 +193,113 @@ export const PracticeDetailsStep: React.FC<PracticeDetailsStepProps> = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div className='space-y-6'>
       {/* Formulaire */}
       <motion.form
         onSubmit={handleSubmit(onSubmit)}
-        className="space-y-8"
+        className='space-y-8'
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
       >
         {/* Titre de l'étape */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-3">
+        <div className='text-center mb-8'>
+          <h1 className='text-3xl font-bold text-gray-900 mb-3'>
             Détails de votre cabinet
           </h1>
-          <p className="text-gray-600 text-lg">
+          <p className='text-gray-600 text-lg'>
             Adresse du cabinet et informations pratiques
           </p>
         </div>
         {/* Adresse du cabinet */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-medium text-gray-900 flex items-center">
-            <MapPin className="h-5 w-5 mr-2" />
+        <div className='space-y-4'>
+          <h3 className='text-lg font-medium text-gray-900 flex items-center'>
+            <MapPin className='h-5 w-5 mr-2' />
             Adresse du cabinet
           </h3>
-          
+
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className='block text-sm font-medium text-gray-700 mb-2'>
               Rue et numéro *
             </label>
             <Input
               {...register('practiceAddress.street')}
-              type="text"
-              placeholder="Rue de la Paix 123"
+              type='text'
+              placeholder='Rue de la Paix 123'
               className={errors.practiceAddress?.street ? 'border-red-300' : ''}
             />
             {errors.practiceAddress?.street && (
-              <p className="mt-1 text-sm text-red-600">
+              <p className='mt-1 text-sm text-red-600'>
                 {errors.practiceAddress.street.message}
               </p>
             )}
           </div>
 
-          <div className="grid md:grid-cols-3 gap-4">
+          <div className='grid md:grid-cols-3 gap-4'>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className='block text-sm font-medium text-gray-700 mb-2'>
                 Code postal *
               </label>
               <Input
                 {...register('practiceAddress.postal_code')}
-                type="text"
-                placeholder="1000"
+                type='text'
+                placeholder='1000'
                 maxLength={4}
-                onChange={(e) => {
+                onChange={e => {
                   const formatted = formatPostalCode(e.target.value);
-                  setValue('practiceAddress.postal_code', formatted, { shouldValidate: true });
+                  setValue('practiceAddress.postal_code', formatted, {
+                    shouldValidate: true,
+                  });
                 }}
-                className={errors.practiceAddress?.postal_code ? 'border-red-300' : ''}
+                className={
+                  errors.practiceAddress?.postal_code ? 'border-red-300' : ''
+                }
               />
               {errors.practiceAddress?.postal_code && (
-                <p className="mt-1 text-sm text-red-600">
+                <p className='mt-1 text-sm text-red-600'>
                   {errors.practiceAddress.postal_code.message}
                 </p>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className='block text-sm font-medium text-gray-700 mb-2'>
                 Ville *
               </label>
               <Input
                 {...register('practiceAddress.city')}
-                type="text"
-                placeholder="Lausanne"
+                type='text'
+                placeholder='Lausanne'
                 className={errors.practiceAddress?.city ? 'border-red-300' : ''}
               />
               {errors.practiceAddress?.city && (
-                <p className="mt-1 text-sm text-red-600">
+                <p className='mt-1 text-sm text-red-600'>
                   {errors.practiceAddress.city.message}
                 </p>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className='block text-sm font-medium text-gray-700 mb-2'>
                 Canton *
               </label>
               <select
                 {...register('practiceAddress.canton')}
                 className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
-                  errors.practiceAddress?.canton ? 'border-red-300' : 'border-gray-300'
+                  errors.practiceAddress?.canton
+                    ? 'border-red-300'
+                    : 'border-gray-300'
                 }`}
               >
-                <option value="">Sélectionner</option>
-                {SWISS_CANTONS.map((canton) => (
+                <option value=''>Sélectionner</option>
+                {SWISS_CANTONS.map(canton => (
                   <option key={canton.code} value={canton.code}>
                     {canton.name} ({canton.code})
                   </option>
                 ))}
               </select>
               {errors.practiceAddress?.canton && (
-                <p className="mt-1 text-sm text-red-600">
+                <p className='mt-1 text-sm text-red-600'>
                   {errors.practiceAddress.canton.message}
                 </p>
               )}
@@ -301,14 +308,14 @@ export const PracticeDetailsStep: React.FC<PracticeDetailsStepProps> = ({
         </div>
 
         {/* Types de consultation */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-medium text-gray-900 flex items-center">
-            <Clock className="h-5 w-5 mr-2" />
+        <div className='space-y-4'>
+          <h3 className='text-lg font-medium text-gray-900 flex items-center'>
+            <Clock className='h-5 w-5 mr-2' />
             Types de consultation
           </h3>
-          
-          <div className="grid md:grid-cols-3 gap-4">
-            {CONSULTATION_TYPES.map((type) => (
+
+          <div className='grid md:grid-cols-3 gap-4'>
+            {CONSULTATION_TYPES.map(type => (
               <label
                 key={type.id}
                 className={`relative flex flex-col items-center p-4 border-2 rounded-lg cursor-pointer transition-all ${
@@ -318,36 +325,34 @@ export const PracticeDetailsStep: React.FC<PracticeDetailsStepProps> = ({
                 }`}
               >
                 <input
-                  type="checkbox"
+                  type='checkbox'
                   value={type.id}
                   {...register('consultationTypes')}
-                  className="sr-only"
+                  className='sr-only'
                 />
-                <div className="text-blue-600 mb-2">
-                  {type.icon}
-                </div>
-                <span className="font-medium text-gray-900">{type.label}</span>
-                <span className="text-sm text-gray-500 text-center mt-1">
+                <div className='text-blue-600 mb-2'>{type.icon}</div>
+                <span className='font-medium text-gray-900'>{type.label}</span>
+                <span className='text-sm text-gray-500 text-center mt-1'>
                   {type.description}
                 </span>
               </label>
             ))}
           </div>
           {errors.consultationTypes && (
-            <p className="text-sm text-red-600">
+            <p className='text-sm text-red-600'>
               {errors.consultationTypes.message}
             </p>
           )}
         </div>
 
         {/* Langues disponibles */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-medium text-gray-900">
+        <div className='space-y-4'>
+          <h3 className='text-lg font-medium text-gray-900'>
             Langues de consultation
           </h3>
-          
-          <div className="grid md:grid-cols-3 gap-4">
-            {CONSULTATION_LANGUAGES.map((lang) => (
+
+          <div className='grid md:grid-cols-3 gap-4'>
+            {CONSULTATION_LANGUAGES.map(lang => (
               <label
                 key={lang.code}
                 className={`relative flex items-center p-3 border rounded-lg cursor-pointer transition-all ${
@@ -357,17 +362,17 @@ export const PracticeDetailsStep: React.FC<PracticeDetailsStepProps> = ({
                 }`}
               >
                 <input
-                  type="checkbox"
+                  type='checkbox'
                   value={lang.code}
                   {...register('availableLanguages')}
-                  className="sr-only"
+                  className='sr-only'
                 />
-                <span className="font-medium text-gray-900">{lang.name}</span>
+                <span className='font-medium text-gray-900'>{lang.name}</span>
               </label>
             ))}
           </div>
           {errors.availableLanguages && (
-            <p className="text-sm text-red-600">
+            <p className='text-sm text-red-600'>
               {errors.availableLanguages.message}
             </p>
           )}
@@ -375,32 +380,32 @@ export const PracticeDetailsStep: React.FC<PracticeDetailsStepProps> = ({
 
         {/* Nombre maximum de patients */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className='block text-sm font-medium text-gray-700 mb-2'>
             Nombre maximum de patients
           </label>
           <Input
             {...register('maxPatients', { valueAsNumber: true })}
-            type="number"
-            min="1"
-            max="500"
-            placeholder="100"
+            type='number'
+            min='1'
+            max='500'
+            placeholder='100'
             className={errors.maxPatients ? 'border-red-300' : ''}
           />
           {errors.maxPatients && (
-            <p className="mt-1 text-sm text-red-600">
+            <p className='mt-1 text-sm text-red-600'>
               {errors.maxPatients.message}
             </p>
           )}
-          <p className="mt-1 text-sm text-gray-500">
+          <p className='mt-1 text-sm text-gray-500'>
             Vous pourrez modifier cette limite plus tard dans vos paramètres
           </p>
         </div>
 
         {/* Boutons de navigation */}
-        <div className="flex justify-between pt-6">
+        <div className='flex justify-between pt-6'>
           <Button
-            type="button"
-            variant="secondary"
+            type='button'
+            variant='secondary'
             onClick={onPrevious}
             disabled={isSubmitting}
           >
@@ -408,13 +413,11 @@ export const PracticeDetailsStep: React.FC<PracticeDetailsStepProps> = ({
           </Button>
 
           <Button
-            type="submit"
+            type='submit'
             disabled={!isValid || isSubmitting}
-            className="flex items-center space-x-2"
+            className='flex items-center space-x-2'
           >
-            <span>
-              {isSubmitting ? 'Enregistrement...' : 'Continuer'}
-            </span>
+            <span>{isSubmitting ? 'Enregistrement...' : 'Continuer'}</span>
           </Button>
         </div>
       </motion.form>

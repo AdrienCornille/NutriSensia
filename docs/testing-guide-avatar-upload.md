@@ -34,81 +34,96 @@ Exécuter le script SQL de configuration :
 ### A. Test de la Page de Profil
 
 #### 1. Navigation et Chargement
+
 ```bash
 # Naviguer vers la page de profil
 http://localhost:3000/profile
 ```
 
 **Scénarios à vérifier :**
+
 - ✅ La page se charge sans erreur
 - ✅ Le skeleton loading s'affiche pendant le chargement
 - ✅ Les informations du profil s'affichent correctement
 - ✅ L'avatar s'affiche (image ou fallback)
 
 #### 2. Affichage de l'Avatar
+
 **Cas de test :**
 
-| Scénario | Attendu |
-|----------|---------|
-| Avec image existante | Affichage de l'image de profil |
-| Sans image, avec nom | Affichage des initiales (ex: "JD" pour "John Doe") |
-| Sans image, sans nom, avec email | Affichage de la première lettre de l'email |
-| Sans aucune information | Affichage de "?" |
+| Scénario                         | Attendu                                            |
+| -------------------------------- | -------------------------------------------------- |
+| Avec image existante             | Affichage de l'image de profil                     |
+| Sans image, avec nom             | Affichage des initiales (ex: "JD" pour "John Doe") |
+| Sans image, sans nom, avec email | Affichage de la première lettre de l'email         |
+| Sans aucune information          | Affichage de "?"                                   |
 
 ### B. Test du Composant ImageUpload
 
 #### 1. Interface de Téléchargement
+
 **Actions :**
+
 1. Cliquer sur l'avatar existant
 2. Vérifier l'ouverture de l'interface de modification
 
 **Vérifications :**
+
 - ✅ Zone de drop visible avec instructions
 - ✅ Bouton "Sélectionner une image" présent
 - ✅ Informations sur les types de fichiers acceptés
 - ✅ Limite de taille affichée
 
 #### 2. Drag-and-Drop
+
 **Tests à effectuer :**
 
-| Action | Fichier | Attendu |
-|--------|---------|---------|
-| Glisser-déposer | image.jpg (1MB) | ✅ Prévisualisation + téléchargement réussi |
-| Glisser-déposer | image.png (2MB) | ✅ Prévisualisation + téléchargement réussi |
-| Glisser-déposer | document.pdf | ❌ Message d'erreur "Type non supporté" |
-| Glisser-déposer | video.mp4 | ❌ Message d'erreur "Type non supporté" |
+| Action          | Fichier         | Attendu                                       |
+| --------------- | --------------- | --------------------------------------------- |
+| Glisser-déposer | image.jpg (1MB) | ✅ Prévisualisation + téléchargement réussi   |
+| Glisser-déposer | image.png (2MB) | ✅ Prévisualisation + téléchargement réussi   |
+| Glisser-déposer | document.pdf    | ❌ Message d'erreur "Type non supporté"       |
+| Glisser-déposer | video.mp4       | ❌ Message d'erreur "Type non supporté"       |
 | Glisser-déposer | large.jpg (6MB) | ❌ Message d'erreur "Fichier trop volumineux" |
 
 #### 3. Sélection de Fichier
+
 **Actions :**
+
 1. Cliquer sur "Sélectionner une image"
 2. Choisir différents types de fichiers
 3. Vérifier la validation
 
 **Vérifications :**
+
 - ✅ Ouverture de l'explorateur de fichiers
 - ✅ Filtrage automatique des types d'images
 - ✅ Validation côté client avant téléchargement
 
 #### 4. Optimisation d'Image
+
 **Tests de redimensionnement :**
 
-| Image originale | Attendu |
-|----------------|---------|
-| 100x100px | Pas de redimensionnement |
-| 800x600px | Redimensionnement à 400x300px |
-| 2000x1500px | Redimensionnement à 400x300px |
-| 400x400px | Pas de redimensionnement |
+| Image originale | Attendu                       |
+| --------------- | ----------------------------- |
+| 100x100px       | Pas de redimensionnement      |
+| 800x600px       | Redimensionnement à 400x300px |
+| 2000x1500px     | Redimensionnement à 400x300px |
+| 400x400px       | Pas de redimensionnement      |
 
 ### C. Test des Notifications
 
 #### 1. Notifications de Succès
+
 **Scénarios :**
+
 - ✅ Téléchargement réussi → Notification verte "Photo de profil mise à jour"
 - ✅ Suppression réussie → Notification verte "Photo de profil supprimée"
 
 #### 2. Notifications d'Erreur
+
 **Scénarios :**
+
 - ❌ Type de fichier invalide → Notification rouge avec message d'erreur
 - ❌ Fichier trop volumineux → Notification rouge avec message d'erreur
 - ❌ Erreur réseau → Notification rouge avec message d'erreur
@@ -116,17 +131,20 @@ http://localhost:3000/profile
 ### D. Test de Responsive Design
 
 #### 1. Tests sur Différents Écrans
+
 ```bash
 # Utiliser les outils de développement du navigateur
 # Tester sur différentes tailles d'écran
 ```
 
 **Tailles à tester :**
+
 - 📱 Mobile (320px - 768px)
 - 📱 Tablet (768px - 1024px)
 - 💻 Desktop (1024px+)
 
 **Vérifications :**
+
 - ✅ Interface adaptée à chaque taille
 - ✅ Boutons et zones de drop accessibles
 - ✅ Prévisualisation d'image correcte
@@ -155,6 +173,7 @@ npm test -- --watch
 ```
 
 **Couverture des tests :**
+
 - ✅ Rendu initial
 - ✅ Affichage avec image existante
 - ✅ Sélection de fichier
@@ -173,6 +192,7 @@ npm test -- --watch
 ```
 
 **Couverture des tests :**
+
 - ✅ Affichage d'image
 - ✅ Gestion des erreurs de chargement
 - ✅ Fallback avec initiales
@@ -193,6 +213,7 @@ node scripts/test-avatar-storage.js
 ```
 
 **Tests inclus :**
+
 - ✅ Configuration du bucket
 - ✅ Permissions de téléchargement
 - ✅ Permissions de lecture
@@ -205,7 +226,7 @@ node scripts/test-avatar-storage.js
 
 ```sql
 -- Vérifier les politiques existantes
-SELECT 
+SELECT
   schemaname,
   tablename,
   policyname,
@@ -214,12 +235,13 @@ SELECT
   cmd,
   qual,
   with_check
-FROM pg_policies 
-WHERE tablename = 'objects' 
+FROM pg_policies
+WHERE tablename = 'objects'
 AND schemaname = 'storage';
 ```
 
 **Politiques attendues :**
+
 - `Users can upload their own avatar`
 - `Users can view all avatars`
 - `Users can update their own avatar`
@@ -238,6 +260,7 @@ AND schemaname = 'storage';
 ```
 
 **Attendu :**
+
 - ❌ Redirection vers la page de connexion
 - ❌ Impossible de télécharger sans authentification
 
@@ -250,6 +273,7 @@ AND schemaname = 'storage';
 ```
 
 **Attendu :**
+
 - ❌ Impossible d'accéder aux fichiers d'autres utilisateurs
 - ❌ Messages d'erreur appropriés
 
@@ -262,6 +286,7 @@ AND schemaname = 'storage';
 ```
 
 **Attendu :**
+
 - ❌ Rejet des fichiers invalides côté serveur
 - ❌ Messages d'erreur appropriés
 
@@ -270,6 +295,7 @@ AND schemaname = 'storage';
 ### A. Tests de Téléchargement
 
 **Métriques à mesurer :**
+
 - ⏱️ Temps de téléchargement (objectif : < 2 secondes pour 2MB)
 - 📦 Taille avant/après optimisation (réduction attendue : 60-80%)
 - 🖼️ Qualité visuelle maintenue
@@ -282,6 +308,7 @@ AND schemaname = 'storage';
 ```
 
 **Vérifications :**
+
 - ✅ Pas de fuites mémoire
 - ✅ Libération des ressources après téléchargement
 - ✅ Gestion correcte des blobs temporaires
@@ -298,6 +325,7 @@ AND schemaname = 'storage';
 ```
 
 **Vérifications :**
+
 - ✅ Tous les éléments sont accessibles au clavier
 - ✅ Ordre de tabulation logique
 - ✅ Indicateurs de focus visibles
@@ -311,6 +339,7 @@ AND schemaname = 'storage';
 ```
 
 **Vérifications :**
+
 - ✅ Textes alternatifs appropriés
 - ✅ Messages d'état annoncés
 - ✅ Structure sémantique correcte
@@ -327,6 +356,7 @@ AND schemaname = 'storage';
 ```
 
 **Scénarios à tester :**
+
 - ❌ Perte de connexion pendant le téléchargement
 - ❌ Timeout de la requête
 - ❌ Erreur 500 du serveur
@@ -335,6 +365,7 @@ AND schemaname = 'storage';
 ### B. Erreurs de Fichier
 
 **Tests à effectuer :**
+
 - ❌ Fichier corrompu
 - ❌ Fichier avec extension incorrecte
 - ❌ Fichier vide
@@ -343,6 +374,7 @@ AND schemaname = 'storage';
 ## 📝 Checklist de Test
 
 ### ✅ Tests Fonctionnels
+
 - [ ] Téléchargement d'image valide
 - [ ] Validation des types de fichiers
 - [ ] Validation de la taille
@@ -352,6 +384,7 @@ AND schemaname = 'storage';
 - [ ] Notifications de succès/erreur
 
 ### ✅ Tests d'Interface
+
 - [ ] Responsive design
 - [ ] Drag-and-drop
 - [ ] Sélection de fichier
@@ -359,18 +392,21 @@ AND schemaname = 'storage';
 - [ ] Messages d'erreur
 
 ### ✅ Tests de Sécurité
+
 - [ ] Authentification requise
 - [ ] Isolation des données
 - [ ] Validation côté serveur
 - [ ] Politiques RLS
 
 ### ✅ Tests de Performance
+
 - [ ] Temps de téléchargement
 - [ ] Optimisation d'image
 - [ ] Gestion mémoire
 - [ ] Qualité visuelle
 
 ### ✅ Tests d'Accessibilité
+
 - [ ] Navigation au clavier
 - [ ] Lecteurs d'écran
 - [ ] Attributs ARIA
@@ -415,13 +451,13 @@ chmod +x test-avatar-feature.sh
 
 ### Objectifs de Test
 
-| Métrique | Objectif | Mesure |
-|----------|----------|--------|
-| Couverture de code | > 90% | Jest coverage |
-| Temps de téléchargement | < 2s | Outils de développement |
-| Taille optimisée | 60-80% réduction | Comparaison avant/après |
-| Tests passants | 100% | Jest results |
-| Accessibilité | WCAG 2.1 AA | Lighthouse audit |
+| Métrique                | Objectif         | Mesure                  |
+| ----------------------- | ---------------- | ----------------------- |
+| Couverture de code      | > 90%            | Jest coverage           |
+| Temps de téléchargement | < 2s             | Outils de développement |
+| Taille optimisée        | 60-80% réduction | Comparaison avant/après |
+| Tests passants          | 100%             | Jest results            |
+| Accessibilité           | WCAG 2.1 AA      | Lighthouse audit        |
 
 ### Rapport de Test
 

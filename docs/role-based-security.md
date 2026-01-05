@@ -10,10 +10,10 @@ Ce document décrit le système de sécurité différencié selon les rôles uti
 
 ### Différenciation par rôle
 
-| Rôle | Exigence 2FA | Niveau AAL | Raison |
-|------|--------------|------------|---------|
-| **👨‍⚕️ Nutritionniste** | **Obligatoire** | **AAL2** | Accès aux données de santé de plusieurs patients |
-| **👤 Patient** | **Recommandé** | **AAL2** | Protection des données personnelles de santé |
+| Rôle                  | Exigence 2FA    | Niveau AAL | Raison                                           |
+| --------------------- | --------------- | ---------- | ------------------------------------------------ |
+| **👨‍⚕️ Nutritionniste** | **Obligatoire** | **AAL2**   | Accès aux données de santé de plusieurs patients |
+| **👤 Patient**        | **Recommandé**  | **AAL2**   | Protection des données personnelles de santé     |
 
 ## Architecture du système
 
@@ -46,6 +46,7 @@ const needsMFAForRole = async (role: string) => {
 ## 🔐 **Exigences de sécurité par rôle**
 
 ### 👨‍⚕️ **Nutritionniste**
+
 - **2FA** : **Obligatoire**
 - **Niveau AAL** : **AAL2**
 - **Raison** : Accès aux données de santé de plusieurs patients
@@ -53,6 +54,7 @@ const needsMFAForRole = async (role: string) => {
 - **Protection** : Données sensibles de multiples patients
 
 ### 👤 **Patient**
+
 - **2FA** : **Recommandé** (actuellement obligatoire)
 - **Niveau AAL** : **AAL2**
 - **Raison** : Protection des données personnelles de santé
@@ -96,11 +98,13 @@ const needsMFAForRole = async (role: string) => {
 ## 🧪 **Pages de test**
 
 ### `/role-test`
+
 - **Fonction** : Vérifier les exigences selon votre rôle
 - **Affiche** : Rôle actuel, exigences 2FA, recommandations
 - **Actions** : Tests de redirection, configuration 2FA
 
 ### `/auth-flow-test`
+
 - **Fonction** : Tester le flux d'authentification complet
 - **Affiche** : Statut 2FA, facteurs configurés
 - **Actions** : Test des redirections automatiques
@@ -137,7 +141,7 @@ Actuellement, tous les utilisateurs ont besoin de AAL2. Possibilités d'évoluti
 // Configuration future possible
 const securityConfig = {
   nutritionist: { mfaRequired: true, aalLevel: 'aal2' },
-  patient: { mfaRequired: false, aalLevel: 'aal1' } // Optionnel
+  patient: { mfaRequired: false, aalLevel: 'aal1' }, // Optionnel
 };
 ```
 
@@ -184,21 +188,24 @@ const securityConfig = {
 ### Problèmes courants
 
 #### "2FA obligatoire pour nutritionniste"
+
 - **Cause** : Rôle détecté comme "nutritionist"
 - **Solution** : Configurer le 2FA ou vérifier le rôle
 
 #### "Redirection en boucle"
+
 - **Cause** : Erreur dans la vérification du rôle
 - **Solution** : Vérifier les métadonnées utilisateur
 
 #### "Rôle non reconnu"
+
 - **Cause** : Métadonnées manquantes
 - **Solution** : Réinscription ou mise à jour du profil
 
 ## 📞 **Support**
 
 Pour toute question sur la sécurité ou la configuration :
+
 - Consultez la page `/role-test` pour diagnostiquer
 - Utilisez `/auth-flow-test` pour tester le flux
 - Contactez l'équipe technique si nécessaire
-

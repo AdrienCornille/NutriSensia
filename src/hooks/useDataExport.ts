@@ -1,6 +1,6 @@
 /**
  * Hooks personnalisés pour l'export et l'import de données
- * 
+ *
  * Ces hooks fournissent une interface React pour :
  * - Exporter les données utilisateur
  * - Importer des données
@@ -10,16 +10,16 @@
 
 import { useState, useCallback } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { 
-  DataExportService, 
+import {
+  DataExportService,
   DataImportService,
   dataExportUtils,
-  type ExportOptions, 
+  type ExportOptions,
   type ImportOptions,
   type ExportResult,
   type ExportHistoryEntry,
   type ExportSection,
-  type UserRole
+  type UserRole,
 } from '@/lib/data-export';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -43,7 +43,7 @@ export const useDataExport = () => {
     isLoading: false,
     progress: 0,
     error: null,
-    result: null
+    result: null,
   });
 
   // Mutation pour exporter les données
@@ -54,7 +54,7 @@ export const useDataExport = () => {
       }
 
       const exportService = dataExportUtils.createExportService(
-        user.id, 
+        user.id,
         user.user_metadata.role as UserRole
       );
 
@@ -65,17 +65,17 @@ export const useDataExport = () => {
         isLoading: true,
         progress: 0,
         error: null,
-        result: null
+        result: null,
       });
     },
-    onSuccess: (result) => {
+    onSuccess: result => {
       setOperationState({
         isLoading: false,
         progress: 100,
         error: null,
-        result
+        result,
       });
-      
+
       // Invalider le cache de l'historique pour le rafraîchir
       queryClient.invalidateQueries({ queryKey: ['export-history', user?.id] });
     },
@@ -84,25 +84,28 @@ export const useDataExport = () => {
         isLoading: false,
         progress: 0,
         error: error.message,
-        result: null
+        result: null,
       });
-    }
+    },
   });
 
   // Fonction pour démarrer un export
-  const startExport = useCallback(async (options: ExportOptions) => {
-    // Valider les options avant de démarrer
-    const errors = dataExportUtils.validateExportOptions(options);
-    if (errors.length > 0) {
-      setOperationState(prev => ({
-        ...prev,
-        error: errors.join(', ')
-      }));
-      return;
-    }
+  const startExport = useCallback(
+    async (options: ExportOptions) => {
+      // Valider les options avant de démarrer
+      const errors = dataExportUtils.validateExportOptions(options);
+      if (errors.length > 0) {
+        setOperationState(prev => ({
+          ...prev,
+          error: errors.join(', '),
+        }));
+        return;
+      }
 
-    return exportMutation.mutate(options);
-  }, [exportMutation]);
+      return exportMutation.mutate(options);
+    },
+    [exportMutation]
+  );
 
   // Fonction pour télécharger un export
   const downloadExport = useCallback((result: ExportResult) => {
@@ -125,7 +128,7 @@ export const useDataExport = () => {
       isLoading: false,
       progress: 0,
       error: null,
-      result: null
+      result: null,
     });
   }, []);
 
@@ -135,14 +138,14 @@ export const useDataExport = () => {
     progress: operationState.progress,
     error: operationState.error,
     result: operationState.result,
-    
+
     // Actions
     startExport,
     downloadExport,
     resetState,
-    
+
     // Utilitaires
-    isSuccess: !!operationState.result && !operationState.error
+    isSuccess: !!operationState.result && !operationState.error,
   };
 };
 
@@ -155,18 +158,24 @@ export const useDataImport = () => {
     isLoading: false,
     progress: 0,
     error: null,
-    result: null
+    result: null,
   });
 
   // Mutation pour importer les données
   const importMutation = useMutation({
-    mutationFn: async ({ fileContent, options }: { fileContent: string; options: ImportOptions }) => {
+    mutationFn: async ({
+      fileContent,
+      options,
+    }: {
+      fileContent: string;
+      options: ImportOptions;
+    }) => {
       if (!user?.id || !user?.user_metadata?.role) {
         throw new Error('Utilisateur non authentifié');
       }
 
       const importService = dataExportUtils.createImportService(
-        user.id, 
+        user.id,
         user.user_metadata.role as UserRole
       );
 
@@ -178,7 +187,7 @@ export const useDataImport = () => {
         isLoading: true,
         progress: 0,
         error: null,
-        result: null
+        result: null,
       });
     },
     onSuccess: () => {
@@ -186,7 +195,7 @@ export const useDataImport = () => {
         isLoading: false,
         progress: 100,
         error: null,
-        result: { success: true } as any
+        result: { success: true } as any,
       });
     },
     onError: (error: Error) => {
@@ -194,23 +203,26 @@ export const useDataImport = () => {
         isLoading: false,
         progress: 0,
         error: error.message,
-        result: null
+        result: null,
       });
-    }
+    },
   });
 
   // Fonction pour démarrer un import
-  const startImport = useCallback(async (file: File, options: ImportOptions) => {
-    try {
-      const fileContent = await file.text();
-      return importMutation.mutate({ fileContent, options });
-    } catch (error) {
-      setOperationState(prev => ({
-        ...prev,
-        error: `Erreur lors de la lecture du fichier: ${error.message}`
-      }));
-    }
-  }, [importMutation]);
+  const startImport = useCallback(
+    async (file: File, options: ImportOptions) => {
+      try {
+        const fileContent = await file.text();
+        return importMutation.mutate({ fileContent, options });
+      } catch (error) {
+        setOperationState(prev => ({
+          ...prev,
+          error: `Erreur lors de la lecture du fichier: ${error.message}`,
+        }));
+      }
+    },
+    [importMutation]
+  );
 
   // Réinitialiser l'état
   const resetState = useCallback(() => {
@@ -218,7 +230,7 @@ export const useDataImport = () => {
       isLoading: false,
       progress: 0,
       error: null,
-      result: null
+      result: null,
     });
   }, []);
 
@@ -228,13 +240,13 @@ export const useDataImport = () => {
     progress: operationState.progress,
     error: operationState.error,
     result: operationState.result,
-    
+
     // Actions
     startImport,
     resetState,
-    
+
     // Utilitaires
-    isSuccess: !!operationState.result && !operationState.error
+    isSuccess: !!operationState.result && !operationState.error,
   };
 };
 
@@ -252,7 +264,7 @@ export const useExportHistory = () => {
       }
 
       const exportService = dataExportUtils.createExportService(
-        user.id, 
+        user.id,
         user.user_metadata.role as UserRole
       );
 
@@ -270,63 +282,66 @@ export const useExportHistory = () => {
 export const useAvailableExportSections = () => {
   const { user } = useAuth();
 
-  const availableSections = user?.user_metadata?.role 
+  const availableSections = user?.user_metadata?.role
     ? dataExportUtils.getAvailableSections(user.user_metadata.role as UserRole)
     : [];
 
   // Informations détaillées sur chaque section
-  const sectionDetails: Record<ExportSection, { label: string; description: string; icon: string }> = {
+  const sectionDetails: Record<
+    ExportSection,
+    { label: string; description: string; icon: string }
+  > = {
     profile: {
       label: 'Profil de base',
       description: 'Nom, email, informations personnelles',
-      icon: '👤'
+      icon: '👤',
     },
     professional: {
       label: 'Informations professionnelles',
       description: 'Certifications, spécialisations, tarifs',
-      icon: '💼'
+      icon: '💼',
     },
     medical: {
       label: 'Informations médicales',
       description: 'Santé, allergies, conditions médicales',
-      icon: '🏥'
+      icon: '🏥',
     },
     preferences: {
       label: 'Préférences',
       description: 'Langue, fuseau horaire, notifications',
-      icon: '⚙️'
+      icon: '⚙️',
     },
     activity: {
-      label: 'Historique d\'activité',
+      label: "Historique d'activité",
       description: 'Connexions, actions, utilisation',
-      icon: '📊'
+      icon: '📊',
     },
     files: {
       label: 'Fichiers',
       description: 'Photos de profil, documents uploadés',
-      icon: '📁'
+      icon: '📁',
     },
     privacy: {
       label: 'Paramètres de confidentialité',
       description: 'Visibilité, permissions, partage',
-      icon: '🔒'
+      icon: '🔒',
     },
     subscription: {
       label: 'Abonnement',
       description: 'Plan, facturation, crédits',
-      icon: '💳'
+      icon: '💳',
     },
     audit: {
-      label: 'Logs d\'audit',
+      label: "Logs d'audit",
       description: 'Historique des modifications, sécurité',
-      icon: '🔍'
-    }
+      icon: '🔍',
+    },
   };
 
   return {
     availableSections,
     sectionDetails,
-    getSectionInfo: (section: ExportSection) => sectionDetails[section]
+    getSectionInfo: (section: ExportSection) => sectionDetails[section],
   };
 };
 
@@ -334,75 +349,84 @@ export const useAvailableExportSections = () => {
  * Hook pour valider les fichiers d'import
  */
 export const useImportValidation = () => {
-  const validateFile = useCallback((file: File): { isValid: boolean; errors: string[] } => {
-    const errors: string[] = [];
-    
-    // Vérifier la taille (max 10MB)
-    if (file.size > 10 * 1024 * 1024) {
-      errors.push('Le fichier ne peut pas dépasser 10MB');
-    }
-    
-    // Vérifier le type
-    const allowedTypes = ['application/json', 'text/csv', 'text/plain'];
-    if (!allowedTypes.includes(file.type)) {
-      errors.push('Type de fichier non supporté. Utilisez JSON ou CSV.');
-    }
-    
-    // Vérifier l'extension
-    const allowedExtensions = ['.json', '.csv', '.txt'];
-    const hasValidExtension = allowedExtensions.some(ext => 
-      file.name.toLowerCase().endsWith(ext)
-    );
-    
-    if (!hasValidExtension) {
-      errors.push('Extension de fichier non supportée. Utilisez .json, .csv ou .txt');
-    }
-    
-    return {
-      isValid: errors.length === 0,
-      errors
-    };
-  }, []);
+  const validateFile = useCallback(
+    (file: File): { isValid: boolean; errors: string[] } => {
+      const errors: string[] = [];
 
-  const validateImportData = useCallback(async (fileContent: string, format: 'json' | 'csv'): Promise<{ isValid: boolean; errors: string[] }> => {
-    const errors: string[] = [];
-    
-    try {
-      if (format === 'json') {
-        const data = JSON.parse(fileContent);
-        
-        // Vérifications basiques de structure
-        if (!data || typeof data !== 'object') {
-          errors.push('Structure JSON invalide');
-        }
-        
-        // Vérifier la présence de métadonnées d'export
-        if (!data._metadata) {
-          errors.push('Métadonnées d\'export manquantes');
-        } else if (!data._metadata.export_version) {
-          errors.push('Version d\'export non spécifiée');
-        }
-        
-      } else if (format === 'csv') {
-        // Validation basique CSV
-        if (!fileContent.includes('Section,Field,Value,Type')) {
-          errors.push('En-tête CSV manquant ou incorrect');
-        }
+      // Vérifier la taille (max 10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        errors.push('Le fichier ne peut pas dépasser 10MB');
       }
-      
-    } catch (error) {
-      errors.push(`Erreur de parsing: ${error.message}`);
-    }
-    
-    return {
-      isValid: errors.length === 0,
-      errors
-    };
-  }, []);
+
+      // Vérifier le type
+      const allowedTypes = ['application/json', 'text/csv', 'text/plain'];
+      if (!allowedTypes.includes(file.type)) {
+        errors.push('Type de fichier non supporté. Utilisez JSON ou CSV.');
+      }
+
+      // Vérifier l'extension
+      const allowedExtensions = ['.json', '.csv', '.txt'];
+      const hasValidExtension = allowedExtensions.some(ext =>
+        file.name.toLowerCase().endsWith(ext)
+      );
+
+      if (!hasValidExtension) {
+        errors.push(
+          'Extension de fichier non supportée. Utilisez .json, .csv ou .txt'
+        );
+      }
+
+      return {
+        isValid: errors.length === 0,
+        errors,
+      };
+    },
+    []
+  );
+
+  const validateImportData = useCallback(
+    async (
+      fileContent: string,
+      format: 'json' | 'csv'
+    ): Promise<{ isValid: boolean; errors: string[] }> => {
+      const errors: string[] = [];
+
+      try {
+        if (format === 'json') {
+          const data = JSON.parse(fileContent);
+
+          // Vérifications basiques de structure
+          if (!data || typeof data !== 'object') {
+            errors.push('Structure JSON invalide');
+          }
+
+          // Vérifier la présence de métadonnées d'export
+          if (!data._metadata) {
+            errors.push("Métadonnées d'export manquantes");
+          } else if (!data._metadata.export_version) {
+            errors.push("Version d'export non spécifiée");
+          }
+        } else if (format === 'csv') {
+          // Validation basique CSV
+          if (!fileContent.includes('Section,Field,Value,Type')) {
+            errors.push('En-tête CSV manquant ou incorrect');
+          }
+        }
+      } catch (error) {
+        errors.push(`Erreur de parsing: ${error.message}`);
+      }
+
+      return {
+        isValid: errors.length === 0,
+        errors,
+      };
+    },
+    []
+  );
 
   return {
     validateFile,
-    validateImportData
+    validateImportData,
   };
 };
 
@@ -410,60 +434,71 @@ export const useImportValidation = () => {
  * Hook pour la gestion des téléchargements
  */
 export const useDownloadManager = () => {
-  const [downloads, setDownloads] = useState<Map<string, { progress: number; status: string }>>(new Map());
+  const [downloads, setDownloads] = useState<
+    Map<string, { progress: number; status: string }>
+  >(new Map());
 
-  const trackDownload = useCallback((exportId: string, url: string, filename: string) => {
-    setDownloads(prev => new Map(prev.set(exportId, { progress: 0, status: 'starting' })));
+  const trackDownload = useCallback(
+    (exportId: string, url: string, filename: string) => {
+      setDownloads(
+        prev => new Map(prev.set(exportId, { progress: 0, status: 'starting' }))
+      );
 
-    // Simuler le suivi de progression (en réalité, difficile avec les téléchargements directs)
-    const progressInterval = setInterval(() => {
-      setDownloads(prev => {
-        const current = prev.get(exportId);
-        if (current && current.progress < 90) {
-          return new Map(prev.set(exportId, { 
-            progress: current.progress + 10, 
-            status: 'downloading' 
-          }));
-        }
-        return prev;
-      });
-    }, 200);
-
-    // Démarrer le téléchargement
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    // Marquer comme terminé après un délai
-    setTimeout(() => {
-      clearInterval(progressInterval);
-      setDownloads(prev => new Map(prev.set(exportId, { progress: 100, status: 'completed' })));
-      
-      // Nettoyer après 5 secondes
-      setTimeout(() => {
+      // Simuler le suivi de progression (en réalité, difficile avec les téléchargements directs)
+      const progressInterval = setInterval(() => {
         setDownloads(prev => {
-          const newMap = new Map(prev);
-          newMap.delete(exportId);
-          return newMap;
+          const current = prev.get(exportId);
+          if (current && current.progress < 90) {
+            return new Map(
+              prev.set(exportId, {
+                progress: current.progress + 10,
+                status: 'downloading',
+              })
+            );
+          }
+          return prev;
         });
-      }, 5000);
-    }, 2000);
+      }, 200);
 
-  }, []);
+      // Démarrer le téléchargement
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
 
-  const getDownloadStatus = useCallback((exportId: string) => {
-    return downloads.get(exportId) || null;
-  }, [downloads]);
+      // Marquer comme terminé après un délai
+      setTimeout(() => {
+        clearInterval(progressInterval);
+        setDownloads(
+          prev =>
+            new Map(prev.set(exportId, { progress: 100, status: 'completed' }))
+        );
+
+        // Nettoyer après 5 secondes
+        setTimeout(() => {
+          setDownloads(prev => {
+            const newMap = new Map(prev);
+            newMap.delete(exportId);
+            return newMap;
+          });
+        }, 5000);
+      }, 2000);
+    },
+    []
+  );
+
+  const getDownloadStatus = useCallback(
+    (exportId: string) => {
+      return downloads.get(exportId) || null;
+    },
+    [downloads]
+  );
 
   return {
     trackDownload,
     getDownloadStatus,
-    activeDownloads: Array.from(downloads.entries())
+    activeDownloads: Array.from(downloads.entries()),
   };
 };
-
-
-

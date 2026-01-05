@@ -9,16 +9,19 @@ Le formulaire de profil nutritionniste ne sauvegardait pas les données en base 
 Grâce à l'utilisation de Context7 pour analyser la documentation officielle Supabase JS, nous avons identifié plusieurs problèmes :
 
 ### 1. **Problème principal : UPSERT vs UPDATE**
+
 - **Erreur 409** : `duplicate key value violates unique constraint "nutritionists_pkey"`
 - **Cause** : Utilisation d'`upsert` sur un enregistrement existant
 - **Solution** : Utiliser `update` avec `.eq('id', user.id)`
 
 ### 2. **Problème de confirmation**
+
 - **Manque** : Pas de `.select()` après l'UPDATE
 - **Conséquence** : Impossible de confirmer que l'opération a réussi
 - **Solution** : Ajouter `.select()` pour récupérer les données mises à jour
 
 ### 3. **Problème de logique métier**
+
 - **Erreur** : Fonction `onSave` personnalisée interceptait les données
 - **Conséquence** : Les données n'étaient jamais envoyées à Supabase
 - **Solution** : Supprimer `onSave` pour utiliser directement le hook
@@ -26,6 +29,7 @@ Grâce à l'utilisation de Context7 pour analyser la documentation officielle Su
 ## ✅ **Solutions implémentées**
 
 ### 1. **Hook Context7 optimisé**
+
 ```typescript
 // AVANT (ne fonctionnait pas)
 const { error } = await supabase
@@ -41,11 +45,13 @@ const { data: result, error } = await supabase
 ```
 
 ### 2. **Logs détaillés Context7**
+
 - Préfixe `[Context7]` pour traçage complet
 - Affichage des données envoyées et reçues
 - Confirmation de la persistance
 
 ### 3. **Correction du formulaire**
+
 - Suppression de la fonction `onSave` qui interceptait
 - Utilisation directe du hook `updateProfile`
 - Schémas de production au lieu de schémas de test
@@ -53,6 +59,7 @@ const { data: result, error } = await supabase
 ## 🧪 **Page de test restaurée**
 
 La page de test a été remise en place pour faciliter les tests futurs :
+
 - **URL** : `http://localhost:3000/profile/authenticated-test`
 - **Fonctionnalité** : Test complet du formulaire avec logs Context7
 - **Sécurité** : Vérification d'authentification
@@ -61,17 +68,18 @@ La page de test a été remise en place pour faciliter les tests futurs :
 
 ### ✅ **Avant/Après**
 
-| Aspect | Avant | Après |
-|--------|-------|-------|
-| Lecture données | ✅ | ✅ |
-| Affichage formulaire | ✅ | ✅ |
-| Validation frontend | ✅ | ✅ |
-| Envoi à Supabase | ❌ | ✅ |
-| Persistance en base | ❌ | ✅ |
-| Logs de debugging | ❌ | ✅ |
-| Confirmation UPDATE | ❌ | ✅ |
+| Aspect               | Avant | Après |
+| -------------------- | ----- | ----- |
+| Lecture données      | ✅    | ✅    |
+| Affichage formulaire | ✅    | ✅    |
+| Validation frontend  | ✅    | ✅    |
+| Envoi à Supabase     | ❌    | ✅    |
+| Persistance en base  | ❌    | ✅    |
+| Logs de debugging    | ❌    | ✅    |
+| Confirmation UPDATE  | ❌    | ✅    |
 
 ### 🎯 **Logs de succès Context7**
+
 ```
 🔄 [Context7] Démarrage mise à jour profil
 📊 [Context7] Updates reçues: {...}

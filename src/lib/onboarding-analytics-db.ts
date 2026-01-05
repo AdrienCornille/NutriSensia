@@ -72,7 +72,8 @@ export class OnboardingAnalyticsDB {
 
       // Vérifier si userId est un UUID valide avant de l'ajouter
       const isValidUUID = (uuid: string) => {
-        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+        const uuidRegex =
+          /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
         return uuidRegex.test(uuid);
       };
 
@@ -86,7 +87,10 @@ export class OnboardingAnalyticsDB {
         .insert(insertData);
 
       if (error) {
-        console.error('❌ [Analytics DB] Erreur enregistrement événement:', error);
+        console.error(
+          '❌ [Analytics DB] Erreur enregistrement événement:',
+          error
+        );
         return { success: false, error: error.message };
       }
 
@@ -94,9 +98,9 @@ export class OnboardingAnalyticsDB {
       return { success: true };
     } catch (error) {
       console.error('💥 [Analytics DB] Erreur critique:', error);
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Erreur inconnue' 
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Erreur inconnue',
       };
     }
   }
@@ -109,7 +113,10 @@ export class OnboardingAnalyticsDB {
     sessionData: OnboardingSessionData
   ): Promise<{ success: boolean; error?: string }> {
     try {
-      console.log('📊 [Analytics DB] Création/mise à jour session:', sessionData);
+      console.log(
+        '📊 [Analytics DB] Création/mise à jour session:',
+        sessionData
+      );
 
       // Vérifier si la session existe déjà
       const { data: existingSession } = await supabase
@@ -142,7 +149,8 @@ export class OnboardingAnalyticsDB {
 
         // Vérifier si userId est un UUID valide avant de l'ajouter
         const isValidUUID = (uuid: string) => {
-          const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+          const uuidRegex =
+            /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
           return uuidRegex.test(uuid);
         };
 
@@ -165,9 +173,9 @@ export class OnboardingAnalyticsDB {
       return { success: true };
     } catch (error) {
       console.error('💥 [Analytics DB] Erreur critique session:', error);
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Erreur inconnue' 
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Erreur inconnue',
       };
     }
   }
@@ -244,7 +252,13 @@ export class OnboardingAnalyticsDB {
     browser?: string
   ): Promise<{ success: boolean; error?: string }> {
     // Créer la session
-    await this.startOnboardingSession(userId, role, sessionId, deviceType, browser);
+    await this.startOnboardingSession(
+      userId,
+      role,
+      sessionId,
+      deviceType,
+      browser
+    );
 
     // Enregistrer l'événement
     const eventData: OnboardingEventData = {

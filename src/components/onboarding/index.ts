@@ -31,18 +31,15 @@ export type {
   OnboardingStepInfo,
   UseOnboarding,
   OnboardingEvent,
-  OnboardingMetrics
+  OnboardingMetrics,
 } from '@/types/onboarding';
 
-export {
-  getStepSchema,
-  getCompleteSchema
-} from '@/lib/onboarding-schemas';
+export { getStepSchema, getCompleteSchema } from '@/lib/onboarding-schemas';
 
 // Utilitaires
 export const ONBOARDING_ROUTES = {
   nutritionist: '/onboarding/nutritionist',
-  patient: '/onboarding/patient', 
+  patient: '/onboarding/patient',
   admin: '/onboarding/admin',
 } as const;
 

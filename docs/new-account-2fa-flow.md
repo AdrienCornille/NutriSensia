@@ -22,6 +22,7 @@ graph TD
 ```
 
 **Étapes détaillées :**
+
 1. **Formulaire d'inscription** → `supabase.auth.signUp()` avec `emailRedirectTo: /auth/callback`
 2. **Email envoyé** → Utilisateur reçoit un email avec lien de vérification
 3. **Clic sur lien** → Redirection vers `/auth/callback` avec tokens
@@ -45,6 +46,7 @@ graph TD
 ```
 
 **Étapes détaillées :**
+
 1. **Clic bouton Google** → `supabase.auth.signInWithOAuth()` avec `redirectTo: /auth/callback`
 2. **OAuth Google** → Authentification sur Google
 3. **Retour app** → Redirection vers `/auth/callback` avec tokens
@@ -103,16 +105,19 @@ return isRecentAccount || isFirstSignIn || no2FAConfigured;
 ### 📄 **Fichiers Modifiés**
 
 #### 1. **`src/components/auth/AuthCallback.tsx`**
+
 - ✅ Ajout fonction `isNewAccount()`
 - ✅ Modification `handleMFARedirection()` avec priorité nouveau compte
 - ✅ Force redirection `/auth/enroll-mfa` pour nouveaux comptes
 
 #### 2. **`src/components/auth/AuthForms.tsx`**
+
 - ✅ Ajout fonction `checkIfNewAccount()`
 - ✅ Modification logique connexion email/password
 - ✅ Force redirection `/auth/enroll-mfa` pour nouveaux comptes
 
 #### 3. **`src/lib/supabase.ts`**
+
 - ✅ `emailRedirectTo` configuré sur `/auth/callback`
 
 ### 🔄 **Ordre de Priorité dans la Redirection**
@@ -134,6 +139,7 @@ const { currentLevel, nextLevel } = await getAAL();
 ### 📋 **Page de Test : `/test-new-account-flow`**
 
 **Fonctionnalités :**
+
 - ✅ Test création compte email avec rôle sélectionnable
 - ✅ Test OAuth Google
 - ✅ Vérification utilisateur actuel
@@ -143,6 +149,7 @@ const { currentLevel, nextLevel } = await getAAL();
 ### 🔍 **Scénarios de Test**
 
 #### **Scénario 1 : Nouveau Compte Email**
+
 1. Aller sur `/test-new-account-flow`
 2. Remplir email + mot de passe + rôle
 3. Cliquer "Créer Compte Email"
@@ -150,12 +157,14 @@ const { currentLevel, nextLevel } = await getAAL();
 5. **Attendu** : Redirection automatique vers `/auth/enroll-mfa`
 
 #### **Scénario 2 : Nouveau Compte Google**
+
 1. Aller sur `/test-new-account-flow`
 2. Cliquer "Test OAuth Google"
 3. S'authentifier avec Google (nouveau compte)
 4. **Attendu** : Redirection automatique vers `/auth/enroll-mfa`
 
 #### **Scénario 3 : Compte Existant**
+
 1. Se connecter avec compte existant (déjà 2FA configuré)
 2. **Attendu** : Redirection normale vers dashboard
 
@@ -166,13 +175,13 @@ const { currentLevel, nextLevel } = await getAAL();
 ```javascript
 // AuthCallback.tsx
 console.log('🔍 Analyse nouveau compte:', {
-  userId, userEmail, accountAge, isRecentAccount, 
+  userId, userEmail, accountAge, isRecentAccount,
   isFirstSignIn, no2FAConfigured
 });
 
 console.log('🆕 NOUVEAU COMPTE DÉTECTÉ - Redirection obligatoire vers 2FA');
 
-// AuthForms.tsx  
+// AuthForms.tsx
 console.log('🔍 AuthForms - Analyse nouveau compte:', { ... });
 console.log('🆕 NOUVEAU COMPTE DÉTECTÉ - Redirection obligatoire vers 2FA');
 ```
@@ -200,6 +209,7 @@ console.log('🆕 NOUVEAU COMPTE DÉTECTÉ - Redirection obligatoire vers 2FA');
 ### 🛠️ **Page de Debug : `/debug-auth-flow`**
 
 **Fonctionnalités :**
+
 - ✅ Analyse complète de l'utilisateur actuel
 - ✅ Simulation de la logique AuthCallback
 - ✅ Vérification des critères de nouveau compte
@@ -207,6 +217,7 @@ console.log('🆕 NOUVEAU COMPTE DÉTECTÉ - Redirection obligatoire vers 2FA');
 - ✅ Logs détaillés de tous les paramètres
 
 **Utilisation :**
+
 1. Se connecter avec le compte à analyser
 2. Aller sur `/debug-auth-flow`
 3. Cliquer "Analyser Utilisateur Actuel"
@@ -215,6 +226,7 @@ console.log('🆕 NOUVEAU COMPTE DÉTECTÉ - Redirection obligatoire vers 2FA');
 ### 🐛 **Problèmes Courants**
 
 #### **Problème 1 : Nouveau compte ne va pas vers 2FA**
+
 ```javascript
 // Vérifier dans la console :
 console.log('🔍 Analyse nouveau compte:', { ... });
@@ -222,15 +234,17 @@ console.log('🔍 Analyse nouveau compte:', { ... });
 ```
 
 #### **Problème 2 : Compte existant bloqué sur 2FA**
+
 ```javascript
 // Vérifier les critères de nouveau compte :
 // accountAge, isFirstSignIn, no2FAConfigured
 ```
 
 #### **Problème 3 : OAuth ne fonctionne pas**
+
 ```javascript
 // Vérifier redirectTo dans signInWithOAuth :
-redirectTo: `${window.location.origin}/auth/callback`
+redirectTo: `${window.location.origin}/auth/callback`;
 ```
 
 ---

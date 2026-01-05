@@ -59,12 +59,34 @@ export const practiceAddressSchema = z.object({
     .min(5, 'Adresse trop courte')
     .max(100, 'Adresse trop longue'),
   postal_code: swissPostalCodeSchema,
-  city: z
-    .string()
-    .min(2, 'Ville trop courte')
-    .max(50, 'Ville trop longue'),
+  city: z.string().min(2, 'Ville trop courte').max(50, 'Ville trop longue'),
   canton: z.enum([
-    'AG', 'AI', 'AR', 'BE', 'BL', 'BS', 'FR', 'GE', 'GL', 'GR', 'JU', 'LU', 'NE', 'NW', 'OW', 'SG', 'SH', 'SO', 'SZ', 'TG', 'TI', 'UR', 'VD', 'VS', 'ZG', 'ZH'
+    'AG',
+    'AI',
+    'AR',
+    'BE',
+    'BL',
+    'BS',
+    'FR',
+    'GE',
+    'GL',
+    'GR',
+    'JU',
+    'LU',
+    'NE',
+    'NW',
+    'OW',
+    'SG',
+    'SH',
+    'SO',
+    'SZ',
+    'TG',
+    'TI',
+    'UR',
+    'VD',
+    'VS',
+    'ZG',
+    'ZH',
   ]),
   country: z.literal('CH'),
 });
@@ -73,8 +95,8 @@ export const practiceAddressSchema = z.object({
 export const emergencyContactSchema = z.object({
   name: z
     .string()
-    .min(2, 'Nom du contact d\'urgence trop court')
-    .max(50, 'Nom du contact d\'urgence trop long'),
+    .min(2, "Nom du contact d'urgence trop court")
+    .max(50, "Nom du contact d'urgence trop long"),
   phone: swissPhoneSchema,
   relationship: z
     .string()
@@ -105,20 +127,21 @@ export const commonProfileSchema = z.object({
     .string()
     .min(2, 'Le prénom doit contenir au moins 2 caractères')
     .max(50, 'Le prénom ne peut pas dépasser 50 caractères')
-    .regex(/^[a-zA-ZÀ-ÿ\s'-]+$/, 'Le prénom ne peut contenir que des lettres, espaces, tirets et apostrophes'),
+    .regex(
+      /^[a-zA-ZÀ-ÿ\s'-]+$/,
+      'Le prénom ne peut contenir que des lettres, espaces, tirets et apostrophes'
+    ),
   last_name: z
     .string()
     .min(2, 'Le nom doit contenir au moins 2 caractères')
     .max(50, 'Le nom ne peut pas dépasser 50 caractères')
-    .regex(/^[a-zA-ZÀ-ÿ\s'-]+$/, 'Le nom ne peut contenir que des lettres, espaces, tirets et apostrophes'),
+    .regex(
+      /^[a-zA-ZÀ-ÿ\s'-]+$/,
+      'Le nom ne peut contenir que des lettres, espaces, tirets et apostrophes'
+    ),
   phone: swissPhoneSchema.optional(),
-  avatar_url: z
-    .string()
-    .url('URL d\'avatar invalide')
-    .optional(),
-  locale: z
-    .enum(['fr-CH', 'de-CH', 'it-CH', 'en-CH'])
-    .default('fr-CH'),
+  avatar_url: z.string().url("URL d'avatar invalide").optional(),
+  locale: z.enum(['fr-CH', 'de-CH', 'it-CH', 'en-CH']).default('fr-CH'),
   timezone: z
     .string()
     .regex(/^Europe\/[A-Za-z_]+$/, 'Fuseau horaire européen invalide')
@@ -130,211 +153,270 @@ export const commonProfileSchema = z.object({
 // =====================================================
 
 // Schéma pour les champs spécifiques aux nutritionnistes
-export const nutritionistProfileSchema = z.object({
-  // Informations d'identification professionnelle
-  asca_number: ascaNumberSchema.optional(),
-  rme_number: rmeNumberSchema.optional(),
-  ean_code: eanCodeSchema.optional(),
-  
-  // Spécialisations
-  specializations: z
-    .array(z.string().min(3, 'Spécialisation trop courte').max(50, 'Spécialisation trop longue'))
-    .min(1, 'Au moins une spécialisation est requise')
-    .max(10, 'Maximum 10 spécialisations')
-    .optional(),
-  
-  // Bio professionnelle
-  bio: z
-    .string()
-    .min(50, 'La bio doit contenir au moins 50 caractères')
-    .max(1000, 'La bio ne peut pas dépasser 1000 caractères')
-    .optional(),
-  
-  // Tarifs de consultation
-  consultation_rates: consultationRatesSchema.optional(),
-  
-  // Adresse du cabinet
-  practice_address: practiceAddressSchema.optional(),
-  
-  // Statut professionnel
-  verified: z.boolean().default(false),
-  is_active: z.boolean().default(true),
-  max_patients: z
-    .number()
-    .int()
-    .min(1, 'Nombre minimum de patients: 1')
-    .max(500, 'Nombre maximum de patients: 500')
-    .default(50),
-}).refine(
-  (data) => {
-    // Au moins un numéro d'identification professionnelle est requis
-    return data.asca_number || data.rme_number || data.ean_code;
-  },
-  {
-    message: 'Au moins un numéro d\'identification professionnelle (ASCA, RME ou EAN) est requis',
-    path: ['asca_number'],
-  }
-);
+export const nutritionistProfileSchema = z
+  .object({
+    // Informations d'identification professionnelle
+    asca_number: ascaNumberSchema.optional(),
+    rme_number: rmeNumberSchema.optional(),
+    ean_code: eanCodeSchema.optional(),
+
+    // Spécialisations
+    specializations: z
+      .array(
+        z
+          .string()
+          .min(3, 'Spécialisation trop courte')
+          .max(50, 'Spécialisation trop longue')
+      )
+      .min(1, 'Au moins une spécialisation est requise')
+      .max(10, 'Maximum 10 spécialisations')
+      .optional(),
+
+    // Bio professionnelle
+    bio: z
+      .string()
+      .min(50, 'La bio doit contenir au moins 50 caractères')
+      .max(1000, 'La bio ne peut pas dépasser 1000 caractères')
+      .optional(),
+
+    // Tarifs de consultation
+    consultation_rates: consultationRatesSchema.optional(),
+
+    // Adresse du cabinet
+    practice_address: practiceAddressSchema.optional(),
+
+    // Statut professionnel
+    verified: z.boolean().default(false),
+    is_active: z.boolean().default(true),
+    max_patients: z
+      .number()
+      .int()
+      .min(1, 'Nombre minimum de patients: 1')
+      .max(500, 'Nombre maximum de patients: 500')
+      .default(50),
+  })
+  .refine(
+    data => {
+      // Au moins un numéro d'identification professionnelle est requis
+      return data.asca_number || data.rme_number || data.ean_code;
+    },
+    {
+      message:
+        "Au moins un numéro d'identification professionnelle (ASCA, RME ou EAN) est requis",
+      path: ['asca_number'],
+    }
+  );
 
 // =====================================================
 // SCHÉMAS POUR LES PATIENTS
 // =====================================================
 
 // Schéma pour les champs spécifiques aux patients
-export const patientProfileSchema = z.object({
-  // Référence au nutritionniste
-  nutritionist_id: z
-    .string()
-    .uuid('ID de nutritionniste invalide')
-    .optional(),
-  
-  // Informations personnelles
-  date_of_birth: z
-    .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Format de date invalide (YYYY-MM-DD)')
-    .refine(
-      (date) => {
-        const birthDate = new Date(date);
-        const today = new Date();
-        const age = today.getFullYear() - birthDate.getFullYear();
-        return age >= 13 && age <= 120;
-      },
-      {
-        message: 'L\'âge doit être compris entre 13 et 120 ans',
+export const patientProfileSchema = z
+  .object({
+    // Référence au nutritionniste
+    nutritionist_id: z
+      .string()
+      .uuid('ID de nutritionniste invalide')
+      .optional(),
+
+    // Informations personnelles
+    date_of_birth: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, 'Format de date invalide (YYYY-MM-DD)')
+      .refine(
+        date => {
+          const birthDate = new Date(date);
+          const today = new Date();
+          const age = today.getFullYear() - birthDate.getFullYear();
+          return age >= 13 && age <= 120;
+        },
+        {
+          message: "L'âge doit être compris entre 13 et 120 ans",
+        }
+      )
+      .optional(),
+
+    gender: z.enum(['male', 'female', 'other', 'prefer_not_to_say']).optional(),
+
+    // Contact d'urgence
+    emergency_contact: emergencyContactSchema.optional(),
+
+    // Mesures physiques
+    height: z
+      .number()
+      .min(100, 'Taille minimum: 100 cm')
+      .max(250, 'Taille maximum: 250 cm')
+      .optional(),
+
+    initial_weight: z
+      .number()
+      .min(30, 'Poids initial minimum: 30 kg')
+      .max(300, 'Poids initial maximum: 300 kg')
+      .optional(),
+
+    target_weight: z
+      .number()
+      .min(30, 'Poids cible minimum: 30 kg')
+      .max(300, 'Poids cible maximum: 300 kg')
+      .optional(),
+
+    // Niveau d'activité
+    activity_level: z
+      .enum(['sedentary', 'light', 'moderate', 'active', 'very_active'])
+      .optional(),
+
+    // Informations médicales
+    allergies: z
+      .array(
+        z
+          .string()
+          .min(2, 'Allergie trop courte')
+          .max(50, 'Allergie trop longue')
+      )
+      .max(20, 'Maximum 20 allergies')
+      .optional(),
+
+    dietary_restrictions: z
+      .array(
+        z
+          .string()
+          .min(2, 'Restriction trop courte')
+          .max(50, 'Restriction trop longue')
+      )
+      .max(15, 'Maximum 15 restrictions alimentaires')
+      .optional(),
+
+    medical_conditions: z
+      .array(
+        z
+          .string()
+          .min(3, 'Condition médicale trop courte')
+          .max(100, 'Condition médicale trop longue')
+      )
+      .max(10, 'Maximum 10 conditions médicales')
+      .optional(),
+
+    medications: z
+      .array(
+        z
+          .string()
+          .min(2, 'Médicament trop court')
+          .max(100, 'Médicament trop long')
+      )
+      .max(15, 'Maximum 15 médicaments')
+      .optional(),
+
+    // Informations d'abonnement
+    subscription_tier: z
+      .number()
+      .int()
+      .min(1, "Niveau d'abonnement minimum: 1")
+      .max(5, "Niveau d'abonnement maximum: 5")
+      .optional(),
+
+    subscription_status: z
+      .enum(['active', 'inactive', 'suspended', 'expired'])
+      .optional(),
+
+    subscription_start_date: z
+      .string()
+      .datetime("Date de début d'abonnement invalide")
+      .optional(),
+
+    subscription_end_date: z
+      .string()
+      .datetime("Date de fin d'abonnement invalide")
+      .optional(),
+
+    // Crédits du package
+    package_credits: packageCreditsSchema.optional(),
+  })
+  .refine(
+    data => {
+      // Si un poids cible est spécifié, un poids initial doit aussi être spécifié
+      if (data.target_weight && !data.initial_weight) {
+        return false;
       }
-    )
-    .optional(),
-  
-  gender: z.enum(['male', 'female', 'other', 'prefer_not_to_say']).optional(),
-  
-  // Contact d'urgence
-  emergency_contact: emergencyContactSchema.optional(),
-  
-  // Mesures physiques
-  height: z
-    .number()
-    .min(100, 'Taille minimum: 100 cm')
-    .max(250, 'Taille maximum: 250 cm')
-    .optional(),
-  
-  initial_weight: z
-    .number()
-    .min(30, 'Poids initial minimum: 30 kg')
-    .max(300, 'Poids initial maximum: 300 kg')
-    .optional(),
-  
-  target_weight: z
-    .number()
-    .min(30, 'Poids cible minimum: 30 kg')
-    .max(300, 'Poids cible maximum: 300 kg')
-    .optional(),
-  
-  // Niveau d'activité
-  activity_level: z.enum(['sedentary', 'light', 'moderate', 'active', 'very_active']).optional(),
-  
-  // Informations médicales
-  allergies: z
-    .array(z.string().min(2, 'Allergie trop courte').max(50, 'Allergie trop longue'))
-    .max(20, 'Maximum 20 allergies')
-    .optional(),
-  
-  dietary_restrictions: z
-    .array(z.string().min(2, 'Restriction trop courte').max(50, 'Restriction trop longue'))
-    .max(15, 'Maximum 15 restrictions alimentaires')
-    .optional(),
-  
-  medical_conditions: z
-    .array(z.string().min(3, 'Condition médicale trop courte').max(100, 'Condition médicale trop longue'))
-    .max(10, 'Maximum 10 conditions médicales')
-    .optional(),
-  
-  medications: z
-    .array(z.string().min(2, 'Médicament trop court').max(100, 'Médicament trop long'))
-    .max(15, 'Maximum 15 médicaments')
-    .optional(),
-  
-  // Informations d'abonnement
-  subscription_tier: z
-    .number()
-    .int()
-    .min(1, 'Niveau d\'abonnement minimum: 1')
-    .max(5, 'Niveau d\'abonnement maximum: 5')
-    .optional(),
-  
-  subscription_status: z.enum(['active', 'inactive', 'suspended', 'expired']).optional(),
-  
-  subscription_start_date: z
-    .string()
-    .datetime('Date de début d\'abonnement invalide')
-    .optional(),
-  
-  subscription_end_date: z
-    .string()
-    .datetime('Date de fin d\'abonnement invalide')
-    .optional(),
-  
-  // Crédits du package
-  package_credits: packageCreditsSchema.optional(),
-}).refine(
-  (data) => {
-    // Si un poids cible est spécifié, un poids initial doit aussi être spécifié
-    if (data.target_weight && !data.initial_weight) {
-      return false;
+      return true;
+    },
+    {
+      message:
+        'Un poids initial doit être spécifié si un poids cible est défini',
+      path: ['initial_weight'],
     }
-    return true;
-  },
-  {
-    message: 'Un poids initial doit être spécifié si un poids cible est défini',
-    path: ['initial_weight'],
-  }
-).refine(
-  (data) => {
-    // Si un poids cible est spécifié, il doit être différent du poids initial
-    if (data.target_weight && data.initial_weight && data.target_weight === data.initial_weight) {
-      return false;
+  )
+  .refine(
+    data => {
+      // Si un poids cible est spécifié, il doit être différent du poids initial
+      if (
+        data.target_weight &&
+        data.initial_weight &&
+        data.target_weight === data.initial_weight
+      ) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: 'Le poids cible doit être différent du poids initial',
+      path: ['target_weight'],
     }
-    return true;
-  },
-  {
-    message: 'Le poids cible doit être différent du poids initial',
-    path: ['target_weight'],
-  }
-);
+  );
 
 // =====================================================
 // SCHÉMAS COMPLETS POUR LES PROFILS
 // =====================================================
 
 // Schéma complet pour un profil de nutritionniste
-export const completeNutritionistProfileSchema = commonProfileSchema.merge(nutritionistProfileSchema);
+export const completeNutritionistProfileSchema = commonProfileSchema.merge(
+  nutritionistProfileSchema
+);
 
 // Schéma complet pour un profil de patient
-export const completePatientProfileSchema = commonProfileSchema.merge(patientProfileSchema);
+export const completePatientProfileSchema =
+  commonProfileSchema.merge(patientProfileSchema);
 
 // Schéma pour la mise à jour de profil (tous les champs optionnels)
 export const profileUpdateSchema = z.object({
   // Champs communs
-  first_name: z.string()
+  first_name: z
+    .string()
     .min(2, 'Le prénom doit contenir au moins 2 caractères')
     .max(50, 'Le prénom ne peut pas dépasser 50 caractères')
-    .regex(/^[a-zA-ZÀ-ÿ\s'-]+$/, 'Le prénom ne peut contenir que des lettres, espaces, tirets et apostrophes')
+    .regex(
+      /^[a-zA-ZÀ-ÿ\s'-]+$/,
+      'Le prénom ne peut contenir que des lettres, espaces, tirets et apostrophes'
+    )
     .optional(),
-  last_name: z.string()
+  last_name: z
+    .string()
     .min(2, 'Le nom doit contenir au moins 2 caractères')
     .max(50, 'Le nom ne peut pas dépasser 50 caractères')
-    .regex(/^[a-zA-ZÀ-ÿ\s'-]+$/, 'Le nom ne peut contenir que des lettres, espaces, tirets et apostrophes')
+    .regex(
+      /^[a-zA-ZÀ-ÿ\s'-]+$/,
+      'Le nom ne peut contenir que des lettres, espaces, tirets et apostrophes'
+    )
     .optional(),
   phone: swissPhoneSchema.optional(),
-  avatar_url: z.string().url('URL d\'avatar invalide').optional(),
+  avatar_url: z.string().url("URL d'avatar invalide").optional(),
   locale: z.enum(['fr-CH', 'de-CH', 'it-CH', 'en-CH']).optional(),
-  timezone: z.string().regex(/^Europe\/[A-Za-z_]+$/, 'Fuseau horaire européen invalide').optional(),
-  
+  timezone: z
+    .string()
+    .regex(/^Europe\/[A-Za-z_]+$/, 'Fuseau horaire européen invalide')
+    .optional(),
+
   // Champs nutritionniste
   asca_number: ascaNumberSchema.optional(),
   rme_number: rmeNumberSchema.optional(),
   ean_code: eanCodeSchema.optional(),
   specializations: z
-    .array(z.string().min(3, 'Spécialisation trop courte').max(50, 'Spécialisation trop longue'))
+    .array(
+      z
+        .string()
+        .min(3, 'Spécialisation trop courte')
+        .max(50, 'Spécialisation trop longue')
+    )
     .min(1, 'Au moins une spécialisation est requise')
     .max(10, 'Maximum 10 spécialisations')
     .optional(),
@@ -353,21 +435,21 @@ export const profileUpdateSchema = z.object({
     .min(1, 'Nombre minimum de patients: 1')
     .max(500, 'Nombre maximum de patients: 500')
     .optional(),
-  
+
   // Champs patient
   nutritionist_id: z.string().uuid('ID de nutritionniste invalide').optional(),
   date_of_birth: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, 'Format de date invalide (YYYY-MM-DD)')
     .refine(
-      (date) => {
+      date => {
         const birthDate = new Date(date);
         const today = new Date();
         const age = today.getFullYear() - birthDate.getFullYear();
         return age >= 13 && age <= 120;
       },
       {
-        message: 'L\'âge doit être compris entre 13 et 120 ans',
+        message: "L'âge doit être compris entre 13 et 120 ans",
       }
     )
     .optional(),
@@ -388,32 +470,59 @@ export const profileUpdateSchema = z.object({
     .min(30, 'Poids cible minimum: 30 kg')
     .max(300, 'Poids cible maximum: 300 kg')
     .optional(),
-  activity_level: z.enum(['sedentary', 'light', 'moderate', 'active', 'very_active']).optional(),
+  activity_level: z
+    .enum(['sedentary', 'light', 'moderate', 'active', 'very_active'])
+    .optional(),
   allergies: z
-    .array(z.string().min(2, 'Allergie trop courte').max(50, 'Allergie trop longue'))
+    .array(
+      z.string().min(2, 'Allergie trop courte').max(50, 'Allergie trop longue')
+    )
     .max(20, 'Maximum 20 allergies')
     .optional(),
   dietary_restrictions: z
-    .array(z.string().min(2, 'Restriction trop courte').max(50, 'Restriction trop longue'))
+    .array(
+      z
+        .string()
+        .min(2, 'Restriction trop courte')
+        .max(50, 'Restriction trop longue')
+    )
     .max(15, 'Maximum 15 restrictions alimentaires')
     .optional(),
   medical_conditions: z
-    .array(z.string().min(3, 'Condition médicale trop courte').max(100, 'Condition médicale trop longue'))
+    .array(
+      z
+        .string()
+        .min(3, 'Condition médicale trop courte')
+        .max(100, 'Condition médicale trop longue')
+    )
     .max(10, 'Maximum 10 conditions médicales')
     .optional(),
   medications: z
-    .array(z.string().min(2, 'Médicament trop court').max(100, 'Médicament trop long'))
+    .array(
+      z
+        .string()
+        .min(2, 'Médicament trop court')
+        .max(100, 'Médicament trop long')
+    )
     .max(15, 'Maximum 15 médicaments')
     .optional(),
   subscription_tier: z
     .number()
     .int()
-    .min(1, 'Niveau d\'abonnement minimum: 1')
-    .max(5, 'Niveau d\'abonnement maximum: 5')
+    .min(1, "Niveau d'abonnement minimum: 1")
+    .max(5, "Niveau d'abonnement maximum: 5")
     .optional(),
-  subscription_status: z.enum(['active', 'inactive', 'suspended', 'expired']).optional(),
-  subscription_start_date: z.string().datetime('Date de début d\'abonnement invalide').optional(),
-  subscription_end_date: z.string().datetime('Date de fin d\'abonnement invalide').optional(),
+  subscription_status: z
+    .enum(['active', 'inactive', 'suspended', 'expired'])
+    .optional(),
+  subscription_start_date: z
+    .string()
+    .datetime("Date de début d'abonnement invalide")
+    .optional(),
+  subscription_end_date: z
+    .string()
+    .datetime("Date de fin d'abonnement invalide")
+    .optional(),
   package_credits: packageCreditsSchema.optional(),
 });
 
@@ -504,7 +613,9 @@ export const mealPlanSchema = z.object({
 
 // Types pour les nouveaux schémas de profil
 export type CommonProfile = z.infer<typeof commonProfileSchema>;
-export type NutritionistProfile = z.infer<typeof completeNutritionistProfileSchema>;
+export type NutritionistProfile = z.infer<
+  typeof completeNutritionistProfileSchema
+>;
 export type PatientProfile = z.infer<typeof completePatientProfileSchema>;
 export type ProfileUpdate = z.infer<typeof profileUpdateSchema>;
 

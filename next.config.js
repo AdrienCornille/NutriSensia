@@ -1,73 +1,54 @@
+const createNextIntlPlugin = require('next-intl/plugin');
+
+const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Désactiver la vérification TypeScript temporairement
+  // Configuration MDX
+  pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
+
+  // Configuration des images
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        port: '',
+        pathname: '/**',
+      },
+    ],
+  },
+
+  // Désactiver la vérification TypeScript et ESLint temporairement
   typescript: {
     ignoreBuildErrors: true,
   },
-  // Désactiver ESLint temporairement
   eslint: {
     ignoreDuringBuilds: true,
   },
+
   // Optimisations pour améliorer les performances de compilation
   swcMinify: true,
-  experimental: {
-    // Amélioration de la gestion des modules Node.js
-    serverComponentsExternalPackages: ['crypto'],
-    // Optimisations de compilation
-    optimizePackageImports: ['lucide-react', 'framer-motion', '@supabase/supabase-js'],
-    // Turbo réactivé pour de meilleures performances
-    turbo: {
-      rules: {
-        '*.svg': {
-          loaders: ['@svgr/webpack'],
-          as: '*.js',
-        },
-      },
-    },
-    // Optimisations supplémentaires
-    webVitalsAttribution: ['CLS', 'LCP'],
-    optimizeCss: true,
-  },
+  // NOTE: experimental.optimizePackageImports a été désactivé car il cause
+  // des erreurs "Cannot find module './vendor-chunks/...'" avec Next.js 14.2.x
+  // Réactiver après mise à jour vers Next.js 15+ si le bug est corrigé
+
+  // Optimisations webpack pour accélérer le développement
   webpack: (config, { isServer, dev }) => {
-    // Configuration pour gérer les modules Node.js natifs
-    if (isServer) {
-      config.externals.push({
-        crypto: 'commonjs crypto',
-      });
-    }
-
-    // Optimisations pour la production et le développement
-    if (!dev) {
-      config.optimization = {
-        ...config.optimization,
-        splitChunks: {
-          chunks: 'all',
-          cacheGroups: {
-            vendor: {
-              test: /[\\/]node_modules[\\/]/,
-              name: 'vendors',
-              chunks: 'all',
-            },
-            common: {
-              minChunks: 2,
-              priority: -10,
-              reuseExistingChunk: true,
-            },
-          },
-        },
-      };
-    }
-
-    // Réduire la verbosité des logs en développement
+    // En développement, optimiser la compilation
     if (dev) {
+      // Réduire la verbosité des logs
       config.stats = 'errors-warnings';
       config.infrastructureLogging = {
         level: 'error',
       };
+
+      // NOTE: Les optimisations agressives (splitChunks: false, etc.) ont été
+      // retirées car elles causaient des problèmes de stabilité avec le HMR
     }
 
     return config;
   },
 };
 
-module.exports = nextConfig;
+module.exports = withNextIntl(nextConfig);

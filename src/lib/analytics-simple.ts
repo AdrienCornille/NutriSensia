@@ -55,14 +55,20 @@ export class SimpleOnboardingAnalytics {
       this.sendToInternalAPI(eventName, properties);
       console.log(`📊 [Analytics] ${eventName}:`, properties);
     } catch (error) {
-      console.warn(`⚠️ Erreur lors du tracking de l'événement ${eventName}:`, error);
+      console.warn(
+        `⚠️ Erreur lors du tracking de l'événement ${eventName}:`,
+        error
+      );
     }
   }
 
   /**
    * Envoie les événements vers l'API interne
    */
-  private async sendToInternalAPI(eventName: string, properties: Record<string, any>) {
+  private async sendToInternalAPI(
+    eventName: string,
+    properties: Record<string, any>
+  ) {
     try {
       const response = await fetch('/api/analytics/onboarding/events', {
         method: 'POST',
@@ -75,7 +81,7 @@ export class SimpleOnboardingAnalytics {
             ...properties,
             sessionId: this.sessionId,
             timestamp: new Date().toISOString(),
-          }
+          },
         }),
       });
 
@@ -83,7 +89,7 @@ export class SimpleOnboardingAnalytics {
         throw new Error(`Erreur API: ${response.status}`);
       }
     } catch (error) {
-      console.warn('⚠️ Erreur lors de l\'envoi vers l\'API interne:', error);
+      console.warn("⚠️ Erreur lors de l'envoi vers l'API interne:", error);
     }
   }
 
@@ -97,7 +103,10 @@ export class SimpleOnboardingAnalytics {
   /**
    * Track le début de l'onboarding
    */
-  trackOnboardingStarted(role: 'nutritionist' | 'patient' | 'admin', userId?: string) {
+  trackOnboardingStarted(
+    role: 'nutritionist' | 'patient' | 'admin',
+    userId?: string
+  ) {
     const event: OnboardingEvent = {
       event: 'Onboarding Started',
       properties: {
@@ -116,9 +125,15 @@ export class SimpleOnboardingAnalytics {
   /**
    * Track le début d'une étape
    */
-  trackStepStarted(step: string, stepNumber: number, totalSteps: number, role: 'nutritionist' | 'patient' | 'admin', userId?: string) {
+  trackStepStarted(
+    step: string,
+    stepNumber: number,
+    totalSteps: number,
+    role: 'nutritionist' | 'patient' | 'admin',
+    userId?: string
+  ) {
     this.stepStartTimes.set(step, Date.now());
-    
+
     const event: OnboardingEvent = {
       event: 'Onboarding Step Started',
       properties: {
@@ -140,10 +155,17 @@ export class SimpleOnboardingAnalytics {
   /**
    * Track la completion d'une étape
    */
-  trackStepCompleted(step: string, stepNumber: number, totalSteps: number, role: 'nutritionist' | 'patient' | 'admin', completionPercentage: number, userId?: string) {
+  trackStepCompleted(
+    step: string,
+    stepNumber: number,
+    totalSteps: number,
+    role: 'nutritionist' | 'patient' | 'admin',
+    completionPercentage: number,
+    userId?: string
+  ) {
     const stepStartTime = this.stepStartTimes.get(step);
     const timeSpent = stepStartTime ? Date.now() - stepStartTime : 0;
-    
+
     const event: OnboardingEvent = {
       event: 'Onboarding Step Completed',
       properties: {
@@ -167,7 +189,14 @@ export class SimpleOnboardingAnalytics {
   /**
    * Track le passage d'une étape
    */
-  trackStepSkipped(step: string, stepNumber: number, totalSteps: number, role: 'nutritionist' | 'patient' | 'admin', reason?: string, userId?: string) {
+  trackStepSkipped(
+    step: string,
+    stepNumber: number,
+    totalSteps: number,
+    role: 'nutritionist' | 'patient' | 'admin',
+    reason?: string,
+    userId?: string
+  ) {
     const event: OnboardingEvent = {
       event: 'Onboarding Step Skipped',
       properties: {
@@ -191,7 +220,14 @@ export class SimpleOnboardingAnalytics {
   /**
    * Track une erreur dans une étape
    */
-  trackStepError(step: string, stepNumber: number, role: 'nutritionist' | 'patient' | 'admin', errorType: string, errorMessage?: string, userId?: string) {
+  trackStepError(
+    step: string,
+    stepNumber: number,
+    role: 'nutritionist' | 'patient' | 'admin',
+    errorType: string,
+    errorMessage?: string,
+    userId?: string
+  ) {
     const event: OnboardingEvent = {
       event: 'Onboarding Step Error',
       properties: {
@@ -214,7 +250,13 @@ export class SimpleOnboardingAnalytics {
   /**
    * Track une demande d'aide
    */
-  trackHelpRequested(step: string, stepNumber: number, role: 'nutritionist' | 'patient' | 'admin', helpType: string, userId?: string) {
+  trackHelpRequested(
+    step: string,
+    stepNumber: number,
+    role: 'nutritionist' | 'patient' | 'admin',
+    helpType: string,
+    userId?: string
+  ) {
     const event: OnboardingEvent = {
       event: 'Onboarding Help Requested',
       properties: {
@@ -237,7 +279,12 @@ export class SimpleOnboardingAnalytics {
   /**
    * Track la completion de l'onboarding
    */
-  trackOnboardingCompleted(role: 'nutritionist' | 'patient' | 'admin', totalSteps: number, totalTimeSpent: number, userId?: string) {
+  trackOnboardingCompleted(
+    role: 'nutritionist' | 'patient' | 'admin',
+    totalSteps: number,
+    totalTimeSpent: number,
+    userId?: string
+  ) {
     const event: OnboardingEvent = {
       event: 'Onboarding Completed',
       properties: {
@@ -259,7 +306,13 @@ export class SimpleOnboardingAnalytics {
   /**
    * Track l'abandon de l'onboarding
    */
-  trackOnboardingAbandoned(step: string, stepNumber: number, role: 'nutritionist' | 'patient' | 'admin', reason?: string, userId?: string) {
+  trackOnboardingAbandoned(
+    step: string,
+    stepNumber: number,
+    role: 'nutritionist' | 'patient' | 'admin',
+    reason?: string,
+    userId?: string
+  ) {
     const event: OnboardingEvent = {
       event: 'Onboarding Abandoned',
       properties: {
@@ -316,7 +369,7 @@ export class SimpleOnboardingAnalytics {
    */
   private getDeviceType(): 'mobile' | 'tablet' | 'desktop' {
     if (typeof window === 'undefined') return 'desktop';
-    
+
     const width = window.innerWidth;
     if (width < 768) return 'mobile';
     if (width < 1024) return 'tablet';
@@ -328,7 +381,7 @@ export class SimpleOnboardingAnalytics {
    */
   private getBrowser(): string {
     if (typeof window === 'undefined') return 'unknown';
-    
+
     const userAgent = window.navigator.userAgent;
     if (userAgent.includes('Chrome')) return 'chrome';
     if (userAgent.includes('Firefox')) return 'firefox';
@@ -340,4 +393,3 @@ export class SimpleOnboardingAnalytics {
 
 // Instance simplifiée des analytics
 export const simpleOnboardingAnalytics = new SimpleOnboardingAnalytics();
-

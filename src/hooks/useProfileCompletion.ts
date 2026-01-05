@@ -1,19 +1,19 @@
 /**
  * Hook personnalisé pour gérer la complétude du profil
- * 
+ *
  * Ce hook utilise TanStack Query pour optimiser les performances
  * et fournit une interface simple pour accéder aux données de complétude
  */
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { 
-  calculateProfileCompletion, 
+import {
+  calculateProfileCompletion,
   getRequiredFieldsForLevel,
   estimateCompletionTime,
   type ProfileCompletion,
   type UserRole,
-  type ProfileData
+  type ProfileData,
 } from '@/lib/profile-completion';
 
 /**
@@ -61,9 +61,9 @@ interface UseProfileCompletionResult {
  * Clé de cache pour les données de complétude
  */
 const getCompletionCacheKey = (profileData: any, role: UserRole) => [
-  'profile-completion', 
-  role, 
-  JSON.stringify(profileData)
+  'profile-completion',
+  role,
+  JSON.stringify(profileData),
 ];
 
 /**
@@ -73,7 +73,7 @@ export const useProfileCompletion = ({
   profileData = {},
   role,
   enableCache = true,
-  refetchInterval
+  refetchInterval,
 }: UseProfileCompletionOptions): UseProfileCompletionResult => {
   const queryClient = useQueryClient();
 
@@ -82,7 +82,7 @@ export const useProfileCompletion = ({
     data: completion,
     isLoading,
     error,
-    refetch: queryRefetch
+    refetch: queryRefetch,
   } = useQuery({
     queryKey: getCompletionCacheKey(profileData, role),
     queryFn: () => calculateProfileCompletion(profileData, role),
@@ -134,13 +134,14 @@ export const useProfileCompletion = ({
     }
 
     const remaining = Math.max(0, target - percentage);
-    const progressPercentage = target > 0 ? Math.round((percentage / target) * 100) : 100;
+    const progressPercentage =
+      target > 0 ? Math.round((percentage / target) * 100) : 100;
 
     return {
       current: percentage,
       target,
       remaining,
-      percentage: Math.min(progressPercentage, 100)
+      percentage: Math.min(progressPercentage, 100),
     };
   }, [finalCompletion]);
 
@@ -152,7 +153,7 @@ export const useProfileCompletion = ({
   // Fonction pour invalider le cache
   const invalidate = () => {
     queryClient.invalidateQueries({
-      queryKey: ['profile-completion', role]
+      queryKey: ['profile-completion', role],
     });
   };
 
@@ -174,7 +175,7 @@ export const useProfileCompletion = ({
     invalidate,
     getFieldsForLevel,
     estimatedTime,
-    progressToNextLevel
+    progressToNextLevel,
   };
 };
 
@@ -209,16 +210,15 @@ export const useProfileLevelCheck = (
   minimumLevel: 'incomplete' | 'basic' | 'good' | 'excellent' = 'basic'
 ): boolean => {
   const { completion } = useProfileCompletion({ profileData, role });
-  
+
   if (!completion) return false;
-  
+
   const levelHierarchy = {
-    'incomplete': 0,
-    'basic': 1,
-    'good': 2,
-    'excellent': 3
+    incomplete: 0,
+    basic: 1,
+    good: 2,
+    excellent: 3,
   };
-  
+
   return levelHierarchy[completion.level] >= levelHierarchy[minimumLevel];
 };
-

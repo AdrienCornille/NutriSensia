@@ -71,7 +71,6 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
   onPrevious,
   isSubmitting = false,
 }) => {
-  
   // Configuration du formulaire
   const {
     register,
@@ -108,23 +107,23 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div className='space-y-6'>
       {/* En-tête */}
       <motion.div
-        className="text-center space-y-2"
+        className='text-center space-y-2'
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4">
-          <User className="h-8 w-8 text-white" />
+        <div className='mx-auto w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4'>
+          <User className='h-8 w-8 text-white' />
         </div>
-        
-        <h1 className="text-3xl font-bold text-gray-900">
+
+        <h1 className='text-3xl font-bold text-gray-900'>
           Parlez-nous de vous
         </h1>
-        
-        <p className="text-gray-600">
+
+        <p className='text-gray-600'>
           Ces informations nous aident à personnaliser votre expérience
         </p>
       </motion.div>
@@ -132,82 +131,82 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
       {/* Formulaire */}
       <motion.form
         onSubmit={handleSubmit(onSubmit)}
-        className="space-y-6"
+        className='space-y-6'
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
       >
         {/* Nom et prénom */}
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className='grid md:grid-cols-2 gap-4'>
           <FormField
-            label="Prénom *"
-            type="text"
-            placeholder="Votre prénom"
+            label='Prénom *'
+            type='text'
+            placeholder='Votre prénom'
             {...register('firstName')}
             error={errors.firstName?.message}
-            leftIcon={<User className="h-4 w-4" />}
+            leftIcon={<User className='h-4 w-4' />}
           />
-          
+
           <FormField
-            label="Nom *"
-            type="text"
-            placeholder="Votre nom"
+            label='Nom *'
+            type='text'
+            placeholder='Votre nom'
             {...register('lastName')}
             error={errors.lastName?.message}
-            leftIcon={<User className="h-4 w-4" />}
+            leftIcon={<User className='h-4 w-4' />}
           />
         </div>
 
         {/* Téléphone */}
         <FormField
-          label="Téléphone"
-          type="text"
-          placeholder="+41 79 123 45 67"
+          label='Téléphone'
+          type='text'
+          placeholder='+41 79 123 45 67'
           {...register('phone')}
           error={errors.phone?.message}
-          leftIcon={<Phone className="h-4 w-4" />}
-          helperText="Optionnel - Pour les rappels de rendez-vous"
+          leftIcon={<Phone className='h-4 w-4' />}
+          helperText='Optionnel - Pour les rappels de rendez-vous'
         />
 
         {/* Préférences de langue et fuseau horaire */}
-        <div className="grid md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              <Globe className="h-4 w-4 inline mr-2" />
+        <div className='grid md:grid-cols-2 gap-4'>
+          <div className='space-y-2'>
+            <label className='block text-sm font-medium text-gray-700'>
+              <Globe className='h-4 w-4 inline mr-2' />
               Langue préférée
             </label>
             <select
               {...register('locale')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent'
             >
-              {LANGUAGE_OPTIONS.map((option) => (
+              {LANGUAGE_OPTIONS.map(option => (
                 <option key={option.value} value={option.value}>
                   {option.label}
                 </option>
               ))}
             </select>
             {errors.locale && (
-              <p className="text-sm text-red-600">{errors.locale.message}</p>
+              <p className='text-sm text-red-600'>{errors.locale.message}</p>
             )}
           </div>
 
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              <Clock className="h-4 w-4 inline mr-2" />
+          <div className='space-y-2'>
+            <label className='block text-sm font-medium text-gray-700'>
+              <Clock className='h-4 w-4 inline mr-2' />
               Fuseau horaire
             </label>
             <select
               {...register('timezone')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent'
             >
-              {TIMEZONE_OPTIONS.map((option) => (
+              {TIMEZONE_OPTIONS.map(option => (
                 <option key={option.value} value={option.value}>
                   {option.label}
                 </option>
               ))}
             </select>
             {errors.timezone && (
-              <p className="text-sm text-red-600">{errors.timezone.message}</p>
+              <p className='text-sm text-red-600'>{errors.timezone.message}</p>
             )}
           </div>
         </div>
@@ -218,26 +217,37 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
         >
-          <WizardTip type="tip" title="Pourquoi ces informations ?">
-            <ul className="space-y-1 text-sm">
-              <li>• <strong>Nom complet</strong> : Pour personnaliser votre suivi</li>
-              <li>• <strong>Téléphone</strong> : Pour les rappels de rendez-vous (optionnel)</li>
-              <li>• <strong>Langue</strong> : Pour adapter l'interface à vos préférences</li>
-              <li>• <strong>Fuseau horaire</strong> : Pour programmer vos consultations</li>
+          <WizardTip type='tip' title='Pourquoi ces informations ?'>
+            <ul className='space-y-1 text-sm'>
+              <li>
+                • <strong>Nom complet</strong> : Pour personnaliser votre suivi
+              </li>
+              <li>
+                • <strong>Téléphone</strong> : Pour les rappels de rendez-vous
+                (optionnel)
+              </li>
+              <li>
+                • <strong>Langue</strong> : Pour adapter l'interface à vos
+                préférences
+              </li>
+              <li>
+                • <strong>Fuseau horaire</strong> : Pour programmer vos
+                consultations
+              </li>
             </ul>
           </WizardTip>
         </motion.div>
 
         {/* Boutons de navigation */}
         <motion.div
-          className="flex justify-between pt-6"
+          className='flex justify-between pt-6'
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.6 }}
         >
           <Button
-            type="button"
-            variant="secondary"
+            type='button'
+            variant='secondary'
             onClick={onPrevious}
             disabled={isSubmitting}
           >
@@ -245,7 +255,7 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
           </Button>
 
           <Button
-            type="submit"
+            type='submit'
             disabled={!isValid || isSubmitting}
             loading={isSubmitting}
           >
@@ -256,17 +266,17 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
 
       {/* Indicateur de progression */}
       <motion.div
-        className="mt-8 text-center text-sm text-gray-500"
+        className='mt-8 text-center text-sm text-gray-500'
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.8 }}
       >
         <p>Étape 2 sur 9 • Environ 13 minutes restantes</p>
-        
+
         {/* Barre de progression */}
-        <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
+        <div className='mt-2 w-full bg-gray-200 rounded-full h-2'>
           <motion.div
-            className="bg-gradient-to-r from-green-500 to-teal-600 h-2 rounded-full"
+            className='bg-gradient-to-r from-green-500 to-teal-600 h-2 rounded-full'
             initial={{ width: '11%' }}
             animate={{ width: '22%' }}
             transition={{ duration: 0.8, delay: 0.5 }}

@@ -23,10 +23,10 @@ Le composant principal pour le téléchargement d'images avec les fonctionnalit�
 ```tsx
 <ImageUpload
   currentImageUrl={user.avatar_url}
-  bucketName="avatars"
+  bucketName='avatars'
   path={`users/${userId}`}
-  onUploadSuccess={(url) => console.log('Image téléchargée:', url)}
-  onUploadError={(error) => console.error('Erreur:', error)}
+  onUploadSuccess={url => console.log('Image téléchargée:', url)}
+  onUploadError={error => console.error('Erreur:', error)}
   maxFileSize={2 * 1024 * 1024} // 2MB
   maxWidth={400}
   maxHeight={400}
@@ -52,7 +52,7 @@ Composant d'affichage de l'avatar avec fallback intelligent :
   src={user.avatar_url}
   name={user.full_name}
   email={user.email}
-  size="lg"
+  size='lg'
   clickable
   onClick={() => setIsEditingAvatar(true)}
 />
@@ -71,13 +71,7 @@ Hook personnalisé pour la gestion des profils utilisateur :
 #### Utilisation
 
 ```tsx
-const { 
-  profile, 
-  loading, 
-  error, 
-  updateAvatar, 
-  removeAvatar 
-} = useProfile();
+const { profile, loading, error, updateAvatar, removeAvatar } = useProfile();
 
 // Mettre à jour l'avatar
 await updateAvatar('https://example.com/avatar.jpg');
@@ -105,7 +99,7 @@ const { showSuccess, showError, NotificationContainer } = useNotification();
 showSuccess('Succès!', 'Opération réussie');
 
 // Dans le JSX
-<NotificationContainer />
+<NotificationContainer />;
 ```
 
 ## Configuration Supabase
@@ -141,36 +135,35 @@ Script complet pour configurer Supabase Storage :
 Le composant `ImageUpload` inclut une optimisation automatique des images :
 
 ```typescript
-const resizeImage = useCallback((file: File): Promise<Blob> => {
-  return new Promise((resolve, reject) => {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    const img = new Image();
+const resizeImage = useCallback(
+  (file: File): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
 
-    img.onload = () => {
-      // Calcul des nouvelles dimensions
-      let { width, height } = img;
-      
-      if (width > maxWidth || height > maxHeight) {
-        const ratio = Math.min(maxWidth / width, maxHeight / height);
-        width *= ratio;
-        height *= ratio;
-      }
+      img.onload = () => {
+        // Calcul des nouvelles dimensions
+        let { width, height } = img;
 
-      // Redimensionnement
-      canvas.width = width;
-      canvas.height = height;
-      ctx?.drawImage(img, 0, 0, width, height);
+        if (width > maxWidth || height > maxHeight) {
+          const ratio = Math.min(maxWidth / width, maxHeight / height);
+          width *= ratio;
+          height *= ratio;
+        }
 
-      // Conversion avec qualité optimisée
-      canvas.toBlob(
-        (blob) => resolve(blob!),
-        file.type,
-        quality / 100
-      );
-    };
-  });
-}, [maxWidth, maxHeight, quality]);
+        // Redimensionnement
+        canvas.width = width;
+        canvas.height = height;
+        ctx?.drawImage(img, 0, 0, width, height);
+
+        // Conversion avec qualité optimisée
+        canvas.toBlob(blob => resolve(blob!), file.type, quality / 100);
+      };
+    });
+  },
+  [maxWidth, maxHeight, quality]
+);
 ```
 
 ### Gestion des Erreurs
@@ -178,19 +171,22 @@ const resizeImage = useCallback((file: File): Promise<Blob> => {
 Système robuste de gestion d'erreurs avec messages en français :
 
 ```typescript
-const validateFile = useCallback((file: File): string | null => {
-  // Vérification du type MIME
-  if (!acceptedTypes.includes(file.type)) {
-    return `Type de fichier non supporté. Types autorisés: ${acceptedTypes.join(', ')}`;
-  }
+const validateFile = useCallback(
+  (file: File): string | null => {
+    // Vérification du type MIME
+    if (!acceptedTypes.includes(file.type)) {
+      return `Type de fichier non supporté. Types autorisés: ${acceptedTypes.join(', ')}`;
+    }
 
-  // Vérification de la taille
-  if (file.size > maxFileSize) {
-    return `Fichier trop volumineux. Taille maximale: ${Math.round(maxFileSize / 1024 / 1024)}MB`;
-  }
+    // Vérification de la taille
+    if (file.size > maxFileSize) {
+      return `Fichier trop volumineux. Taille maximale: ${Math.round(maxFileSize / 1024 / 1024)}MB`;
+    }
 
-  return null;
-}, [acceptedTypes, maxFileSize]);
+    return null;
+  },
+  [acceptedTypes, maxFileSize]
+);
 ```
 
 ### Nettoyage Automatique
@@ -208,10 +204,10 @@ BEGIN
       file_path text;
     BEGIN
       file_path := substring(OLD.avatar_url from 'avatars/(.*)');
-      
+
       IF file_path IS NOT NULL THEN
-        DELETE FROM storage.objects 
-        WHERE bucket_id = 'avatars' 
+        DELETE FROM storage.objects
+        WHERE bucket_id = 'avatars'
         AND name = file_path;
       END IF;
     EXCEPTION
@@ -219,7 +215,7 @@ BEGIN
         NULL;
     END;
   END IF;
-  
+
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -325,4 +321,3 @@ describe('ImageUpload', () => {
 ## Conclusion
 
 Cette implémentation fournit une solution complète et robuste pour la gestion des photos de profil, avec une attention particulière portée à l'expérience utilisateur, la sécurité et les performances. L'architecture modulaire permet une maintenance facile et des extensions futures.
-

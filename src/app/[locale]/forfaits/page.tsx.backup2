@@ -1,0 +1,2033 @@
+'use client';
+
+import React, { useState } from 'react';
+import { Button } from '@/components/ui/Button';
+import { MarketingHeader } from '@/components/landing/MarketingHeader';
+import { MarketingFooter } from '@/components/landing/MarketingFooter';
+import { useScrollAnimation } from '@/hooks/useScrollAnimation';
+import { Check, Sparkles, Flame } from 'lucide-react';
+
+/**
+ * Page Forfaits et Tarifs
+ *
+ * Cette page présente les différents forfaits disponibles sur la plateforme NutriSensia.
+ * Elle est conçue pour être claire, attractive et faciliter la prise de décision des utilisateurs.
+ * Accessible via l'URL /forfaits (avec support de l'internationalisation)
+ */
+export default function ForfaitsPage() {
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  // Animation refs
+  const { elementRef: heroRef, isInView: heroVisible } = useScrollAnimation();
+  const { elementRef: discoveryRef, isInView: discoveryVisible } =
+    useScrollAnimation();
+  const { elementRef: pricingRef, isInView: pricingVisible } =
+    useScrollAnimation();
+  const { elementRef: addonsRef, isInView: addonsVisible } =
+    useScrollAnimation();
+  const { elementRef: insuranceRef, isInView: insuranceVisible } =
+    useScrollAnimation();
+  const { elementRef: termsRef, isInView: termsVisible } = useScrollAnimation();
+  const { elementRef: faqRef, isInView: faqVisible } = useScrollAnimation();
+
+  const toggleFaq = (index: number) => {
+    setOpenFaq(openFaq === index ? null : index);
+  };
+
+  // Données des forfaits
+  const pricingPlans = [
+    {
+      id: 1,
+      name: 'Consultation Découverte',
+      price: 'CHF 180',
+      priceAfterRefund: 'Environ CHF 36-54 après remboursement',
+      features: [
+        { text: '1h30 de consultation approfondie' },
+        { text: 'Bilan complet de votre situation' },
+        { text: 'Plan nutritionnel personnalisé' },
+        { text: 'Accès à la plateforme 7 jours (essai gratuit)' },
+        { text: 'Documents pour remboursement fournis' },
+      ],
+      idealFor: 'Découvrir l\'approche et obtenir un premier plan d\'action',
+      ctaText: 'Réserver ma consultation',
+      ctaLink: '/contact?type=consultation',
+      badge: {
+        icon: Check,
+        text: 'Aucun engagement sur le long terme',
+        color: 'text-primary',
+      },
+    },
+    {
+      id: 2,
+      name: 'Suivi 3 Mois',
+      price: 'CHF 780',
+      priceAfterRefund: 'Environ CHF 156-234 après remboursement',
+      features: [
+        { text: '1 consultation découverte (1h30)' },
+        { text: '3 consultations de suivi (1h chacune)' },
+        { text: 'Accès illimité à la plateforme NutriSensia' },
+        { text: 'Messagerie sécurisée (réponse 24h)' },
+        { text: 'Ajustements continus de votre plan' },
+        { text: 'Tous les documents de remboursement' },
+      ],
+      idealFor: 'Créer des changements durables et ancrer vos nouvelles habitudes',
+      ctaText: 'Choisir ce forfait',
+      ctaLink: '/contact?type=package&plan=3months',
+      isPopular: true,
+      badge: {
+        icon: Flame,
+        text: 'Économisez CHF 60 vs consultations individuelles',
+        color: 'text-orange-600',
+      },
+    },
+    {
+      id: 3,
+      name: 'Suivi 6 Mois',
+      price: 'CHF 1\'440',
+      priceAfterRefund: 'Environ CHF 288-432 après remboursement',
+      features: [
+        { text: '1 consultation découverte (1h30)' },
+        { text: '6 consultations de suivi (1h chacune)' },
+        { text: 'Accès illimité à la plateforme NutriSensia' },
+        { text: 'Messagerie sécurisée prioritaire' },
+        { text: 'Suivi approfondi et ajustements réguliers' },
+        { text: 'Tous les documents de remboursement' },
+      ],
+      idealFor: 'Une transformation profonde avec accompagnement complet',
+      ctaText: 'Choisir ce forfait',
+      ctaLink: '/contact?type=package&plan=6months',
+      badge: {
+        icon: Sparkles,
+        text: 'Économisez CHF 120 vs consultations individuelles',
+        color: 'text-purple-600',
+      },
+    },
+  ];
+
+  const faqData = [
+    {
+      question: 'Quel forfait choisir ?',
+      answer:
+        "Cela dépend de vos objectifs :\n- Fondation : Pour tester ou un besoin ponctuel (2 mois)\n- Transformation : Pour créer de vraies habitudes durables (3 mois) - Le plus choisi !\n- Parcours Complet : Pour une transformation profonde avec soutien continu (6 mois)\n\nSi vous hésitez, réservez d'abord la consultation découverte. Nous déciderons ensemble du meilleur forfait pour vous.",
+    },
+    {
+      question: 'Puis-je payer en plusieurs fois ?',
+      answer:
+        'Actuellement, les forfaits sont payables en une fois. Si vous avez des contraintes financières, contactez-moi pour voir ce qui est possible.',
+    },
+    {
+      question: 'Que se passe-t-il après la fin de mon forfait ?',
+      answer:
+        "Vous avez plusieurs options :\n- Continuer avec des consultations à l'unité (CHF 180/consultation)\n- Prolonger l'accès à la plateforme uniquement (CHF 90/mois)\n- Arrêter l'accompagnement (vous gardez tout ce que vous avez appris !)\n\nL'objectif est que vous deveniez autonome, pas dépendante de moi.",
+    },
+    {
+      question: 'Les forfaits sont-ils remboursés en entier ?',
+      answer:
+        "Cela dépend de votre contrat d'assurance complémentaire. La plupart des assurances remboursent entre 50% et 90% de vos consultations, dans la limite d'un plafond annuel (généralement CHF 500 à CHF 3'000).\n\nVérifiez auprès de votre assurance avant de débuter.",
+    },
+    {
+      question: 'Puis-je changer de forfait en cours de route ?',
+      answer:
+        'Oui ! Si vous commencez avec Fondation et souhaitez prolonger :\n- Vous payez la différence pour passer au forfait supérieur\n- Les consultations déjà effectuées sont déduites\n- Vous bénéficiez du tarif avantageux du forfait étendu',
+    },
+    {
+      question: 'Dois-je prendre la consultation découverte avant un forfait ?',
+      answer:
+        "Oui, c'est obligatoire. La consultation découverte est incluse dans tous les forfaits. C'est le point de départ indispensable pour :\n- Comprendre votre situation\n- Créer votre programme personnalisé\n- Vérifier que mon approche vous convient",
+    },
+    {
+      question: 'La messagerie prioritaire est-elle vraiment utile ?',
+      answer:
+        "Cela dépend de votre besoin de soutien :\n- Si vous êtes autonome et patiente : Pas nécessaire\n- Si vous avez besoin d'être rassurée ou guidée rapidement : Très utile\n\nElle est particulièrement recommandée pour :\n- Les débuts d'accompagnement (premiers mois)\n- Les périodes de stress ou difficultés\n- Les personnes qui aiment poser beaucoup de questions\n\nElle est incluse dans le Parcours Complet.",
+    },
+    {
+      question: "Puis-je offrir un forfait à quelqu'un ?",
+      answer:
+        'Oui ! Contactez-moi pour créer un bon cadeau personnalisé. La personne pourra réserver sa consultation découverte quand elle le souhaite.',
+    },
+    {
+      question: 'Y a-t-il des frais cachés ?',
+      answer:
+        'Non, aucun. Le prix affiché est le prix final. Vous ne payez rien de plus.\n\nLes seules options supplémentaires possibles (mais non obligatoires) :\n- Messagerie prioritaire : CHF 90/mois\n- Prolongation plateforme après forfait : CHF 90/mois',
+    },
+    {
+      question: "Puis-je essayer avant de m'engager ?",
+      answer:
+        "Oui ! Vous pouvez :\n- Réserver juste la consultation découverte (CHF 150) pour voir si ça vous convient\n- Essayer la plateforme gratuitement pendant 7 jours (via le site)\n- Décider ensuite si vous souhaitez un forfait ou continuer à l'unité",
+    },
+  ];
+
+  return (
+    <div className='min-h-screen'>
+      {/* Header Marketing */}
+      <MarketingHeader />
+
+      {/* Section Hero */}
+      <section
+        ref={heroRef}
+        className='min-h-[60vh] bg-gradient-to-br from-white to-[#7C9885]/[0.03] flex items-center justify-center text-center px-6 py-[60px] sm:py-[100px] md:px-10 md:py-[120px] pt-[140px] md:pt-[160px]'
+      >
+        <div className='max-w-[900px] mx-auto'>
+          {/* Label au-dessus du H1 */}
+          <div
+            className={`transition-all duration-600 ${
+              heroVisible
+                ? 'opacity-100 translate-y-0'
+                : 'opacity-0 translate-y-8'
+            }`}
+          >
+            <p className="text-[#7C9885] text-sm font-semibold uppercase tracking-[2px] mb-5 font-['Inter']">
+              NOS FORFAITS
+            </p>
+          </div>
+
+          {/* Titre principal H1 */}
+          <div
+            className={`transition-all duration-800 delay-100 ${
+              heroVisible
+                ? 'opacity-100 translate-y-0'
+                : 'opacity-0 translate-y-8'
+            }`}
+          >
+            <h1 className="font-['Playfair_Display'] text-[2.25rem] sm:text-4xl lg:text-5xl font-bold text-[#2C3E3C] leading-[1.2] max-w-[800px] mx-auto mb-6 text-center">
+              Des Formules Adaptées à Vos Besoins et Votre Rythme
+            </h1>
+          </div>
+
+          {/* Sous-titre */}
+          <div
+            className={`transition-all duration-800 delay-200 ${
+              heroVisible
+                ? 'opacity-100 translate-y-0'
+                : 'opacity-0 translate-y-8'
+            }`}
+          >
+            <p className="font-['Inter'] text-base sm:text-lg lg:text-xl font-normal text-[#667674] leading-[1.7] max-w-[750px] mx-auto mb-10 text-center">
+              Que vous cherchiez un accompagnement ponctuel ou une
+              transformation profonde, il y a une formule pour vous. Tous les
+              forfaits incluent l'accès à la plateforme digitale et sont
+              remboursables par votre assurance complémentaire.
+            </p>
+          </div>
+
+          {/* Badges de confiance */}
+          <div
+            className={`mt-10 transition-all duration-800 delay-300 ${
+              heroVisible
+                ? 'opacity-100 translate-y-0'
+                : 'opacity-0 translate-y-8'
+            }`}
+          >
+            <div className='flex flex-wrap justify-center items-center gap-4 sm:gap-6'>
+              {/* Badge 1 */}
+              <div
+                className={`flex items-center bg-[#7C9885]/10 px-5 py-2.5 rounded-full gap-2 transition-all duration-800 ${
+                  heroVisible
+                    ? 'opacity-100 translate-y-0'
+                    : 'opacity-0 translate-y-8'
+                }`}
+                style={{ animationDelay: '350ms' }}
+              >
+                <svg
+                  className='w-4 h-4 text-[#7C9885]'
+                  fill='none'
+                  stroke='currentColor'
+                  viewBox='0 0 24 24'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M5 13l4 4L19 7'
+                  />
+                </svg>
+                <span className="font-['Inter'] text-sm font-semibold text-[#2C3E3C]">
+                  Remboursable ASCA/RME
+                </span>
+              </div>
+
+              {/* Badge 2 */}
+              <div
+                className={`flex items-center bg-[#7C9885]/10 px-5 py-2.5 rounded-full gap-2 transition-all duration-800 ${
+                  heroVisible
+                    ? 'opacity-100 translate-y-0'
+                    : 'opacity-0 translate-y-8'
+                }`}
+                style={{ animationDelay: '400ms' }}
+              >
+                <svg
+                  className='w-4 h-4 text-[#7C9885]'
+                  fill='none'
+                  stroke='currentColor'
+                  viewBox='0 0 24 24'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M5 13l4 4L19 7'
+                  />
+                </svg>
+                <span className="font-['Inter'] text-sm font-semibold text-[#2C3E3C]">
+                  Sans engagement
+                </span>
+              </div>
+
+              {/* Badge 3 */}
+              <div
+                className={`flex items-center bg-[#7C9885]/10 px-5 py-2.5 rounded-full gap-2 transition-all duration-800 ${
+                  heroVisible
+                    ? 'opacity-100 translate-y-0'
+                    : 'opacity-0 translate-y-8'
+                }`}
+                style={{ animationDelay: '450ms' }}
+              >
+                <svg
+                  className='w-4 h-4 text-[#7C9885]'
+                  fill='none'
+                  stroke='currentColor'
+                  viewBox='0 0 24 24'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M5 13l4 4L19 7'
+                  />
+                </svg>
+                <span className="font-['Inter'] text-sm font-semibold text-[#2C3E3C]">
+                  Plateforme incluse
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Section Consultation Découverte */}
+      <section
+        ref={discoveryRef}
+        className='bg-white py-[60px] sm:py-[100px] px-6 sm:px-10 md:py-[60px] md:px-6'
+      >
+        <div className='max-w-[1000px] mx-auto'>
+          {/* Titre de section */}
+          <h2
+            className={`font-['Playfair_Display'] text-[2.5rem] md:text-[2rem] font-bold text-[#2C3E3C] text-left md:text-center mb-10 transition-all duration-800 ${
+              discoveryVisible
+                ? 'opacity-100 translate-y-0'
+                : 'opacity-0 translate-y-8'
+            }`}
+          >
+            Tout Commence Par la Consultation Découverte
+          </h2>
+
+          {/* Layout Split - 60% contenu / 40% carte */}
+          <div className='flex flex-col lg:flex-row items-center gap-[60px]'>
+            {/* Côté gauche - Contenu explicatif (60%) */}
+            <div className='flex-1 lg:w-[60%] animate-fade-slide-up'>
+              {/* Texte principal */}
+              <p className="font-['Inter'] text-lg md:text-base text-[#667674] leading-[1.7] mb-6">
+                Que vous choisissiez un forfait ou une consultation unique,
+                votre parcours commence toujours par une consultation découverte
+                de 1h30.
+              </p>
+
+              <p className="font-['Inter'] text-lg md:text-base text-[#667674] leading-[1.7] mb-6">
+                C'est durant cette première rencontre que :
+              </p>
+
+              {/* Liste à puces */}
+              <div className='flex flex-col gap-3 ml-0'>
+                <div className='flex items-start gap-3'>
+                  <svg
+                    className='w-4 h-4 text-[#7C9885] mt-1 flex-shrink-0'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M9 5l7 7-7 7'
+                    />
+                  </svg>
+                  <span className="font-['Inter'] text-base leading-[1.6] text-[#667674]">
+                    J'analyse votre situation complète (santé, habitudes,
+                    objectifs)
+                  </span>
+                </div>
+
+                <div className='flex items-start gap-3'>
+                  <svg
+                    className='w-4 h-4 text-[#7C9885] mt-1 flex-shrink-0'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M9 5l7 7-7 7'
+                    />
+                  </svg>
+                  <span className="font-['Inter'] text-base leading-[1.6] text-[#667674]">
+                    Vous comprenez mon approche et comment je travaille
+                  </span>
+                </div>
+
+                <div className='flex items-start gap-3'>
+                  <svg
+                    className='w-4 h-4 text-[#7C9885] mt-1 flex-shrink-0'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M9 5l7 7-7 7'
+                    />
+                  </svg>
+                  <span className="font-['Inter'] text-base leading-[1.6] text-[#667674]">
+                    Nous définissons ensemble le meilleur plan d'action pour
+                    vous
+                  </span>
+                </div>
+
+                <div className='flex items-start gap-3'>
+                  <svg
+                    className='w-4 h-4 text-[#7C9885] mt-1 flex-shrink-0'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M9 5l7 7-7 7'
+                    />
+                  </svg>
+                  <span className="font-['Inter'] text-base leading-[1.6] text-[#667674]">
+                    Vous décidez si vous souhaitez poursuivre avec un forfait ou
+                    à l'unité
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Côté droit - Carte d'information (40%) */}
+            <div className='w-full lg:w-[40%] lg:sticky lg:top-[100px] animate-fade-slide-up animation-delay-200'>
+              <div className='bg-[#F8FAF9] p-10 md:p-8 rounded-xl border-l-[6px] border-[#7C9885] shadow-[0_4px_20px_rgba(124,152,133,0.12)] max-w-[400px] mx-auto lg:max-w-none'>
+                {/* Titre de la carte */}
+                <h3 className="font-['Inter'] text-xl font-bold uppercase tracking-[0.5px] text-[#2C3E3C] mb-5">
+                  CONSULTATION DÉCOUVERTE
+                </h3>
+
+                {/* Durée et Prix */}
+                <div className='flex justify-between items-center mb-6'>
+                  <span className="font-['Inter'] text-base text-[#667674]">
+                    Durée : 1h30
+                  </span>
+                  <span className="font-['Inter'] text-base font-bold text-[#7C9885]">
+                    Prix : CHF 150
+                  </span>
+                </div>
+
+                {/* Ligne de séparation */}
+                <div className='w-full h-px bg-[#7C9885]/20 my-6'></div>
+
+                {/* Label "Inclus" */}
+                <h4 className="font-['Inter'] text-base font-bold text-[#2C3E3C] mb-4">
+                  Inclus :
+                </h4>
+
+                {/* Liste des éléments inclus */}
+                <div className='flex flex-col gap-3 mb-5'>
+                  <div className='flex items-start gap-2.5 animate-fade-slide-up animation-delay-300'>
+                    <svg
+                      className='w-3.5 h-3.5 text-green-600 mt-0.5 flex-shrink-0'
+                      fill='none'
+                      stroke='currentColor'
+                      viewBox='0 0 24 24'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M5 13l4 4L19 7'
+                      />
+                    </svg>
+                    <span className="font-['Inter'] text-[0.95rem] leading-[1.5] text-[#667674]">
+                      Anamnèse complète et approfondie
+                    </span>
+                  </div>
+
+                  <div className='flex items-start gap-2.5 animate-fade-slide-up animation-delay-350'>
+                    <svg
+                      className='w-3.5 h-3.5 text-green-600 mt-0.5 flex-shrink-0'
+                      fill='none'
+                      stroke='currentColor'
+                      viewBox='0 0 24 24'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M5 13l4 4L19 7'
+                      />
+                    </svg>
+                    <span className="font-['Inter'] text-[0.95rem] leading-[1.5] text-[#667674]">
+                      Analyse de vos habitudes alimentaires
+                    </span>
+                  </div>
+
+                  <div className='flex items-start gap-2.5 animate-fade-slide-up animation-delay-400'>
+                    <svg
+                      className='w-3.5 h-3.5 text-green-600 mt-0.5 flex-shrink-0'
+                      fill='none'
+                      stroke='currentColor'
+                      viewBox='0 0 24 24'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M5 13l4 4L19 7'
+                      />
+                    </svg>
+                    <span className="font-['Inter'] text-[0.95rem] leading-[1.5] text-[#667674]">
+                      Évaluation de vos symptômes
+                    </span>
+                  </div>
+
+                  <div className='flex items-start gap-2.5 animate-fade-slide-up animation-delay-450'>
+                    <svg
+                      className='w-3.5 h-3.5 text-green-600 mt-0.5 flex-shrink-0'
+                      fill='none'
+                      stroke='currentColor'
+                      viewBox='0 0 24 24'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M5 13l4 4L19 7'
+                      />
+                    </svg>
+                    <span className="font-['Inter'] text-[0.95rem] leading-[1.5] text-[#667674]">
+                      Premières recommandations personnalisées
+                    </span>
+                  </div>
+
+                  <div className='flex items-start gap-2.5 animate-fade-slide-up animation-delay-500'>
+                    <svg
+                      className='w-3.5 h-3.5 text-green-600 mt-0.5 flex-shrink-0'
+                      fill='none'
+                      stroke='currentColor'
+                      viewBox='0 0 24 24'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M5 13l4 4L19 7'
+                      />
+                    </svg>
+                    <span className="font-['Inter'] text-[0.95rem] leading-[1.5] text-[#667674]">
+                      Plan d'action clair
+                    </span>
+                  </div>
+
+                  <div className='flex items-start gap-2.5 animate-fade-slide-up animation-delay-550'>
+                    <svg
+                      className='w-3.5 h-3.5 text-green-600 mt-0.5 flex-shrink-0'
+                      fill='none'
+                      stroke='currentColor'
+                      viewBox='0 0 24 24'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M5 13l4 4L19 7'
+                      />
+                    </svg>
+                    <span className="font-['Inter'] text-[0.95rem] leading-[1.5] text-[#667674]">
+                      Accès à votre plateforme NutriSensia
+                    </span>
+                  </div>
+                </div>
+
+                {/* Note de remboursement */}
+                <p className="font-['Inter'] text-sm italic text-[#9BA5A3] mt-5 mb-8">
+                  Remboursable par votre assurance complémentaire
+                </p>
+
+                {/* Bouton CTA */}
+                <Button className='w-full bg-gradient-to-r from-[#7C9885] to-[#6B8574] hover:from-[#6B8574] hover:to-[#5A7463] text-white font-semibold py-4 px-6 text-base transition-all duration-200 shadow-lg hover:shadow-xl'>
+                  <div className='flex items-center justify-center gap-2'>
+                    <svg
+                      className='w-4 h-4'
+                      fill='none'
+                      stroke='currentColor'
+                      viewBox='0 0 24 24'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'
+                      />
+                    </svg>
+                    <span>Réserver Ma Consultation Découverte</span>
+                  </div>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Section Forfaits */}
+      <section
+        ref={pricingRef}
+        className='bg-gradient-to-r from-[#E8F3EF] via-[#B8D4C7]/50 to-[#E8F3EF] py-[60px] sm:py-[100px] px-6 sm:px-10 md:py-[60px] md:px-6'
+      >
+        <div className='max-w-[1370px] mx-auto'>
+          {/* Header de section */}
+          <div className='mb-[60px] text-center'>
+            <h2
+              className={`font-sans text-[2rem] md:text-[2.5rem] lg:text-[3rem] font-bold text-[#2C3E3C] mb-4 transition-all duration-800 ${
+                pricingVisible
+                  ? 'opacity-100 translate-y-0'
+                  : 'opacity-0 translate-y-8'
+              }`}
+            >
+              Nos Forfaits
+            </h2>
+            <p
+              className={`font-['Inter'] text-[1.125rem] md:text-[1.25rem] text-[#667674] max-w-[840px] mx-auto transition-all duration-800 delay-100 ${
+                pricingVisible
+                  ? 'opacity-100 translate-y-0'
+                  : 'opacity-0 translate-y-8'
+              }`}
+            >
+              Des forfaits flexibles, pensés pour vous accompagner selon vos besoins
+            </p>
+          </div>
+
+          {/* Grid des cartes forfaits */}
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 items-stretch'>
+            {pricingPlans.map((plan, index) => (
+              <div
+                key={plan.id}
+                className={`h-full transition-all duration-600 delay-${200 + index * 150} ${
+                  pricingVisible
+                    ? 'opacity-100 translate-y-0'
+                    : 'opacity-0 translate-y-12'
+                } ${plan.isPopular ? 'md:-my-6' : ''}`}
+              >
+                <div
+                  className={`relative rounded-2xl border-2 transition-all duration-300 hover:shadow-[0_12px_40px_rgba(44,62,60,0.2)] hover:-translate-y-2 bg-white flex flex-col h-full ${
+                    plan.isPopular
+                      ? 'border-primary shadow-[0_12px_40px_rgba(46,125,94,0.25)] z-10 p-10 md:py-12'
+                      : 'border-primary/30 shadow-[0_4px_20px_rgba(44,62,60,0.08)] p-8'
+                  }`}
+                >
+                  {/* Popular Badge */}
+                  <div className='h-[32px] -mb-4'>
+                    {plan.isPopular && (
+                      <div className='absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-2 bg-primary text-white text-sm font-semibold rounded-full shadow-lg whitespace-nowrap'>
+                        ⭐ Le plus populaire
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Plan Name */}
+                  <h3 className='font-sans text-[1.5rem] md:text-[1.75rem] font-bold mb-4 min-h-[60px] flex items-center text-[#2C3E3C]'>
+                    {plan.name}
+                  </h3>
+
+                  {/* Price */}
+                  <div className='mb-2 min-h-[60px] flex items-center'>
+                    <span className="font-['Inter'] text-[2.5rem] font-bold text-[#2C3E3C]">
+                      {plan.price}
+                    </span>
+                  </div>
+
+                  {/* Price after refund */}
+                  <p className="font-['Inter'] text-[0.875rem] font-medium mb-6 min-h-[40px] text-primary">
+                    {plan.priceAfterRefund}
+                  </p>
+
+                  {/* Features List */}
+                  <ul className='space-y-3 mb-6 flex-grow'>
+                    {plan.features.map((feature, idx) => (
+                      <li key={idx} className='flex items-start gap-3'>
+                        <div className='flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mt-0.5 bg-primary'>
+                          <Check className='w-3 h-3 text-white' strokeWidth={3} />
+                        </div>
+                        <span className="font-['Inter'] text-[0.95rem] leading-[1.6] text-[#667674]">
+                          {feature.text}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* Ideal For */}
+                  <div className='p-4 rounded-lg mb-6 min-h-[80px] bg-[#E8F3EF]/30'>
+                    <p className="font-['Inter'] text-[0.875rem] font-medium text-[#2C3E3C]">
+                      <span className='font-bold'>Idéal pour :</span>{' '}
+                      {plan.idealFor}
+                    </p>
+                  </div>
+
+                  {/* Badge (savings) */}
+                  <div className='mb-4 min-h-[28px]'>
+                    {plan.badge && (
+                      <div className='flex items-center gap-2'>
+                        {React.createElement(plan.badge.icon, {
+                          className: `w-4 h-4 ${plan.badge.color}`,
+                        })}
+                        <span
+                          className={`font-['Inter'] text-[0.875rem] font-semibold ${plan.badge.color}`}
+                        >
+                          {plan.badge.text}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* CTA Button */}
+                  <div className='mt-auto'>
+                    <Button
+                      variant={plan.isPopular ? 'primary' : 'secondary'}
+                      className='w-full'
+                      onClick={() => {
+                        window.location.href = plan.ctaLink;
+                      }}
+                    >
+                      {plan.ctaText} →
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Refund Information */}
+          <div
+            className={`mb-12 md:mb-16 transition-all duration-800 delay-800 ${
+              pricingVisible
+                ? 'opacity-100 translate-y-0'
+                : 'opacity-0 translate-y-8'
+            }`}
+          >
+            <div className='max-w-[1000px] mx-auto'>
+              {/* Header avec icône */}
+              <div className='flex items-center gap-3 mb-6'>
+                <div className='w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center'>
+                  <svg
+                    className='w-5 h-5 text-primary'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+                    />
+                  </svg>
+                </div>
+                <h4 className="font-['Inter'] text-[1.125rem] font-semibold text-[#2C3E3C]">
+                  Informations sur les remboursements
+                </h4>
+              </div>
+
+              {/* Bento Grid Layout */}
+              <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+                {/* Card 1 */}
+                <div className='p-6 bg-white border border-[#E8F3EF] rounded-xl hover:border-primary/30 transition-all duration-300 hover:shadow-[0_4px_20px_rgba(44,62,60,0.08)]'>
+                  <div className='mb-3'>
+                    <span className="text-[2rem] font-bold text-primary font-['Inter']">
+                      70-90%
+                    </span>
+                  </div>
+                  <p className="font-['Inter'] text-[0.875rem] text-[#667674] leading-[1.6]">
+                    de remboursement selon votre assurance complémentaire
+                  </p>
+                </div>
+
+                {/* Card 2 */}
+                <div className='p-6 bg-white border border-[#E8F3EF] rounded-xl hover:border-primary/30 transition-all duration-300 hover:shadow-[0_4px_20px_rgba(44,62,60,0.08)]'>
+                  <div className='mb-3'>
+                    <span className="font-['Inter'] text-[0.875rem] font-semibold text-[#2C3E3C]">
+                      Assurances partenaires
+                    </span>
+                  </div>
+                  <p className="font-['Inter'] text-[0.875rem] text-[#667674] leading-[1.6]">
+                    Visana, Swica, CSS, Helsana, Sanitas, et la plupart des assurances
+                    suisses
+                  </p>
+                </div>
+
+                {/* Card 3 */}
+                <div className='p-6 bg-white border border-[#E8F3EF] rounded-xl hover:border-primary/30 transition-all duration-300 hover:shadow-[0_4px_20px_rgba(44,62,60,0.08)]'>
+                  <div className='mb-3'>
+                    <span className="font-['Inter'] text-[0.875rem] font-semibold text-[#2C3E3C]">
+                      Factures conformes
+                    </span>
+                  </div>
+                  <p className="font-['Inter'] text-[0.875rem] text-[#667674] leading-[1.6]">
+                    ASCA/RME fournies immédiatement après chaque consultation
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Section Options Supplémentaires */}
+      <section className='bg-gradient-to-br from-[#7C9885]/[0.03] to-[#7C9885]/[0.05] py-[80px] px-10 md:py-[60px] md:px-6'>
+        <div className='max-w-[1000px] mx-auto'>
+          {/* Header de section */}
+          <div className='text-center mb-[60px]'>
+            <h2 className="font-['Playfair_Display'] text-[2.5rem] md:text-[2rem] font-bold text-[#2C3E3C] mb-5">
+              Personnalisez Votre Accompagnement
+            </h2>
+            <p className="font-['Inter'] text-lg text-[#667674] max-w-[700px] mx-auto leading-[1.6]">
+              Besoin de plus de soutien entre les consultations ? Ajoutez une
+              option à votre forfait.
+            </p>
+          </div>
+
+          {/* Grid des options */}
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-[30px]'>
+            {/* Option 1: Messagerie Prioritaire */}
+            <div className='bg-white p-[35px] md:p-[25px] rounded-xl border-2 border-[#E5E7E6] shadow-[0_2px_15px_rgba(44,62,60,0.06)] flex flex-col transition-all duration-300 hover:-translate-y-[5px] hover:shadow-[0_8px_25px_rgba(44,62,60,0.12)] animate-fade-slide-up'>
+              {/* Icône + Titre */}
+              <div className='flex items-center gap-3 mb-5'>
+                <div className='text-[2rem] text-[#7C9885]'>💬</div>
+                <h3 className="font-['Inter'] text-xl font-bold uppercase tracking-[0.5px] text-[#2C3E3C]">
+                  MESSAGERIE PRIORITAIRE
+                </h3>
+              </div>
+
+              {/* Prix */}
+              <div className='flex items-baseline mb-6'>
+                <span className="font-['Inter'] text-base text-[#667674] mr-1">
+                  CHF
+                </span>
+                <span className="font-['Playfair_Display'] text-[2rem] font-bold text-[#7C9885]">
+                  90
+                </span>
+                <span className="font-['Inter'] text-base text-[#667674] ml-1">
+                  /mois
+                </span>
+              </div>
+
+              {/* Séparateur */}
+              <div className='w-full h-[1px] bg-[#E5E7E6] my-5'></div>
+
+              {/* Pour : */}
+              <h4 className="font-['Inter'] text-base font-bold text-[#2C3E3C] mb-3">
+                Pour :
+              </h4>
+
+              {/* Liste des bénéfices */}
+              <div className='flex flex-col gap-[10px] mb-5'>
+                <div className='flex items-start gap-[10px]'>
+                  <svg
+                    className='w-[14px] h-[14px] text-[#6BA583] mt-1 flex-shrink-0'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M5 13l4 4L19 7'
+                    />
+                  </svg>
+                  <span className="font-['Inter'] text-[0.95rem] leading-[1.6] text-[#667674]">
+                    Poser vos questions entre les consultations
+                  </span>
+                </div>
+                <div className='flex items-start gap-[10px]'>
+                  <svg
+                    className='w-[14px] h-[14px] text-[#6BA583] mt-1 flex-shrink-0'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M5 13l4 4L19 7'
+                    />
+                  </svg>
+                  <span className="font-['Inter'] text-[0.95rem] leading-[1.6] text-[#667674]">
+                    Recevoir mes réponses sous 48h maximum
+                  </span>
+                </div>
+                <div className='flex items-start gap-[10px]'>
+                  <svg
+                    className='w-[14px] h-[14px] text-[#6BA583] mt-1 flex-shrink-0'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M5 13l4 4L19 7'
+                    />
+                  </svg>
+                  <span className="font-['Inter'] text-[0.95rem] leading-[1.6] text-[#667674]">
+                    Être soutenue dans les moments difficiles
+                  </span>
+                </div>
+                <div className='flex items-start gap-[10px]'>
+                  <svg
+                    className='w-[14px] h-[14px] text-[#6BA583] mt-1 flex-shrink-0'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M5 13l4 4L19 7'
+                    />
+                  </svg>
+                  <span className="font-['Inter'] text-[0.95rem] leading-[1.6] text-[#667674]">
+                    Valider vos choix alimentaires au quotidien
+                  </span>
+                </div>
+                <div className='flex items-start gap-[10px]'>
+                  <svg
+                    className='w-[14px] h-[14px] text-[#6BA583] mt-1 flex-shrink-0'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M5 13l4 4L19 7'
+                    />
+                  </svg>
+                  <span className="font-['Inter'] text-[0.95rem] leading-[1.6] text-[#667674]">
+                    Ajuster rapidement si quelque chose ne va pas
+                  </span>
+                </div>
+              </div>
+
+              {/* Séparateur */}
+              <div className='w-full h-[1px] bg-[#E5E7E6] my-5'></div>
+
+              {/* Note de compatibilité */}
+              <p className="font-['Inter'] text-sm italic text-[#9BA5A3] leading-[1.5] mt-auto">
+                Compatible avec : Forfait Fondation et Transformation
+                <br />
+                (Inclus dans Parcours Complet)
+              </p>
+            </div>
+
+            {/* Option 2: Prolongation Plateforme */}
+            <div className='bg-white p-[35px] md:p-[25px] rounded-xl border-2 border-[#E5E7E6] shadow-[0_2px_15px_rgba(44,62,60,0.06)] flex flex-col transition-all duration-300 hover:-translate-y-[5px] hover:shadow-[0_8px_25px_rgba(44,62,60,0.12)] animate-fade-slide-up animation-delay-150'>
+              {/* Icône + Titre */}
+              <div className='flex items-center gap-3 mb-5'>
+                <div className='text-[2rem] text-[#7C9885]'>📱</div>
+                <h3 className="font-['Inter'] text-xl font-bold uppercase tracking-[0.5px] text-[#2C3E3C]">
+                  PROLONGATION PLATEFORME
+                </h3>
+              </div>
+
+              {/* Prix */}
+              <div className='flex items-baseline mb-6'>
+                <span className="font-['Inter'] text-base text-[#667674] mr-1">
+                  CHF
+                </span>
+                <span className="font-['Playfair_Display'] text-[2rem] font-bold text-[#7C9885]">
+                  90
+                </span>
+                <span className="font-['Inter'] text-base text-[#667674] ml-1">
+                  /mois
+                </span>
+              </div>
+              <p className="font-['Inter'] text-sm text-[#667674] mb-4 -mt-2">
+                (après la fin de votre forfait)
+              </p>
+
+              {/* Séparateur */}
+              <div className='w-full h-[1px] bg-[#E5E7E6] my-5'></div>
+
+              {/* Pour : */}
+              <h4 className="font-['Inter'] text-base font-bold text-[#2C3E3C] mb-3">
+                Pour :
+              </h4>
+
+              {/* Liste des bénéfices */}
+              <div className='flex flex-col gap-[10px] mb-5'>
+                <div className='flex items-start gap-[10px]'>
+                  <svg
+                    className='w-[14px] h-[14px] text-[#6BA583] mt-1 flex-shrink-0'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M5 13l4 4L19 7'
+                    />
+                  </svg>
+                  <span className="font-['Inter'] text-[0.95rem] leading-[1.6] text-[#667674]">
+                    Garder l'accès à tous vos plans de repas
+                  </span>
+                </div>
+                <div className='flex items-start gap-[10px]'>
+                  <svg
+                    className='w-[14px] h-[14px] text-[#6BA583] mt-1 flex-shrink-0'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M5 13l4 4L19 7'
+                    />
+                  </svg>
+                  <span className="font-['Inter'] text-[0.95rem] leading-[1.6] text-[#667674]">
+                    Continuer à utiliser le journal alimentaire
+                  </span>
+                </div>
+                <div className='flex items-start gap-[10px]'>
+                  <svg
+                    className='w-[14px] h-[14px] text-[#6BA583] mt-1 flex-shrink-0'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M5 13l4 4L19 7'
+                    />
+                  </svg>
+                  <span className="font-['Inter'] text-[0.95rem] leading-[1.6] text-[#667674]">
+                    Conserver l'historique de vos progrès
+                  </span>
+                </div>
+                <div className='flex items-start gap-[10px]'>
+                  <svg
+                    className='w-[14px] h-[14px] text-[#6BA583] mt-1 flex-shrink-0'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M5 13l4 4L19 7'
+                    />
+                  </svg>
+                  <span className="font-['Inter'] text-[0.95rem] leading-[1.6] text-[#667674]">
+                    Accéder aux ressources éducatives
+                  </span>
+                </div>
+                <div className='flex items-start gap-[10px]'>
+                  <svg
+                    className='w-[14px] h-[14px] text-[#6BA583] mt-1 flex-shrink-0'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M5 13l4 4L19 7'
+                    />
+                  </svg>
+                  <span className="font-['Inter'] text-[0.95rem] leading-[1.6] text-[#667674]">
+                    Maintenir vos bonnes habitudes
+                  </span>
+                </div>
+              </div>
+
+              {/* Séparateur */}
+              <div className='w-full h-[1px] bg-[#E5E7E6] my-5'></div>
+
+              {/* Note de compatibilité */}
+              <p className="font-['Inter'] text-sm italic text-[#9BA5A3] leading-[1.5] mt-auto">
+                Sans engagement, résiliable à tout moment
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Section Remboursement Assurance */}
+      <section className='bg-white py-[100px] px-10 md:py-[60px] md:px-6'>
+        <div className='max-w-[1100px] mx-auto'>
+          {/* Header de section */}
+          <div className='text-center mb-[60px]'>
+            <div className="font-['Inter'] text-sm uppercase tracking-[1.5px] text-[#7C9885] font-semibold mb-3">
+              REMBOURSEMENT
+            </div>
+            <h2 className="font-['Playfair_Display'] text-[2.5rem] md:text-[2rem] font-bold text-[#2C3E3C] mb-5">
+              Remboursement par Votre Assurance Complémentaire
+            </h2>
+            <p className="font-['Inter'] text-lg text-[#667674] max-w-[800px] mx-auto leading-[1.6]">
+              En tant que thérapeute diplômée et reconnue ASCA/RME, mes
+              consultations sont remboursables par la plupart des assurances
+              complémentaires suisses.
+            </p>
+          </div>
+
+          {/* Sous-section: Comment ça marche */}
+          <div className='mb-[60px]'>
+            <h3 className="font-['Inter'] text-2xl font-bold text-[#2C3E3C] mb-10 text-center">
+              Comment ça marche ?
+            </h3>
+
+            {/* Timeline - Desktop */}
+            <div className='hidden md:flex justify-between items-start gap-6 mb-10'>
+              {/* Étape 1 */}
+              <div className='flex-1 flex flex-col items-center text-center animate-fade-slide-up'>
+                <div className="w-[60px] h-[60px] rounded-full bg-[#7C9885] text-white font-['Playfair_Display'] text-[1.75rem] font-bold flex items-center justify-center shadow-[0_4px_12px_rgba(124,152,133,0.3)] mb-5">
+                  1
+                </div>
+                <h4 className="font-['Inter'] text-lg font-bold text-[#2C3E3C] mb-3">
+                  Vous Consultez
+                </h4>
+                <p className="font-['Inter'] text-[0.95rem] text-[#667674] leading-[1.6] max-w-[200px]">
+                  Vous réservez et suivez vos consultations normalement. Vous
+                  payez à l'avance (carte ou virement).
+                </p>
+              </div>
+
+              {/* Connecteur 1 */}
+              <div className='flex items-center justify-center mt-[30px]'>
+                <svg
+                  className='w-10 h-6 text-[#7C9885]'
+                  fill='none'
+                  stroke='currentColor'
+                  viewBox='0 0 24 24'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M13 7l5 5m0 0l-5 5m5-5H6'
+                  />
+                </svg>
+              </div>
+
+              {/* Étape 2 */}
+              <div className='flex-1 flex flex-col items-center text-center animate-fade-slide-up animation-delay-200'>
+                <div className="w-[60px] h-[60px] rounded-full bg-[#7C9885] text-white font-['Playfair_Display'] text-[1.75rem] font-bold flex items-center justify-center shadow-[0_4px_12px_rgba(124,152,133,0.3)] mb-5">
+                  2
+                </div>
+                <h4 className="font-['Inter'] text-lg font-bold text-[#2C3E3C] mb-3">
+                  Vous Recevez Votre Facture
+                </h4>
+                <p className="font-['Inter'] text-[0.95rem] text-[#667674] leading-[1.6] max-w-[200px]">
+                  Après chaque consultation, vous recevez automatiquement une
+                  facture conforme ASCA/RME via votre plateforme.
+                </p>
+              </div>
+
+              {/* Connecteur 2 */}
+              <div className='flex items-center justify-center mt-[30px]'>
+                <svg
+                  className='w-10 h-6 text-[#7C9885]'
+                  fill='none'
+                  stroke='currentColor'
+                  viewBox='0 0 24 24'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M13 7l5 5m0 0l-5 5m5-5H6'
+                  />
+                </svg>
+              </div>
+
+              {/* Étape 3 */}
+              <div className='flex-1 flex flex-col items-center text-center animate-fade-slide-up animation-delay-400'>
+                <div className="w-[60px] h-[60px] rounded-full bg-[#7C9885] text-white font-['Playfair_Display'] text-[1.75rem] font-bold flex items-center justify-center shadow-[0_4px_12px_rgba(124,152,133,0.3)] mb-5">
+                  3
+                </div>
+                <h4 className="font-['Inter'] text-lg font-bold text-[#2C3E3C] mb-3">
+                  Vous Transmettez
+                </h4>
+                <p className="font-['Inter'] text-[0.95rem] text-[#667674] leading-[1.6] max-w-[200px]">
+                  Vous envoyez la facture à votre assurance complémentaire
+                  (courrier, email, ou app).
+                </p>
+              </div>
+
+              {/* Connecteur 3 */}
+              <div className='flex items-center justify-center mt-[30px]'>
+                <svg
+                  className='w-10 h-6 text-[#7C9885]'
+                  fill='none'
+                  stroke='currentColor'
+                  viewBox='0 0 24 24'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M13 7l5 5m0 0l-5 5m5-5H6'
+                  />
+                </svg>
+              </div>
+
+              {/* Étape 4 */}
+              <div className='flex-1 flex flex-col items-center text-center animate-fade-slide-up animation-delay-500'>
+                <div className="w-[60px] h-[60px] rounded-full bg-[#7C9885] text-white font-['Playfair_Display'] text-[1.75rem] font-bold flex items-center justify-center shadow-[0_4px_12px_rgba(124,152,133,0.3)] mb-5">
+                  4
+                </div>
+                <h4 className="font-['Inter'] text-lg font-bold text-[#2C3E3C] mb-3">
+                  Vous Êtes Remboursée
+                </h4>
+                <p className="font-['Inter'] text-[0.95rem] text-[#667674] leading-[1.6] max-w-[200px]">
+                  Votre assurance vous rembourse selon votre contrat
+                  (généralement sous 2-4 semaines).
+                </p>
+              </div>
+            </div>
+
+            {/* Timeline - Mobile */}
+            <div className='md:hidden space-y-6'>
+              {/* Étape 1 Mobile */}
+              <div className='flex items-start gap-4 animate-fade-slide-up'>
+                <div className="w-[50px] h-[50px] rounded-full bg-[#7C9885] text-white font-['Playfair_Display'] text-xl font-bold flex items-center justify-center shadow-[0_4px_12px_rgba(124,152,133,0.3)] flex-shrink-0">
+                  1
+                </div>
+                <div className='flex-1'>
+                  <h4 className="font-['Inter'] text-lg font-bold text-[#2C3E3C] mb-2">
+                    Vous Consultez
+                  </h4>
+                  <p className="font-['Inter'] text-[0.95rem] text-[#667674] leading-[1.6]">
+                    Vous réservez et suivez vos consultations normalement. Vous
+                    payez à l'avance (carte ou virement).
+                  </p>
+                </div>
+              </div>
+
+              {/* Flèche Mobile */}
+              <div className='flex justify-center'>
+                <svg
+                  className='w-6 h-8 text-[#7C9885]'
+                  fill='none'
+                  stroke='currentColor'
+                  viewBox='0 0 24 24'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M19 14l-7 7m0 0l-7-7m7 7V3'
+                  />
+                </svg>
+              </div>
+
+              {/* Étape 2 Mobile */}
+              <div className='flex items-start gap-4 animate-fade-slide-up animation-delay-200'>
+                <div className="w-[50px] h-[50px] rounded-full bg-[#7C9885] text-white font-['Playfair_Display'] text-xl font-bold flex items-center justify-center shadow-[0_4px_12px_rgba(124,152,133,0.3)] flex-shrink-0">
+                  2
+                </div>
+                <div className='flex-1'>
+                  <h4 className="font-['Inter'] text-lg font-bold text-[#2C3E3C] mb-2">
+                    Vous Recevez Votre Facture
+                  </h4>
+                  <p className="font-['Inter'] text-[0.95rem] text-[#667674] leading-[1.6]">
+                    Après chaque consultation, vous recevez automatiquement une
+                    facture conforme ASCA/RME via votre plateforme.
+                  </p>
+                </div>
+              </div>
+
+              {/* Flèche Mobile */}
+              <div className='flex justify-center'>
+                <svg
+                  className='w-6 h-8 text-[#7C9885]'
+                  fill='none'
+                  stroke='currentColor'
+                  viewBox='0 0 24 24'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M19 14l-7 7m0 0l-7-7m7 7V3'
+                  />
+                </svg>
+              </div>
+
+              {/* Étape 3 Mobile */}
+              <div className='flex items-start gap-4 animate-fade-slide-up animation-delay-400'>
+                <div className="w-[50px] h-[50px] rounded-full bg-[#7C9885] text-white font-['Playfair_Display'] text-xl font-bold flex items-center justify-center shadow-[0_4px_12px_rgba(124,152,133,0.3)] flex-shrink-0">
+                  3
+                </div>
+                <div className='flex-1'>
+                  <h4 className="font-['Inter'] text-lg font-bold text-[#2C3E3C] mb-2">
+                    Vous Transmettez
+                  </h4>
+                  <p className="font-['Inter'] text-[0.95rem] text-[#667674] leading-[1.6]">
+                    Vous envoyez la facture à votre assurance complémentaire
+                    (courrier, email, ou app).
+                  </p>
+                </div>
+              </div>
+
+              {/* Flèche Mobile */}
+              <div className='flex justify-center'>
+                <svg
+                  className='w-6 h-8 text-[#7C9885]'
+                  fill='none'
+                  stroke='currentColor'
+                  viewBox='0 0 24 24'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M19 14l-7 7m0 0l-7-7m7 7V3'
+                  />
+                </svg>
+              </div>
+
+              {/* Étape 4 Mobile */}
+              <div className='flex items-start gap-4 animate-fade-slide-up animation-delay-500'>
+                <div className="w-[50px] h-[50px] rounded-full bg-[#7C9885] text-white font-['Playfair_Display'] text-xl font-bold flex items-center justify-center shadow-[0_4px_12px_rgba(124,152,133,0.3)] flex-shrink-0">
+                  4
+                </div>
+                <div className='flex-1'>
+                  <h4 className="font-['Inter'] text-lg font-bold text-[#2C3E3C] mb-2">
+                    Vous Êtes Remboursée
+                  </h4>
+                  <p className="font-['Inter'] text-[0.95rem] text-[#667674] leading-[1.6]">
+                    Votre assurance vous rembourse selon votre contrat
+                    (généralement sous 2-4 semaines).
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Sous-section: Taux de remboursement */}
+          <div className='mb-[60px]'>
+            <h3 className="font-['Inter'] text-2xl font-bold text-[#2C3E3C] mb-[30px]">
+              Taux de remboursement
+            </h3>
+            <p className="font-['Inter'] text-[0.95rem] italic text-[#667674] mb-[30px]">
+              Tableau indicatif - Vérifiez votre contrat pour les montants
+              exacts
+            </p>
+
+            {/* Tableau - Desktop */}
+            <div className='hidden md:block rounded-xl overflow-hidden shadow-[0_2px_15px_rgba(44,62,60,0.08)] mb-[30px]'>
+              <table className='w-full'>
+                <thead className='bg-[#F8FAF9] border-b-2 border-[#7C9885]'>
+                  <tr>
+                    <th
+                      scope='col'
+                      className="text-left p-4 font-['Inter'] text-[0.95rem] font-bold text-[#2C3E3C] w-[25%]"
+                    >
+                      Assurance
+                    </th>
+                    <th
+                      scope='col'
+                      className="text-left p-4 font-['Inter'] text-[0.95rem] font-bold text-[#2C3E3C] w-[35%]"
+                    >
+                      Couverture Typique
+                    </th>
+                    <th
+                      scope='col'
+                      className="text-left p-4 font-['Inter'] text-[0.95rem] font-bold text-[#2C3E3C] w-[40%]"
+                    >
+                      Remarques
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className='hover:bg-[#7C9885]/[0.02] transition-colors duration-200 border-b border-[#F0F0F0]'>
+                    <td className="p-4 font-['Inter'] text-[0.95rem] font-medium text-[#2C3E3C]">
+                      CSS
+                    </td>
+                    <td className="p-4 font-['Inter'] text-[0.95rem] text-[#667674]">
+                      75% jusqu'à CHF 500/an
+                    </td>
+                    <td className="p-4 font-['Inter'] text-[0.95rem] text-[#667674]">
+                      Selon contrat myFlex
+                    </td>
+                  </tr>
+                  <tr className='bg-white hover:bg-[#7C9885]/[0.02] transition-colors duration-200 border-b border-[#F0F0F0]'>
+                    <td className="p-4 font-['Inter'] text-[0.95rem] font-medium text-[#2C3E3C]">
+                      Helsana
+                    </td>
+                    <td className="p-4 font-['Inter'] text-[0.95rem] text-[#667674]">
+                      75% jusqu'à CHF 1'000/an
+                    </td>
+                    <td className="p-4 font-['Inter'] text-[0.95rem] text-[#667674]">
+                      Module COMPLETA
+                    </td>
+                  </tr>
+                  <tr className='hover:bg-[#7C9885]/[0.02] transition-colors duration-200 border-b border-[#F0F0F0]'>
+                    <td className="p-4 font-['Inter'] text-[0.95rem] font-medium text-[#2C3E3C]">
+                      Swica
+                    </td>
+                    <td className="p-4 font-['Inter'] text-[0.95rem] text-[#667674]">
+                      90% jusqu'à CHF 3'000/an
+                    </td>
+                    <td className="p-4 font-['Inter'] text-[0.95rem] text-[#667674]">
+                      COMPLETA PRAEVENTA
+                    </td>
+                  </tr>
+                  <tr className='bg-white hover:bg-[#7C9885]/[0.02] transition-colors duration-200 border-b border-[#F0F0F0]'>
+                    <td className="p-4 font-['Inter'] text-[0.95rem] font-medium text-[#2C3E3C]">
+                      Visana
+                    </td>
+                    <td className="p-4 font-['Inter'] text-[0.95rem] text-[#667674]">
+                      75% jusqu'à CHF 750/an
+                    </td>
+                    <td className="p-4 font-['Inter'] text-[0.95rem] text-[#667674]">
+                      SANA complémentaire
+                    </td>
+                  </tr>
+                  <tr className='hover:bg-[#7C9885]/[0.02] transition-colors duration-200 border-b border-[#F0F0F0]'>
+                    <td className="p-4 font-['Inter'] text-[0.95rem] font-medium text-[#2C3E3C]">
+                      Groupe Mutuel
+                    </td>
+                    <td className="p-4 font-['Inter'] text-[0.95rem] text-[#667674]">
+                      80% jusqu'à CHF 1'000/an
+                    </td>
+                    <td className="p-4 font-['Inter'] text-[0.95rem] text-[#667674]">
+                      Selon contrat
+                    </td>
+                  </tr>
+                  <tr className='bg-white hover:bg-[#7C9885]/[0.02] transition-colors duration-200 border-b border-[#F0F0F0]'>
+                    <td className="p-4 font-['Inter'] text-[0.95rem] font-medium text-[#2C3E3C]">
+                      Assura
+                    </td>
+                    <td className="p-4 font-['Inter'] text-[0.95rem] text-[#667674]">
+                      50% jusqu'à CHF 500/an
+                    </td>
+                    <td className="p-4 font-['Inter'] text-[0.95rem] text-[#667674]">
+                      Complémentaire
+                    </td>
+                  </tr>
+                  <tr className='hover:bg-[#7C9885]/[0.02] transition-colors duration-200'>
+                    <td className="p-4 font-['Inter'] text-[0.95rem] font-medium text-[#2C3E3C]">
+                      Sanitas
+                    </td>
+                    <td className="p-4 font-['Inter'] text-[0.95rem] text-[#667674]">
+                      75% jusqu'à CHF 500/an
+                    </td>
+                    <td className="p-4 font-['Inter'] text-[0.95rem] text-[#667674]">
+                      Compact ONE
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            {/* Cartes - Mobile */}
+            <div className='md:hidden space-y-4 mb-[30px]'>
+              <div className='bg-white p-4 rounded-lg border border-[#E5E7E6] shadow-sm'>
+                <h4 className="font-['Inter'] text-base font-bold text-[#2C3E3C] mb-2">
+                  CSS
+                </h4>
+                <p className="font-['Inter'] text-sm text-[#667674] mb-1">
+                  75% jusqu'à CHF 500/an
+                </p>
+                <p className="font-['Inter'] text-xs text-[#9BA5A3]">
+                  Selon contrat myFlex
+                </p>
+              </div>
+              <div className='bg-white p-4 rounded-lg border border-[#E5E7E6] shadow-sm'>
+                <h4 className="font-['Inter'] text-base font-bold text-[#2C3E3C] mb-2">
+                  Helsana
+                </h4>
+                <p className="font-['Inter'] text-sm text-[#667674] mb-1">
+                  75% jusqu'à CHF 1'000/an
+                </p>
+                <p className="font-['Inter'] text-xs text-[#9BA5A3]">
+                  Module COMPLETA
+                </p>
+              </div>
+              <div className='bg-white p-4 rounded-lg border border-[#E5E7E6] shadow-sm'>
+                <h4 className="font-['Inter'] text-base font-bold text-[#2C3E3C] mb-2">
+                  Swica
+                </h4>
+                <p className="font-['Inter'] text-sm text-[#667674] mb-1">
+                  90% jusqu'à CHF 3'000/an
+                </p>
+                <p className="font-['Inter'] text-xs text-[#9BA5A3]">
+                  COMPLETA PRAEVENTA
+                </p>
+              </div>
+              <div className='bg-white p-4 rounded-lg border border-[#E5E7E6] shadow-sm'>
+                <h4 className="font-['Inter'] text-base font-bold text-[#2C3E3C] mb-2">
+                  Visana
+                </h4>
+                <p className="font-['Inter'] text-sm text-[#667674] mb-1">
+                  75% jusqu'à CHF 750/an
+                </p>
+                <p className="font-['Inter'] text-xs text-[#9BA5A3]">
+                  SANA complémentaire
+                </p>
+              </div>
+              <div className='bg-white p-4 rounded-lg border border-[#E5E7E6] shadow-sm'>
+                <h4 className="font-['Inter'] text-base font-bold text-[#2C3E3C] mb-2">
+                  Groupe Mutuel
+                </h4>
+                <p className="font-['Inter'] text-sm text-[#667674] mb-1">
+                  80% jusqu'à CHF 1'000/an
+                </p>
+                <p className="font-['Inter'] text-xs text-[#9BA5A3]">
+                  Selon contrat
+                </p>
+              </div>
+              <div className='bg-white p-4 rounded-lg border border-[#E5E7E6] shadow-sm'>
+                <h4 className="font-['Inter'] text-base font-bold text-[#2C3E3C] mb-2">
+                  Assura
+                </h4>
+                <p className="font-['Inter'] text-sm text-[#667674] mb-1">
+                  50% jusqu'à CHF 500/an
+                </p>
+                <p className="font-['Inter'] text-xs text-[#9BA5A3]">
+                  Complémentaire
+                </p>
+              </div>
+              <div className='bg-white p-4 rounded-lg border border-[#E5E7E6] shadow-sm'>
+                <h4 className="font-['Inter'] text-base font-bold text-[#2C3E3C] mb-2">
+                  Sanitas
+                </h4>
+                <p className="font-['Inter'] text-sm text-[#667674] mb-1">
+                  75% jusqu'à CHF 500/an
+                </p>
+                <p className="font-['Inter'] text-xs text-[#9BA5A3]">
+                  Compact ONE
+                </p>
+              </div>
+            </div>
+
+            {/* Encadré d'avertissement */}
+            <div className='bg-[#D4A574]/[0.1] border-l-[4px] border-[#D4A574] p-5 rounded-lg flex items-start gap-3'>
+              <span className='text-2xl'>⚠️</span>
+              <div>
+                <h4 className="font-['Inter'] text-[0.95rem] font-bold text-[#2C3E3C] mb-2">
+                  Important
+                </h4>
+                <p className="font-['Inter'] text-[0.95rem] text-[#2C3E3C] leading-[1.6]">
+                  Ces montants sont indicatifs. Le taux et le plafond exact
+                  dépendent de votre contrat d'assurance complémentaire.
+                  Vérifiez vos conditions avant de débuter.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Sous-section: Documents fournis */}
+          <div className='mb-[60px]'>
+            <h3 className="font-['Inter'] text-2xl font-bold text-[#2C3E3C] mb-[30px]">
+              Documents fournis
+            </h3>
+            <p className="font-['Inter'] text-base text-[#667674] mb-5">
+              Je vous fournis systématiquement :
+            </p>
+
+            <div className='bg-[#7C9885]/[0.03] p-[30px] rounded-xl max-w-[700px]'>
+              <div className='space-y-3'>
+                <div className='flex items-start gap-3'>
+                  <svg
+                    className='w-[18px] h-[18px] text-[#6BA583] mt-1 flex-shrink-0'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M5 13l4 4L19 7'
+                    />
+                  </svg>
+                  <span className="font-['Inter'] text-base leading-[1.6] text-[#667674]">
+                    Facture conforme aux exigences des assureurs ASCA/RME
+                  </span>
+                </div>
+                <div className='flex items-start gap-3'>
+                  <svg
+                    className='w-[18px] h-[18px] text-[#6BA583] mt-1 flex-shrink-0'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M5 13l4 4L19 7'
+                    />
+                  </svg>
+                  <span className="font-['Inter'] text-base leading-[1.6] text-[#667674]">
+                    Récapitulatif détaillé de chaque consultation (date, durée,
+                    type)
+                  </span>
+                </div>
+                <div className='flex items-start gap-3'>
+                  <svg
+                    className='w-[18px] h-[18px] text-[#6BA583] mt-1 flex-shrink-0'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M5 13l4 4L19 7'
+                    />
+                  </svg>
+                  <span className="font-['Inter'] text-base leading-[1.6] text-[#667674]">
+                    Numéro RCC (Registre de Commerce des Cantons)
+                  </span>
+                </div>
+                <div className='flex items-start gap-3'>
+                  <svg
+                    className='w-[18px] h-[18px] text-[#6BA583] mt-1 flex-shrink-0'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M5 13l4 4L19 7'
+                    />
+                  </svg>
+                  <span className="font-['Inter'] text-base leading-[1.6] text-[#667674]">
+                    Tous les éléments nécessaires à votre remboursement
+                  </span>
+                </div>
+              </div>
+
+              <p className="font-['Inter'] text-base font-bold text-[#7C9885] mt-5">
+                Vous n'avez qu'à transmettre, je m'occupe de la paperasse !
+              </p>
+            </div>
+          </div>
+
+          {/* Sous-section: Vérifier couverture */}
+          <div className='bg-white border-2 border-[#7C9885] p-[30px] rounded-xl text-center max-w-[700px] mx-auto'>
+            <h3 className="font-['Inter'] text-lg font-bold text-[#2C3E3C] mb-4">
+              Vérifier votre couverture
+            </h3>
+
+            <Button
+              variant='outline'
+              className='border-2 border-[#7C9885] text-[#7C9885] hover:bg-[#7C9885]/[0.05] py-[14px] px-7 text-base font-semibold mb-4 transition-all duration-200'
+            >
+              → Contacter votre assurance pour vérifier
+            </Button>
+
+            <p className="font-['Inter'] text-sm italic text-[#9BA5A3] leading-[1.6] max-w-[600px] mx-auto">
+              Astuce : Demandez à votre assurance combien vous avez droit par
+              année civile pour les « médecines complémentaires » ou « thérapies
+              naturelles » avec reconnaissance ASCA/RME.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Section Modalités */}
+      <section className='bg-gradient-to-br from-[#7C9885]/[0.03] to-[#7C9885]/[0.05] py-[80px] px-10 md:py-[60px] md:px-6'>
+        <div className='max-w-[1000px] mx-auto'>
+          {/* Header de section */}
+          <div className='text-center mb-[60px]'>
+            <h2 className="font-['Playfair_Display'] text-[2.5rem] md:text-[2rem] font-bold text-[#2C3E3C]">
+              Modalités de Paiement et d'Annulation
+            </h2>
+          </div>
+
+          {/* Grid des cartes modalités */}
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-[30px]'>
+            {/* Carte 1: Paiement */}
+            <div className='bg-white p-[35px] md:p-[25px] rounded-xl border-t-[4px] border-[#7C9885] shadow-[0_2px_15px_rgba(44,62,60,0.06)] flex flex-col transition-all duration-300 hover:-translate-y-[3px] hover:shadow-[0_8px_25px_rgba(44,62,60,0.12)] animate-fade-slide-up'>
+              {/* Icône */}
+              <div className='text-center mb-5'>
+                <div className='text-[2.5rem] text-[#7C9885]'>💳</div>
+              </div>
+
+              {/* Titre */}
+              <h3 className="font-['Inter'] text-xl font-bold uppercase tracking-[0.5px] text-[#2C3E3C] text-center mb-6">
+                COMMENT PAYER ?
+              </h3>
+
+              {/* Contenu */}
+              <div className='flex flex-col gap-5 text-left'>
+                {/* Section 1: Options acceptées */}
+                <div>
+                  <h4 className="font-['Inter'] text-[0.95rem] font-bold text-[#7C9885] mb-2">
+                    Options acceptées :
+                  </h4>
+                  <div className='space-y-2'>
+                    <div className='flex items-start gap-2'>
+                      <span className='text-[#7C9885] mt-1 text-xs'>•</span>
+                      <span className="font-['Inter'] text-[0.95rem] leading-[1.7] text-[#667674]">
+                        Carte bancaire (Visa, Mastercard)
+                      </span>
+                    </div>
+                    <div className='flex items-start gap-2'>
+                      <span className='text-[#7C9885] mt-1 text-xs'>•</span>
+                      <span className="font-['Inter'] text-[0.95rem] leading-[1.7] text-[#667674]">
+                        Virement bancaire (IBAN fourni après réservation)
+                      </span>
+                    </div>
+                    <div className='flex items-start gap-2'>
+                      <span className='text-[#7C9885] mt-1 text-xs'>•</span>
+                      <span className="font-['Inter'] text-[0.95rem] leading-[1.7] text-[#667674]">
+                        Twint (pour les consultations à l'unité)
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section 2: Quand */}
+                <div>
+                  <h4 className="font-['Inter'] text-[0.95rem] font-bold text-[#7C9885] mb-2">
+                    Quand :
+                  </h4>
+                  <div className='space-y-2'>
+                    <div className='flex items-start gap-2'>
+                      <span className='text-[#7C9885] mt-1 text-xs'>•</span>
+                      <span className="font-['Inter'] text-[0.95rem] leading-[1.7] text-[#667674]">
+                        Forfaits : Paiement en une fois au moment de la
+                        réservation
+                      </span>
+                    </div>
+                    <div className='flex items-start gap-2'>
+                      <span className='text-[#7C9885] mt-1 text-xs'>•</span>
+                      <span className="font-['Inter'] text-[0.95rem] leading-[1.7] text-[#667674]">
+                        Consultations à l'unité : Paiement avant chaque
+                        consultation
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section 3: Confirmation */}
+                <div>
+                  <p className="font-['Inter'] text-[0.95rem] leading-[1.7] text-[#667674]">
+                    Un reçu vous est automatiquement envoyé pour chaque
+                    paiement.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Carte 2: Annulation et Report */}
+            <div className='bg-white p-[35px] md:p-[25px] rounded-xl border-t-[4px] border-[#7C9885] shadow-[0_2px_15px_rgba(44,62,60,0.06)] flex flex-col transition-all duration-300 hover:-translate-y-[3px] hover:shadow-[0_8px_25px_rgba(44,62,60,0.12)] animate-fade-slide-up animation-delay-150'>
+              {/* Icône */}
+              <div className='text-center mb-5'>
+                <div className='text-[2.5rem] text-[#7C9885]'>📅</div>
+              </div>
+
+              {/* Titre */}
+              <h3 className="font-['Inter'] text-xl font-bold uppercase tracking-[0.5px] text-[#2C3E3C] text-center mb-6">
+                ANNULATION & REPORT
+              </h3>
+
+              {/* Contenu */}
+              <div className='flex flex-col gap-5 text-left'>
+                {/* Section 1: Annulation gratuite */}
+                <div>
+                  <h4 className="font-['Inter'] text-[0.95rem] font-bold text-[#7C9885] mb-2">
+                    Annulation gratuite :
+                  </h4>
+                  <div className='space-y-2'>
+                    <div className='flex items-start gap-2'>
+                      <span className='text-[#7C9885] mt-1 text-xs'>•</span>
+                      <span className="font-['Inter'] text-[0.95rem] leading-[1.7] text-[#667674]">
+                        Jusqu'à 48h avant votre rendez-vous
+                      </span>
+                    </div>
+                    <div className='flex items-start gap-2'>
+                      <span className='text-[#7C9885] mt-1 text-xs'>•</span>
+                      <span className="font-['Inter'] text-[0.95rem] leading-[1.7] text-[#667674]">
+                        Par email ou via la plateforme
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section 2: Annulation tardive */}
+                <div>
+                  <h4 className="font-['Inter'] text-[0.95rem] font-bold text-[#7C9885] mb-2">
+                    Annulation tardive (moins de 48h) :
+                  </h4>
+                  <div className='space-y-2'>
+                    <div className='flex items-start gap-2'>
+                      <span className='text-[#7C9885] mt-1 text-xs'>•</span>
+                      <span className="font-['Inter'] text-[0.95rem] leading-[1.7] text-[#667674]">
+                        La consultation est facturée et non remboursée
+                      </span>
+                    </div>
+                    <div className='flex items-start gap-2'>
+                      <span className='text-[#7C9885] mt-1 text-xs'>•</span>
+                      <span className="font-['Inter'] text-[0.95rem] leading-[1.7] text-[#667674]">
+                        Sauf cas exceptionnel (maladie avec certificat médical)
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section 3: Report */}
+                <div>
+                  <h4 className="font-['Inter'] text-[0.95rem] font-bold text-[#7C9885] mb-2">
+                    Report :
+                  </h4>
+                  <div className='space-y-2'>
+                    <div className='flex items-start gap-2'>
+                      <span className='text-[#7C9885] mt-1 text-xs'>•</span>
+                      <span className="font-['Inter'] text-[0.95rem] leading-[1.7] text-[#667674]">
+                        Possible jusqu'à 24h avant le rendez-vous
+                      </span>
+                    </div>
+                    <div className='flex items-start gap-2'>
+                      <span className='text-[#7C9885] mt-1 text-xs'>•</span>
+                      <span className="font-['Inter'] text-[0.95rem] leading-[1.7] text-[#667674]">
+                        Nous fixons ensemble une nouvelle date
+                      </span>
+                    </div>
+                    <div className='flex items-start gap-2'>
+                      <span className='text-[#7C9885] mt-1 text-xs'>•</span>
+                      <span className="font-['Inter'] text-[0.95rem] leading-[1.7] text-[#667674]">
+                        Sans frais supplémentaires
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section 4: Empêchement de ma part */}
+                <div>
+                  <h4 className="font-['Inter'] text-[0.95rem] font-bold text-[#7C9885] mb-2">
+                    En cas d'empêchement de ma part :
+                  </h4>
+                  <div className='space-y-2'>
+                    <div className='flex items-start gap-2'>
+                      <span className='text-[#7C9885] mt-1 text-xs'>•</span>
+                      <span className="font-['Inter'] text-[0.95rem] leading-[1.7] text-[#667674]">
+                        Je vous préviens dès que possible
+                      </span>
+                    </div>
+                    <div className='flex items-start gap-2'>
+                      <span className='text-[#7C9885] mt-1 text-xs'>•</span>
+                      <span className="font-['Inter'] text-[0.95rem] leading-[1.7] text-[#667674]">
+                        Nous replanifions à votre convenance
+                      </span>
+                    </div>
+                    <div className='flex items-start gap-2'>
+                      <span className='text-[#7C9885] mt-1 text-xs'>•</span>
+                      <span className="font-['Inter'] text-[0.95rem] leading-[1.7] text-[#667674]">
+                        Aucun frais ne vous est facturé
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Carte 3: Remboursement de Forfait */}
+            <div className='bg-white p-[35px] md:p-[25px] rounded-xl border-t-[4px] border-[#7C9885] shadow-[0_2px_15px_rgba(44,62,60,0.06)] flex flex-col transition-all duration-300 hover:-translate-y-[3px] hover:shadow-[0_8px_25px_rgba(44,62,60,0.12)] animate-fade-slide-up animation-delay-300'>
+              {/* Icône */}
+              <div className='text-center mb-5'>
+                <div className='text-[2.5rem] text-[#7C9885]'>🔄</div>
+              </div>
+
+              {/* Titre */}
+              <h3 className="font-['Inter'] text-xl font-bold uppercase tracking-[0.5px] text-[#2C3E3C] text-center mb-6">
+                REMBOURSEMENT FORFAIT
+              </h3>
+
+              {/* Contenu */}
+              <div className='flex flex-col gap-5 text-left'>
+                {/* Intro */}
+                <p className="font-['Inter'] text-[0.95rem] leading-[1.7] text-[#667674]">
+                  Si vous souhaitez arrêter avant la fin de votre forfait :
+                </p>
+
+                {/* Section 1: Calcul */}
+                <div>
+                  <h4 className="font-['Inter'] text-[0.95rem] font-bold text-[#7C9885] mb-2">
+                    Calcul :
+                  </h4>
+                  <div className='space-y-2'>
+                    <div className='flex items-start gap-2'>
+                      <span className='text-[#7C9885] mt-1 text-xs'>•</span>
+                      <span className="font-['Inter'] text-[0.95rem] leading-[1.7] text-[#667674]">
+                        Consultations déjà effectuées : Facturées au tarif
+                        unitaire (CHF 180/consultation)
+                      </span>
+                    </div>
+                    <div className='flex items-start gap-2'>
+                      <span className='text-[#7C9885] mt-1 text-xs'>•</span>
+                      <span className="font-['Inter'] text-[0.95rem] leading-[1.7] text-[#667674]">
+                        Consultations non effectuées : Remboursées
+                      </span>
+                    </div>
+                    <div className='flex items-start gap-2'>
+                      <span className='text-[#7C9885] mt-1 text-xs'>•</span>
+                      <span className="font-['Inter'] text-[0.95rem] leading-[1.7] text-[#667674]">
+                        Accès plateforme : Proportionnel au temps restant
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section 2: Exemple */}
+                <div>
+                  <h4 className="font-['Inter'] text-[0.95rem] font-bold text-[#7C9885] mb-2">
+                    Exemple :
+                  </h4>
+                  <div className='bg-[#7C9885]/[0.05] p-3 rounded-lg'>
+                    <p className="font-['Inter'] text-[0.9rem] leading-[1.6] text-[#667674] mb-2">
+                      Forfait Transformation (CHF 1'199) avec 3 consultations
+                      effectuées sur 6
+                    </p>
+                    <p className="font-['Inter'] text-[0.9rem] leading-[1.6] text-[#667674] mb-1">
+                      → 3 × CHF 180 = CHF 540 déduits
+                    </p>
+                    <p className="font-['Inter'] text-[0.9rem] leading-[1.6] text-[#7C9885] font-semibold">
+                      → CHF 659 remboursés
+                    </p>
+                  </div>
+                </div>
+
+                {/* Section 3: Délai */}
+                <div>
+                  <p className="font-['Inter'] text-[0.95rem] leading-[1.7] text-[#667674]">
+                    <span className='font-bold text-[#7C9885]'>
+                      Délai de remboursement :
+                    </span>{' '}
+                    14 jours ouvrés
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Section FAQ */}
+      <section className='bg-white py-[100px] px-10 md:py-[60px] md:px-6'>
+        <div className='max-w-[900px] mx-auto'>
+          {/* Header de section */}
+          <div className='text-center mb-[50px]'>
+            <div className="font-['Inter'] text-sm uppercase tracking-[1.5px] text-[#7C9885] font-semibold mb-3">
+              VOS QUESTIONS
+            </div>
+            <h2 className="font-['Playfair_Display'] text-[2.25rem] md:text-[1.75rem] font-bold text-[#2C3E3C]">
+              Questions Fréquentes sur les Tarifs
+            </h2>
+          </div>
+
+          {/* Accordéon FAQ */}
+          <div className='flex flex-col'>
+            {faqData.map((faq, index) => (
+              <div
+                key={index}
+                className={`border-b border-[#E5E7E6] py-6 ${index === 0 ? 'pt-0' : ''} transition-all duration-300 ease-in-out`}
+              >
+                {/* Question Button */}
+                <button
+                  onClick={() => toggleFaq(index)}
+                  className='w-full flex justify-between items-center bg-transparent border-none text-left p-0 cursor-pointer group focus:outline-none focus:ring-2 focus:ring-[#7C9885] focus:ring-opacity-50 rounded-md'
+                  aria-expanded={openFaq === index}
+                  aria-controls={`faq-answer-${index}`}
+                  role='button'
+                >
+                  {/* Question Text */}
+                  <span
+                    className={`font-['Inter'] text-lg md:text-base font-bold leading-[1.4] flex-1 pr-4 transition-colors duration-200 ${
+                      openFaq === index
+                        ? 'text-[#7C9885]'
+                        : 'text-[#2C3E3C] group-hover:text-[#7C9885]'
+                    }`}
+                  >
+                    {faq.question}
+                  </span>
+
+                  {/* Chevron Icon */}
+                  <div className='flex-shrink-0 ml-4'>
+                    <svg
+                      className={`w-6 h-6 text-[#7C9885] transition-transform duration-300 ease-in-out ${
+                        openFaq === index ? 'rotate-180' : 'rotate-0'
+                      }`}
+                      fill='none'
+                      stroke='currentColor'
+                      viewBox='0 0 24 24'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M19 9l-7 7-7-7'
+                      />
+                    </svg>
+                  </div>
+                </button>
+
+                {/* Answer Panel */}
+                <div
+                  id={`faq-answer-${index}`}
+                  className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                    openFaq === index
+                      ? 'max-h-[1000px] pt-4 opacity-100'
+                      : 'max-h-0 pt-0 opacity-0'
+                  }`}
+                >
+                  <div className='pb-2'>
+                    <p className="font-['Inter'] text-base md:text-[0.95rem] leading-[1.7] text-[#667674] whitespace-pre-line">
+                      {faq.answer}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Footer Marketing */}
+      <MarketingFooter />
+    </div>
+  );
+}

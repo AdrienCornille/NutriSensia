@@ -9,7 +9,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseServiceKey) {
-  console.error('❌ Variables d\'environnement manquantes:');
+  console.error("❌ Variables d'environnement manquantes:");
   console.error('NEXT_PUBLIC_SUPABASE_URL:', !!supabaseUrl);
   console.error('SUPABASE_SERVICE_ROLE_KEY:', !!supabaseServiceKey);
   process.exit(1);
@@ -19,24 +19,24 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 async function createSimpleAnalyticsTables() {
   try {
-    console.log('🚀 Création des tables d\'analytics d\'onboarding...');
-    
+    console.log("🚀 Création des tables d'analytics d'onboarding...");
+
     // Test de connexion
     console.log('🔍 Test de connexion à Supabase...');
     const { data: testData, error: testError } = await supabase
       .from('auth.users')
       .select('count')
       .limit(1);
-    
+
     if (testError) {
       console.log('⚠️  Erreur de connexion:', testError.message);
     } else {
       console.log('✅ Connexion à Supabase OK');
     }
-    
+
     // Créer une table simple pour tester
-    console.log('📊 Création d\'une table de test...');
-    
+    console.log("📊 Création d'une table de test...");
+
     // Insérer des données de test dans une table existante ou créer une nouvelle table
     const { data: insertData, error: insertError } = await supabase
       .from('onboarding_events')
@@ -52,20 +52,27 @@ async function createSimpleAnalyticsTables() {
           time_spent: 0,
           device_type: 'desktop',
           browser: 'chrome',
-          properties: { test: true }
-        }
+          properties: { test: true },
+        },
       ])
       .select();
-    
+
     if (insertError) {
-      console.log('⚠️  Erreur lors de l\'insertion de test:', insertError.message);
-      console.log('💡 La table onboarding_events n\'existe peut-être pas encore.');
-      
+      console.log(
+        "⚠️  Erreur lors de l'insertion de test:",
+        insertError.message
+      );
+      console.log(
+        "💡 La table onboarding_events n'existe peut-être pas encore."
+      );
+
       // Essayer de créer la table via une requête SQL directe
       console.log('🔧 Tentative de création de la table...');
-      
-      const { data: createData, error: createError } = await supabase.rpc('exec', {
-        sql: `
+
+      const { data: createData, error: createError } = await supabase.rpc(
+        'exec',
+        {
+          sql: `
           CREATE TABLE IF NOT EXISTS onboarding_events (
             id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
             user_id UUID,
@@ -89,14 +96,18 @@ async function createSimpleAnalyticsTables() {
             created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
             updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
           );
-        `
-      });
-      
+        `,
+        }
+      );
+
       if (createError) {
-        console.log('❌ Erreur lors de la création de la table:', createError.message);
+        console.log(
+          '❌ Erreur lors de la création de la table:',
+          createError.message
+        );
       } else {
         console.log('✅ Table onboarding_events créée avec succès !');
-        
+
         // Réessayer l'insertion
         const { data: retryData, error: retryError } = await supabase
           .from('onboarding_events')
@@ -112,13 +123,16 @@ async function createSimpleAnalyticsTables() {
               time_spent: 0,
               device_type: 'desktop',
               browser: 'chrome',
-              properties: { test: true }
-            }
+              properties: { test: true },
+            },
           ])
           .select();
-        
+
         if (retryError) {
-          console.log('❌ Erreur lors de l\'insertion après création:', retryError.message);
+          console.log(
+            "❌ Erreur lors de l'insertion après création:",
+            retryError.message
+          );
         } else {
           console.log('✅ Données de test insérées avec succès !');
           console.log('📊 Données insérées:', retryData);
@@ -128,11 +142,13 @@ async function createSimpleAnalyticsTables() {
       console.log('✅ Données de test insérées avec succès !');
       console.log('📊 Données insérées:', insertData);
     }
-    
+
     // Créer la table des sessions
     console.log('📊 Création de la table onboarding_sessions...');
-    const { data: sessionsData, error: sessionsError } = await supabase.rpc('exec', {
-      sql: `
+    const { data: sessionsData, error: sessionsError } = await supabase.rpc(
+      'exec',
+      {
+        sql: `
         CREATE TABLE IF NOT EXISTS onboarding_sessions (
           id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
           session_id VARCHAR(255) UNIQUE NOT NULL,
@@ -152,19 +168,25 @@ async function createSimpleAnalyticsTables() {
           created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
           updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
         );
-      `
-    });
-    
+      `,
+      }
+    );
+
     if (sessionsError) {
-      console.log('⚠️  Erreur lors de la création de onboarding_sessions:', sessionsError.message);
+      console.log(
+        '⚠️  Erreur lors de la création de onboarding_sessions:',
+        sessionsError.message
+      );
     } else {
       console.log('✅ Table onboarding_sessions créée');
     }
-    
+
     // Créer la table des métriques
     console.log('📊 Création de la table onboarding_metrics...');
-    const { data: metricsData, error: metricsError } = await supabase.rpc('exec', {
-      sql: `
+    const { data: metricsData, error: metricsError } = await supabase.rpc(
+      'exec',
+      {
+        sql: `
         CREATE TABLE IF NOT EXISTS onboarding_metrics (
           id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
           date DATE NOT NULL,
@@ -185,22 +207,30 @@ async function createSimpleAnalyticsTables() {
           created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
           updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
         );
-      `
-    });
-    
+      `,
+      }
+    );
+
     if (metricsError) {
-      console.log('⚠️  Erreur lors de la création de onboarding_metrics:', metricsError.message);
+      console.log(
+        '⚠️  Erreur lors de la création de onboarding_metrics:',
+        metricsError.message
+      );
     } else {
       console.log('✅ Table onboarding_metrics créée');
     }
-    
+
     // Activer RLS
     console.log('🔒 Activation de RLS...');
-    const rlsTables = ['onboarding_events', 'onboarding_sessions', 'onboarding_metrics'];
-    
+    const rlsTables = [
+      'onboarding_events',
+      'onboarding_sessions',
+      'onboarding_metrics',
+    ];
+
     for (const table of rlsTables) {
       const { error: rlsError } = await supabase.rpc('exec', {
-        sql: `ALTER TABLE ${table} ENABLE ROW LEVEL SECURITY;`
+        sql: `ALTER TABLE ${table} ENABLE ROW LEVEL SECURITY;`,
       });
       if (rlsError) {
         console.log(`⚠️  Erreur RLS pour ${table}:`, rlsError.message);
@@ -208,22 +238,21 @@ async function createSimpleAnalyticsTables() {
         console.log(`✅ RLS activé pour ${table}`);
       }
     }
-    
-    console.log('🎉 Configuration des tables d\'analytics terminée !');
-    
+
+    console.log("🎉 Configuration des tables d'analytics terminée !");
+
     // Test final
     console.log('🧪 Test final - Vérification des tables...');
     const { data: finalTest, error: finalError } = await supabase
       .from('onboarding_events')
       .select('*')
       .limit(1);
-    
+
     if (finalError) {
       console.log('❌ Erreur lors du test final:', finalError.message);
     } else {
-      console.log('✅ Test final réussi ! Tables d\'analytics opérationnelles.');
+      console.log("✅ Test final réussi ! Tables d'analytics opérationnelles.");
     }
-    
   } catch (error) {
     console.error('❌ Erreur générale:', error);
   }

@@ -1,7 +1,7 @@
 /**
  * 🎯 SOLUTION DÉFINITIVE CONTEXT7
  * ================================
- * 
+ *
  * Basée sur la documentation officielle Supabase JS,
  * cette solution corrige TOUS les problèmes d'écriture identifiés.
  */
@@ -25,25 +25,28 @@ async function solutionUpdateOptimal() {
       consultation_rates: {
         initial: 200,
         follow_up: 150,
-        express: 120
+        express: 120,
       },
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
 
     console.log('📤 Envoi UPDATE avec configuration Context7...');
 
-    const response = await fetch(`${SUPABASE_URL}/rest/v1/nutritionists?id=eq.${TEST_USER_ID}`, {
-      method: 'PATCH',
-      headers: {
-        // Headers Context7 recommandés
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=representation', // CRUCIAL: Pour avoir les données retournées
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify(updateData)
-    });
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/nutritionists?id=eq.${TEST_USER_ID}`,
+      {
+        method: 'PATCH',
+        headers: {
+          // Headers Context7 recommandés
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+          Prefer: 'return=representation', // CRUCIAL: Pour avoir les données retournées
+          Accept: 'application/json',
+        },
+        body: JSON.stringify(updateData),
+      }
+    );
 
     console.log(`📊 Status: ${response.status}`);
     console.log(`📊 OK: ${response.ok}`);
@@ -53,7 +56,7 @@ async function solutionUpdateOptimal() {
       console.log('✅ UPDATE réussi !');
       console.log(`📊 Lignes affectées: ${result.length}`);
       console.log('📊 Données retournées:', result[0]);
-      
+
       // Vérification immédiate
       return await verifierPersistance();
     } else {
@@ -62,7 +65,6 @@ async function solutionUpdateOptimal() {
       console.log(`📊 Erreur: ${errorText}`);
       return false;
     }
-
   } catch (error) {
     console.error('❌ Exception UPDATE:', error);
     return false;
@@ -80,21 +82,24 @@ async function verifierPersistance() {
     // Attendre un peu pour la réplication
     await new Promise(resolve => setTimeout(resolve, 2000));
 
-    const response = await fetch(`${SUPABASE_URL}/rest/v1/nutritionists?id=eq.${TEST_USER_ID}`, {
-      method: 'GET',
-      headers: {
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-        'Content-Type': 'application/json'
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/nutritionists?id=eq.${TEST_USER_ID}`,
+      {
+        method: 'GET',
+        headers: {
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+        },
       }
-    });
+    );
 
     if (response.ok) {
       const data = await response.json();
       const currentRates = data[0]?.consultation_rates;
-      
+
       console.log('📊 Données actuelles en base:', currentRates);
-      
+
       if (currentRates && currentRates.initial === 200) {
         console.log('✅ PERSISTANCE CONFIRMÉE !');
         console.log('✅ La solution Context7 fonctionne parfaitement !');
@@ -108,7 +113,6 @@ async function verifierPersistance() {
       console.log('❌ Erreur lors de la vérification');
       return false;
     }
-
   } catch (error) {
     console.error('❌ Exception vérification:', error);
     return false;
@@ -125,18 +129,21 @@ async function diagnosticRLS() {
   try {
     // Test de lecture pour vérifier les permissions
     console.log('📋 Test de lecture RLS...');
-    
-    const readResponse = await fetch(`${SUPABASE_URL}/rest/v1/nutritionists?id=eq.${TEST_USER_ID}`, {
-      method: 'GET',
-      headers: {
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-        'Content-Type': 'application/json'
+
+    const readResponse = await fetch(
+      `${SUPABASE_URL}/rest/v1/nutritionists?id=eq.${TEST_USER_ID}`,
+      {
+        method: 'GET',
+        headers: {
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+        },
       }
-    });
+    );
 
     console.log(`📊 Lecture Status: ${readResponse.status}`);
-    
+
     if (readResponse.ok) {
       const data = await readResponse.json();
       console.log(`✅ Lecture OK - ${data.length} enregistrement(s)`);
@@ -147,31 +154,33 @@ async function diagnosticRLS() {
     }
 
     // Test d'écriture minimal
-    console.log('\n📋 Test d\'écriture RLS minimal...');
-    
-    const writeResponse = await fetch(`${SUPABASE_URL}/rest/v1/nutritionists?id=eq.${TEST_USER_ID}`, {
-      method: 'PATCH',
-      headers: {
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal' // Minimal pour tester juste les permissions
-      },
-      body: JSON.stringify({
-        updated_at: new Date().toISOString()
-      })
-    });
+    console.log("\n📋 Test d'écriture RLS minimal...");
+
+    const writeResponse = await fetch(
+      `${SUPABASE_URL}/rest/v1/nutritionists?id=eq.${TEST_USER_ID}`,
+      {
+        method: 'PATCH',
+        headers: {
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+          Prefer: 'return=minimal', // Minimal pour tester juste les permissions
+        },
+        body: JSON.stringify({
+          updated_at: new Date().toISOString(),
+        }),
+      }
+    );
 
     console.log(`📊 Écriture Status: ${writeResponse.status}`);
-    
+
     if (writeResponse.ok) {
-      console.log('✅ Permissions d\'écriture OK');
+      console.log("✅ Permissions d'écriture OK");
     } else {
-      console.log('❌ Problème de permissions d\'écriture RLS');
+      console.log("❌ Problème de permissions d'écriture RLS");
       const errorText = await writeResponse.text();
       console.log(`📊 Erreur: ${errorText}`);
     }
-
   } catch (error) {
     console.error('❌ Exception diagnostic RLS:', error);
   }
@@ -191,9 +200,9 @@ async function testFormatsData() {
         consultation_rates: {
           initial: 180,
           follow_up: 130,
-          express: 100
-        }
-      }
+          express: 100,
+        },
+      },
     },
     {
       name: 'Avec types explicites',
@@ -201,35 +210,38 @@ async function testFormatsData() {
         consultation_rates: {
           initial: Number(180),
           follow_up: Number(130),
-          express: Number(100)
-        }
-      }
+          express: Number(100),
+        },
+      },
     },
     {
       name: 'Champ simple pour test',
       data: {
-        updated_at: new Date().toISOString()
-      }
-    }
+        updated_at: new Date().toISOString(),
+      },
+    },
   ];
 
   for (const format of formats) {
     console.log(`\n📋 Test: ${format.name}`);
-    
+
     try {
-      const response = await fetch(`${SUPABASE_URL}/rest/v1/nutritionists?id=eq.${TEST_USER_ID}`, {
-        method: 'PATCH',
-        headers: {
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-          'Content-Type': 'application/json',
-          'Prefer': 'return=representation'
-        },
-        body: JSON.stringify(format.data)
-      });
+      const response = await fetch(
+        `${SUPABASE_URL}/rest/v1/nutritionists?id=eq.${TEST_USER_ID}`,
+        {
+          method: 'PATCH',
+          headers: {
+            apikey: SUPABASE_ANON_KEY,
+            Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json',
+            Prefer: 'return=representation',
+          },
+          body: JSON.stringify(format.data),
+        }
+      );
 
       console.log(`   Status: ${response.status} ${response.ok ? '✅' : '❌'}`);
-      
+
       if (response.ok) {
         const result = await response.json();
         console.log(`   Lignes affectées: ${result.length}`);
@@ -237,7 +249,6 @@ async function testFormatsData() {
         const errorText = await response.text();
         console.log(`   Erreur: ${errorText}`);
       }
-
     } catch (error) {
       console.error(`   Exception: ${error.message}`);
     }
@@ -250,7 +261,7 @@ async function testFormatsData() {
 async function executerSolutionComplete() {
   console.log('🚀 DÉMARRAGE SOLUTION COMPLÈTE CONTEXT7');
   console.log('========================================');
-  
+
   if (SUPABASE_ANON_KEY === 'VOTRE_CLE_ANON_ICI') {
     console.log('❌ ERREUR: Remplacez SUPABASE_ANON_KEY par votre vraie clé !');
     return;
@@ -258,7 +269,7 @@ async function executerSolutionComplete() {
 
   // Étape 1: Test UPDATE optimal
   const updateSuccess = await solutionUpdateOptimal();
-  
+
   if (updateSuccess) {
     console.log('\n🎉 SUCCÈS TOTAL !');
     console.log('✅ La solution Context7 fonctionne parfaitement');
@@ -270,7 +281,7 @@ async function executerSolutionComplete() {
   // Étape 2: Diagnostic RLS si échec
   console.log('\n🔍 UPDATE échoué - Diagnostic approfondi...');
   await diagnosticRLS();
-  
+
   // Étape 3: Test formats si problème persiste
   await testFormatsData();
 
@@ -278,7 +289,9 @@ async function executerSolutionComplete() {
   console.log('1. Si Status 200 mais pas de persistance → Problème RLS');
   console.log('2. Si Status 401/403 → Problème authentification');
   console.log('3. Si Status 400 → Problème format données');
-  console.log('4. Si tout OK ici mais pas dans l\'app → Problème dans le code React');
+  console.log(
+    "4. Si tout OK ici mais pas dans l'app → Problème dans le code React"
+  );
 
   console.log('\n🎯 SOLUTION RECOMMANDÉE:');
   console.log('Utilisez exactement les mêmes headers et configuration');

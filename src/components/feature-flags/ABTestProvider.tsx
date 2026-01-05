@@ -1,13 +1,19 @@
 /**
  * Provider pour les tests A/B et feature flags
- * 
+ *
  * Ce composant fournit le contexte des feature flags aux composants enfants
  * et gère l'initialisation du tracking des événements A/B.
  */
 
 'use client';
 
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from 'react';
 import { analytics as abTestAnalytics } from '@/lib/feature-flags/analytics-simple';
 
 /**
@@ -16,18 +22,21 @@ import { analytics as abTestAnalytics } from '@/lib/feature-flags/analytics-simp
 interface ABTestContextType {
   // Flags actuels
   flags: Record<string, any>;
-  
+
   // Méthodes pour récupérer les flags
   getFlag: <T>(flagKey: string, defaultValue: T) => T;
-  
+
   // Méthodes de tracking
   trackEvent: (eventType: string, data?: Record<string, any>) => Promise<void>;
-  trackConversion: (flagKey: string, data?: Record<string, any>) => Promise<void>;
-  
+  trackConversion: (
+    flagKey: string,
+    data?: Record<string, any>
+  ) => Promise<void>;
+
   // État du provider
   isLoading: boolean;
   error: string | null;
-  
+
   // Informations utilisateur
   userId?: string;
   userRole?: 'nutritionist' | 'patient' | 'admin';
@@ -64,16 +73,18 @@ interface ABTestProviderProps {
 /**
  * Provider principal pour les tests A/B
  */
-export function ABTestProvider({ 
-  children, 
-  userId, 
+export function ABTestProvider({
+  children,
+  userId,
   userRole,
-  initialFlags = {} 
+  initialFlags = {},
 }: ABTestProviderProps) {
   const [flags, setFlags] = useState<Record<string, any>>(initialFlags);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
+  const [sessionId] = useState(
+    () => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+  );
 
   /**
    * Initialisation des feature flags
@@ -96,27 +107,29 @@ export function ABTestProvider({
 
         // Sinon, récupérer les flags côté client
         const response = await fetch('/api/flags');
-        
+
         if (!response.ok) {
           throw new Error(`Failed to fetch flags: ${response.status}`);
         }
 
         const flagsData = await response.json();
         setFlags(flagsData.flags || {});
-        
+
         // Tracking de l'attribution des flags (une seule fois)
         if (userId) {
-          for (const [flagKey, flagValue] of Object.entries(flagsData.flags || {})) {
+          for (const [flagKey, flagValue] of Object.entries(
+            flagsData.flags || {}
+          )) {
             abTestAnalytics.trackFlagAssignment(
-              userId, 
-              flagKey, 
+              userId,
+              flagKey,
               String(flagValue),
               { userRole, sessionId }
             );
           }
         }
       } catch (err) {
-        console.error('Erreur lors de l\'initialisation des flags:', err);
+        console.error("Erreur lors de l'initialisation des flags:", err);
         setError(err instanceof Error ? err.message : 'Unknown error');
       } finally {
         setIsLoading(false);
@@ -136,13 +149,16 @@ export function ABTestProvider({
   /**
    * Enregistre un événement A/B
    */
-  const trackEvent = async (eventType: string, data: Record<string, any> = {}) => {
+  const trackEvent = async (
+    eventType: string,
+    data: Record<string, any> = {}
+  ) => {
     if (!userId) return;
 
     try {
       // Déterminer quels flags sont concernés par cet événement
-      const relevantFlags = Object.entries(flags).filter(([flagKey]) => 
-        data.flagKey === flagKey || !data.flagKey
+      const relevantFlags = Object.entries(flags).filter(
+        ([flagKey]) => data.flagKey === flagKey || !data.flagKey
       );
 
       for (const [flagKey, flagValue] of relevantFlags) {
@@ -157,14 +173,17 @@ export function ABTestProvider({
         });
       }
     } catch (error) {
-      console.error('Erreur lors du tracking d\'événement:', error);
+      console.error("Erreur lors du tracking d'événement:", error);
     }
   };
 
   /**
    * Enregistre une conversion
    */
-  const trackConversion = async (flagKey: string, data: Record<string, any> = {}) => {
+  const trackConversion = async (
+    flagKey: string,
+    data: Record<string, any> = {}
+  ) => {
     if (!userId || !flags[flagKey]) return;
 
     try {
@@ -209,11 +228,11 @@ export function ABTestProvider({
  */
 export function useABTest() {
   const context = useContext(ABTestContext);
-  
+
   if (!context) {
     throw new Error('useABTest doit être utilisé dans un ABTestProvider');
   }
-  
+
   return context;
 }
 
@@ -246,8 +265,8 @@ export function useOnboardingTracking() {
   };
 
   const trackOnboardingStep = async (
-    stepName: string, 
-    stepIndex: number, 
+    stepName: string,
+    stepIndex: number,
     totalSteps: number,
     duration?: number
   ) => {
@@ -272,8 +291,8 @@ export function useOnboardingTracking() {
   };
 
   const trackOnboardingAbandon = async (
-    currentStep: string, 
-    stepIndex: number, 
+    currentStep: string,
+    stepIndex: number,
     reason?: string
   ) => {
     await trackEvent('onboarding_abandon', {
@@ -285,7 +304,7 @@ export function useOnboardingTracking() {
   };
 
   const trackFormValidationError = async (
-    formField: string, 
+    formField: string,
     errorMessage: string
   ) => {
     await trackEvent('form_validation_error', {
@@ -315,7 +334,7 @@ export function withABTest<P extends object>(
   return function ABTestComponent(props: P) {
     const variant = useFeatureFlag(flagKey, 'control');
     const VariantComponent = variants[variant] || variants.control || Component;
-    
+
     return <VariantComponent {...props} />;
   };
 }
@@ -330,15 +349,20 @@ interface FeatureFlagProps {
   children: ReactNode;
 }
 
-export function FeatureFlag({ flag, value, fallback = null, children }: FeatureFlagProps) {
+export function FeatureFlag({
+  flag,
+  value,
+  fallback = null,
+  children,
+}: FeatureFlagProps) {
   const { getFlag } = useABTest();
   const flagValue = getFlag(flag, false);
-  
+
   // Si une valeur spécifique est requise, la vérifier
   if (value !== undefined) {
     return flagValue === value ? <>{children}</> : <>{fallback}</>;
   }
-  
+
   // Sinon, traiter comme un boolean
   return flagValue ? <>{children}</> : <>{fallback}</>;
 }

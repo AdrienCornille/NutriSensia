@@ -1,0 +1,526 @@
+{
+  "Common": {
+    "loading": "Chargement...",
+    "error": "Une erreur s'est produite",
+    "success": "Succès",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "close": "Fermer",
+    "confirm": "Confirmer",
+    "yes": "Oui",
+    "no": "Non",
+    "optional": "Optionnel",
+    "required": "Obligatoire",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "name": "Nom",
+    "firstName": "Prénom",
+    "lastName": "Nom de famille",
+    "phone": "Téléphone",
+    "address": "Adresse",
+    "city": "Ville",
+    "postalCode": "Code postal",
+    "country": "Pays",
+    "language": "Langue",
+    "timezone": "Fuseau horaire"
+  },
+  "Navigation": {
+    "home": "Accueil",
+    "about": "À propos",
+    "services": "Services",
+    "pricing": "Tarifs",
+    "pricingPlans": "Forfaits",
+    "blog": "Blog",
+    "contact": "Contact",
+    "login": "Connexion",
+    "register": "S'inscrire",
+    "dashboard": "Tableau de bord",
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "logout": "Déconnexion",
+    "admin": "Administration",
+    "nutrition": "Nutrition"
+  },
+  "HomePage": {
+    "title": "NutriSensia - Votre partenaire nutrition en Suisse",
+    "subtitle": "Connectez-vous avec des nutritionnistes certifiés pour un suivi personnalisé",
+    "heroTitle": "Transformez votre relation avec la nutrition",
+    "heroSubtitle": "Plateforme digitale leader en Suisse francophone connectant nutritionnistes certifiés et patients via des outils modernes de suivi nutritionnel.",
+    "ctaPrimary": "Commencer maintenant",
+    "ctaSecondary": "Demander une démo",
+    "forPatients": "Pour les patients",
+    "forNutritionists": "Pour les nutritionnistes",
+    "patientsTitle": "Suivi nutritionnel personnalisé",
+    "patientsDescription": "Consultations remboursées par les assurances suisses, plans alimentaires sur mesure, suivi en temps réel.",
+    "nutritionistsTitle": "Outils professionnels modernes",
+    "nutritionistsDescription": "Gestion simplifiée des patients, facturation automatique, conformité RGPD/HDS garantie.",
+    "featuresTitle": "Pourquoi choisir NutriSensia ?",
+    "feature1Title": "Remboursement assuré",
+    "feature1Description": "Consultations remboursées par les assurances suisses (ASCA/RME)",
+    "feature2Title": "Suivi personnalisé",
+    "feature2Description": "Plans alimentaires adaptés à vos besoins et objectifs",
+    "feature3Title": "Conformité garantie",
+    "feature3Description": "Respect des normes RGPD et HDS pour la protection de vos données",
+    "sections": {
+      "hero": "Accueil",
+      "isThisForYou": "Est-ce pour vous ?",
+      "benefits": "Bénéfices",
+      "aboutMe": "Qui suis-je",
+      "trustSignals": "Nos Garanties",
+      "howItWorks": "Comment ça marche",
+      "whyNutriSensia": "Pourquoi NutriSensia",
+      "pricing": "Forfaits",
+      "platform": "Notre Plateforme",
+      "packages": "Nos Forfaits",
+      "faq": "Questions Fréquentes",
+      "guarantee": "Notre Garantie",
+      "cta": "Commencez Maintenant"
+    }
+  },
+  "IsThisForYouSection": {
+    "title": "Si vous vivez l'une de ces situations, je peux vous aider :",
+    "intro": {
+      "paragraph1": "",
+      "paragraph2": "",
+      "ifYouLive": ""
+    },
+    "situations": {
+      "menopause": {
+        "title": "Soulager les symptômes de la ménopause",
+        "description": "Bouffées de chaleur, troubles du sommeil, prise de poids, sautes d'humeur... La ménopause bouleverse votre corps, mais vous n'êtes pas obligée de subir. L'alimentation peut vraiment vous aider."
+      },
+      "weightLoss": {
+        "title": "Perdre du poids sans régime restrictif",
+        "description": "Vous en avez assez des régimes yo-yo qui ne fonctionnent jamais sur le long terme. Vous méritez une approche durable, sans privation, qui respecte votre corps et votre vie."
+      },
+      "digestive": {
+        "title": "Apaiser vos inconforts digestifs",
+        "description": "Ballonnements, reflux, syndrome de l'intestin irritable, sensibilités alimentaires... Votre ventre vous fait souffrir et vous ne savez plus quoi manger. Il existe des solutions concrètes."
+      },
+      "glycemia": {
+        "title": "Stabiliser votre glycémie ou votre tension artérielle",
+        "description": "Prédiabète, diabète de type 2, hypertension... Votre médecin vous dit de \"faire attention\" mais personne ne vous explique comment. Je traduis les conseils médicaux en actions concrètes."
+      },
+      "cardiovascular": {
+        "title": "Améliorer votre santé cardiovasculaire",
+        "description": "Cholestérol élevé, triglycérides, prévention des maladies cardiaques... Vous voulez protéger votre cœur naturellement, par l'alimentation. C'est possible."
+      },
+      "energy": {
+        "title": "Retrouver votre énergie et votre vitalité",
+        "description": "Fatigue chronique, coups de barre à répétition, impression de fonctionner au ralenti... Votre corps a besoin d'être nourri différemment pour retrouver son énergie."
+      },
+      "longevity": {
+        "title": "Investir dans votre longévité et votre bien-être",
+        "description": "Pas de problème urgent, mais vous sentez qu'il est temps d'investir dans votre santé. Prévenir, optimiser, vieillir en pleine forme... C'est maintenant que ça se joue."
+      }
+    },
+    "recognition": "Vous vous reconnaissez dans une ou plusieurs de ces situations ?",
+    "accompaniment": "Je suis là pour vous accompagner, avec bienveillance et expertise, vers un mieux-être durable.",
+    "cta": "Réserver ma consultation découverte",
+    "microReassurance": "1h30 pour parler de VOTRE situation • Sans engagement"
+  },
+  "Auth": {
+    "signIn": "Se connecter",
+    "signUp": "Créer un compte",
+    "signOut": "Se déconnecter",
+    "forgotPassword": "Mot de passe oublié ?",
+    "resetPassword": "Réinitialiser le mot de passe",
+    "emailPlaceholder": "votre@email.com",
+    "passwordPlaceholder": "Votre mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "rememberMe": "Se souvenir de moi",
+    "alreadyHaveAccount": "Vous avez déjà un compte ?",
+    "dontHaveAccount": "Vous n'avez pas de compte ?",
+    "signInWithGoogle": "Se connecter avec Google",
+    "signUpWithGoogle": "S'inscrire avec Google",
+    "emailSent": "E-mail envoyé",
+    "checkEmail": "Vérifiez votre boîte e-mail pour continuer",
+    "invalidCredentials": "Identifiants invalides",
+    "accountCreated": "Compte créé avec succès",
+    "passwordReset": "Mot de passe réinitialisé",
+    "mfaRequired": "Authentification à deux facteurs requise",
+    "mfaCode": "Code de vérification",
+    "enableMfa": "Activer l'authentification à deux facteurs",
+    "mfaEnabled": "Authentification à deux facteurs activée",
+    "Login": {
+      "title": "Votre espace vous attend",
+      "subtitle": "Connectez-vous à votre espace NutriSensia",
+      "email": "Adresse e-mail",
+      "emailPlaceholder": "votre@email.com",
+      "password": "Mot de passe",
+      "passwordPlaceholder": "Votre mot de passe",
+      "rememberMe": "Se souvenir de moi",
+      "forgotPassword": "Mot de passe oublié ?",
+      "submit": "Se connecter",
+      "submitting": "Connexion...",
+      "noAccount": "Vous n'avez pas de compte ?",
+      "createAccount": "Créer un compte",
+      "orContinueWith": "ou",
+      "googleSignIn": "Continuer avec Google",
+      "errors": {
+        "invalidCredentials": "Email ou mot de passe incorrect",
+        "emailRequired": "L'adresse e-mail est requise",
+        "emailInvalid": "Adresse e-mail invalide",
+        "passwordRequired": "Le mot de passe est requis"
+      }
+    },
+    "ForgotPassword": {
+      "title": "Réinitialisez votre accès",
+      "subtitle": "Entrez votre adresse e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe",
+      "email": "Adresse e-mail",
+      "emailPlaceholder": "votre@email.com",
+      "submit": "Envoyer le lien",
+      "submitting": "Envoi en cours...",
+      "successTitle": "E-mail envoyé !",
+      "successMessage": "Vérifiez votre boîte de réception. Un lien de réinitialisation vous a été envoyé.",
+      "sentTo": "E-mail envoyé à",
+      "rememberPassword": "Vous vous souvenez de votre mot de passe ?",
+      "backToLogin": "Retour à la connexion"
+    }
+  },
+  "Profile": {
+    "title": "Mon profil",
+    "personalInfo": "Informations personnelles",
+    "contactInfo": "Informations de contact",
+    "preferences": "Préférences",
+    "security": "Sécurité",
+    "profilePicture": "Photo de profil",
+    "uploadPicture": "Télécharger une photo",
+    "changePassword": "Changer le mot de passe",
+    "currentPassword": "Mot de passe actuel",
+    "newPassword": "Nouveau mot de passe",
+    "confirmNewPassword": "Confirmer le nouveau mot de passe",
+    "profileUpdated": "Profil mis à jour avec succès",
+    "passwordChanged": "Mot de passe modifié avec succès"
+  },
+  "Dashboard": {
+    "title": "Tableau de bord",
+    "welcome": "Bienvenue, {name}",
+    "overview": "Vue d'ensemble",
+    "recentActivity": "Activité récente",
+    "upcomingAppointments": "Rendez-vous à venir",
+    "quickActions": "Actions rapides",
+    "statistics": "Statistiques",
+    "noAppointments": "Aucun rendez-vous à venir",
+    "scheduleAppointment": "Planifier un rendez-vous"
+  },
+  "Contact": {
+    "title": "Nous contacter",
+    "subtitle": "Une question ? Nous sommes là pour vous aider",
+    "generalInquiry": "Demande générale",
+    "patientInquiry": "Question patient",
+    "nutritionistInquiry": "Partenariat nutritionniste",
+    "demoRequest": "Demande de démo",
+    "subject": "Sujet",
+    "message": "Message",
+    "send": "Envoyer",
+    "messageSent": "Message envoyé avec succès",
+    "messageError": "Erreur lors de l'envoi du message",
+    "contactInfo": "Informations de contact",
+    "emailAddress": "Adresse e-mail",
+    "phoneNumber": "Numéro de téléphone",
+    "officeAddress": "Adresse du bureau",
+    "businessHours": "Heures d'ouverture"
+  },
+  "Blog": {
+    "title": "Blog Nutrition",
+    "subtitle": "Conseils et actualités nutrition",
+    "readMore": "Lire la suite",
+    "readingTime": "{minutes} min de lecture",
+    "publishedOn": "Publié le {date}",
+    "author": "Par {author}",
+    "categories": "Catégories",
+    "tags": "Étiquettes",
+    "relatedPosts": "Articles similaires",
+    "shareArticle": "Partager cet article",
+    "backToBlog": "Retour au blog"
+  },
+  "Onboarding": {
+    "welcome": "Bienvenue sur NutriSensia",
+    "letsGetStarted": "Commençons",
+    "step": "Étape {current} sur {total}",
+    "personalInfo": "Informations personnelles",
+    "preferences": "Préférences",
+    "goals": "Objectifs",
+    "complete": "Terminer",
+    "skipForNow": "Passer pour l'instant",
+    "tellUsAboutYou": "Parlez-nous de vous",
+    "yourGoals": "Vos objectifs",
+    "almostDone": "Presque terminé",
+    "setupComplete": "Configuration terminée",
+    "welcomeMessage": "Bienvenue dans votre espace NutriSensia !"
+  },
+  "Errors": {
+    "pageNotFound": "Page non trouvée",
+    "pageNotFoundDescription": "La page que vous recherchez n'existe pas.",
+    "serverError": "Erreur serveur",
+    "serverErrorDescription": "Une erreur s'est produite sur le serveur.",
+    "accessDenied": "Accès refusé",
+    "accessDeniedDescription": "Vous n'avez pas les permissions nécessaires pour accéder à cette page.",
+    "somethingWentWrong": "Quelque chose s'est mal passé",
+    "tryAgain": "Réessayer",
+    "goHome": "Retour à l'accueil",
+    "contactSupport": "Contacter le support"
+  },
+  "Settings": {
+    "title": "Paramètres",
+    "general": "Général",
+    "notifications": "Notifications",
+    "privacy": "Confidentialité",
+    "account": "Compte",
+    "appearance": "Apparence",
+    "language": "Langue",
+    "theme": "Thème",
+    "lightMode": "Mode clair",
+    "darkMode": "Mode sombre",
+    "systemMode": "Système",
+    "emailNotifications": "Notifications par e-mail",
+    "pushNotifications": "Notifications push",
+    "marketingEmails": "E-mails marketing",
+    "deleteAccount": "Supprimer le compte",
+    "deleteAccountWarning": "Cette action est irréversible",
+    "settingsSaved": "Paramètres sauvegardés"
+  },
+  "Admin": {
+    "title": "Administration",
+    "users": "Utilisateurs",
+    "analytics": "Analyses",
+    "settings": "Paramètres système",
+    "reports": "Rapports",
+    "userManagement": "Gestion des utilisateurs",
+    "systemHealth": "État du système",
+    "totalUsers": "Utilisateurs totaux",
+    "activeUsers": "Utilisateurs actifs",
+    "newRegistrations": "Nouvelles inscriptions",
+    "systemStatus": "État du système"
+  },
+  "Nutrition": {
+    "title": "Nutrition",
+    "mealPlan": "Plan alimentaire",
+    "foodDiary": "Journal alimentaire",
+    "recipes": "Recettes",
+    "nutritionalInfo": "Informations nutritionnelles",
+    "calories": "Calories",
+    "proteins": "Protéines",
+    "carbs": "Glucides",
+    "fats": "Lipides",
+    "fiber": "Fibres",
+    "addFood": "Ajouter un aliment",
+    "searchFood": "Rechercher un aliment",
+    "portion": "Portion",
+    "breakfast": "Petit-déjeuner",
+    "lunch": "Déjeuner",
+    "dinner": "Dîner",
+    "snack": "Collation"
+  },
+  "Pricing": {
+    "title": "Forfaits et Tarifs",
+    "subtitle": "Choisissez le forfait qui correspond le mieux à vos besoins nutritionnels. Tous nos forfaits incluent un suivi personnalisé avec des nutritionnistes certifiés.",
+    "comingSoon": "Contenu en cours de développement",
+    "comingSoonDescription": "Nous travaillons actuellement sur la présentation de nos forfaits. Cette page sera bientôt enrichie avec tous les détails de nos offres de suivi nutritionnel.",
+    "notifyLaunch": "Être notifié du lancement",
+    "contactUs": "Nous contacter",
+    "insuranceReimbursement": "Remboursement assuré",
+    "insuranceDescription": "Consultations remboursées par les assurances suisses (ASCA/RME)",
+    "personalizedTracking": "Suivi personnalisé",
+    "personalizedDescription": "Plans alimentaires adaptés à vos besoins et objectifs spécifiques",
+    "securityGuaranteed": "Sécurité garantie",
+    "securityDescription": "Conformité RGPD et protection maximale de vos données de santé"
+  },
+  "MethodsSection": {
+    "label": "NOS MÉTHODES",
+    "title": "Les Méthodes Que Nous Utilisons",
+    "intro": "Pour vous accompagner, nous combinons plusieurs approches thérapeutiques basées sur la science et notre expérience clinique, adaptées à votre situation unique.",
+    "methods": {
+      "micronutrition": {
+        "title": "La Micronutrition",
+        "description": "Votre corps a besoin de vitamines, minéraux et oligoéléments pour fonctionner. Quand il en manque, il vous le dit : fatigue, fringales, troubles du sommeil, irritabilité. Nous analysons vos symptômes et votre alimentation pour identifier ces carences, puis nous les comblons d'abord par l'assiette, et si nécessaire par des compléments ciblés.",
+        "forWhom": "Vous êtes peut-être concerné·e si : Fatigue persistante • Fringales régulières • Troubles du sommeil • Problèmes de peau • Chute de cheveux • Irritabilité fréquente"
+      },
+      "functionalNutrition": {
+        "title": "La Nutrition Fonctionnelle",
+        "description": "Au lieu de traiter vos symptômes isolément, nous cherchons leur cause profonde. Vos ballonnements peuvent venir d'un déséquilibre hormonal, votre prise de poids d'une inflammation chronique. Nous analysons votre corps comme un système interconnecté, testons des ajustements alimentaires ciblés, et affinons progressivement jusqu'à trouver ce qui fonctionne.",
+        "forWhom": "Vous êtes peut-être concerné·e si : Symptômes chroniques sans diagnostic • Plusieurs symptômes apparemment non liés • Analyses médicales normales mais symptômes réels • Sensation que votre corps dysfonctionne"
+      },
+      "inflammation": {
+        "title": "La Gestion de l'Inflammation",
+        "description": "L'inflammation chronique sabote votre métabolisme : elle bloque la perte de poids, entretient les douleurs, perturbe votre digestion. Nous vous aidons à identifier vos déclencheurs personnels (aliments, stress, sommeil). Ensemble, nous mettons en place une phase d'élimination ciblée pour apaiser l'inflammation, puis nous réintroduisons progressivement pour construire votre équilibre anti-inflammatoire durable.",
+        "forWhom": "Vous êtes peut-être concerné·e si : Douleurs articulaires • Rétention d'eau • Problèmes de peau (acné, eczéma) • Résistance à la perte de poids • Fatigue chronique • Troubles digestifs récurrents"
+      },
+      "hormonalBalance": {
+        "title": "L'Équilibre Hormonal",
+        "description": "Vos hormones orchestrent votre poids, énergie, humeur et sommeil. Quand elles sont déséquilibrées, aucun régime ne fonctionne vraiment. Nous vous accompagnons pour rééquilibrer naturellement votre production hormonale via des ajustements alimentaires, la gestion du stress et l'optimisation du sommeil. Sans hormones de synthèse, en complément de votre suivi médical si nécessaire.",
+        "forWhom": "Vous êtes peut-être concerné·e si : Syndrome prémenstruel intense • Règles irrégulières ou douloureuses • Difficulté à perdre du poids • Fatigue malgré un sommeil suffisant • Sautes d'humeur • Acné hormonale"
+      },
+      "intuitiveEating": {
+        "title": "L'Alimentation Intuitive",
+        "description": "Vous pouvez avoir le meilleur plan alimentaire, si vous culpabilisez à chaque bouchée, ça ne tiendra pas. Nous explorons vos déclencheurs émotionnels, déconstruisons les croyances limitantes, et vous apprenons à reconnecter avec vos signaux de faim et satiété. L'objectif : manger avec plaisir, sans guerre intérieure.",
+        "forWhom": "Vous êtes peut-être concerné·e si : Compulsions alimentaires • Culpabilité après les repas • Cycles de restriction et d'excès • Peur de certains aliments • Difficulté à reconnaître vos signaux de faim et satiété"
+      }
+    }
+  },
+  "CalorieCalculator": {
+    "meta": {
+      "title": "Calculateur de Calories Gratuit | NutriSensia",
+      "description": "Calculez votre besoin calorique quotidien avec notre outil gratuit. Formule Mifflin-St Jeor pour des résultats précis."
+    },
+    "hero": {
+      "badge": "Outil gratuit",
+      "title": "Arrêtez de manger au hasard.",
+      "subtitle": "Découvrez vos besoins caloriques réels en 30 secondes",
+      "description": "Régimes restrictifs, interdits alimentaires, comptage approximatif... Et si la solution était simplement de connaître vos vrais besoins ? Notre calculateur, conçu par des diététicien·ne·s diplômé·e·s, vous donne enfin une base fiable pour atteindre vos objectifs — sans frustration ni privation inutile."
+    },
+    "howItWorks": {
+      "title": "Un calcul fiable, basé sur la science",
+      "subtitle": "Comment ça marche ?",
+      "steps": {
+        "step1": {
+          "number": "1",
+          "title": "Renseignez vos informations",
+          "description": "Quelques données simples suffisent pour estimer vos besoins."
+        },
+        "step2": {
+          "number": "2",
+          "title": "Obtenez vos résultats personnalisés",
+          "description": "Notre calculateur utilise la formule de Mifflin-St Jeor, reconnue pour sa précision."
+        },
+        "step3": {
+          "number": "3",
+          "title": "Passez à l'action",
+          "description": "Utilisez ces chiffres comme point de départ, pas comme une obsession."
+        }
+      }
+    },
+    "form": {
+      "title": "Calculez vos besoins caloriques",
+      "age": {
+        "label": "Âge",
+        "placeholder": "Ex: 35",
+        "unit": "ans",
+        "helper": "Indiquez votre âge en années"
+      },
+      "height": {
+        "label": "Taille",
+        "placeholder": "Ex: 170",
+        "unit": "cm",
+        "helper": "Indiquez votre taille en centimètres"
+      },
+      "weight": {
+        "label": "Poids",
+        "placeholder": "Ex: 70",
+        "unit": "kg",
+        "helper": "Indiquez votre poids actuel en kilogrammes"
+      },
+      "gender": {
+        "label": "Sexe",
+        "male": "Homme",
+        "female": "Femme"
+      },
+      "activity": {
+        "label": "Niveau d'activité",
+        "sedentary": "Sédentaire (peu ou pas d'exercice)",
+        "lightlyActive": "Légèrement actif (1-2 séances/semaine)",
+        "moderatelyActive": "Modérément actif (3-5 séances/semaine)",
+        "veryActive": "Très actif (6-7 séances/semaine)",
+        "athlete": "Athlète (entraînement intensif quotidien)"
+      },
+      "goal": {
+        "label": "Votre objectif",
+        "maintain": "Maintenir mon poids",
+        "lose": "Perdre du poids progressivement",
+        "gain": "Prendre de la masse musculaire"
+      },
+      "submit": "Calculer mes besoins",
+      "calculating": "Calcul en cours...",
+      "recalculate": "Recalculer"
+    },
+    "results": {
+      "title": "Résultats",
+      "bmr": {
+        "label": "Métabolisme de base (MB)",
+        "shortLabel": "Métabolisme de base",
+        "description": "C'est le nombre de calories que votre corps brûle au repos, juste pour maintenir vos fonctions vitales.",
+        "unit": "kcal/jour"
+      },
+      "tdee": {
+        "label": "Dépense énergétique totale (DET)",
+        "shortLabel": "Dépense énergétique totale",
+        "description": "C'est le nombre de calories nécessaires pour maintenir votre poids actuel.",
+        "unit": "kcal/jour"
+      },
+      "target": {
+        "label": "Votre objectif calorique quotidien",
+        "shortLabel": "Objectif calorique quotidien",
+        "description": "C'est votre besoin calorique quotidien pour atteindre votre objectif.",
+        "unit": "kcal/jour"
+      },
+      "macros": {
+        "title": "Répartition des macronutriments suggérée",
+        "protein": "Protéines",
+        "carbs": "Glucides",
+        "fat": "Lipides",
+        "unit": "g/jour"
+      },
+      "whatNext": {
+        "title": "Et maintenant ?",
+        "description": "Maintenant que vous avez déterminé vos besoins caloriques, je vous envoie un plan alimentaire GRATUIT de 7 jours adapté à vos objectifs !",
+        "ctaButton": "Recevoir mon plan alimentaire gratuit"
+      }
+    },
+    "cta": {
+      "title": "Passez à l'action !",
+      "description": "Vous avez vos chiffres. Maintenant, transformez-les en résultats concrets avec un accompagnement personnalisé par une diététicienne certifiée.",
+      "button": "Découvrir nos forfaits"
+    },
+    "nextSteps": {
+      "title": "Vous avez vos chiffres. Et après ?",
+      "description": "Connaître ses besoins caloriques, c'est un excellent point de départ. Mais les calories ne font pas tout : la qualité nutritionnelle, l'équilibre des macronutriments et vos habitudes alimentaires comptent tout autant.",
+      "benefits": {
+        "item1": "Un exemple de journée alimentaire équilibrée adaptée à vos besoins",
+        "item2": "3 conseils pratiques pour atteindre votre objectif sans vous priver"
+      },
+      "emailPlaceholder": "Votre adresse email",
+      "submitButton": "Recevoir mon guide gratuit",
+      "submitting": "Envoi en cours...",
+      "successMessage": "Merci ! Votre guide a été envoyé à votre adresse email.",
+      "errorMessage": "Une erreur s'est produite. Veuillez réessayer."
+    },
+    "credibility": {
+      "title": "Pourquoi faire confiance à NutriSensia ?",
+      "points": {
+        "scientific": {
+          "title": "Formule scientifique validée",
+          "description": "Nous utilisons la formule Mifflin-St Jeor, reconnue par les études cliniques comme la plus précise pour estimer le métabolisme de base."
+        },
+        "privacy": {
+          "title": "Aucune donnée stockée",
+          "description": "Vos informations ne sont pas enregistrées. Le calcul se fait directement dans votre navigateur, en toute confidentialité."
+        },
+        "expertise": {
+          "title": "Expertise reconnue",
+          "description": "Calculateur développé par des diététicien·ne·s diplômé·e·s en Suisse, certifié·e·s ASCA/RME."
+        }
+      },
+      "disclaimer": "Ce calculateur fournit une estimation. Pour un accompagnement personnalisé tenant compte de votre historique de santé, de vos préférences et de votre mode de vie, une consultation avec un·e diététicien·ne reste la meilleure option.",
+      "ctaConsultation": "Prendre rendez-vous"
+    },
+    "modal": {
+      "title": "Et maintenant ?",
+      "description": "Maintenant que vous avez déterminé vos besoins caloriques quotidiens, j'aimerais vous envoyer un plan alimentaire GRATUIT de 7 jours adapté à vos objectifs !",
+      "firstName": "Prénom",
+      "firstNamePlaceholder": "Votre prénom",
+      "email": "Votre email",
+      "emailPlaceholder": "exemple@email.com",
+      "submitButton": "Recevoir mon plan alimentaire gratuit",
+      "submitting": "Envoi en cours...",
+      "successTitle": "Merci !",
+      "successMessage": "Votre demande a été envoyée avec succès. N'oubliez pas de vérifier votre boîte de réception pour recevoir votre plan alimentaire !",
+      "okButton": "OK"
+    }
+  }
+}

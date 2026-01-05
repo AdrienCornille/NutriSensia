@@ -37,26 +37,31 @@ Lorsqu'un utilisateur se connecte via `/auth/signin` :
 ### 2. Redirection selon le statut 2FA
 
 #### Cas 1 : 2FA non configuré
+
 - **Redirection** : `/auth/enroll-mfa`
 - **Action** : L'utilisateur configure son premier facteur 2FA
 - **Après configuration** : Redirection vers `/` (page d'accueil)
 
 #### Cas 2 : 2FA configuré mais non vérifié
+
 - **Redirection** : `/auth/verify-mfa`
 - **Action** : L'utilisateur entre son code 2FA
 - **Après vérification** : Redirection vers `/` (page d'accueil)
 
 #### Cas 3 : 2FA déjà vérifié
+
 - **Redirection** : `/` (page d'accueil)
 - **Action** : L'utilisateur accède directement à l'application
 
 ## Niveaux d'assurance d'authentification (AAL)
 
 ### AAL1 (Authenticator Assurance Level 1)
+
 - Authentification simple (email + mot de passe)
 - Niveau de sécurité de base
 
 ### AAL2 (Authenticator Assurance Level 2)
+
 - Authentification à deux facteurs requise
 - Niveau de sécurité élevé
 - Nécessite un facteur supplémentaire (TOTP, SMS, etc.)
@@ -104,6 +109,7 @@ function PageProtegee() {
 ## Pages de test
 
 ### Page de test du flux d'authentification
+
 - **URL** : `/auth-flow-test`
 - **Fonctionnalités** :
   - Affiche les informations de session
@@ -112,6 +118,7 @@ function PageProtegee() {
   - Liste les facteurs MFA configurés
 
 ### Accès aux pages de test
+
 - **Page d'accueil** : Section "Tests et développement"
 - **Boutons disponibles** :
   - "Tester la 2FA" → `/mfa-test`
@@ -120,22 +127,26 @@ function PageProtegee() {
 ## Gestion des erreurs
 
 ### Erreurs de vérification 2FA
+
 - **Comportement** : Redirection vers la page d'accueil
 - **Log** : Erreur enregistrée dans la console
 - **Fallback** : L'utilisateur peut continuer sans 2FA
 
 ### Erreurs de session
+
 - **Comportement** : Redirection vers `/auth/signin`
 - **Log** : Erreur enregistrée dans la console
 
 ## Sécurité
 
 ### Vérifications automatiques
+
 - Vérification de session à chaque chargement de page protégée
 - Vérification du niveau d'assurance d'authentification
 - Redirection automatique en cas de session expirée
 
 ### Protection des routes
+
 - Les pages sensibles peuvent être protégées avec `MFAProtection`
 - Vérification automatique du statut 2FA
 - Écran de chargement pendant les vérifications
@@ -143,9 +154,11 @@ function PageProtegee() {
 ## Configuration
 
 ### Variables d'environnement
+
 Aucune configuration supplémentaire requise. Le système utilise les configurations Supabase existantes.
 
 ### Personnalisation des redirections
+
 Les redirections peuvent être personnalisées en modifiant le hook `useAuthRedirect` :
 
 ```typescript
@@ -158,12 +171,14 @@ const redirectToHome = useCallback(() => {
 ## Tests
 
 ### Test manuel du flux
+
 1. Aller sur `/auth/signin`
 2. Se connecter avec un compte
 3. Observer la redirection automatique selon le statut 2FA
 4. Utiliser `/auth-flow-test` pour vérifier les informations
 
 ### Test des redirections
+
 1. Aller sur `/auth-flow-test`
 2. Cliquer sur "Tester la redirection automatique"
 3. Vérifier que la redirection fonctionne correctement
@@ -173,27 +188,31 @@ const redirectToHome = useCallback(() => {
 ### Problèmes courants
 
 #### Redirection en boucle
+
 - **Cause** : Erreur dans la vérification 2FA
 - **Solution** : Vérifier les logs de la console
 
 #### Page de chargement infinie
+
 - **Cause** : Erreur réseau ou problème avec Supabase
 - **Solution** : Vérifier la connexion et les logs
 
 #### 2FA non reconnu
+
 - **Cause** : Facteur non vérifié ou expiré
 - **Solution** : Reconfigurer le 2FA via `/auth/enroll-mfa`
 
 ## Évolutions futures
 
 ### Améliorations possibles
+
 - Support de facteurs 2FA supplémentaires (clés de sécurité, etc.)
 - Configuration du niveau d'assurance requis par rôle
 - Historique des connexions et tentatives 2FA
 - Notifications de sécurité (nouvelles connexions, etc.)
 
 ### Intégrations
+
 - Support de l'authentification par SMS
 - Intégration avec des applications d'authentification tierces
 - Support de la récupération de compte sécurisée
-

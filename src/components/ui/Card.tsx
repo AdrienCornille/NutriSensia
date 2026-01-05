@@ -1,248 +1,151 @@
-'use client';
-
-import React from 'react';
+import { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
-/**
- * Variantes de cartes disponibles selon le design system NutriSensia
- */
-export type CardVariant = 'primary' | 'dashboard' | 'nutrition';
-
-/**
- * Props du composant Card
- */
-export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
-  /**
-   * Variante de la carte selon le design system
-   */
-  variant?: CardVariant;
-  /**
-   * Contenu de la carte
-   */
-  children: React.ReactNode;
-  /**
-   * État de chargement avec skeleton
-   */
-  loading?: boolean;
-  /**
-   * Carte cliquable
-   */
-  clickable?: boolean;
-  /**
-   * État de survol pour les cartes cliquables
-   */
+interface CardProps {
+  children: ReactNode;
+  className?: string;
+  variant?: 'default' | 'elevated' | 'outlined' | 'glass';
+  padding?: 'none' | 'sm' | 'md' | 'lg';
   hover?: boolean;
-  /**
-   * Ombre personnalisée
-   */
-  shadow?: 'none' | 'sm' | 'md' | 'lg';
 }
 
 /**
- * Props du composant CardHeader
- */
-export interface CardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
-  children: React.ReactNode;
-}
-
-/**
- * Props du composant CardContent
- */
-export interface CardContentProps extends React.HTMLAttributes<HTMLDivElement> {
-  children: React.ReactNode;
-}
-
-/**
- * Props du composant CardFooter
- */
-export interface CardFooterProps extends React.HTMLAttributes<HTMLDivElement> {
-  children: React.ReactNode;
-}
-
-/**
- * Composant Card réutilisable selon le design system NutriSensia
+ * Composant Card pour le Design System 2025
  *
- * @example
- * ```tsx
- * <Card variant="primary">
- *   <CardHeader>
- *     <h3>Titre de la carte</h3>
- *   </CardHeader>
- *   <CardContent>
- *     <p>Contenu de la carte</p>
- *   </CardContent>
- * </Card>
+ * Ce composant applique automatiquement les styles, ombres et animations
+ * selon les spécifications du design system.
  *
- * <Card variant="dashboard" clickable hover>
- *   <CardContent>
- *     <p>Carte cliquable avec effet de survol</p>
- *   </CardContent>
- * </Card>
- * ```
+ * @param children - Contenu de la carte
+ * @param className - Classes CSS supplémentaires
+ * @param variant - Style de la carte (default, elevated, outlined, glass)
+ * @param padding - Espacement interne (none, sm, md, lg)
+ * @param hover - Effet de survol
  */
-export const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  (
-    {
-      className,
-      variant = 'primary',
-      loading = false,
-      clickable = false,
-      hover = false,
-      shadow = 'md',
-      children,
-      ...props
-    },
-    ref
-  ) => {
-    // Classes de base communes à toutes les cartes
-    const baseClasses = [
-      'bg-background-primary dark:bg-background-secondary',
-      'transition-all duration-standard ease-out',
-      'focus:outline-none',
-    ];
+export function Card({
+  children,
+  className,
+  variant = 'default',
+  padding = 'md',
+  hover = false,
+}: CardProps) {
+  const getVariantClasses = () => {
+    switch (variant) {
+      case 'elevated':
+        return 'shadow-lg';
+      case 'outlined':
+        return 'border-2 border-neutral-border shadow-none';
+      case 'glass':
+        return 'backdrop-blur-md bg-white/80 border border-white/20 shadow-glass';
+      default:
+        return 'shadow-card-primary'; // 0 4px 20px rgba(0,0,0,0.08)
+    }
+  };
 
-    // Classes spécifiques aux variantes
-    const variantClasses = {
-      primary: [
-        'rounded-12dp',
-        'shadow-card-primary',
-        'border border-neutral-border dark:border-neutral-medium',
-      ],
-      dashboard: [
-        'rounded-16dp',
-        'shadow-card-dashboard',
-        'border border-neutral-border dark:border-neutral-medium',
-      ],
-      nutrition: [
-        'rounded-12dp',
-        'bg-background-accent dark:bg-neutral-dark',
-        'border border-secondary-sage dark:border-neutral-medium',
-      ],
-    };
+  const getPaddingClasses = () => {
+    switch (padding) {
+      case 'none':
+        return 'p-0';
+      case 'sm':
+        return 'p-4';
+      case 'lg':
+        return 'p-8';
+      default:
+        return 'p-6';
+    }
+  };
 
-    // Classes pour les cartes cliquables
-    const clickableClasses = clickable
-      ? [
-          'cursor-pointer',
-          'focus:shadow-focus',
-          'focus:ring-2 focus:ring-primary focus:ring-opacity-20',
-        ]
-      : [];
-
-    // Classes pour l'effet de survol
-    const hoverClasses = hover
-      ? ['hover:shadow-lg', 'hover:scale-[1.02]', 'hover:border-primary']
-      : [];
-
-    // Classes pour les ombres personnalisées
-    const shadowClasses = {
-      none: [],
-      sm: ['shadow-sm'],
-      md: ['shadow-md'],
-      lg: ['shadow-lg'],
-    };
-
-    // Classes pour l'état de chargement
-    const loadingClasses = loading ? ['animate-pulse'] : [];
-
-    // Combinaison de toutes les classes
-    const cardClasses = cn(
-      baseClasses,
-      variantClasses[variant],
-      clickableClasses,
-      hoverClasses,
-      shadowClasses[shadow],
-      loadingClasses,
-      className
-    );
-
-    return (
-      <div ref={ref} className={cardClasses} {...props}>
-        {loading ? (
-          <div className='p-24dp'>
-            <div className='h-4 bg-neutral-light dark:bg-neutral-dark rounded-4dp mb-12dp animate-pulse' />
-            <div className='h-3 bg-neutral-light dark:bg-neutral-dark rounded-4dp mb-8dp animate-pulse' />
-            <div className='h-3 bg-neutral-light dark:bg-neutral-dark rounded-4dp w-2/3 animate-pulse' />
-          </div>
-        ) : (
-          children
-        )}
-      </div>
-    );
-  }
-);
-
-Card.displayName = 'Card';
+  return (
+    <div
+      className={cn(
+        // Classes de base du design system
+        'card-component',
+        'bg-background-white',
+        'rounded-12dp', // 12px border radius pour les cartes
+        'transition-all duration-300 ease',
+        getVariantClasses(),
+        getPaddingClasses(),
+        hover && 'hover:shadow-lg hover:-translate-y-1',
+        className
+      )}
+    >
+      {children}
+    </div>
+  );
+}
 
 /**
- * Composant CardHeader pour l'en-tête de la carte
+ * Composant CardHeader pour l'en-tête d'une carte
  */
-export const CardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(
-  ({ className, children, ...props }, ref) => {
-    return (
-      <div ref={ref} className={cn('p-24dp pb-16dp', className)} {...props}>
-        {children}
-      </div>
-    );
-  }
-);
-
-CardHeader.displayName = 'CardHeader';
+export function CardHeader({
+  children,
+  className = '',
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return <div className={cn('mb-4', className)}>{children}</div>;
+}
 
 /**
- * Composant CardContent pour le contenu principal de la carte
+ * Composant CardContent pour le contenu d'une carte
  */
-export const CardContent = React.forwardRef<HTMLDivElement, CardContentProps>(
-  ({ className, children, ...props }, ref) => {
-    return (
-      <div ref={ref} className={cn('p-24dp', className)} {...props}>
-        {children}
-      </div>
-    );
-  }
-);
-
-CardContent.displayName = 'CardContent';
+export function CardContent({
+  children,
+  className = '',
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return <div className={cn('space-y-4', className)}>{children}</div>;
+}
 
 /**
- * Composant CardFooter pour le pied de page de la carte
+ * Composant CardFooter pour le pied d'une carte
  */
-export const CardFooter = React.forwardRef<HTMLDivElement, CardFooterProps>(
-  ({ className, children, ...props }, ref) => {
-    return (
-      <div
-        ref={ref}
-        className={cn(
-          'p-24dp pt-16dp border-t border-neutral-border dark:border-neutral-medium',
-          className
-        )}
-        {...props}
-      >
-        {children}
-      </div>
-    );
-  }
-);
-
-CardFooter.displayName = 'CardFooter';
+export function CardFooter({
+  children,
+  className = '',
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={cn('mt-4 pt-4 border-t border-neutral-border', className)}>
+      {children}
+    </div>
+  );
+}
 
 /**
- * Composants de cartes pré-configurées pour un usage rapide
+ * Composant CardTitle pour le titre d'une carte
  */
-export const PrimaryCard = React.forwardRef<
-  HTMLDivElement,
-  Omit<CardProps, 'variant'>
->((props, ref) => <Card ref={ref} variant='primary' {...props} />);
-PrimaryCard.displayName = 'PrimaryCard';
+export function CardTitle({
+  children,
+  className = '',
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <h3
+      className={cn('font-heading text-h3 text-text font-semibold', className)}
+    >
+      {children}
+    </h3>
+  );
+}
 
-export const DashboardCard = React.forwardRef<
-  HTMLDivElement,
-  Omit<CardProps, 'variant'>
->((props, ref) => <Card ref={ref} variant='dashboard' {...props} />);
-DashboardCard.displayName = 'DashboardCard';
-
-export const NutritionCard = React.forwardRef<
-  HTMLDivElement,
-  Omit<CardProps, 'variant'>
->((props, ref) => <Card ref={ref} variant='nutrition' {...props} />);
-NutritionCard.displayName = 'NutritionCard';
+/**
+ * Composant CardDescription pour la description d'une carte
+ */
+export function CardDescription({
+  children,
+  className = '',
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <p className={cn('text-body text-text-light', className)}>{children}</p>
+  );
+}

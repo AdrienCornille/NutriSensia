@@ -9,25 +9,32 @@ const config: Config = {
   darkMode: 'class', // Configuration pour détecter le mode sombre via la classe CSS
   theme: {
     extend: {
-      // Palette de couleurs NutriSensia
+      // Palette de couleurs NutriSensia - MÉDITERRANÉE 🌊
       colors: {
-        // Couleurs primaires
+        // Couleurs primaires - Turquoise Azur
         primary: {
-          DEFAULT: '#2E7D5E', // Primary Green
-          white: '#FAFBFC', // Primary White
-          dark: '#1B4F3F', // Primary Dark
+          DEFAULT: '#1B998B', // Primary Turquoise
+          white: '#FDFCFB', // Primary White (warm)
+          dark: '#147569', // Primary Dark
+          darker: '#0F5F56', // Primary Darker (hover)
+          light: '#2EC4B6', // Primary Light
+          pale: '#F0F9F8', // Primary Pale
         },
-        // Couleurs secondaires
+        // Couleurs secondaires - Sable Doré
         secondary: {
-          DEFAULT: '#4A9B7B', // Secondary Green Light
-          pale: '#E8F3EF', // Secondary Green Pale
-          sage: '#B8D4C7', // Sage Green
+          DEFAULT: '#E9C46A', // Secondary Sand Gold
+          pale: '#F8F5F2', // Secondary Cream
+          sage: '#E5DED6', // Beige Sand
+          light: '#F4D6A0', // Light Sand
+          dark: '#D4A84E', // Dark Sand
         },
-        // Couleurs d'accent
+        // Couleurs d'accent - Terracotta & Méditerranée
         accent: {
-          teal: '#00A693', // Accent Teal
-          mint: '#7FD1C1', // Accent Mint
-          orange: '#F4A261', // Accent Orange
+          teal: '#2EC4B6', // Accent Turquoise Vif
+          mint: '#78CFC6', // Accent Turquoise Clair
+          orange: '#E76F51', // Accent Terracotta
+          gold: '#E9C46A', // Accent Sable Doré
+          terracotta: '#E76F51', // Terracotta principal
         },
         // Couleurs fonctionnelles
         functional: {
@@ -36,18 +43,59 @@ const config: Config = {
           warning: '#F59E0B', // Warning Amber
           info: '#3B82F6', // Info Blue
         },
-        // Couleurs neutres
+        // Alias pour compatibilité
+        success: '#22C55E',
+        // Couleurs neutres - Beige Méditerranéen
         neutral: {
-          light: '#F8F9FA', // Neutral Gray Light
-          medium: '#9CA3AF', // Neutral Gray Medium
-          dark: '#374151', // Neutral Gray Dark
-          border: '#E5E7EB', // Neutral Gray Border
+          light: '#FBF9F7', // Neutral Cream Light
+          medium: '#A89888', // Neutral Beige Medium
+          dark: '#524A42', // Neutral Brown Dark
+          border: '#E5DED6', // Neutral Beige Border
         },
-        // Couleurs d'arrière-plan
+        // Couleurs d'arrière-plan - Crème & Blanc chaud
         background: {
           primary: '#FFFFFF', // Background Primary
-          secondary: '#F8FAFB', // Background Secondary
-          accent: '#F0F7F4', // Background Accent
+          secondary: '#FBF9F7', // Background Secondary (warm cream)
+          accent: '#F8F5F2', // Background Accent (warm)
+        },
+        // Échelle Turquoise pour éléments variés
+        sage: {
+          50: '#F0F9F8',
+          100: '#D2EFEC',
+          200: '#A5DFD9',
+          300: '#78CFC6',
+          400: '#2EC4B6',
+          500: '#1B998B',
+          600: '#147569',
+          700: '#0F5F56',
+          800: '#0A4A43',
+          900: '#063530',
+        },
+        // Nouvelle échelle Beige/Sand
+        sand: {
+          50: '#FDFCFB',
+          100: '#FBF9F7',
+          200: '#F8F5F2',
+          300: '#F0EBE5',
+          400: '#E5DED6',
+          500: '#D9CFC3',
+          600: '#C4B5A5',
+          700: '#A89888',
+          800: '#7D7268',
+          900: '#524A42',
+        },
+        // Échelle Terracotta
+        terracotta: {
+          50: '#FEF4F2',
+          100: '#FCE4DF',
+          200: '#F9C4B9',
+          300: '#F3A08D',
+          400: '#ED8872',
+          500: '#E76F51',
+          600: '#D35A3D',
+          700: '#B04530',
+          800: '#8D3725',
+          900: '#6A291B',
         },
       },
       // Configuration de la typographie
@@ -137,11 +185,14 @@ const config: Config = {
         '16dp': '16px',
         '22dp': '22px',
       },
-      // Ombres personnalisées
+      // Ombres personnalisées - Méditerranée
       boxShadow: {
         'card-primary': '0 2px 12px rgba(0, 0, 0, 0.08)',
         'card-dashboard': '0 1px 8px rgba(0, 0, 0, 0.06)',
-        focus: '0 0 0 2px rgba(46, 125, 94, 0.2)', // Primary Green avec 20% d'opacité
+        'card-signature': '8px 8px 0 #E5DED6', // Ombre signature beige
+        'card-signature-hover': '10px 10px 0 #E5DED6', // Ombre signature hover
+        focus: '0 0 0 2px rgba(27, 153, 139, 0.2)', // Primary Turquoise avec 20% d'opacité
+        'focus-terracotta': '0 0 0 2px rgba(231, 111, 81, 0.2)', // Terracotta avec 20% d'opacité
       },
       // Animations et transitions
       transitionDuration: {
@@ -157,6 +208,21 @@ const config: Config = {
         micro: 'ease-in-out',
         page: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
         loading: 'linear',
+      },
+      // Keyframes pour les animations
+      keyframes: {
+        'accordion-down': {
+          from: { height: '0' },
+          to: { height: 'var(--radix-accordion-content-height)' },
+        },
+        'accordion-up': {
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: '0' },
+        },
+      },
+      animation: {
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
       },
       // Hauteurs personnalisées pour les composants
       height: {
@@ -174,45 +240,49 @@ const config: Config = {
         '240dp': '240px',
         '280dp': '280px',
       },
-      // Variables CSS pour le thème dynamique
+      // Variables CSS pour le thème dynamique - MÉDITERRANÉE 🌊
       cssVariables: {
-        '--color-primary': '#2E7D5E',
-        '--color-primary-white': '#FAFBFC',
-        '--color-primary-dark': '#1B4F3F',
-        '--color-secondary': '#4A9B7B',
-        '--color-secondary-pale': '#E8F3EF',
-        '--color-secondary-sage': '#B8D4C7',
-        '--color-accent-teal': '#00A693',
-        '--color-accent-mint': '#7FD1C1',
-        '--color-accent-orange': '#F4A261',
+        '--color-primary': '#1B998B',
+        '--color-primary-white': '#FDFCFB',
+        '--color-primary-dark': '#147569',
+        '--color-primary-darker': '#0F5F56',
+        '--color-secondary': '#E9C46A',
+        '--color-secondary-pale': '#F8F5F2',
+        '--color-secondary-sage': '#E5DED6',
+        '--color-accent-teal': '#2EC4B6',
+        '--color-accent-mint': '#78CFC6',
+        '--color-accent-orange': '#E76F51',
+        '--color-accent-terracotta': '#E76F51',
         '--color-functional-success': '#22C55E',
         '--color-functional-error': '#EF4444',
         '--color-functional-warning': '#F59E0B',
-        '--color-functional-info': '#3B82F6',
-        '--color-neutral-light': '#F8F9FA',
-        '--color-neutral-medium': '#9CA3AF',
-        '--color-neutral-dark': '#374151',
-        '--color-neutral-border': '#E5E7EB',
+        '--color-functional-info': '#2EC4B6',
+        '--color-neutral-light': '#FBF9F7',
+        '--color-neutral-medium': '#A89888',
+        '--color-neutral-dark': '#524A42',
+        '--color-neutral-border': '#E5DED6',
         '--color-background-primary': '#FFFFFF',
-        '--color-background-secondary': '#F8FAFB',
-        '--color-background-accent': '#F0F7F4',
+        '--color-background-secondary': '#FBF9F7',
+        '--color-background-accent': '#F8F5F2',
       },
     },
   },
   plugins: [
-    // Plugin pour les variables CSS
+    // Plugin pour les variables CSS - MÉDITERRANÉE 🌊
     function ({ addBase, theme }: any) {
       addBase({
         ':root': {
           '--color-primary': theme('colors.primary.DEFAULT'),
           '--color-primary-white': theme('colors.primary.white'),
           '--color-primary-dark': theme('colors.primary.dark'),
+          '--color-primary-darker': theme('colors.primary.darker'),
           '--color-secondary': theme('colors.secondary.DEFAULT'),
           '--color-secondary-pale': theme('colors.secondary.pale'),
           '--color-secondary-sage': theme('colors.secondary.sage'),
           '--color-accent-teal': theme('colors.accent.teal'),
           '--color-accent-mint': theme('colors.accent.mint'),
           '--color-accent-orange': theme('colors.accent.orange'),
+          '--color-accent-terracotta': theme('colors.accent.terracotta'),
           '--color-functional-success': theme('colors.functional.success'),
           '--color-functional-error': theme('colors.functional.error'),
           '--color-functional-warning': theme('colors.functional.warning'),
@@ -225,28 +295,30 @@ const config: Config = {
           '--color-background-secondary': theme('colors.background.secondary'),
           '--color-background-accent': theme('colors.background.accent'),
         },
-        // Mode sombre - Couleurs corrigées pour une meilleure visibilité
+        // Mode sombre - Couleurs Méditerranée adaptées
         '.dark': {
           // Couleurs primaires adaptées au mode sombre
-          '--color-primary': '#4A9B7B',
-          '--color-primary-white': '#1B4F3F',
-          '--color-primary-dark': '#2E7D5E',
+          '--color-primary': '#2EC4B6',
+          '--color-primary-white': '#0A4A43',
+          '--color-primary-dark': '#1B998B',
+          '--color-primary-darker': '#147569',
 
           // Couleurs secondaires adaptées au mode sombre
-          '--color-secondary': '#7FD1C1',
+          '--color-secondary': '#F4D6A0',
           '--color-secondary-pale': '#1F2937',
           '--color-secondary-sage': '#374151',
 
           // Couleurs d'accent (conservées pour la cohérence)
-          '--color-accent-teal': '#00A693',
-          '--color-accent-mint': '#7FD1C1',
-          '--color-accent-orange': '#F4A261',
+          '--color-accent-teal': '#2EC4B6',
+          '--color-accent-mint': '#78CFC6',
+          '--color-accent-orange': '#E76F51',
+          '--color-accent-terracotta': '#ED8872',
 
           // Couleurs fonctionnelles (conservées pour la cohérence)
           '--color-functional-success': '#22C55E',
           '--color-functional-error': '#EF4444',
           '--color-functional-warning': '#F59E0B',
-          '--color-functional-info': '#3B82F6',
+          '--color-functional-info': '#2EC4B6',
 
           // Couleurs d'arrière-plan adaptées au mode sombre
           '--color-background-primary': '#1F2937',
@@ -255,7 +327,7 @@ const config: Config = {
 
           // Couleurs neutres adaptées au mode sombre pour une meilleure visibilité
           '--color-neutral-light': '#374151',
-          '--color-neutral-medium': '#9CA3AF',
+          '--color-neutral-medium': '#A89888',
           '--color-neutral-dark': '#F9FAFB',
           '--color-neutral-border': '#4B5563',
         },

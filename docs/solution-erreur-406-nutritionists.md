@@ -11,16 +11,19 @@ L'erreur `406 (Not Acceptable)` sur la table `nutritionists` indique un problèm
 **Fichier modifié :** `src/hooks/useUserProfile.ts`
 
 **Changements :**
+
 - Accès aux tables `nutritionists` et `patients` temporairement désactivé
 - Le profil se charge avec les données de base uniquement
 - Plus d'erreurs 406 dans la console
 
 **Avantages :**
+
 - ✅ Formulaire fonctionne immédiatement
 - ✅ Plus d'erreurs dans la console
 - ✅ Utilisateur peut modifier son profil de base
 
 **Inconvénients :**
+
 - ⚠️ Données spécifiques au rôle non disponibles
 - ⚠️ Fonctionnalités avancées limitées
 
@@ -52,17 +55,20 @@ ALTER TABLE nutritionists ENABLE ROW LEVEL SECURITY;
 ## Étapes de résolution
 
 ### Phase 1: Test immédiat ✅
+
 1. ✅ Hook modifié pour éviter l'erreur 406
 2. ✅ Formulaire fonctionne avec les données de base
 3. ✅ Plus d'erreurs dans la console
 
 ### Phase 2: Résolution permanente (à faire)
+
 1. 🔄 Exécuter le script SQL dans Supabase
 2. 🔄 Tester l'accès à la table nutritionists
 3. 🔄 Restaurer le hook original
 4. 🔄 Vérifier le bon fonctionnement complet
 
 ### Phase 3: Restauration du hook
+
 1. 🔄 Remplacer le hook temporaire par l'original
 2. 🔄 Tester l'accès complet aux données
 3. 🔄 Vérifier toutes les fonctionnalités
@@ -70,6 +76,7 @@ ALTER TABLE nutritionists ENABLE ROW LEVEL SECURITY;
 ## Test de vérification
 
 ### Test immédiat (après modification du hook)
+
 ```javascript
 // Dans la console du navigateur
 console.log('🧪 Test après modification du hook...');
@@ -77,6 +84,7 @@ console.log('🧪 Test après modification du hook...');
 ```
 
 ### Test après résolution SQL
+
 ```javascript
 // Dans la console du navigateur
 supabase
@@ -114,6 +122,7 @@ supabase
 ## Support
 
 Si le problème persiste après application du script SQL :
+
 1. Vérifier les permissions de l'API Supabase
 2. Contrôler la configuration des clés d'API
 3. Vérifier l'exposition des tables via l'API

@@ -63,14 +63,18 @@ export const useAdminDashboardAPI = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Erreur lors de la récupération des données');
+        throw new Error(
+          errorData.error || 'Erreur lors de la récupération des données'
+        );
       }
 
       const dashboardData = await response.json();
       setData(dashboardData);
 
-      console.log('✅ [Admin Dashboard API] Données récupérées:', dashboardData);
-
+      console.log(
+        '✅ [Admin Dashboard API] Données récupérées:',
+        dashboardData
+      );
     } catch (err: any) {
       console.error('❌ [Admin Dashboard API] Erreur:', err);
       setError(err.message);
