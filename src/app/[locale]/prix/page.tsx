@@ -8,13 +8,13 @@ import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { useFirstVisit } from '@/hooks/useFirstVisit';
 
 /**
- * Page Forfaits et Tarifs
+ * Page Prix
  *
  * Cette page présente les différents forfaits disponibles sur la plateforme NutriSensia.
  * Elle est conçue pour être claire, attractive et faciliter la prise de décision des utilisateurs.
- * Accessible via l'URL /forfaits (avec support de l'internationalisation)
+ * Accessible via l'URL /prix (avec support de l'internationalisation)
  */
-export default function ForfaitsPage() {
+export default function PrixPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   // First visit detection for animations
@@ -34,7 +34,7 @@ export default function ForfaitsPage() {
     once: true,
     margin: '-100px',
   });
-  const [openModalite, setOpenModalite] = useState<number | null>(null);
+  const [openModalite, setOpenModalite] = useState<number | null>(1);
 
   // Remboursement banner ref
   const remboursementBannerRef = useRef(null);
@@ -154,7 +154,7 @@ export default function ForfaitsPage() {
       <section
         ref={prestationsRef}
         style={{
-          backgroundColor: '#ffffff',
+          backgroundColor: '#f8f7ef',
           paddingTop: '120px',
           paddingBottom: '96px',
           width: '100%',
@@ -250,7 +250,7 @@ export default function ForfaitsPage() {
                   fontSize: '28px',
                   fontWeight: 700,
                   lineHeight: '36px',
-                  color: '#1B998B',
+                  color: '#1a1a1a',
                   marginBottom: '8px',
                 }}
               >
@@ -263,7 +263,7 @@ export default function ForfaitsPage() {
                   fontFamily: "'Plus Jakarta Sans', sans-serif",
                   fontSize: '18px',
                   fontWeight: 500,
-                  color: '#1B998B',
+                  color: '#41556b',
                   marginBottom: '20px',
                 }}
               >
@@ -284,15 +284,15 @@ export default function ForfaitsPage() {
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '8px',
+                    gap: '6px',
                   }}
                 >
                   <svg
-                    width='18'
-                    height='18'
+                    width='14'
+                    height='14'
                     viewBox='0 0 24 24'
                     fill='none'
-                    stroke='#41556b'
+                    stroke='#9ca3af'
                     strokeWidth='2'
                   >
                     <circle cx='12' cy='12' r='10' />
@@ -301,8 +301,8 @@ export default function ForfaitsPage() {
                   <span
                     style={{
                       fontFamily: "'Plus Jakarta Sans', sans-serif",
-                      fontSize: '16px',
-                      color: '#41556b',
+                      fontSize: '14px',
+                      color: '#9ca3af',
                     }}
                   >
                     1h30
@@ -476,7 +476,7 @@ export default function ForfaitsPage() {
                   fontSize: '28px',
                   fontWeight: 700,
                   lineHeight: '36px',
-                  color: '#1B998B',
+                  color: '#1a1a1a',
                   marginBottom: '8px',
                 }}
               >
@@ -499,7 +499,7 @@ export default function ForfaitsPage() {
                     "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                   fontSize: '18px',
                   fontWeight: 500,
-                  color: '#1B998B',
+                  color: '#41556b',
                   marginBottom: '20px',
                 }}
               >
@@ -520,15 +520,15 @@ export default function ForfaitsPage() {
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '8px',
+                    gap: '6px',
                   }}
                 >
                   <svg
-                    width='18'
-                    height='18'
+                    width='14'
+                    height='14'
                     viewBox='0 0 24 24'
                     fill='none'
-                    stroke='#41556b'
+                    stroke='#9ca3af'
                     strokeWidth='2'
                   >
                     <circle cx='12' cy='12' r='10' />
@@ -537,8 +537,8 @@ export default function ForfaitsPage() {
                   <span
                     style={{
                       fontFamily: "'Plus Jakarta Sans', sans-serif",
-                      fontSize: '16px',
-                      color: '#41556b',
+                      fontSize: '14px',
+                      color: '#9ca3af',
                     }}
                   >
                     1h
@@ -660,25 +660,27 @@ export default function ForfaitsPage() {
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '8px',
-                  backgroundColor: 'transparent',
-                  color: '#1B998B',
+                  background:
+                    'linear-gradient(135deg, #1B998B 0%, #147569 100%)',
+                  color: '#ffffff',
                   padding: '16px 32px',
                   borderRadius: '35px',
                   fontFamily: "'Plus Jakarta Sans', sans-serif",
                   fontSize: '16px',
                   fontWeight: 600,
                   textDecoration: 'none',
-                  border: '2px solid #1B998B',
-                  transition: 'all 0.2s ease',
+                  transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                  boxShadow: '0 4px 14px rgba(27, 153, 139, 0.3)',
                 }}
                 onMouseEnter={e => {
-                  e.currentTarget.style.backgroundColor =
-                    'rgba(27, 153, 139, 0.08)';
                   e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow =
+                    '0 6px 20px rgba(27, 153, 139, 0.4)';
                 }}
                 onMouseLeave={e => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
                   e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow =
+                    '0 4px 14px rgba(27, 153, 139, 0.3)';
                 }}
               >
                 Réserver mon suivi
@@ -804,7 +806,7 @@ export default function ForfaitsPage() {
       <section
         ref={modalitesRef}
         style={{
-          backgroundColor: '#ffffff',
+          backgroundColor: '#f8f7ef',
           padding: '96px 0',
           width: '100%',
         }}
@@ -905,7 +907,7 @@ export default function ForfaitsPage() {
                       fontSize: '24px',
                       fontWeight: 700,
                       lineHeight: '32px',
-                      color: '#1B998B',
+                      color: '#1a1a1a',
                       transition: 'color 0.3s ease',
                     }}
                   >
@@ -942,14 +944,18 @@ export default function ForfaitsPage() {
                               "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                             fontSize: '16px',
                             fontWeight: 700,
-                            color: '#1B998B',
+                            color: '#1a1a1a',
                             marginBottom: '8px',
                           }}
                         >
                           Nous acceptons :
                         </h4>
                         <ul
-                          style={{ marginBottom: '16px', paddingLeft: '20px' }}
+                          style={{
+                            marginBottom: '16px',
+                            paddingLeft: '20px',
+                            listStyleType: 'disc',
+                          }}
                         >
                           <li
                             style={{
@@ -1015,7 +1021,7 @@ export default function ForfaitsPage() {
                               objectFit: 'cover',
                               borderRadius: '10px',
                               border: '1px solid #e5e5e5',
-                              boxShadow: '8px 8px 0 #d7e1ce',
+                              boxShadow: '8px 8px 0 #E5DED6',
                             }}
                           />
                         </div>
@@ -1058,7 +1064,7 @@ export default function ForfaitsPage() {
                       fontSize: '24px',
                       fontWeight: 700,
                       lineHeight: '32px',
-                      color: '#1B998B',
+                      color: '#1a1a1a',
                       transition: 'color 0.3s ease',
                     }}
                   >
@@ -1107,14 +1113,18 @@ export default function ForfaitsPage() {
                               "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                             fontSize: '16px',
                             fontWeight: 700,
-                            color: '#1B998B',
+                            color: '#1a1a1a',
                             marginBottom: '8px',
                           }}
                         >
                           Annulation ou report gratuit :
                         </h4>
                         <ul
-                          style={{ marginBottom: '16px', paddingLeft: '20px' }}
+                          style={{
+                            marginBottom: '16px',
+                            paddingLeft: '20px',
+                            listStyleType: 'disc',
+                          }}
                         >
                           <li
                             style={{
@@ -1145,14 +1155,18 @@ export default function ForfaitsPage() {
                               "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                             fontSize: '16px',
                             fontWeight: 700,
-                            color: '#1B998B',
+                            color: '#1a1a1a',
                             marginBottom: '8px',
                           }}
                         >
                           Annulation tardive (moins de 48h) :
                         </h4>
                         <ul
-                          style={{ marginBottom: '16px', paddingLeft: '20px' }}
+                          style={{
+                            marginBottom: '16px',
+                            paddingLeft: '20px',
+                            listStyleType: 'disc',
+                          }}
                         >
                           <li
                             style={{
@@ -1184,13 +1198,15 @@ export default function ForfaitsPage() {
                               "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                             fontSize: '16px',
                             fontWeight: 700,
-                            color: '#1B998B',
+                            color: '#1a1a1a',
                             marginBottom: '8px',
                           }}
                         >
                           En cas d'empêchement de ma part :
                         </h4>
-                        <ul style={{ paddingLeft: '20px' }}>
+                        <ul
+                          style={{ paddingLeft: '20px', listStyleType: 'disc' }}
+                        >
                           <li
                             style={{
                               fontFamily: "'Plus Jakarta Sans'",
@@ -1232,7 +1248,7 @@ export default function ForfaitsPage() {
                               objectFit: 'cover',
                               borderRadius: '10px',
                               border: '1px solid #e5e5e5',
-                              boxShadow: '8px 8px 0 #d7e1ce',
+                              boxShadow: '8px 8px 0 #E5DED6',
                             }}
                           />
                         </div>
@@ -1272,7 +1288,7 @@ export default function ForfaitsPage() {
                       fontSize: '24px',
                       fontWeight: 700,
                       lineHeight: '32px',
-                      color: '#1B998B',
+                      color: '#1a1a1a',
                       transition: 'color 0.3s ease',
                     }}
                   >
@@ -1384,7 +1400,7 @@ export default function ForfaitsPage() {
                   borderRadius: '10px',
                   overflow: 'hidden',
                   border: '1px solid #e5e5e5',
-                  boxShadow: '8px 8px 0 #d7e1ce',
+                  boxShadow: '8px 8px 0 #E5DED6',
                 }}
               >
                 <AnimatePresence mode='wait'>
@@ -1439,73 +1455,37 @@ export default function ForfaitsPage() {
         ref={faqRef}
         style={{
           backgroundColor: '#1B998B',
-          padding: '96px 0',
+          paddingTop: '100px',
+          paddingBottom: '80px',
           width: '100%',
         }}
       >
         <div
           style={{
-            maxWidth: '900px',
+            maxWidth: '1370px',
             margin: '0 auto',
             padding: '0 24px',
           }}
         >
           {/* Header de section */}
           <motion.div
-            style={{ textAlign: 'center', marginBottom: '64px' }}
+            style={{ textAlign: 'center', marginBottom: '50px' }}
             initial={
-              isFirstVisit ? { opacity: 0, y: 20 } : { opacity: 1, y: 0 }
+              isFirstVisit ? { opacity: 0, y: 30 } : { opacity: 1, y: 0 }
             }
-            animate={showFaq ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            animate={showFaq ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
             transition={getTransition(shouldAnimateFaq)}
           >
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                padding: '8px 20px',
-                borderRadius: '35px',
-                marginBottom: '24px',
-              }}
-            >
-              <svg
-                width='16'
-                height='16'
-                viewBox='0 0 24 24'
-                fill='none'
-                stroke='#ffffff'
-                strokeWidth='2'
-              >
-                <circle cx='12' cy='12' r='10' />
-                <path d='M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3' />
-                <line x1='12' y1='17' x2='12.01' y2='17' />
-              </svg>
-              <span
-                style={{
-                  fontFamily:
-                    "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-                  fontSize: '14px',
-                  fontWeight: 600,
-                  color: '#ffffff',
-                  letterSpacing: '0.5px',
-                }}
-              >
-                VOS QUESTIONS
-              </span>
-            </div>
             <h2
               style={{
                 fontFamily: "'Marcellus', serif",
-                fontSize: '42px',
+                fontSize: '48px',
                 fontWeight: 700,
-                lineHeight: '50.4px',
+                lineHeight: '57.6px',
                 color: '#ffffff',
-                marginBottom: '24px',
               }}
             >
-              Questions Fréquentes
+              Vos questions
             </h2>
           </motion.div>
 

@@ -51,14 +51,16 @@ const pricingPlans: PricingPlan[] = [
     subtitle: '1 Séance (1h30)',
     price: 'CHF 159',
     features: [
-      { text: 'Analyse complète de votre situation (symptômes, habitudes, objectifs)' },
+      {
+        text: 'Analyse complète de votre situation (symptômes, habitudes, objectifs)',
+      },
       { text: 'Compréhension des causes de vos déséquilibres' },
-      { text: 'Plan d\'action personnalisé avec premières recommandations' },
+      { text: "Plan d'action personnalisé avec premières recommandations" },
       { text: 'Programme nutritionnel complet (livré sous 48-72h)' },
       { text: 'Accès immédiat à votre espace plateforme' },
       { text: 'Support continu par messagerie sécurisée' },
     ],
-    idealFor: 'Découvrir l\'approche et obtenir un premier plan d\'action',
+    idealFor: "Découvrir l'approche et obtenir un premier plan d'action",
     ctaText: 'Réserver ma consultation',
     ctaLink: '/contact?type=consultation',
     badge: {
@@ -73,14 +75,19 @@ const pricingPlans: PricingPlan[] = [
     subtitle: '5 Séances',
     price: 'CHF 499',
     features: [
-      { text: '5 consultations au total (1 bilan complet 1h30 + 4 suivis personnalisés 1h)' },
+      {
+        text: '5 consultations au total (1 bilan complet 1h30 + 4 suivis personnalisés 1h)',
+      },
       { text: 'Plan nutritionnel évolutif adapté à vos progrès' },
       { text: 'Ajustements réguliers selon vos résultats' },
-      { text: 'Optimisation de la complémentation (vitamines, minéraux, plantes)' },
+      {
+        text: 'Optimisation de la complémentation (vitamines, minéraux, plantes)',
+      },
       { text: 'Accès illimité plateforme + messagerie sécurisée' },
       { text: 'Support continu entre consultations (réponse 24h)' },
     ],
-    idealFor: 'Créer des changements durables et ancrer vos nouvelles habitudes',
+    idealFor:
+      'Créer des changements durables et ancrer vos nouvelles habitudes',
     ctaText: 'Choisir ce forfait',
     ctaLink: '/contact?type=package&plan=3months',
     isPopular: true,
@@ -96,10 +103,14 @@ const pricingPlans: PricingPlan[] = [
     subtitle: '9 Séances',
     price: 'CHF 799',
     features: [
-      { text: '9 consultations au total (1 bilan complet 1h30 + 8 suivis personnalisés 1h)' },
+      {
+        text: '9 consultations au total (1 bilan complet 1h30 + 8 suivis personnalisés 1h)',
+      },
       { text: 'Plan nutritionnel évolutif adapté à vos progrès' },
       { text: 'Ajustements réguliers selon vos résultats' },
-      { text: 'Optimisation de la complémentation (vitamines, minéraux, plantes)' },
+      {
+        text: 'Optimisation de la complémentation (vitamines, minéraux, plantes)',
+      },
       { text: 'Accès illimité plateforme + messagerie sécurisée' },
       { text: 'Support continu entre consultations (réponse 24h)' },
     ],
@@ -140,7 +151,7 @@ export function PricingSection() {
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
             transition={{ duration: 0.6 }}
             className={cn(
-              "font-sans",
+              'font-sans',
               'text-[2rem] md:text-[2.5rem] lg:text-[3rem]',
               'font-bold',
               'text-[#2C3E3C]',
@@ -209,93 +220,106 @@ export function PricingSection() {
                   'flex flex-col h-full'
                 )}
               >
-              {/* Popular Badge - Hauteur réservée pour toutes les cartes */}
-              <div className='h-[32px] -mb-4'>
-                {plan.isPopular && (
-                  <div
-                    className={cn(
-                      'absolute -top-4 left-1/2 -translate-x-1/2',
-                      'px-4 py-2',
-                      'bg-primary',
-                      'text-white',
-                      'text-sm font-semibold',
-                      'rounded-full',
-                      'shadow-lg',
-                      'whitespace-nowrap'
-                    )}
-                  >
-                    ⭐ Le plus populaire
-                  </div>
-                )}
-              </div>
-
-              {/* Plan Name */}
-              <div className='mb-3 h-[48px] flex flex-col justify-center'>
-                <h3 className='font-sans text-[1.5rem] md:text-[1.75rem] font-bold text-[#2C3E3C] leading-tight'>
-                  {plan.name}
-                </h3>
-                {plan.subtitle && (
-                  <p className="font-['Inter',system-ui,sans-serif] text-[0.95rem] text-[#667674] mt-1 mb-2">
-                    {plan.subtitle}
-                  </p>
-                )}
-              </div>
-
-              {/* Price */}
-              <div className='mb-5 h-[50px] flex items-center' style={{ marginTop: plan.subtitle ? '0.75rem' : '0' }}>
-                <span className="font-['Inter',system-ui,sans-serif] text-[2.5rem] font-bold text-[#2C3E3C]">
-                  {plan.price}
-                </span>
-              </div>
-
-              {/* Features List */}
-              <ul className='space-y-2.5 mb-8 min-h-[250px]'>
-                {plan.features.map((feature, idx) => (
-                  <li key={idx} className='flex items-start gap-3'>
-                    <div className='flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mt-0.5 bg-primary'>
-                      <Check className='w-3 h-3 text-white' strokeWidth={3} />
+                {/* Popular Badge - Hauteur réservée pour toutes les cartes */}
+                <div className='h-[32px] -mb-4'>
+                  {plan.isPopular && (
+                    <div
+                      className={cn(
+                        'absolute -top-4 left-1/2 -translate-x-1/2',
+                        'px-4 py-2',
+                        'bg-primary',
+                        'text-white',
+                        'text-sm font-semibold',
+                        'rounded-full',
+                        'shadow-lg',
+                        'whitespace-nowrap'
+                      )}
+                    >
+                      ⭐ Le plus populaire
                     </div>
-                    <span className="font-['Inter',system-ui,sans-serif] text-[0.95rem] leading-[1.6] text-[#2C3E3C]">
-                      {feature.text}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-
-              {/* Ideal For */}
-              <div className='p-3.5 rounded-lg mb-4 h-[85px] flex items-center bg-[#E8F3EF]/30'>
-                <p className="font-['Inter',system-ui,sans-serif] text-[0.875rem] font-medium text-[#2C3E3C]">
-                  <span className='font-bold'>Idéal pour :</span>{' '}
-                  {plan.idealFor}
-                </p>
-              </div>
-
-              {/* Badge (réduction) */}
-              {plan.badge && (
-                <div className='mb-5 h-[32px] flex items-center justify-center'>
-                  <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border-2 ${
-                    plan.id === 1 ? 'border-primary/30' : plan.id === 2 ? 'border-orange-200' : 'border-purple-200'
-                  }`}>
-                    <plan.badge.icon className={`w-4 h-4 ${plan.badge.color}`} />
-                    <span className={`font-['Inter',system-ui,sans-serif] text-[0.8rem] font-semibold ${plan.badge.color}`}>
-                      {plan.badge.text}
-                    </span>
-                  </div>
+                  )}
                 </div>
-              )}
 
-              {/* CTA Button - Toujours en bas */}
-              <div className='mt-auto'>
-                <Button
-                  variant={plan.isPopular ? 'primary' : 'secondary'}
-                  className='w-full'
-                  onClick={() => {
-                    window.location.href = plan.ctaLink;
-                  }}
+                {/* Plan Name */}
+                <div className='mb-3 h-[48px] flex flex-col justify-center'>
+                  <h3 className='font-sans text-[1.5rem] md:text-[1.75rem] font-bold text-[#2C3E3C] leading-tight'>
+                    {plan.name}
+                  </h3>
+                  {plan.subtitle && (
+                    <p className="font-['Inter',system-ui,sans-serif] text-[0.95rem] text-[#667674] mt-1 mb-2">
+                      {plan.subtitle}
+                    </p>
+                  )}
+                </div>
+
+                {/* Price */}
+                <div
+                  className='mb-5 h-[50px] flex items-center'
+                  style={{ marginTop: plan.subtitle ? '0.75rem' : '0' }}
                 >
-                  {plan.ctaText} →
-                </Button>
-              </div>
+                  <span className="font-['Inter',system-ui,sans-serif] text-[2.5rem] font-bold text-[#2C3E3C]">
+                    {plan.price}
+                  </span>
+                </div>
+
+                {/* Features List */}
+                <ul className='space-y-2.5 mb-8 min-h-[250px]'>
+                  {plan.features.map((feature, idx) => (
+                    <li key={idx} className='flex items-start gap-3'>
+                      <div className='flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mt-0.5 bg-primary'>
+                        <Check className='w-3 h-3 text-white' strokeWidth={3} />
+                      </div>
+                      <span className="font-['Inter',system-ui,sans-serif] text-[0.95rem] leading-[1.6] text-[#2C3E3C]">
+                        {feature.text}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+
+                {/* Ideal For */}
+                <div className='p-3.5 rounded-lg mb-4 h-[85px] flex items-center bg-[#E8F3EF]/30'>
+                  <p className="font-['Inter',system-ui,sans-serif] text-[0.875rem] font-medium text-[#2C3E3C]">
+                    <span className='font-bold'>Idéal pour :</span>{' '}
+                    {plan.idealFor}
+                  </p>
+                </div>
+
+                {/* Badge (réduction) */}
+                {plan.badge && (
+                  <div className='mb-5 h-[32px] flex items-center justify-center'>
+                    <div
+                      className={`flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border-2 ${
+                        plan.id === 1
+                          ? 'border-primary/30'
+                          : plan.id === 2
+                            ? 'border-orange-200'
+                            : 'border-purple-200'
+                      }`}
+                    >
+                      <plan.badge.icon
+                        className={`w-4 h-4 ${plan.badge.color}`}
+                      />
+                      <span
+                        className={`font-['Inter',system-ui,sans-serif] text-[0.8rem] font-semibold ${plan.badge.color}`}
+                      >
+                        {plan.badge.text}
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {/* CTA Button - Toujours en bas */}
+                <div className='mt-auto'>
+                  <Button
+                    variant={plan.isPopular ? 'primary' : 'secondary'}
+                    className='w-full'
+                    onClick={() => {
+                      window.location.href = plan.ctaLink;
+                    }}
+                  >
+                    {plan.ctaText} →
+                  </Button>
+                </div>
               </div>
             </motion.div>
           ))}
@@ -311,153 +335,153 @@ export function PricingSection() {
           className={cn('mb-12 md:mb-16')}
         >
           <div className='max-w-[1000px] mx-auto'>
-          {/* Header avec icône */}
-          <div className='flex items-center gap-3 mb-6'>
-            <div
-              className={cn(
-                'w-10 h-10',
-                'rounded-xl',
-                'bg-primary/10',
-                'flex items-center justify-center'
-              )}
-            >
-              <svg
-                className='w-5 h-5 text-primary'
-                fill='none'
-                stroke='currentColor'
-                viewBox='0 0 24 24'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth={2}
-                  d='M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
-                />
-              </svg>
-            </div>
-            <h4
-              className={cn(
-                "font-['Inter',system-ui,sans-serif]",
-                'text-[1.125rem]',
-                'font-semibold',
-                'text-[#2C3E3C]'
-              )}
-            >
-              Informations sur les remboursements
-            </h4>
-          </div>
-
-          {/* Bento Grid Layout */}
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-            {/* Card 1 - Taux de remboursement */}
-            <div
-              className={cn(
-                'p-6',
-                'bg-white',
-                'border border-[#E8F3EF]',
-                'rounded-xl',
-                'hover:border-primary/30',
-                'transition-all duration-300',
-                'hover:shadow-[0_4px_20px_rgba(44,62,60,0.08)]'
-              )}
-            >
-              <div className='mb-3'>
-                <span
-                  className={cn(
-                    'text-[2rem]',
-                    'font-bold',
-                    'text-primary',
-                    "font-['Inter',system-ui,sans-serif]"
-                  )}
-                >
-                  70-90%
-                </span>
-              </div>
-              <p
+            {/* Header avec icône */}
+            <div className='flex items-center gap-3 mb-6'>
+              <div
                 className={cn(
-                  "font-['Inter',system-ui,sans-serif]",
-                  'text-[0.875rem]',
-                  'text-[#667674]',
-                  'leading-[1.6]'
+                  'w-10 h-10',
+                  'rounded-xl',
+                  'bg-primary/10',
+                  'flex items-center justify-center'
                 )}
               >
-                de remboursement selon votre assurance complémentaire
-              </p>
+                <svg
+                  className='w-5 h-5 text-primary'
+                  fill='none'
+                  stroke='currentColor'
+                  viewBox='0 0 24 24'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+                  />
+                </svg>
+              </div>
+              <h4
+                className={cn(
+                  "font-['Inter',system-ui,sans-serif]",
+                  'text-[1.125rem]',
+                  'font-semibold',
+                  'text-[#2C3E3C]'
+                )}
+              >
+                Informations sur les remboursements
+              </h4>
             </div>
 
-            {/* Card 2 - Assurances partenaires */}
-            <div
-              className={cn(
-                'p-6',
-                'bg-white',
-                'border border-[#E8F3EF]',
-                'rounded-xl',
-                'hover:border-primary/30',
-                'transition-all duration-300',
-                'hover:shadow-[0_4px_20px_rgba(44,62,60,0.08)]'
-              )}
-            >
-              <div className='mb-3'>
-                <span
+            {/* Bento Grid Layout */}
+            <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+              {/* Card 1 - Taux de remboursement */}
+              <div
+                className={cn(
+                  'p-6',
+                  'bg-white',
+                  'border border-[#E8F3EF]',
+                  'rounded-xl',
+                  'hover:border-primary/30',
+                  'transition-all duration-300',
+                  'hover:shadow-[0_4px_20px_rgba(44,62,60,0.08)]'
+                )}
+              >
+                <div className='mb-3'>
+                  <span
+                    className={cn(
+                      'text-[2rem]',
+                      'font-bold',
+                      'text-primary',
+                      "font-['Inter',system-ui,sans-serif]"
+                    )}
+                  >
+                    70-90%
+                  </span>
+                </div>
+                <p
                   className={cn(
                     "font-['Inter',system-ui,sans-serif]",
                     'text-[0.875rem]',
-                    'font-semibold',
-                    'text-[#2C3E3C]'
+                    'text-[#667674]',
+                    'leading-[1.6]'
                   )}
                 >
-                  Assurances partenaires
-                </span>
+                  de remboursement selon votre assurance complémentaire
+                </p>
               </div>
-              <p
+
+              {/* Card 2 - Assurances partenaires */}
+              <div
                 className={cn(
-                  "font-['Inter',system-ui,sans-serif]",
-                  'text-[0.875rem]',
-                  'text-[#667674]',
-                  'leading-[1.6]'
+                  'p-6',
+                  'bg-white',
+                  'border border-[#E8F3EF]',
+                  'rounded-xl',
+                  'hover:border-primary/30',
+                  'transition-all duration-300',
+                  'hover:shadow-[0_4px_20px_rgba(44,62,60,0.08)]'
                 )}
               >
-                Visana, Swica, CSS, Helsana, Sanitas, et la plupart des
-                assurances suisses
-              </p>
-            </div>
-
-            {/* Card 3 - Factures */}
-            <div
-              className={cn(
-                'p-6',
-                'bg-white',
-                'border border-[#E8F3EF]',
-                'rounded-xl',
-                'hover:border-primary/30',
-                'transition-all duration-300',
-                'hover:shadow-[0_4px_20px_rgba(44,62,60,0.08)]'
-              )}
-            >
-              <div className='mb-3'>
-                <span
+                <div className='mb-3'>
+                  <span
+                    className={cn(
+                      "font-['Inter',system-ui,sans-serif]",
+                      'text-[0.875rem]',
+                      'font-semibold',
+                      'text-[#2C3E3C]'
+                    )}
+                  >
+                    Assurances partenaires
+                  </span>
+                </div>
+                <p
                   className={cn(
                     "font-['Inter',system-ui,sans-serif]",
                     'text-[0.875rem]',
-                    'font-semibold',
-                    'text-[#2C3E3C]'
+                    'text-[#667674]',
+                    'leading-[1.6]'
                   )}
                 >
-                  Factures conformes
-                </span>
+                  Visana, Swica, CSS, Helsana, Sanitas, et la plupart des
+                  assurances suisses
+                </p>
               </div>
-              <p
+
+              {/* Card 3 - Factures */}
+              <div
                 className={cn(
-                  "font-['Inter',system-ui,sans-serif]",
-                  'text-[0.875rem]',
-                  'text-[#667674]',
-                  'leading-[1.6]'
+                  'p-6',
+                  'bg-white',
+                  'border border-[#E8F3EF]',
+                  'rounded-xl',
+                  'hover:border-primary/30',
+                  'transition-all duration-300',
+                  'hover:shadow-[0_4px_20px_rgba(44,62,60,0.08)]'
                 )}
               >
-                ASCA/RME fournies immédiatement après chaque consultation
-              </p>
+                <div className='mb-3'>
+                  <span
+                    className={cn(
+                      "font-['Inter',system-ui,sans-serif]",
+                      'text-[0.875rem]',
+                      'font-semibold',
+                      'text-[#2C3E3C]'
+                    )}
+                  >
+                    Factures conformes
+                  </span>
+                </div>
+                <p
+                  className={cn(
+                    "font-['Inter',system-ui,sans-serif]",
+                    'text-[0.875rem]',
+                    'text-[#667674]',
+                    'leading-[1.6]'
+                  )}
+                >
+                  ASCA/RME fournies immédiatement après chaque consultation
+                </p>
+              </div>
             </div>
-          </div>
           </div>
         </motion.div>
 
@@ -489,7 +513,7 @@ export function PricingSection() {
               'transition-all duration-300'
             )}
             onClick={() => {
-              window.location.href = '/forfaits';
+              window.location.href = '/prix';
             }}
           >
             <span>Voir tous les détails de tarification</span>
@@ -507,4 +531,3 @@ export function PricingSection() {
     </section>
   );
 }
-

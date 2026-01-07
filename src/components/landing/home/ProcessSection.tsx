@@ -93,7 +93,7 @@ export function ProcessSection() {
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
             transition={{ duration: 0.6, delay: 0.1 }}
             className={cn(
-              "font-sans",
+              'font-sans',
               'text-[2rem] md:text-[2.5rem]',
               'font-bold',
               'text-[#2C3E3C]'
@@ -270,7 +270,7 @@ export function ProcessSection() {
                 packagesSection.scrollIntoView({ behavior: 'smooth' });
               } else {
                 // Fallback vers une page dédiée si pas de section packages
-                window.location.href = '/forfaits';
+                window.location.href = '/prix';
               }
             }}
             whileHover={{ scale: 1.02 }}

@@ -122,11 +122,11 @@ export function Header({ className = '' }: HeaderProps) {
                 </span>
               </Link>
               <Link
-                href='/forfaits'
+                href='/prix'
                 className='relative px-4 py-2.5 rounded-2xl text-sm font-medium transition-all duration-200 hover:bg-white/40 hover:shadow-lg hover:backdrop-blur-xl group'
               >
                 <span className='relative z-10 text-gray-700 group-hover:text-gray-900 transition-colors font-semibold'>
-                  Forfaits & Tarifs
+                  Prix
                 </span>
               </Link>
               <Link
@@ -279,11 +279,11 @@ export function Header({ className = '' }: HeaderProps) {
               L&apos;Approche
             </Link>
             <Link
-              href='/forfaits'
+              href='/prix'
               onClick={() => setMobileMenuOpen(false)}
               className='block px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-100 font-semibold transition-colors'
             >
-              Forfaits & Tarifs
+              Prix
             </Link>
             <Link
               href='/plateforme'

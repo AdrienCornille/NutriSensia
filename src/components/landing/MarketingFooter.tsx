@@ -61,7 +61,7 @@ export function MarketingFooter() {
   const navigationLinks = [
     { label: 'À Propos', href: '/a-propos' },
     { label: 'Nos Spécialisations', href: '/specialisations' },
-    { label: 'Forfaits & Tarifs', href: '/forfaits' },
+    { label: 'Prix', href: '/prix' },
     { label: 'Plateforme', href: '/plateforme' },
     { label: 'Blog', href: '/blog' },
     { label: 'FAQ', href: '/faq' },

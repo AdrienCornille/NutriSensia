@@ -125,7 +125,7 @@ export function PackagesPreviewSection() {
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
             transition={{ duration: 0.6, delay: 0.1 }}
             className={cn(
-              "font-sans",
+              'font-sans',
               'text-[2rem] md:text-[2.5rem]',
               'font-bold',
               'text-[#2C3E3C]',
@@ -376,7 +376,7 @@ export function PackagesPreviewSection() {
           className={cn('text-center', 'mt-[50px]')}
         >
           <motion.a
-            href='/forfaits'
+            href='/prix'
             className={cn(
               'inline-flex items-center gap-2',
               "font-['Inter',system-ui,sans-serif]",

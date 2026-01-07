@@ -160,7 +160,7 @@ export function FinalConversionSection() {
                 transition={{ duration: 0.6, delay: 0.6 }}
               >
                 <Link
-                  href='/forfaits'
+                  href='/prix'
                   className="inline-flex items-center justify-center gap-3 bg-transparent border-2 border-white text-white font-['Inter',system-ui,sans-serif] text-[1.125rem] font-semibold px-10 py-4 max-md:px-8 max-md:py-[14px] rounded-lg min-w-[350px] max-md:min-w-[90%] transition-all duration-300 ease-out hover:bg-white/15 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary"
                   role='button'
                   aria-label="Découvrir les forfaits d'accompagnement"

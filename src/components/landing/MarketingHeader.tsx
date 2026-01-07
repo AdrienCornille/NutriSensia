@@ -101,7 +101,7 @@ export function MarketingHeader({
   const navigationLinks = [
     { href: '/', label: 'Accueil' },
     { href: '/approche', label: 'Notre Approche' },
-    { href: '/forfaits', label: 'Prix' },
+    { href: '/prix', label: 'Prix' },
     { href: '/plateforme', label: 'Votre Coach 24/7' },
     { href: '/a-propos', label: 'À Propos' },
     { href: '/blog', label: 'Blog' },
