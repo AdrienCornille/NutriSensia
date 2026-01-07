@@ -5,6 +5,7 @@ import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { MarketingHeader } from '@/components/landing/MarketingHeader';
 import { MarketingFooter } from '@/components/landing/MarketingFooter';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
+import { useFirstVisit } from '@/hooks/useFirstVisit';
 
 /**
  * Page Forfaits et Tarifs
@@ -15,6 +16,9 @@ import { useScrollAnimation } from '@/hooks/useScrollAnimation';
  */
 export default function ForfaitsPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  // First visit detection for animations
+  const { isFirstVisit } = useFirstVisit();
 
   // Animation refs
   const { elementRef: prestationsRef, isInView: prestationsVisible } =
@@ -38,6 +42,34 @@ export default function ForfaitsPage() {
     once: true,
     margin: '-50px',
   });
+
+  // FAQ section ref
+  const faqRef = useRef(null);
+  const faqInView = useInView(faqRef, {
+    once: true,
+    margin: '-100px',
+  });
+
+  // Animation helpers based on first-visit pattern
+  const shouldAnimatePrestations = isFirstVisit && prestationsVisible;
+  const showPrestations = !isFirstVisit || prestationsVisible;
+
+  const shouldAnimateRemboursement = isFirstVisit && remboursementBannerInView;
+  const showRemboursement = !isFirstVisit || remboursementBannerInView;
+
+  const shouldAnimateModalites = isFirstVisit && modalitesInView;
+  const showModalites = !isFirstVisit || modalitesInView;
+
+  const shouldAnimateFaq = isFirstVisit && faqInView;
+  const showFaq = !isFirstVisit || faqInView;
+
+  // Utility function for transitions
+  const getTransition = (shouldAnimate: boolean, delay: number = 0) => {
+    if (shouldAnimate) {
+      return { duration: 0.6, delay, ease: 'easeOut' as const };
+    }
+    return { duration: 0 };
+  };
 
   const modalitesImages: Record<number, string> = {
     1: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=600&fit=crop&q=80', // Paiement
@@ -141,11 +173,13 @@ export default function ForfaitsPage() {
               textAlign: 'center',
               marginBottom: '48px',
             }}
-            initial={{ opacity: 0, y: 20 }}
-            animate={
-              prestationsVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+            initial={
+              isFirstVisit ? { opacity: 0, y: 20 } : { opacity: 1, y: 0 }
             }
-            transition={{ duration: 0.6, ease: 'easeOut' }}
+            animate={
+              showPrestations ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+            }
+            transition={getTransition(shouldAnimatePrestations)}
           >
             {/* Titre H2 */}
             <h2
@@ -192,13 +226,13 @@ export default function ForfaitsPage() {
           >
             {/* Carte 1 - Consultation Découverte */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={
-                prestationsVisible
-                  ? { opacity: 1, y: 0 }
-                  : { opacity: 0, y: 20 }
+              initial={
+                isFirstVisit ? { opacity: 0, y: 20 } : { opacity: 1, y: 0 }
               }
-              transition={{ duration: 0.6, delay: 0.1, ease: 'easeOut' }}
+              animate={
+                showPrestations ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+              }
+              transition={getTransition(shouldAnimatePrestations, 0.1)}
               style={{
                 backgroundColor: '#ffffff',
                 borderRadius: '16px',
@@ -418,13 +452,13 @@ export default function ForfaitsPage() {
 
             {/* Carte 2 - Consultation de Suivi */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={
-                prestationsVisible
-                  ? { opacity: 1, y: 0 }
-                  : { opacity: 0, y: 20 }
+              initial={
+                isFirstVisit ? { opacity: 0, y: 20 } : { opacity: 1, y: 0 }
               }
-              transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
+              animate={
+                showPrestations ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+              }
+              transition={getTransition(shouldAnimatePrestations, 0.2)}
               style={{
                 backgroundColor: '#ffffff',
                 borderRadius: '16px',
@@ -686,13 +720,13 @@ export default function ForfaitsPage() {
               gap: '32px',
               flexWrap: 'wrap',
             }}
-            initial={{ opacity: 0, y: 20 }}
-            animate={
-              remboursementBannerInView
-                ? { opacity: 1, y: 0 }
-                : { opacity: 0, y: 20 }
+            initial={
+              isFirstVisit ? { opacity: 0, y: 20 } : { opacity: 1, y: 0 }
             }
-            transition={{ duration: 0.6, ease: 'easeOut' }}
+            animate={
+              showRemboursement ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+            }
+            transition={getTransition(shouldAnimateRemboursement)}
           >
             {/* Texte */}
             <motion.span
@@ -704,13 +738,15 @@ export default function ForfaitsPage() {
                 color: '#ffffff',
                 textAlign: 'center',
               }}
-              initial={{ opacity: 0, x: -20 }}
+              initial={
+                isFirstVisit ? { opacity: 0, x: -20 } : { opacity: 1, x: 0 }
+              }
               animate={
-                remboursementBannerInView
+                showRemboursement
                   ? { opacity: 1, x: 0 }
                   : { opacity: 0, x: -20 }
               }
-              transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
+              transition={getTransition(shouldAnimateRemboursement, 0.2)}
             >
               Remboursement possible par les assurances complémentaires
             </motion.span>
@@ -734,13 +770,13 @@ export default function ForfaitsPage() {
                 cursor: 'pointer',
                 whiteSpace: 'nowrap',
               }}
-              initial={{ opacity: 0, x: 20 }}
-              animate={
-                remboursementBannerInView
-                  ? { opacity: 1, x: 0 }
-                  : { opacity: 0, x: 20 }
+              initial={
+                isFirstVisit ? { opacity: 0, x: 20 } : { opacity: 1, x: 0 }
               }
-              transition={{ duration: 0.6, delay: 0.4, ease: 'easeOut' }}
+              animate={
+                showRemboursement ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }
+              }
+              transition={getTransition(shouldAnimateRemboursement, 0.4)}
               onMouseEnter={e => {
                 e.currentTarget.style.backgroundColor = '#f0f0f0';
               }}
@@ -786,11 +822,13 @@ export default function ForfaitsPage() {
               textAlign: 'center',
               marginBottom: '64px',
             }}
-            initial={{ opacity: 0, y: 20 }}
-            animate={
-              modalitesInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+            initial={
+              isFirstVisit ? { opacity: 0, y: 20 } : { opacity: 1, y: 0 }
             }
-            transition={{ duration: 0.6, ease: 'easeOut' }}
+            animate={
+              showModalites ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+            }
+            transition={getTransition(shouldAnimateModalites)}
           >
             {/* Titre principal */}
             <h2
@@ -839,11 +877,13 @@ export default function ForfaitsPage() {
                 style={{
                   borderBottom: '1px solid #b6ccae',
                 }}
-                initial={{ opacity: 0, y: 20 }}
-                animate={
-                  modalitesInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+                initial={
+                  isFirstVisit ? { opacity: 0, y: 20 } : { opacity: 1, y: 0 }
                 }
-                transition={{ duration: 0.6, delay: 0.1, ease: 'easeOut' }}
+                animate={
+                  showModalites ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+                }
+                transition={getTransition(shouldAnimateModalites, 0.1)}
               >
                 <button
                   onClick={() => handleToggleModalite(1)}
@@ -990,11 +1030,13 @@ export default function ForfaitsPage() {
                 style={{
                   borderBottom: '1px solid #b6ccae',
                 }}
-                initial={{ opacity: 0, y: 20 }}
-                animate={
-                  modalitesInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+                initial={
+                  isFirstVisit ? { opacity: 0, y: 20 } : { opacity: 1, y: 0 }
                 }
-                transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
+                animate={
+                  showModalites ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+                }
+                transition={getTransition(shouldAnimateModalites, 0.2)}
               >
                 <button
                   onClick={() => handleToggleModalite(2)}
@@ -1202,11 +1244,13 @@ export default function ForfaitsPage() {
 
               {/* Item 3: Une question ? */}
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={
-                  modalitesInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+                initial={
+                  isFirstVisit ? { opacity: 0, y: 20 } : { opacity: 1, y: 0 }
                 }
-                transition={{ duration: 0.6, delay: 0.3, ease: 'easeOut' }}
+                animate={
+                  showModalites ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+                }
+                transition={getTransition(shouldAnimateModalites, 0.3)}
               >
                 <button
                   onClick={() => handleToggleModalite(3)}
@@ -1392,6 +1436,7 @@ export default function ForfaitsPage() {
 
       {/* Section FAQ - Fond Turquoise */}
       <section
+        ref={faqRef}
         style={{
           backgroundColor: '#1B998B',
           padding: '96px 0',
@@ -1406,7 +1451,14 @@ export default function ForfaitsPage() {
           }}
         >
           {/* Header de section */}
-          <div style={{ textAlign: 'center', marginBottom: '64px' }}>
+          <motion.div
+            style={{ textAlign: 'center', marginBottom: '64px' }}
+            initial={
+              isFirstVisit ? { opacity: 0, y: 20 } : { opacity: 1, y: 0 }
+            }
+            animate={showFaq ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={getTransition(shouldAnimateFaq)}
+          >
             <div
               style={{
                 display: 'inline-flex',
@@ -1455,10 +1507,17 @@ export default function ForfaitsPage() {
             >
               Questions Fréquentes
             </h2>
-          </div>
+          </motion.div>
 
           {/* Accordéon FAQ */}
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <motion.div
+            style={{ display: 'flex', flexDirection: 'column' }}
+            initial={
+              isFirstVisit ? { opacity: 0, y: 20 } : { opacity: 1, y: 0 }
+            }
+            animate={showFaq ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={getTransition(shouldAnimateFaq, 0.1)}
+          >
             {faqData.map((faq, index) => (
               <div
                 key={index}
@@ -1589,7 +1648,7 @@ export default function ForfaitsPage() {
                 </div>
               </div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
