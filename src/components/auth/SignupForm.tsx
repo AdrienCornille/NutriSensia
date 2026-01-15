@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { motion } from 'framer-motion';
-import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { Input } from '@/components/ui';
@@ -42,37 +41,66 @@ const GoogleLogo = () => (
 );
 
 // Schéma de validation Zod
-const loginSchema = z.object({
-  email: z
-    .string()
-    .min(1, "L'adresse e-mail est requise")
-    .email('Adresse e-mail invalide'),
-  password: z.string().min(1, 'Le mot de passe est requis'),
-  rememberMe: z.boolean().optional(),
-});
+const signupSchema = z
+  .object({
+    firstName: z
+      .string()
+      .min(1, 'Le prénom est requis')
+      .min(2, 'Le prénom doit contenir au moins 2 caractères'),
+    lastName: z
+      .string()
+      .min(1, 'Le nom est requis')
+      .min(2, 'Le nom doit contenir au moins 2 caractères'),
+    email: z
+      .string()
+      .min(1, "L'adresse e-mail est requise")
+      .email('Adresse e-mail invalide'),
+    password: z
+      .string()
+      .min(1, 'Le mot de passe est requis')
+      .min(8, 'Le mot de passe doit contenir au moins 8 caractères')
+      .regex(/[A-Z]/, 'Le mot de passe doit contenir au moins 1 majuscule')
+      .regex(/[0-9]/, 'Le mot de passe doit contenir au moins 1 chiffre')
+      .regex(/[^A-Za-z0-9]/, 'Le mot de passe doit contenir au moins 1 caractère spécial'),
+    confirmPassword: z.string().min(1, 'Veuillez confirmer votre mot de passe'),
+    acceptTerms: z.boolean().refine(val => val === true, {
+      message: 'Vous devez accepter les conditions',
+    }),
+  })
+  .refine(data => data.password === data.confirmPassword, {
+    message: 'Les mots de passe ne correspondent pas',
+    path: ['confirmPassword'],
+  });
 
-type LoginFormData = z.infer<typeof loginSchema>;
+type SignupFormData = z.infer<typeof signupSchema>;
 
-interface LoginFormProps {
+// Texte d'aide pour les exigences du mot de passe
+const PasswordRequirementsHint: React.FC = () => (
+  <p className='mt-1.5 text-xs text-neutral-medium'>
+    Min. 8 caractères avec 1 majuscule, 1 chiffre et 1 caractère spécial
+  </p>
+);
+
+interface SignupFormProps {
   onSuccess?: () => void;
   redirectTo?: string;
 }
 
 /**
- * Formulaire de connexion NutriSensia
- * - Email/Password avec validation Zod
+ * Formulaire d'inscription NutriSensia
+ * - Nom complet, Email, Password avec validation Zod
  * - Toggle visibilité mot de passe
- * - Checkbox "Se souvenir de moi"
- * - Connexion Google OAuth
+ * - Checkbox CGU
+ * - Inscription Google OAuth
  */
-export const LoginForm: React.FC<LoginFormProps> = ({
+export const SignupForm: React.FC<SignupFormProps> = ({
   onSuccess,
-  redirectTo = '/dashboard',
+  redirectTo = '/auth/confirm',
 }) => {
-  const t = useTranslations('Auth.Login');
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [message, setMessage] = useState<{
     type: 'success' | 'error';
     text: string;
@@ -82,15 +110,15 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<SignupFormData>({
+    resolver: zodResolver(signupSchema),
     mode: 'onBlur',
     defaultValues: {
-      rememberMe: false,
+      acceptTerms: false,
     },
   });
 
-  const onSubmit = async (data: LoginFormData) => {
+  const onSubmit = async (data: SignupFormData) => {
     if (!isSupabaseConfigured) {
       setMessage({
         type: 'error',
@@ -103,45 +131,45 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     setMessage(null);
 
     try {
-      const { data: authData, error } = await supabase.auth.signInWithPassword({
+      const { data: authData, error } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
+        options: {
+          data: {
+            first_name: data.firstName,
+            last_name: data.lastName,
+            full_name: `${data.firstName} ${data.lastName}`,
+          },
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
       });
 
       if (error) {
         throw error;
       }
 
-      // Connexion réussie
-      setMessage({
-        type: 'success',
-        text: 'Connexion réussie ! Redirection...',
-      });
-
+      // Inscription réussie - redirection immédiate vers la page de confirmation
       if (onSuccess) {
         onSuccess();
       }
 
-      setTimeout(() => {
-        router.push(redirectTo);
-      }, 1000);
+      router.push(redirectTo);
     } catch (error: any) {
       // Traduire les erreurs Supabase en français
-      let errorMessage = 'Email ou mot de passe incorrect';
+      let errorMessage = "Une erreur s'est produite lors de l'inscription";
 
-      if (error.message?.includes('Invalid login credentials')) {
-        errorMessage = 'Email ou mot de passe incorrect';
-      } else if (error.message?.includes('Email not confirmed')) {
-        errorMessage = 'Veuillez confirmer votre email avant de vous connecter';
-      } else if (error.message?.includes('Too many requests')) {
-        errorMessage = 'Trop de tentatives. Veuillez réessayer plus tard';
+      if (error.message?.includes('User already registered')) {
+        errorMessage = 'Un compte existe déjà avec cet email';
+      } else if (error.message?.includes('Password should be')) {
+        errorMessage = 'Le mot de passe doit contenir au moins 8 caractères';
+      } else if (error.message?.includes('Invalid email')) {
+        errorMessage = 'Adresse email invalide';
       }
 
       setMessage({
         type: 'error',
         text: errorMessage,
       });
-    } finally {
       setIsLoading(false);
     }
   };
@@ -162,21 +190,47 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             color: '#3f6655',
           }}
         >
-          {t('title')}
+          Créer un compte
         </h1>
         <p className='text-body' style={{ color: '#41556b' }}>
-          {t('subtitle')}
+          Rejoignez NutriSensia pour votre accompagnement nutritionnel
         </p>
       </div>
 
       {/* Formulaire */}
-      <form onSubmit={handleSubmit(onSubmit)} noValidate className='space-y-5'>
+      <form onSubmit={handleSubmit(onSubmit)} noValidate className='space-y-4'>
+        {/* Prénom et Nom sur la même ligne */}
+        <div className='grid grid-cols-2 gap-3'>
+          <Input
+            id='firstName'
+            type='text'
+            label='Prénom'
+            placeholder='Votre prénom'
+            {...register('firstName')}
+            error={errors.firstName?.message}
+            required
+            fullWidth
+            autoComplete='given-name'
+          />
+          <Input
+            id='lastName'
+            type='text'
+            label='Nom'
+            placeholder='Votre nom'
+            {...register('lastName')}
+            error={errors.lastName?.message}
+            required
+            fullWidth
+            autoComplete='family-name'
+          />
+        </div>
+
         {/* Email */}
         <Input
           id='email'
           type='email'
-          label={t('email')}
-          placeholder={t('emailPlaceholder')}
+          label='Adresse e-mail'
+          placeholder='votre@email.com'
           {...register('email')}
           error={errors.email?.message}
           required
@@ -185,29 +239,66 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         />
 
         {/* Mot de passe avec toggle */}
+        <div>
+          <div className='relative'>
+            <Input
+              id='password'
+              type={showPassword ? 'text' : 'password'}
+              label='Mot de passe'
+              placeholder='Créez un mot de passe sécurisé'
+              {...register('password')}
+              error={errors.password?.message}
+              required
+              fullWidth
+              autoComplete='new-password'
+              rightIcon={
+                <button
+                  type='button'
+                  onClick={() => setShowPassword(!showPassword)}
+                  className='text-neutral-medium hover:text-neutral-dark transition-colors'
+                  aria-label={
+                    showPassword
+                      ? 'Masquer le mot de passe'
+                      : 'Afficher le mot de passe'
+                  }
+                >
+                  {showPassword ? (
+                    <EyeSlashIcon className='w-5 h-5' />
+                  ) : (
+                    <EyeIcon className='w-5 h-5' />
+                  )}
+                </button>
+              }
+            />
+          </div>
+          {/* Exigences du mot de passe */}
+          <PasswordRequirementsHint />
+        </div>
+
+        {/* Confirmer mot de passe */}
         <div className='relative'>
           <Input
-            id='password'
-            type={showPassword ? 'text' : 'password'}
-            label={t('password')}
-            placeholder={t('passwordPlaceholder')}
-            {...register('password')}
-            error={errors.password?.message}
+            id='confirmPassword'
+            type={showConfirmPassword ? 'text' : 'password'}
+            label='Confirmer le mot de passe'
+            placeholder='Confirmez votre mot de passe'
+            {...register('confirmPassword')}
+            error={errors.confirmPassword?.message}
             required
             fullWidth
-            autoComplete='current-password'
+            autoComplete='new-password'
             rightIcon={
               <button
                 type='button'
-                onClick={() => setShowPassword(!showPassword)}
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 className='text-neutral-medium hover:text-neutral-dark transition-colors'
                 aria-label={
-                  showPassword
+                  showConfirmPassword
                     ? 'Masquer le mot de passe'
                     : 'Afficher le mot de passe'
                 }
               >
-                {showPassword ? (
+                {showConfirmPassword ? (
                   <EyeSlashIcon className='w-5 h-5' />
                 ) : (
                   <EyeIcon className='w-5 h-5' />
@@ -217,27 +308,41 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           />
         </div>
 
-        {/* Remember me et Mot de passe oublié */}
-        <div className='flex items-center justify-between'>
-          <label className='flex items-center gap-2 cursor-pointer'>
-            <input
-              type='checkbox'
-              {...register('rememberMe')}
-              className='w-4 h-4 rounded border-neutral-border text-primary focus:ring-primary focus:ring-offset-0'
-            />
-            <span className='text-body-small text-neutral-medium'>
-              {t('rememberMe')}
-            </span>
-          </label>
-
-          <Link
-            href='/auth/forgot-password'
-            className='text-body-small font-medium transition-colors hover:underline'
-            style={{ color: '#1B998B' }}
+        {/* Checkbox CGU */}
+        <div className='flex items-start gap-2'>
+          <input
+            type='checkbox'
+            id='acceptTerms'
+            {...register('acceptTerms')}
+            className='w-4 h-4 mt-1 rounded border-neutral-border text-primary focus:ring-primary focus:ring-offset-0'
+          />
+          <label
+            htmlFor='acceptTerms'
+            className='text-body-small text-neutral-medium cursor-pointer'
           >
-            {t('forgotPassword')}
-          </Link>
+            J'accepte les{' '}
+            <Link
+              href='/terms'
+              className='font-medium hover:underline'
+              style={{ color: '#1B998B' }}
+            >
+              conditions d'utilisation
+            </Link>{' '}
+            et la{' '}
+            <Link
+              href='/privacy'
+              className='font-medium hover:underline'
+              style={{ color: '#1B998B' }}
+            >
+              politique de confidentialité
+            </Link>
+          </label>
         </div>
+        {errors.acceptTerms && (
+          <p className='text-sm text-functional-error'>
+            {errors.acceptTerms.message}
+          </p>
+        )}
 
         {/* Message d'erreur/succès */}
         {message && (
@@ -254,7 +359,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           </motion.div>
         )}
 
-        {/* Bouton de connexion - Style CTA NutriSensia */}
+        {/* Bouton d'inscription - Style CTA NutriSensia */}
         <motion.button
           type='submit'
           disabled={isLoading}
@@ -313,10 +418,10 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                   d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
                 />
               </svg>
-              {t('submitting')}
+              Création en cours...
             </>
           ) : (
-            t('submit')
+            'Créer mon compte'
           )}
         </motion.button>
       </form>
@@ -343,7 +448,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
               },
             });
           } catch (error) {
-            console.error('Erreur connexion Google:', error);
+            console.error('Erreur inscription Google:', error);
           }
         }}
         style={{
@@ -374,19 +479,19 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         }}
       >
         <GoogleLogo />
-        {t('googleSignIn')}
+        S'inscrire avec Google
       </motion.button>
 
-      {/* Lien vers l'inscription */}
+      {/* Lien vers la connexion */}
       <div className='mt-6 text-center'>
         <p className='text-body text-neutral-medium'>
-          {t('noAccount')}{' '}
+          Déjà un compte ?{' '}
           <Link
-            href='/auth/signup'
+            href='/auth/signin'
             className='font-medium transition-colors hover:underline'
             style={{ color: '#1B998B' }}
           >
-            {t('createAccount')}
+            Se connecter
           </Link>
         </p>
       </div>
@@ -394,4 +499,4 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   );
 };
 
-export default LoginForm;
+export default SignupForm;

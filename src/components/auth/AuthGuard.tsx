@@ -10,7 +10,6 @@ interface AuthGuardProps {
   children: ReactNode;
   requiredRole?: 'nutritionist' | 'patient' | 'admin';
   requiredRoles?: ('nutritionist' | 'patient' | 'admin')[];
-  require2FA?: boolean;
   fallback?: ReactNode;
   redirectTo?: string;
 }
@@ -34,18 +33,16 @@ const AuthError = ({ message }: { message: string }) => (
 
 /**
  * Composant AuthGuard pour protéger les routes côté client
- * Vérifie l'authentification, les rôles et les exigences 2FA
+ * Vérifie l'authentification et les rôles
  */
 export function AuthGuard({
   children,
   requiredRole,
   requiredRoles,
-  require2FA = false,
   fallback,
   redirectTo = '/auth/signin',
 }: AuthGuardProps) {
-  const { user, loading, initialized, isAuthenticated, requires2FA } =
-    useAuth();
+  const { user, loading, initialized, isAuthenticated } = useAuth();
   const { hasRole, hasAnyRole } = usePermissions();
   const router = useRouter();
 
@@ -65,12 +62,6 @@ export function AuthGuard({
       return hasAnyRole(requiredRoles);
     }
     return true;
-  };
-
-  // Vérification 2FA
-  const check2FA = () => {
-    if (!require2FA) return true;
-    return !requires2FA() || user?.user_metadata?.two_factor_verified;
   };
 
   // Affichage du chargement
@@ -94,15 +85,6 @@ export function AuthGuard({
         <AuthError
           message={`Vous n'avez pas les permissions nécessaires pour accéder à cette page. Rôle requis: ${requiredRole || requiredRoles?.join(', ')}`}
         />
-      )
-    );
-  }
-
-  // Vérification 2FA
-  if (!check2FA()) {
-    return (
-      fallback || (
-        <AuthError message="L'authentification à deux facteurs est requise pour accéder à cette page." />
       )
     );
   }
@@ -163,23 +145,6 @@ export function PatientGuard({
 }
 
 /**
- * Composant pour les routes nécessitant 2FA
- */
-export function TwoFactorGuard({
-  children,
-  fallback,
-}: {
-  children: ReactNode;
-  fallback?: ReactNode;
-}) {
-  return (
-    <AuthGuard require2FA={true} fallback={fallback}>
-      {children}
-    </AuthGuard>
-  );
-}
-
-/**
  * Hook pour vérifier l'accès à une route
  */
 export function useRouteAccess() {
@@ -188,8 +153,7 @@ export function useRouteAccess() {
 
   const canAccess = (
     requiredRole?: 'nutritionist' | 'patient' | 'admin',
-    requiredRoles?: ('nutritionist' | 'patient' | 'admin')[],
-    require2FA = false
+    requiredRoles?: ('nutritionist' | 'patient' | 'admin')[]
   ) => {
     if (loading || !isAuthenticated || !user) {
       return false;
@@ -201,11 +165,6 @@ export function useRouteAccess() {
     }
 
     if (requiredRoles && !hasAnyRole(requiredRoles)) {
-      return false;
-    }
-
-    // Vérification 2FA
-    if (require2FA && !user.user_metadata?.two_factor_verified) {
       return false;
     }
 

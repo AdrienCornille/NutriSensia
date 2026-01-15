@@ -1,66 +1,49 @@
 /**
- * Client Supabase pour l'application NutriSensia
+ * Client Supabase pour le navigateur (Browser Client)
  *
- * Ce fichier exporte le client Supabase configuré pour être utilisé
- * dans les composants React et les API routes.
+ * Utilise @supabase/ssr pour une gestion correcte des cookies et sessions
+ * Compatible avec Next.js App Router
  */
 
-import { createClient as createSupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '../supabase';
+import { createBrowserClient } from '@supabase/ssr';
+import type { Database } from '@/types/database';
 
 // Vérification des variables d'environnement
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 // Vérifier si les clés sont des placeholders ou manquantes
-const isValidSupabaseConfig =
+export const isSupabaseConfigured =
   supabaseUrl &&
   supabaseAnonKey &&
   supabaseUrl !== 'your_supabase_project_url' &&
   supabaseAnonKey !== 'your_supabase_anon_key';
 
-// Création du client Supabase avec types TypeScript
-const supabaseClient = createSupabaseClient<Database>(
-  isValidSupabaseConfig ? supabaseUrl! : 'https://placeholder.supabase.co',
-  isValidSupabaseConfig ? supabaseAnonKey! : 'placeholder-key',
-  {
-    auth: {
-      // Configuration pour la conformité GDPR et la sécurité
-      autoRefreshToken: isValidSupabaseConfig,
-      persistSession: isValidSupabaseConfig,
-      detectSessionInUrl: isValidSupabaseConfig,
-      // Configuration pour la gestion des cookies
+/**
+ * Crée un client Supabase pour le navigateur
+ *
+ * Ce client utilise automatiquement document.cookie pour gérer les sessions
+ * et supporte le rafraîchissement automatique des tokens
+ */
+export function createClient() {
+  return createBrowserClient<Database>(
+    supabaseUrl || 'https://placeholder.supabase.co',
+    supabaseAnonKey || 'placeholder-key',
+    {
       cookieOptions: {
-        name: 'nutrisensia-auth-token',
-        lifetime: 60 * 60 * 24 * 7, // 7 jours
+        name: 'nutrisensia-auth',
         domain:
-          process.env.NODE_ENV === 'production'
-            ? '.nutrisensia.com'
-            : 'localhost',
+          process.env.NODE_ENV === 'production' ? '.nutrisensia.ch' : undefined,
         path: '/',
         sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production',
       },
-    },
-    db: {
-      schema: 'public',
-    },
-    global: {
-      headers: {
-        'X-Client-Info': 'nutrisensia-web',
-        'X-App-Version': process.env.NEXT_PUBLIC_APP_VERSION || '0.1.0',
-      },
-    },
-  }
-);
+    }
+  );
+}
 
-// Export du client par défaut
-export default supabaseClient;
-
-// Export de la fonction createClient pour compatibilité
-export const createClient = () => supabaseClient;
-
-// Flag pour indiquer si Supabase est configuré correctement
-export const isSupabaseConfigured = isValidSupabaseConfig;
+// Export par défaut pour compatibilité
+export default createClient;
 
 // Types d'erreur personnalisés
 export interface SupabaseError {
@@ -69,8 +52,24 @@ export interface SupabaseError {
   code?: string;
 }
 
-// Fonctions utilitaires pour la gestion d'erreurs
-export const handleSupabaseError = (error: any): SupabaseError => {
+// Messages d'erreur traduits en français
+const errorMessages: { [key: string]: string } = {
+  'Invalid login credentials': 'Email ou mot de passe incorrect',
+  'Email not confirmed':
+    'Veuillez confirmer votre email avant de vous connecter',
+  'Too many requests': 'Trop de tentatives. Veuillez réessayer plus tard',
+  'User not found': 'Aucun compte trouvé avec cet email',
+  'User already registered': 'Un compte existe déjà avec cet email',
+  'Password should be at least 6 characters':
+    'Le mot de passe doit contenir au moins 6 caractères',
+  'Invalid email': 'Adresse email invalide',
+  'Unable to validate email address': "Impossible de valider l'adresse email",
+  'JWT expired': 'Session expirée. Veuillez vous reconnecter',
+  'JWT malformed': 'Token de session invalide',
+};
+
+// Fonction utilitaire pour la gestion d'erreurs
+export const handleSupabaseError = (error: unknown): SupabaseError => {
   if (!error) {
     return {
       message: 'Erreur inconnue',
@@ -78,25 +77,11 @@ export const handleSupabaseError = (error: any): SupabaseError => {
     };
   }
 
-  // Messages d'erreur traduits en français
-  const errorMessages: { [key: string]: string } = {
-    'Invalid login credentials': 'Email ou mot de passe incorrect',
-    'Email not confirmed':
-      'Veuillez confirmer votre email avant de vous connecter',
-    'Too many requests': 'Trop de tentatives. Veuillez réessayer plus tard',
-    'User not found': 'Aucun compte trouvé avec cet email',
-    'User already registered': 'Un compte existe déjà avec cet email',
-    'Password should be at least 6 characters':
-      'Le mot de passe doit contenir au moins 6 caractères',
-    'Invalid email': 'Adresse email invalide',
-    'Unable to validate email address': "Impossible de valider l'adresse email",
-    'JWT expired': 'Session expirée. Veuillez vous reconnecter',
-    'JWT malformed': 'Token de session invalide',
-  };
+  const err = error as { message?: string; status?: number; code?: string };
 
   return {
-    message: errorMessages[error.message] || error.message || 'Erreur inconnue',
-    status: error.status,
-    code: error.code || error.name || 'UNKNOWN_ERROR',
+    message: errorMessages[err.message || ''] || err.message || 'Erreur inconnue',
+    status: err.status,
+    code: err.code || 'UNKNOWN_ERROR',
   };
 };

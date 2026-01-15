@@ -267,73 +267,7 @@ const config: Config = {
       },
     },
   },
-  plugins: [
-    // Plugin pour les variables CSS - MÉDITERRANÉE 🌊
-    function ({ addBase, theme }: any) {
-      addBase({
-        ':root': {
-          '--color-primary': theme('colors.primary.DEFAULT'),
-          '--color-primary-white': theme('colors.primary.white'),
-          '--color-primary-dark': theme('colors.primary.dark'),
-          '--color-primary-darker': theme('colors.primary.darker'),
-          '--color-secondary': theme('colors.secondary.DEFAULT'),
-          '--color-secondary-pale': theme('colors.secondary.pale'),
-          '--color-secondary-sage': theme('colors.secondary.sage'),
-          '--color-accent-teal': theme('colors.accent.teal'),
-          '--color-accent-mint': theme('colors.accent.mint'),
-          '--color-accent-orange': theme('colors.accent.orange'),
-          '--color-accent-terracotta': theme('colors.accent.terracotta'),
-          '--color-functional-success': theme('colors.functional.success'),
-          '--color-functional-error': theme('colors.functional.error'),
-          '--color-functional-warning': theme('colors.functional.warning'),
-          '--color-functional-info': theme('colors.functional.info'),
-          '--color-neutral-light': theme('colors.neutral.light'),
-          '--color-neutral-medium': theme('colors.neutral.medium'),
-          '--color-neutral-dark': theme('colors.neutral.dark'),
-          '--color-neutral-border': theme('colors.neutral.border'),
-          '--color-background-primary': theme('colors.background.primary'),
-          '--color-background-secondary': theme('colors.background.secondary'),
-          '--color-background-accent': theme('colors.background.accent'),
-        },
-        // Mode sombre - Couleurs Méditerranée adaptées
-        '.dark': {
-          // Couleurs primaires adaptées au mode sombre
-          '--color-primary': '#2EC4B6',
-          '--color-primary-white': '#0A4A43',
-          '--color-primary-dark': '#1B998B',
-          '--color-primary-darker': '#147569',
-
-          // Couleurs secondaires adaptées au mode sombre
-          '--color-secondary': '#F4D6A0',
-          '--color-secondary-pale': '#1F2937',
-          '--color-secondary-sage': '#374151',
-
-          // Couleurs d'accent (conservées pour la cohérence)
-          '--color-accent-teal': '#2EC4B6',
-          '--color-accent-mint': '#78CFC6',
-          '--color-accent-orange': '#E76F51',
-          '--color-accent-terracotta': '#ED8872',
-
-          // Couleurs fonctionnelles (conservées pour la cohérence)
-          '--color-functional-success': '#22C55E',
-          '--color-functional-error': '#EF4444',
-          '--color-functional-warning': '#F59E0B',
-          '--color-functional-info': '#2EC4B6',
-
-          // Couleurs d'arrière-plan adaptées au mode sombre
-          '--color-background-primary': '#1F2937',
-          '--color-background-secondary': '#111827',
-          '--color-background-accent': '#374151',
-
-          // Couleurs neutres adaptées au mode sombre pour une meilleure visibilité
-          '--color-neutral-light': '#374151',
-          '--color-neutral-medium': '#A89888',
-          '--color-neutral-dark': '#F9FAFB',
-          '--color-neutral-border': '#4B5563',
-        },
-      });
-    },
-  ],
+  plugins: [],
 };
 
 export default config;

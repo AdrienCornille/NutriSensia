@@ -163,17 +163,15 @@ export function Header({ className = '' }: HeaderProps) {
                   size='sm'
                   className='relative overflow-hidden backdrop-blur-xl bg-white/30 hover:bg-white/50 border border-white/40 text-gray-700 hover:text-gray-900 font-semibold shadow-md hover:shadow-lg transition-all duration-200'
                 >
-                  Se connecter / S&apos;inscrire
+                  Se connecter
                 </Button>
               </Link>
-              <Link href='/contact'>
+              <Link href='/auth/signup'>
                 <Button
                   size='sm'
-                  className='relative overflow-hidden bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 ring-2 ring-white/30'
+                  className='relative overflow-hidden bg-gradient-to-r from-primary to-secondary hover:from-primary-dark hover:to-secondary text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 ring-2 ring-white/30'
                 >
-                  <span className='relative z-10'>
-                    Réserver une Consultation
-                  </span>
+                  <span className='relative z-10'>Commencer</span>
                   {/* Effet de brillance sur le bouton */}
                   <div className='absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700' />
                 </Button>
@@ -319,16 +317,16 @@ export function Header({ className = '' }: HeaderProps) {
                 variant='ghost'
                 className='w-full bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-gray-900 font-semibold'
               >
-                Se connecter / S&apos;inscrire
+                Se connecter
               </Button>
             </Link>
             <Link
-              href='/contact'
+              href='/auth/signup'
               onClick={() => setMobileMenuOpen(false)}
               className='block'
             >
-              <Button className='w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-lg'>
-                Réserver une Consultation
+              <Button className='w-full bg-gradient-to-r from-primary to-secondary hover:from-primary-dark hover:to-secondary text-white font-semibold shadow-lg'>
+                Commencer
               </Button>
             </Link>
           </div>

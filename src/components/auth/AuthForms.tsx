@@ -12,13 +12,53 @@ import {
   CardFooter,
   Input,
 } from '@/components/ui';
+// Note: SignUpForm utilise des styles inline Palette Méditerranée
+// Les autres composants (SignInForm, ResetPasswordForm, UpdatePasswordForm) utilisent encore les composants UI
 import { supabase } from '@/lib/supabase';
 
-// Schémas de validation Zod pour l'authentification
+// Liste des pays avec indicatifs et drapeaux
+const countries = [
+  { code: '+41', flag: '🇨🇭', name: 'Suisse' },
+  { code: '+33', flag: '🇫🇷', name: 'France' },
+  { code: '+49', flag: '🇩🇪', name: 'Allemagne' },
+  { code: '+39', flag: '🇮🇹', name: 'Italie' },
+  { code: '+43', flag: '🇦🇹', name: 'Autriche' },
+  { code: '+32', flag: '🇧🇪', name: 'Belgique' },
+  { code: '+352', flag: '🇱🇺', name: 'Luxembourg' },
+  { code: '+377', flag: '🇲🇨', name: 'Monaco' },
+  { code: '+34', flag: '🇪🇸', name: 'Espagne' },
+  { code: '+351', flag: '🇵🇹', name: 'Portugal' },
+  { code: '+44', flag: '🇬🇧', name: 'Royaume-Uni' },
+  { code: '+1', flag: '🇺🇸', name: 'États-Unis' },
+  { code: '+1', flag: '🇨🇦', name: 'Canada' },
+];
+
+// Schéma de validation Zod pour l'inscription complète
 const signUpSchema = z
   .object({
-    name: z.string().min(2, 'Le nom doit contenir au moins 2 caractères'),
+    firstName: z
+      .string()
+      .min(2, 'Le prénom doit contenir au moins 2 caractères')
+      .max(50, 'Le prénom ne peut pas dépasser 50 caractères')
+      .regex(
+        /^[a-zA-ZÀ-ÿ\s'-]+$/,
+        'Le prénom ne peut contenir que des lettres'
+      ),
+    lastName: z
+      .string()
+      .min(2, 'Le nom doit contenir au moins 2 caractères')
+      .max(50, 'Le nom ne peut pas dépasser 50 caractères')
+      .regex(/^[a-zA-ZÀ-ÿ\s'-]+$/, 'Le nom ne peut contenir que des lettres'),
     email: z.string().email('Adresse email invalide'),
+    phoneCountryCode: z.string().default('+41'),
+    phoneNumber: z
+      .string()
+      .regex(
+        /^[1-9]\d{7,9}$/,
+        'Numéro invalide (sans le 0, ex: 791234567)'
+      )
+      .optional()
+      .or(z.literal('')),
     password: z
       .string()
       .min(8, 'Le mot de passe doit contenir au moins 8 caractères')
@@ -27,7 +67,10 @@ const signUpSchema = z
         'Le mot de passe doit contenir au moins une minuscule, une majuscule et un chiffre'
       ),
     confirmPassword: z.string(),
-    role: z.enum(['patient', 'nutritionist']),
+    acceptedTerms: z.boolean().refine(val => val === true, {
+      message: "Vous devez accepter les conditions d'utilisation",
+    }),
+    marketingConsent: z.boolean().optional(),
   })
   .refine(data => data.password === data.confirmPassword, {
     message: 'Les mots de passe ne correspondent pas',
@@ -49,10 +92,60 @@ type SignInData = z.infer<typeof signInSchema>;
 type ResetPasswordData = z.infer<typeof resetPasswordSchema>;
 
 /**
- * Composant d'inscription avec validation complète
+ * Icône d'œil pour afficher/masquer le mot de passe
+ */
+const EyeIcon: React.FC<{ visible: boolean }> = ({ visible }) => {
+  if (visible) {
+    return (
+      <svg
+        xmlns='http://www.w3.org/2000/svg'
+        width='20'
+        height='20'
+        viewBox='0 0 24 24'
+        fill='none'
+        stroke='currentColor'
+        strokeWidth='2'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+      >
+        <path d='M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24' />
+        <line x1='1' y1='1' x2='23' y2='23' />
+      </svg>
+    );
+  }
+  return (
+    <svg
+      xmlns='http://www.w3.org/2000/svg'
+      width='20'
+      height='20'
+      viewBox='0 0 24 24'
+      fill='none'
+      stroke='currentColor'
+      strokeWidth='2'
+      strokeLinecap='round'
+      strokeLinejoin='round'
+    >
+      <path d='M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z' />
+      <circle cx='12' cy='12' r='3' />
+    </svg>
+  );
+};
+
+/**
+ * Composant d'inscription complet avec validation et intégration Supabase
+ *
+ * Fonctionnalités:
+ * - Barre de progression (étape 1/3)
+ * - Validation complète avec Zod + react-hook-form
+ * - Afficher/masquer le mot de passe
+ * - Intégration Supabase Auth + table profiles
+ * - Consentement RGPD (conditions + marketing)
+ * - Design NutriSensia "Palette Méditerranée"
  */
 export const SignUpForm: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [message, setMessage] = useState<{
     type: 'success' | 'error';
     text: string;
@@ -66,6 +159,17 @@ export const SignUpForm: React.FC = () => {
   } = useForm<SignUpData>({
     resolver: zodResolver(signUpSchema),
     mode: 'onBlur',
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      phoneCountryCode: '+41',
+      phoneNumber: '',
+      password: '',
+      confirmPassword: '',
+      acceptedTerms: false,
+      marketingConsent: false,
+    },
   });
 
   const onSubmit = async (data: SignUpData) => {
@@ -73,228 +177,520 @@ export const SignUpForm: React.FC = () => {
     setMessage(null);
 
     try {
-      // Inscription avec Supabase
-      const { data: authData, error } = await supabase.auth.signUp({
+      // Combiner l'indicatif pays et le numéro de téléphone
+      const normalizedPhone =
+        data.phoneNumber ? `${data.phoneCountryCode}${data.phoneNumber}` : '';
+
+      // 1. Inscription avec Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
         options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
           data: {
-            name: data.name,
-            role: data.role,
+            first_name: data.firstName,
+            last_name: data.lastName,
+            phone: normalizedPhone,
           },
         },
       });
 
-      if (error) {
-        throw error;
+      if (authError) {
+        throw authError;
       }
 
-      // L'inscription a réussi - l'entrée dans la table nutritionists/patients
-      // sera créée automatiquement lors de la première connexion ou de l'onboarding
-      if (authData.user) {
-        console.log(
-          `✅ Inscription réussie pour l'utilisateur ${data.role}:`,
-          authData.user.id
-        );
-        console.log(
-          "ℹ️  L'entrée dans la table correspondante sera créée lors de la première connexion"
-        );
+      if (!authData.user) {
+        throw new Error("Erreur lors de la création de l'utilisateur");
       }
+
+      // 2. Insérer dans la table profiles
+      // Note: Utilisation de 'as any' car le client lib/supabase.ts utilise des types obsolètes
+      // qui ne correspondent pas au schéma actuel de la DB (types/database.ts)
+      const { error: profileError } = await supabase.from('profiles').insert({
+        id: authData.user.id,
+        email: data.email,
+        first_name: data.firstName,
+        last_name: data.lastName,
+        phone: normalizedPhone || null,
+        marketing_consent: data.marketingConsent || false,
+        accepted_terms_at: new Date().toISOString(),
+        account_status: 'trial',
+      } as any);
+
+      if (profileError) {
+        console.error('Erreur création profil:', profileError);
+        // On ne bloque pas l'inscription si le profil échoue
+        // Le trigger Supabase peut aussi créer le profil
+      }
+
+      console.log('✅ Inscription réussie pour:', authData.user.id);
 
       setMessage({
         type: 'success',
         text: 'Inscription réussie ! Vérifiez votre email pour confirmer votre compte.',
       });
+
       reset();
-    } catch (error: any) {
+
+      // Redirection vers la page de confirmation après 2 secondes
+      setTimeout(() => {
+        window.location.href = '/auth/confirm';
+      }, 2000);
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Une erreur est survenue lors de l'inscription";
       setMessage({
         type: 'error',
-        text: error.message || "Une erreur est survenue lors de l'inscription",
+        text: errorMessage,
       });
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Styles communs Palette Méditerranée
+  const labelStyle = {
+    fontFamily:
+      "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+    fontSize: '14px',
+    fontWeight: 600,
+    color: '#41556b',
+  };
+
+  const inputStyle = {
+    fontFamily:
+      "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+    fontSize: '16px',
+    color: '#1a1a1a',
+    backgroundColor: '#ffffff',
+    border: '1px solid #e5e5e5',
+    borderRadius: '10px',
+    padding: '14px 16px',
+    width: '100%',
+    transition: 'all 0.3s ease',
+    outline: 'none',
+  };
+
+  const inputFocusStyle = {
+    borderColor: '#1b998b',
+    boxShadow: '0 0 0 3px rgba(27, 153, 139, 0.1)',
+  };
+
+  const errorStyle = {
+    fontFamily:
+      "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+    fontSize: '13px',
+    color: '#ef4444',
+    marginTop: '4px',
+  };
+
+  const helperStyle = {
+    fontFamily:
+      "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+    fontSize: '13px',
+    color: '#41556b',
+    marginTop: '4px',
+  };
+
   return (
-    <Card variant='primary' className='max-w-md mx-auto'>
-      <CardHeader>
-        <h2 className='text-h2 font-bold text-neutral-dark dark:text-neutral-light'>
-          Créer un compte
-        </h2>
-        <p className='text-body text-neutral-medium dark:text-neutral-medium'>
-          Rejoignez NutriSensia pour votre bien-être nutritionnel
-        </p>
-      </CardHeader>
-
-      <form onSubmit={handleSubmit(onSubmit)} noValidate>
-        <CardContent className='space-y-16dp'>
-          {/* Nom complet */}
-          <Input
-            label='Nom complet'
-            placeholder='Votre nom complet'
-            {...register('name')}
-            error={errors.name?.message}
-            required
-            fullWidth
-          />
-
-          {/* Email */}
-          <Input
-            label='Adresse email'
-            type='email'
-            placeholder='votre@email.com'
-            {...register('email')}
-            error={errors.email?.message}
-            required
-            fullWidth
-          />
-
-          {/* Rôle */}
-          <div className='space-y-8dp'>
-            <label className='block text-label font-medium text-neutral-dark dark:text-neutral-light'>
-              Rôle *
+    <div className='w-full'>
+      <form onSubmit={handleSubmit(onSubmit)} noValidate className='space-y-5'>
+        {/* Prénom et Nom sur la même ligne */}
+        <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+          <div>
+            <label style={labelStyle} className='block mb-2'>
+              Prénom *
             </label>
-            <div className='space-y-8dp'>
-              <label className='flex items-center space-x-8dp'>
-                <input
-                  type='radio'
-                  value='patient'
-                  {...register('role')}
-                  className='text-primary focus:ring-primary'
-                />
-                <span className='text-body'>Patient</span>
-              </label>
-              <label className='flex items-center space-x-8dp'>
-                <input
-                  type='radio'
-                  value='nutritionist'
-                  {...register('role')}
-                  className='text-primary focus:ring-primary'
-                />
-                <span className='text-body'>Nutritionniste</span>
-              </label>
-            </div>
-            {errors.role && (
-              <p className='text-caption text-functional-error'>
-                {errors.role.message}
-              </p>
+            <input
+              type='text'
+              placeholder='Marie'
+              {...register('firstName')}
+              style={{
+                ...inputStyle,
+                borderColor: errors.firstName ? '#ef4444' : '#e5e5e5',
+              }}
+              onFocus={e => {
+                e.target.style.borderColor = '#1b998b';
+                e.target.style.boxShadow = '0 0 0 3px rgba(27, 153, 139, 0.1)';
+              }}
+              onBlur={e => {
+                e.target.style.borderColor = errors.firstName
+                  ? '#ef4444'
+                  : '#e5e5e5';
+                e.target.style.boxShadow = 'none';
+              }}
+            />
+            {errors.firstName && (
+              <p style={errorStyle}>{errors.firstName.message}</p>
             )}
           </div>
+          <div>
+            <label style={labelStyle} className='block mb-2'>
+              Nom *
+            </label>
+            <input
+              type='text'
+              placeholder='Dupont'
+              {...register('lastName')}
+              style={{
+                ...inputStyle,
+                borderColor: errors.lastName ? '#ef4444' : '#e5e5e5',
+              }}
+              onFocus={e => {
+                e.target.style.borderColor = '#1b998b';
+                e.target.style.boxShadow = '0 0 0 3px rgba(27, 153, 139, 0.1)';
+              }}
+              onBlur={e => {
+                e.target.style.borderColor = errors.lastName
+                  ? '#ef4444'
+                  : '#e5e5e5';
+                e.target.style.boxShadow = 'none';
+              }}
+            />
+            {errors.lastName && (
+              <p style={errorStyle}>{errors.lastName.message}</p>
+            )}
+          </div>
+        </div>
 
-          {/* Mot de passe */}
-          <Input
-            label='Mot de passe'
-            type='password'
-            placeholder='Votre mot de passe'
-            {...register('password')}
-            error={errors.password?.message}
-            helperText='Au moins 8 caractères avec minuscule, majuscule et chiffre'
-            required
-            fullWidth
+        {/* Email */}
+        <div>
+          <label style={labelStyle} className='block mb-2'>
+            Adresse email *
+          </label>
+          <input
+            type='email'
+            placeholder='marie.dupont@exemple.ch'
+            {...register('email')}
+            style={{
+              ...inputStyle,
+              borderColor: errors.email ? '#ef4444' : '#e5e5e5',
+            }}
+            onFocus={e => {
+              e.target.style.borderColor = '#1b998b';
+              e.target.style.boxShadow = '0 0 0 3px rgba(27, 153, 139, 0.1)';
+            }}
+            onBlur={e => {
+              e.target.style.borderColor = errors.email ? '#ef4444' : '#e5e5e5';
+              e.target.style.boxShadow = 'none';
+            }}
           />
+          {errors.email && <p style={errorStyle}>{errors.email.message}</p>}
+        </div>
 
-          {/* Confirmation du mot de passe */}
-          <Input
-            label='Confirmer le mot de passe'
-            type='password'
-            placeholder='Confirmez votre mot de passe'
-            {...register('confirmPassword')}
-            error={errors.confirmPassword?.message}
-            required
-            fullWidth
-          />
-
-          {/* Message de succès/erreur */}
-          {message && (
-            <div
-              className={`p-12dp rounded-8dp text-body ${
-                message.type === 'success'
-                  ? 'bg-functional-success/10 text-functional-success border border-functional-success/20'
-                  : 'bg-functional-error/10 text-functional-error border border-functional-error/20'
-              }`}
+        {/* Téléphone (optionnel) */}
+        <div>
+          <label style={labelStyle} className='block mb-2'>
+            Téléphone
+          </label>
+          <div className='flex gap-3'>
+            {/* Sélecteur de pays avec drapeau */}
+            <select
+              {...register('phoneCountryCode')}
+              style={{
+                ...inputStyle,
+                width: '220px',
+                cursor: 'pointer',
+                appearance: 'none',
+                backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2341556b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+                backgroundPosition: 'right 8px center',
+                backgroundRepeat: 'no-repeat',
+                backgroundSize: '16px',
+                paddingRight: '28px',
+              }}
+              onFocus={e => {
+                e.target.style.borderColor = '#1b998b';
+                e.target.style.boxShadow = '0 0 0 3px rgba(27, 153, 139, 0.1)';
+              }}
+              onBlur={e => {
+                e.target.style.borderColor = '#e5e5e5';
+                e.target.style.boxShadow = 'none';
+              }}
             >
-              {message.text}
-            </div>
+              {countries.map((country, index) => (
+                <option key={`${country.code}-${index}`} value={country.code}>
+                  {country.flag} {country.name} ({country.code})
+                </option>
+              ))}
+            </select>
+
+            {/* Numéro de téléphone */}
+            <input
+              type='tel'
+              placeholder='79 123 45 67'
+              {...register('phoneNumber')}
+              style={{
+                ...inputStyle,
+                flex: 1,
+                borderColor: errors.phoneNumber ? '#ef4444' : '#e5e5e5',
+              }}
+              onFocus={e => {
+                e.target.style.borderColor = '#1b998b';
+                e.target.style.boxShadow = '0 0 0 3px rgba(27, 153, 139, 0.1)';
+              }}
+              onBlur={e => {
+                e.target.style.borderColor = errors.phoneNumber
+                  ? '#ef4444'
+                  : '#e5e5e5';
+                e.target.style.boxShadow = 'none';
+              }}
+            />
+          </div>
+          {errors.phoneNumber && (
+            <p style={errorStyle}>{errors.phoneNumber.message}</p>
           )}
-        </CardContent>
+        </div>
 
-        <CardFooter>
-          <Button
-            type='submit'
-            variant='primary'
-            size='lg'
-            loading={isLoading}
-            fullWidth
+        {/* Mot de passe avec toggle */}
+        <div>
+          <label style={labelStyle} className='block mb-2'>
+            Mot de passe *
+          </label>
+          <div className='relative'>
+            <input
+              type={showPassword ? 'text' : 'password'}
+              placeholder='Votre mot de passe sécurisé'
+              {...register('password')}
+              style={{
+                ...inputStyle,
+                borderColor: errors.password ? '#ef4444' : '#e5e5e5',
+                paddingRight: '48px',
+              }}
+              onFocus={e => {
+                e.target.style.borderColor = '#1b998b';
+                e.target.style.boxShadow = '0 0 0 3px rgba(27, 153, 139, 0.1)';
+              }}
+              onBlur={e => {
+                e.target.style.borderColor = errors.password
+                  ? '#ef4444'
+                  : '#e5e5e5';
+                e.target.style.boxShadow = 'none';
+              }}
+            />
+            <button
+              type='button'
+              onClick={() => setShowPassword(!showPassword)}
+              className='absolute right-4 top-1/2 transform -translate-y-1/2 transition-colors'
+              style={{ color: '#41556b' }}
+              aria-label={
+                showPassword
+                  ? 'Masquer le mot de passe'
+                  : 'Afficher le mot de passe'
+              }
+            >
+              <EyeIcon visible={showPassword} />
+            </button>
+          </div>
+          <p style={helperStyle}>
+            Au moins 8 caractères avec minuscule, majuscule et chiffre
+          </p>
+          {errors.password && (
+            <p style={errorStyle}>{errors.password.message}</p>
+          )}
+        </div>
+
+        {/* Confirmation mot de passe avec toggle */}
+        <div>
+          <label style={labelStyle} className='block mb-2'>
+            Confirmer le mot de passe *
+          </label>
+          <div className='relative'>
+            <input
+              type={showConfirmPassword ? 'text' : 'password'}
+              placeholder='Confirmez votre mot de passe'
+              {...register('confirmPassword')}
+              style={{
+                ...inputStyle,
+                borderColor: errors.confirmPassword ? '#ef4444' : '#e5e5e5',
+                paddingRight: '48px',
+              }}
+              onFocus={e => {
+                e.target.style.borderColor = '#1b998b';
+                e.target.style.boxShadow = '0 0 0 3px rgba(27, 153, 139, 0.1)';
+              }}
+              onBlur={e => {
+                e.target.style.borderColor = errors.confirmPassword
+                  ? '#ef4444'
+                  : '#e5e5e5';
+                e.target.style.boxShadow = 'none';
+              }}
+            />
+            <button
+              type='button'
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              className='absolute right-4 top-1/2 transform -translate-y-1/2 transition-colors'
+              style={{ color: '#41556b' }}
+              aria-label={
+                showConfirmPassword
+                  ? 'Masquer le mot de passe'
+                  : 'Afficher le mot de passe'
+              }
+            >
+              <EyeIcon visible={showConfirmPassword} />
+            </button>
+          </div>
+          {errors.confirmPassword && (
+            <p style={errorStyle}>{errors.confirmPassword.message}</p>
+          )}
+        </div>
+
+        {/* Séparateur */}
+        <div className='h-px my-2' style={{ backgroundColor: '#e5ded6' }} />
+
+        {/* Conditions d'utilisation (obligatoire) */}
+        <div>
+          <label className='flex items-start gap-3 cursor-pointer'>
+            <input
+              type='checkbox'
+              {...register('acceptedTerms')}
+              className='mt-1 w-5 h-5 rounded'
+              style={{
+                accentColor: '#1b998b',
+                borderColor: '#e5e5e5',
+              }}
+            />
+            <span
+              style={{
+                fontFamily:
+                  "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                fontSize: '14px',
+                color: '#41556b',
+                lineHeight: '22px',
+              }}
+            >
+              J&apos;accepte les{' '}
+              <a
+                href='/conditions-utilisation'
+                target='_blank'
+                className='underline hover:no-underline'
+                style={{ color: '#1b998b' }}
+              >
+                conditions d&apos;utilisation
+              </a>{' '}
+              et la{' '}
+              <a
+                href='/politique-confidentialite'
+                target='_blank'
+                className='underline hover:no-underline'
+                style={{ color: '#1b998b' }}
+              >
+                politique de confidentialité
+              </a>{' '}
+              *
+            </span>
+          </label>
+          {errors.acceptedTerms && (
+            <p style={errorStyle} className='ml-8'>
+              {errors.acceptedTerms.message}
+            </p>
+          )}
+        </div>
+
+        {/* Consentement marketing (optionnel) */}
+        <label className='flex items-start gap-3 cursor-pointer'>
+          <input
+            type='checkbox'
+            {...register('marketingConsent')}
+            className='mt-1 w-5 h-5 rounded'
+            style={{
+              accentColor: '#1b998b',
+              borderColor: '#e5e5e5',
+            }}
+          />
+          <span
+            style={{
+              fontFamily:
+                "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+              fontSize: '13px',
+              color: '#41556b',
+              lineHeight: '20px',
+            }}
           >
-            {isLoading ? 'Création du compte...' : 'Créer mon compte'}
-          </Button>
-        </CardFooter>
+            Je souhaite recevoir des conseils nutritionnels et les dernières
+            actualités de NutriSensia par email (optionnel)
+          </span>
+        </label>
+
+        {/* Message de succès/erreur */}
+        {message && (
+          <div
+            className='p-4 rounded-xl'
+            style={{
+              fontFamily:
+                "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+              fontSize: '14px',
+              backgroundColor:
+                message.type === 'success'
+                  ? 'rgba(27, 153, 139, 0.08)'
+                  : 'rgba(239, 68, 68, 0.08)',
+              color: message.type === 'success' ? '#1b998b' : '#ef4444',
+              border: `1px solid ${message.type === 'success' ? 'rgba(27, 153, 139, 0.2)' : 'rgba(239, 68, 68, 0.2)'}`,
+            }}
+          >
+            {message.text}
+          </div>
+        )}
+
+        {/* Bouton CTA avec dégradé */}
+        <button
+          type='submit'
+          disabled={isLoading}
+          className='w-full py-4 px-6 rounded-full font-semibold text-white transition-all duration-300 hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed'
+          style={{
+            fontFamily:
+              "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            fontSize: '16px',
+            background: isLoading
+              ? '#a0a0a0'
+              : 'linear-gradient(135deg, #1b998b 0%, #147569 100%)',
+            borderRadius: '35px',
+          }}
+          onMouseEnter={e => {
+            if (!isLoading) {
+              (e.target as HTMLButtonElement).style.background =
+                'linear-gradient(135deg, #147569 0%, #0f5a50 100%)';
+            }
+          }}
+          onMouseLeave={e => {
+            if (!isLoading) {
+              (e.target as HTMLButtonElement).style.background =
+                'linear-gradient(135deg, #1b998b 0%, #147569 100%)';
+            }
+          }}
+        >
+          {isLoading ? (
+            <span className='flex items-center justify-center gap-2'>
+              <svg
+                className='animate-spin h-5 w-5'
+                xmlns='http://www.w3.org/2000/svg'
+                fill='none'
+                viewBox='0 0 24 24'
+              >
+                <circle
+                  className='opacity-25'
+                  cx='12'
+                  cy='12'
+                  r='10'
+                  stroke='currentColor'
+                  strokeWidth='4'
+                ></circle>
+                <path
+                  className='opacity-75'
+                  fill='currentColor'
+                  d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+                ></path>
+              </svg>
+              Création en cours...
+            </span>
+          ) : (
+            'Créer mon compte'
+          )}
+        </button>
       </form>
-    </Card>
+    </div>
   );
-};
-
-/**
- * Vérifie si c'est un nouveau compte (créé récemment ou sans 2FA configuré)
- */
-const checkIfNewAccount = async (user: any): Promise<boolean> => {
-  try {
-    // Récupérer les informations du profil
-    const { data: profileData } = await supabase
-      .from('profiles')
-      .select('created_at, two_factor_enabled, last_sign_in_at')
-      .eq('id', user.id)
-      .single();
-
-    if (!profileData) return true; // Profil pas encore créé = nouveau compte
-
-    // Vérifier si le compte a été créé récemment (moins de 10 minutes)
-    const accountAge = Date.now() - new Date(profileData.created_at).getTime();
-    const isRecentAccount = accountAge < 10 * 60 * 1000; // 10 minutes
-
-    // Vérifier si c'est la première connexion
-    const isFirstSignIn = !profileData.last_sign_in_at;
-
-    // Vérifier si 2FA n'est pas configuré
-    const no2FAConfigured = !profileData.two_factor_enabled;
-
-    console.log('🔍 AuthForms - Analyse nouveau compte:', {
-      userId: user.id,
-      userEmail: user.email,
-      accountAge: `${Math.round(accountAge / 1000 / 60)} minutes`,
-      isRecentAccount,
-      isFirstSignIn,
-      no2FAConfigured,
-      createdAt: profileData.created_at,
-      lastSignIn: profileData.last_sign_in_at,
-    });
-
-    // PRIORITÉ : Si 2FA est déjà configuré, ce n'est PAS un nouveau compte
-    if (profileData.two_factor_enabled === true) {
-      console.log('✅ 2FA déjà configuré - Compte existant confirmé');
-      return false;
-    }
-
-    // C'est un nouveau compte si : récent OU première connexion OU pas de 2FA
-    const isNewAccount = isRecentAccount || isFirstSignIn || no2FAConfigured;
-
-    console.log('🔍 AuthForms - Décision finale nouveau compte:', {
-      isNewAccount,
-      raison: isRecentAccount
-        ? 'compte récent'
-        : isFirstSignIn
-          ? 'première connexion'
-          : no2FAConfigured
-            ? 'pas de 2FA'
-            : 'aucune',
-    });
-
-    return isNewAccount;
-  } catch (error) {
-    console.error('Erreur vérification nouveau compte:', error);
-    return true; // En cas d'erreur, traiter comme nouveau compte par sécurité
-  }
 };
 
 /**
@@ -331,195 +727,16 @@ export const SignInForm: React.FC = () => {
         throw error;
       }
 
-      // Vérifier le statut 2FA après connexion réussie
-      const { data: mfaData, error: mfaError } =
-        await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
-
-      if (mfaError) {
-        console.error('Erreur lors de la vérification 2FA:', mfaError);
-        // En cas d'erreur, rediriger vers la page d'accueil
-        setMessage({
-          type: 'success',
-          text: 'Connexion réussie ! Redirection en cours...',
-        });
-        setTimeout(() => {
-          window.location.href = '/';
-        }, 1000);
-        return;
-      }
-
-      // Récupérer le rôle de l'utilisateur
-      const userRole = authData.user?.user_metadata?.role || 'patient';
-
-      // PRIORITÉ 1: Vérifier si c'est un nouveau compte
-      const isNewAccount = await checkIfNewAccount(authData.user);
-
-      if (isNewAccount) {
-        console.log(
-          '🆕 NOUVEAU COMPTE DÉTECTÉ - Redirection obligatoire vers 2FA'
-        );
-        setMessage({
-          type: 'success',
-          text: 'Connexion réussie ! Configuration de sécurité requise...',
-        });
-        setTimeout(() => {
-          window.location.href = '/auth/enroll-mfa';
-        }, 1000);
-        return;
-      }
-
-      // PRIORITÉ 2: Pour les comptes existants, analyser le niveau d'assurance
-      const { currentLevel, nextLevel } = mfaData;
-
-      console.log('🔍 Analyse des niveaux AAL:', {
-        userRole,
-        currentLevel,
-        nextLevel,
-        mfaData,
-        userEmail: authData.user?.email,
+      // Connexion réussie - redirection vers l'accueil
+      // Note: La vérification 2FA est désactivée pour le moment
+      setMessage({
+        type: 'success',
+        text: 'Connexion réussie ! Redirection en cours...',
       });
 
-      if (userRole === 'nutritionist') {
-        // Les nutritionnistes ont TOUJOURS besoin de AAL2
-        if (nextLevel === 'aal2' && currentLevel === 'aal1') {
-          // Le nutritionniste doit configurer ou vérifier le 2FA
-          setMessage({
-            type: 'success',
-            text: 'Connexion réussie ! Configuration de la sécurité requise...',
-          });
-
-          // Vérifier s'il a déjà des facteurs configurés (Supabase Auth + Base de données)
-          const { data: factorsData } = await supabase.auth.mfa.listFactors();
-          const hasVerifiedFactorsInAuth =
-            factorsData?.totp?.some(f => f.status === 'verified') ||
-            factorsData?.phone?.some(f => f.status === 'verified');
-
-          // Vérifier aussi dans la base de données
-          const { data: profileData, error: profileError } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', authData.user?.id)
-            .single();
-
-          const twoFactorEnabledInDB = profileData
-            ? (profileData as any).two_factor_enabled
-            : false;
-          const hasVerifiedFactors =
-            hasVerifiedFactorsInAuth && twoFactorEnabledInDB;
-
-          console.log('🔍 Diagnostic MFA (AuthForms):', {
-            userId: authData.user?.id,
-            hasVerifiedFactorsInAuth,
-            twoFactorEnabledInDB,
-            hasVerifiedFactors,
-            factorsData,
-          });
-
-          setTimeout(() => {
-            if (hasVerifiedFactors) {
-              // Le nutritionniste a déjà configuré le 2FA, rediriger vers la vérification
-              window.location.href = '/auth/verify-mfa';
-            } else {
-              // Le nutritionniste n'a pas encore configuré le 2FA, rediriger vers l'enrôlement
-              window.location.href = '/auth/enroll-mfa';
-            }
-          }, 1000);
-        } else if (currentLevel === 'aal2') {
-          // Le nutritionniste est déjà au niveau AAL2 requis
-          setMessage({
-            type: 'success',
-            text: 'Connexion réussie ! Redirection en cours...',
-          });
-          setTimeout(() => {
-            window.location.href = '/';
-          }, 1000);
-        } else {
-          // Cas par défaut pour les nutritionnistes
-          setMessage({
-            type: 'success',
-            text: 'Connexion réussie ! Configuration de la sécurité requise...',
-          });
-          setTimeout(() => {
-            window.location.href = '/auth/enroll-mfa';
-          }, 1000);
-        }
-      } else {
-        // Les patients DOIVENT utiliser le 2FA comme les nutritionnistes
-        console.log(
-          '👤 Utilisateur patient connecté, vérification 2FA obligatoire...'
-        );
-
-        // FORCER le 2FA pour tous les patients, indépendamment de nextLevel
-        if (currentLevel === 'aal1') {
-          // Le patient doit configurer ou vérifier le 2FA
-          setMessage({
-            type: 'success',
-            text: 'Connexion réussie ! Configuration de la sécurité en cours...',
-          });
-
-          // Vérifier s'il a déjà des facteurs configurés (Supabase Auth + Base de données)
-          const { data: factorsData } = await supabase.auth.mfa.listFactors();
-          const hasVerifiedFactorsInAuth =
-            factorsData?.totp?.some(f => f.status === 'verified') ||
-            factorsData?.phone?.some(f => f.status === 'verified');
-
-          // Vérifier aussi dans la base de données
-          const { data: profileData, error: profileError } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', authData.user?.id)
-            .single();
-
-          const twoFactorEnabledInDB = profileData
-            ? (profileData as any).two_factor_enabled
-            : false;
-          const hasVerifiedFactors =
-            hasVerifiedFactorsInAuth && twoFactorEnabledInDB;
-
-          console.log('🔍 Diagnostic MFA Patient (AuthForms):', {
-            userId: authData.user?.id,
-            userRole,
-            hasVerifiedFactorsInAuth,
-            twoFactorEnabledInDB,
-            hasVerifiedFactors,
-            factorsData,
-            currentLevel,
-            nextLevel,
-          });
-
-          setTimeout(() => {
-            if (hasVerifiedFactors) {
-              // Le patient a déjà configuré le 2FA, rediriger vers la vérification
-              console.log('🔐 Patient avec 2FA configuré -> /auth/verify-mfa');
-              window.location.href = '/auth/verify-mfa';
-            } else {
-              // Le patient n'a pas encore configuré le 2FA, rediriger vers l'enrôlement
-              console.log('📱 Patient sans 2FA -> /auth/enroll-mfa');
-              window.location.href = '/auth/enroll-mfa';
-            }
-          }, 1000);
-        } else if (currentLevel === 'aal2') {
-          // Le patient est déjà au niveau AAL2 requis
-          console.log('✅ Patient déjà au niveau AAL2, redirection dashboard');
-          setMessage({
-            type: 'success',
-            text: 'Connexion réussie ! Redirection vers votre espace...',
-          });
-          setTimeout(() => {
-            window.location.href = '/';
-          }, 1000);
-        } else {
-          // Cas par défaut : redirection vers l'accueil
-          console.log("🏠 Patient - redirection par défaut vers l'accueil");
-          setMessage({
-            type: 'success',
-            text: 'Connexion réussie ! Redirection vers votre espace...',
-          });
-          setTimeout(() => {
-            window.location.href = '/';
-          }, 1000);
-        }
-      }
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 1000);
     } catch (error: any) {
       setMessage({
         type: 'error',
@@ -531,7 +748,7 @@ export const SignInForm: React.FC = () => {
   };
 
   return (
-    <Card variant='primary' className='max-w-md mx-auto'>
+    <Card variant='elevated' className='max-w-md mx-auto'>
       <CardHeader>
         <h2 className='text-h2 font-bold text-neutral-dark dark:text-neutral-light'>
           Se connecter
@@ -657,7 +874,7 @@ export const ResetPasswordForm: React.FC = () => {
   };
 
   return (
-    <Card variant='primary' className='max-w-md mx-auto'>
+    <Card variant='elevated' className='max-w-md mx-auto'>
       <CardHeader>
         <h2 className='text-h2 font-bold text-neutral-dark dark:text-neutral-light'>
           Réinitialiser le mot de passe
@@ -795,7 +1012,7 @@ export const UpdatePasswordForm: React.FC = () => {
   };
 
   return (
-    <Card variant='primary' className='max-w-md mx-auto'>
+    <Card variant='elevated' className='max-w-md mx-auto'>
       <CardHeader>
         <h2 className='text-h2 font-bold text-neutral-dark dark:text-neutral-light'>
           Nouveau mot de passe

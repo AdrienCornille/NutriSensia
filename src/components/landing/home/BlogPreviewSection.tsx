@@ -207,7 +207,7 @@ export function BlogPreviewSection({ className }: BlogPreviewSectionProps) {
       category: 'sante',
       title: "Renforcer son système immunitaire par l'alimentation",
       image:
-        'https://images.unsplash.com/photo-1610465299996-e4558eecfdd4?w=800&h=600&fit=crop',
+        'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800&h=600&fit=crop',
       publishedAt: '2024-12-01',
       readingTime: 7,
       author: {

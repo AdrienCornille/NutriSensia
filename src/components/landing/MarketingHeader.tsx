@@ -485,7 +485,7 @@ export function MarketingHeader({
                     color: '#1B998B',
                   }}
                   onClick={() => {
-                    window.location.href = '/auth/login';
+                    window.location.href = '/auth/signin';
                   }}
                   onMouseEnter={e => {
                     e.currentTarget.style.backgroundColor =
@@ -521,7 +521,7 @@ export function MarketingHeader({
                     boxShadow: '0 2px 8px rgba(27, 153, 139, 0.2)',
                   }}
                   onClick={() => {
-                    window.location.href = '/contact?type=consultation';
+                    window.location.href = '/auth/signup';
                   }}
                 >
                   Commencer
@@ -781,7 +781,7 @@ export function MarketingHeader({
                     }}
                     onClick={() => {
                       closeMobileMenu();
-                      window.location.href = '/auth/login';
+                      window.location.href = '/auth/signin';
                     }}
                   >
                     Se connecter
@@ -806,7 +806,7 @@ export function MarketingHeader({
                     }}
                     onClick={() => {
                       closeMobileMenu();
-                      window.location.href = '/contact?type=consultation';
+                      window.location.href = '/auth/signup';
                     }}
                   >
                     Commencer maintenant

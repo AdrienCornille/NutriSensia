@@ -46,7 +46,6 @@ interface AuthContextType {
   clearError: () => void;
   isAuthenticated: boolean;
   getUserRole: () => 'nutritionist' | 'patient' | 'admin' | null;
-  requires2FA: () => boolean;
 }
 
 // Création du contexte avec une valeur par défaut
@@ -330,11 +329,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return user.user_metadata?.role || 'patient';
   };
 
-  const requires2FA = (): boolean => {
-    const role = getUserRole();
-    return role === 'nutritionist' || role === 'admin';
-  };
-
   // Valeur du contexte
   const value: AuthContextType = {
     user,
@@ -351,7 +345,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     clearError,
     isAuthenticated,
     getUserRole,
-    requires2FA,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -361,12 +354,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
 export function useUserRole() {
   const { getUserRole } = useAuth();
   return getUserRole();
-}
-
-// Hook pour vérifier si l'utilisateur nécessite 2FA
-export function useRequires2FA() {
-  const { requires2FA } = useAuth();
-  return requires2FA();
 }
 
 // Hook pour vérifier les permissions

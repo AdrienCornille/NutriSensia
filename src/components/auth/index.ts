@@ -9,6 +9,9 @@ export {
 // Nouveau formulaire de connexion avec layout split
 export { LoginForm } from './LoginForm';
 
+// Nouveau formulaire d'inscription avec layout split
+export { SignupForm } from './SignupForm';
+
 // Formulaire de réinitialisation de mot de passe
 export { ForgotPasswordForm } from './ForgotPasswordForm';
 
@@ -29,17 +32,7 @@ export {
   usePasswordValidation,
 } from './PasswordStrengthIndicator';
 
-// Composants d'authentification à deux facteurs (2FA)
-export { MFAEnrollment } from './MFAEnrollment';
-
-export { MFAVerification } from './MFAVerification';
-
-export { MFAManagement } from './MFAManagement';
-
+// Composants d'authentification
 export { AuthCallback } from './AuthCallback';
 
-export { MFASignInForm } from './MFASignInForm';
-
 export { AuthGuard } from './AuthGuard';
-
-export { MFAProtection } from './MFAProtection';

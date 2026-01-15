@@ -19,8 +19,11 @@ export const routing = defineRouting({
     '/': '/',
     '/contact': '/contact',
     '/blog': '/blog',
-    '/auth/login': '/auth/login',
-    '/auth/register': '/auth/register',
+    '/auth/signin': '/auth/signin',
+    '/auth/signup': '/auth/signup',
+    '/auth/confirm': '/auth/confirm',
+    '/auth/callback': '/auth/callback',
+    '/auth/welcome': '/auth/welcome',
     '/auth/forgot-password': '/auth/forgot-password',
     '/profile': '/profile',
     '/settings': '/settings',
@@ -60,5 +63,25 @@ export const routing = defineRouting({
     '/admin/dashboard': '/admin/dashboard',
     '/admin/users': '/admin/users',
     '/admin/analytics': '/admin/analytics',
+
+    // Pages consultation
+    '/consultation/reserver': {
+      fr: '/consultation/reserver',
+      en: '/consultation/book',
+    },
+    '/consultation/confirmation': {
+      fr: '/consultation/confirmation',
+      en: '/consultation/confirmation',
+    },
+
+    // Pages légales
+    '/terms': {
+      fr: '/conditions',
+      en: '/terms',
+    },
+    '/privacy': {
+      fr: '/confidentialite',
+      en: '/privacy',
+    },
   },
 });

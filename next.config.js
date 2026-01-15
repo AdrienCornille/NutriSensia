@@ -29,9 +29,24 @@ const nextConfig = {
 
   // Optimisations pour améliorer les performances de compilation
   swcMinify: true,
-  // NOTE: experimental.optimizePackageImports a été désactivé car il cause
-  // des erreurs "Cannot find module './vendor-chunks/...'" avec Next.js 14.2.x
-  // Réactiver après mise à jour vers Next.js 15+ si le bug est corrigé
+
+  // Optimisation des imports pour réduire la taille des bundles
+  modularizeImports: {
+    'lucide-react': {
+      transform: 'lucide-react/dist/esm/icons/{{kebabCase member}}',
+    },
+    '@heroicons/react/24/outline': {
+      transform: '@heroicons/react/24/outline/{{member}}',
+    },
+    '@heroicons/react/24/solid': {
+      transform: '@heroicons/react/24/solid/{{member}}',
+    },
+  },
+
+  experimental: {
+    // Optimiser les imports de packages volumineux
+    optimizePackageImports: ['framer-motion', 'date-fns', 'lucide-react', '@heroicons/react'],
+  },
 
   // Optimisations webpack pour accélérer le développement
   webpack: (config, { isServer, dev }) => {
