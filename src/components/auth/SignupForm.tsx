@@ -40,6 +40,20 @@ const GoogleLogo = () => (
   </svg>
 );
 
+// Options pour la raison de consultation
+const consultationReasonOptions = [
+  { value: 'menopause_perimenopause', label: 'Ménopause / Périménopause' },
+  { value: 'perte_poids_durable', label: 'Perte de poids durable' },
+  { value: 'troubles_digestifs', label: 'Troubles digestifs' },
+  { value: 'glycemie_diabete', label: 'Glycémie / Diabète' },
+  { value: 'sante_cardiovasculaire', label: 'Santé cardiovasculaire' },
+  { value: 'fatigue_energie', label: 'Fatigue / Énergie' },
+  { value: 'longevite_vieillissement', label: 'Longévité / Bien vieillir' },
+  { value: 'sante_hormonale', label: 'Santé hormonale' },
+  { value: 'alimentation_saine', label: 'Alimentation saine' },
+  { value: 'autre', label: 'Autre' },
+] as const;
+
 // Schéma de validation Zod
 const signupSchema = z
   .object({
@@ -63,6 +77,19 @@ const signupSchema = z
       .regex(/[0-9]/, 'Le mot de passe doit contenir au moins 1 chiffre')
       .regex(/[^A-Za-z0-9]/, 'Le mot de passe doit contenir au moins 1 caractère spécial'),
     confirmPassword: z.string().min(1, 'Veuillez confirmer votre mot de passe'),
+    consultationReason: z.enum([
+      'menopause_perimenopause',
+      'perte_poids_durable',
+      'troubles_digestifs',
+      'glycemie_diabete',
+      'sante_cardiovasculaire',
+      'fatigue_energie',
+      'longevite_vieillissement',
+      'sante_hormonale',
+      'alimentation_saine',
+      'autre',
+    ]),
+    marketingConsent: z.boolean(),
     acceptTerms: z.boolean().refine(val => val === true, {
       message: 'Vous devez accepter les conditions',
     }),
@@ -115,56 +142,52 @@ export const SignupForm: React.FC<SignupFormProps> = ({
     mode: 'onBlur',
     defaultValues: {
       acceptTerms: false,
+      marketingConsent: false,
     },
   });
 
   const onSubmit = async (data: SignupFormData) => {
-    if (!isSupabaseConfigured) {
-      setMessage({
-        type: 'error',
-        text: "Service d'authentification non configuré",
-      });
-      return;
-    }
-
     setIsLoading(true);
     setMessage(null);
 
     try {
-      const { data: authData, error } = await supabase.auth.signUp({
-        email: data.email,
-        password: data.password,
-        options: {
-          data: {
-            first_name: data.firstName,
-            last_name: data.lastName,
-            full_name: `${data.firstName} ${data.lastName}`,
-          },
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
+      // Appeler la nouvelle route API qui crée l'utilisateur ET le profil
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          consultationReason: data.consultationReason,
+          marketingConsent: data.marketingConsent,
+          acceptTerms: data.acceptTerms,
+        }),
       });
 
-      if (error) {
-        throw error;
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Une erreur s'est produite");
       }
 
-      // Inscription réussie - redirection immédiate vers la page de confirmation
+      // Stocker l'email pour la page de confirmation (pré-remplissage du champ de renvoi)
+      localStorage.setItem('nutrisensia-pending-email', data.email);
+
+      // Inscription réussie - redirection vers la page de confirmation
       if (onSuccess) {
         onSuccess();
       }
 
       router.push(redirectTo);
-    } catch (error: any) {
-      // Traduire les erreurs Supabase en français
-      let errorMessage = "Une erreur s'est produite lors de l'inscription";
-
-      if (error.message?.includes('User already registered')) {
-        errorMessage = 'Un compte existe déjà avec cet email';
-      } else if (error.message?.includes('Password should be')) {
-        errorMessage = 'Le mot de passe doit contenir au moins 8 caractères';
-      } else if (error.message?.includes('Invalid email')) {
-        errorMessage = 'Adresse email invalide';
-      }
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Une erreur s'est produite lors de l'inscription";
 
       setMessage({
         type: 'error',
@@ -306,6 +329,54 @@ export const SignupForm: React.FC<SignupFormProps> = ({
               </button>
             }
           />
+        </div>
+
+        {/* Raison de consultation */}
+        <div>
+          <label
+            htmlFor='consultationReason'
+            className='block text-body-small font-medium text-neutral-dark mb-1.5'
+          >
+            Raison de votre consultation <span className='text-functional-error'>*</span>
+          </label>
+          <select
+            id='consultationReason'
+            {...register('consultationReason')}
+            className={`w-full px-4 py-3 rounded-lg border bg-white text-body transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 ${
+              errors.consultationReason
+                ? 'border-functional-error focus:border-functional-error'
+                : 'border-neutral-border focus:border-primary'
+            }`}
+            style={{ color: '#41556b' }}
+          >
+            <option value=''>Sélectionnez une raison...</option>
+            {consultationReasonOptions.map(option => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+          {errors.consultationReason && (
+            <p className='mt-1.5 text-sm text-functional-error'>
+              {errors.consultationReason.message}
+            </p>
+          )}
+        </div>
+
+        {/* Checkbox Marketing */}
+        <div className='flex items-start gap-2'>
+          <input
+            type='checkbox'
+            id='marketingConsent'
+            {...register('marketingConsent')}
+            className='w-4 h-4 mt-1 rounded border-neutral-border text-primary focus:ring-primary focus:ring-offset-0'
+          />
+          <label
+            htmlFor='marketingConsent'
+            className='text-body-small text-neutral-medium cursor-pointer'
+          >
+            J'accepte de recevoir des conseils nutritionnels et des offres par email
+          </label>
         </div>
 
         {/* Checkbox CGU */}
