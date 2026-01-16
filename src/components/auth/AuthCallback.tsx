@@ -167,21 +167,21 @@ export function AuthCallback() {
           // Rediriger selon l'état du profil
           setTimeout(() => {
             if (profileResult.isComplete) {
-              // Profil complet - aller à la page de bienvenue
-              router.push('/auth/welcome');
+              // Profil complet - aller au dashboard (connexion suivante)
+              router.push('/dashboard');
             } else {
               // Profil incomplet - aller compléter le profil (raison consultation)
               router.push('/auth/complete-profile');
             }
           }, 1500);
         } else {
-          // Connexion email classique - comportement existant
+          // Connexion email classique - aller au dashboard
           setMessage('Connexion réussie !');
           setStatus('success');
 
-          // Redirection vers la page de bienvenue
+          // Redirection vers le dashboard
           setTimeout(() => {
-            router.push('/auth/welcome');
+            router.push('/dashboard');
           }, 1500);
         }
       } catch (error: unknown) {
