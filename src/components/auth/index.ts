@@ -36,3 +36,6 @@ export {
 export { AuthCallback } from './AuthCallback';
 
 export { AuthGuard } from './AuthGuard';
+
+// Formulaire de complétion de profil OAuth
+export { CompleteProfileForm } from './CompleteProfileForm';
