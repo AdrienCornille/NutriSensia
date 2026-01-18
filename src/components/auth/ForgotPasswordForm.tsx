@@ -155,7 +155,7 @@ export const ForgotPasswordForm: React.FC = () => {
 
           {/* Bouton retour connexion */}
           <Link
-            href='/auth/login'
+            href='/auth/signin'
             style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -295,7 +295,7 @@ export const ForgotPasswordForm: React.FC = () => {
             <p className='text-body text-neutral-medium'>
               {t('rememberPassword')}{' '}
               <Link
-                href='/auth/login'
+                href='/auth/signin'
                 className='font-medium transition-colors hover:underline'
                 style={{ color: '#1B998B' }}
               >

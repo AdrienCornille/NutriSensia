@@ -62,6 +62,18 @@ export function useAuth() {
   return context;
 }
 
+// Hook sécurisé qui ne throw pas d'erreur si AuthProvider n'est pas disponible
+// Utile pour les composants qui peuvent être utilisés avec ou sans authentification
+export function useAuthSafe() {
+  const context = useContext(AuthContext);
+  return {
+    isAuthenticated: context?.isAuthenticated ?? false,
+    user: context?.user ?? null,
+    loading: context?.loading ?? false,
+    initialized: context?.initialized ?? false,
+  };
+}
+
 // Props pour le provider
 interface AuthProviderProps {
   children: ReactNode;

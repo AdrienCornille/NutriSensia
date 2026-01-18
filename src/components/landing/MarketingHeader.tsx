@@ -4,8 +4,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Sparkles, ChevronRight } from 'lucide-react';
+import { X, Sparkles, ChevronRight, User } from 'lucide-react';
 import { useGlobalFirstVisit } from '@/hooks/useGlobalFirstVisit';
+import { useAuthSafe } from '@/contexts/AuthContext';
 
 /**
  * Navigation NutriSensia - Design Moderne Flottant
@@ -38,6 +39,7 @@ export function MarketingHeader({
   const [announcementInView, setAnnouncementInView] = useState(true); // Track if announcement bar is still on screen
   const pathname = usePathname();
   const { isFirstVisit } = useGlobalFirstVisit(); // Animations seulement à la première visite du SITE
+  const { isAuthenticated } = useAuthSafe(); // État d'authentification (safe pour SSG)
 
   // Height of the announcement bar
   const ANNOUNCEMENT_HEIGHT = 44;
@@ -467,65 +469,102 @@ export function MarketingHeader({
                 animate={{ opacity: 1, x: 0 }}
                 transition={getTransition(0.2)}
               >
-                {/* Login Button - Outline style matching CTA */}
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  style={{
-                    padding: '8px 16px',
-                    borderRadius: '20px',
-                    fontFamily:
-                      "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-                    fontSize: '13px',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                    border: '1.5px solid #1B998B',
-                    backgroundColor: 'transparent',
-                    color: '#1B998B',
-                  }}
-                  onClick={() => {
-                    window.location.href = '/auth/signin';
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.backgroundColor =
-                      'rgba(27, 153, 139, 0.1)';
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                  }}
-                >
-                  Connexion
-                </motion.button>
+                {isAuthenticated ? (
+                  /* Bouton "Accéder à mon espace" pour utilisateur connecté */
+                  <motion.button
+                    whileHover={{
+                      scale: 1.03,
+                      boxShadow: '0 6px 20px rgba(27, 153, 139, 0.3)',
+                    }}
+                    whileTap={{ scale: 0.97 }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '8px 20px',
+                      borderRadius: '20px',
+                      fontFamily:
+                        "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                      fontSize: '13px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      border: 'none',
+                      background:
+                        'linear-gradient(135deg, #1B998B 0%, #147569 100%)',
+                      color: '#fff',
+                      boxShadow: '0 2px 8px rgba(27, 153, 139, 0.2)',
+                    }}
+                    onClick={() => {
+                      window.location.href = '/dashboard';
+                    }}
+                  >
+                    <User style={{ width: '16px', height: '16px' }} />
+                    Accéder à mon espace
+                  </motion.button>
+                ) : (
+                  <>
+                    {/* Login Button - Outline style matching CTA */}
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      style={{
+                        padding: '8px 16px',
+                        borderRadius: '20px',
+                        fontFamily:
+                          "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                        fontSize: '13px',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        border: '1.5px solid #1B998B',
+                        backgroundColor: 'transparent',
+                        color: '#1B998B',
+                      }}
+                      onClick={() => {
+                        window.location.href = '/auth/signin';
+                      }}
+                      onMouseEnter={e => {
+                        e.currentTarget.style.backgroundColor =
+                          'rgba(27, 153, 139, 0.1)';
+                      }}
+                      onMouseLeave={e => {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                      }}
+                    >
+                      Connexion
+                    </motion.button>
 
-                {/* CTA Button - Prominent */}
-                <motion.button
-                  whileHover={{
-                    scale: 1.03,
-                    boxShadow: '0 6px 20px rgba(27, 153, 139, 0.3)',
-                  }}
-                  whileTap={{ scale: 0.97 }}
-                  style={{
-                    padding: '8px 20px',
-                    borderRadius: '20px',
-                    fontFamily:
-                      "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-                    fontSize: '13px',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                    border: 'none',
-                    background:
-                      'linear-gradient(135deg, #1B998B 0%, #147569 100%)',
-                    color: '#fff',
-                    boxShadow: '0 2px 8px rgba(27, 153, 139, 0.2)',
-                  }}
-                  onClick={() => {
-                    window.location.href = '/auth/signup';
-                  }}
-                >
-                  Commencer
-                </motion.button>
+                    {/* CTA Button - Prominent */}
+                    <motion.button
+                      whileHover={{
+                        scale: 1.03,
+                        boxShadow: '0 6px 20px rgba(27, 153, 139, 0.3)',
+                      }}
+                      whileTap={{ scale: 0.97 }}
+                      style={{
+                        padding: '8px 20px',
+                        borderRadius: '20px',
+                        fontFamily:
+                          "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                        fontSize: '13px',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        border: 'none',
+                        background:
+                          'linear-gradient(135deg, #1B998B 0%, #147569 100%)',
+                        color: '#fff',
+                        boxShadow: '0 2px 8px rgba(27, 153, 139, 0.2)',
+                      }}
+                      onClick={() => {
+                        window.location.href = '/auth/signup';
+                      }}
+                    >
+                      Commencer
+                    </motion.button>
+                  </>
+                )}
               </motion.div>
 
               {/* Mobile Menu Button */}
@@ -764,53 +803,88 @@ export function MarketingHeader({
                     gap: '10px',
                   }}
                 >
-                  <button
-                    style={{
-                      width: '100%',
-                      padding: '12px 20px',
-                      borderRadius: '14px',
-                      fontFamily:
-                        "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-                      fontSize: '14px',
-                      fontWeight: 600,
-                      backgroundColor: 'transparent',
-                      color: '#1B998B',
-                      border: '2px solid #1B998B',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                    }}
-                    onClick={() => {
-                      closeMobileMenu();
-                      window.location.href = '/auth/signin';
-                    }}
-                  >
-                    Se connecter
-                  </button>
+                  {isAuthenticated ? (
+                    /* Bouton "Accéder à mon espace" pour utilisateur connecté */
+                    <button
+                      style={{
+                        width: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                        padding: '12px 20px',
+                        borderRadius: '14px',
+                        fontFamily:
+                          "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                        fontSize: '14px',
+                        fontWeight: 600,
+                        background:
+                          'linear-gradient(135deg, #1B998B 0%, #147569 100%)',
+                        color: '#fff',
+                        border: 'none',
+                        cursor: 'pointer',
+                        boxShadow: '0 4px 16px rgba(27, 153, 139, 0.25)',
+                        transition: 'all 0.2s ease',
+                      }}
+                      onClick={() => {
+                        closeMobileMenu();
+                        window.location.href = '/dashboard';
+                      }}
+                    >
+                      <User style={{ width: '18px', height: '18px' }} />
+                      Accéder à mon espace
+                    </button>
+                  ) : (
+                    <>
+                      <button
+                        style={{
+                          width: '100%',
+                          padding: '12px 20px',
+                          borderRadius: '14px',
+                          fontFamily:
+                            "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                          fontSize: '14px',
+                          fontWeight: 600,
+                          backgroundColor: 'transparent',
+                          color: '#1B998B',
+                          border: '2px solid #1B998B',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease',
+                        }}
+                        onClick={() => {
+                          closeMobileMenu();
+                          window.location.href = '/auth/signin';
+                        }}
+                      >
+                        Se connecter
+                      </button>
 
-                  <button
-                    style={{
-                      width: '100%',
-                      padding: '12px 20px',
-                      borderRadius: '14px',
-                      fontFamily:
-                        "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-                      fontSize: '14px',
-                      fontWeight: 600,
-                      background:
-                        'linear-gradient(135deg, #1B998B 0%, #147569 100%)',
-                      color: '#fff',
-                      border: 'none',
-                      cursor: 'pointer',
-                      boxShadow: '0 4px 16px rgba(27, 153, 139, 0.25)',
-                      transition: 'all 0.2s ease',
-                    }}
-                    onClick={() => {
-                      closeMobileMenu();
-                      window.location.href = '/auth/signup';
-                    }}
-                  >
-                    Commencer maintenant
-                  </button>
+                      <button
+                        style={{
+                          width: '100%',
+                          padding: '12px 20px',
+                          borderRadius: '14px',
+                          fontFamily:
+                            "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                          fontSize: '14px',
+                          fontWeight: 600,
+                          background:
+                            'linear-gradient(135deg, #1B998B 0%, #147569 100%)',
+                          color: '#fff',
+                          border: 'none',
+                          cursor: 'pointer',
+                          boxShadow: '0 4px 16px rgba(27, 153, 139, 0.25)',
+                          transition: 'all 0.2s ease',
+                        }}
+                        onClick={() => {
+                          closeMobileMenu();
+                          window.location.href = '/auth/signup';
+                        }}
+                      >
+                        Commencer maintenant
+                      </button>
+                    </>
+                  )}
                 </motion.div>
               </nav>
             </motion.div>

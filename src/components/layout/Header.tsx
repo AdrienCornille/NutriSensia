@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
+import { useAuthSafe } from '@/contexts/AuthContext';
 
 interface HeaderProps {
   className?: string;
@@ -11,6 +12,7 @@ interface HeaderProps {
 export function Header({ className = '' }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { isAuthenticated } = useAuthSafe();
 
   // Détection du scroll pour ajuster l'opacité du header
   useEffect(() => {
@@ -157,25 +159,51 @@ export function Header({ className = '' }: HeaderProps) {
 
             {/* Boutons à droite - Desktop */}
             <div className='hidden lg:flex items-center space-x-3 flex-shrink-0'>
-              <Link href='/auth/signin'>
-                <Button
-                  variant='ghost'
-                  size='sm'
-                  className='relative overflow-hidden backdrop-blur-xl bg-white/30 hover:bg-white/50 border border-white/40 text-gray-700 hover:text-gray-900 font-semibold shadow-md hover:shadow-lg transition-all duration-200'
-                >
-                  Se connecter
-                </Button>
-              </Link>
-              <Link href='/auth/signup'>
-                <Button
-                  size='sm'
-                  className='relative overflow-hidden bg-gradient-to-r from-primary to-secondary hover:from-primary-dark hover:to-secondary text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 ring-2 ring-white/30'
-                >
-                  <span className='relative z-10'>Commencer</span>
-                  {/* Effet de brillance sur le bouton */}
-                  <div className='absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700' />
-                </Button>
-              </Link>
+              {isAuthenticated ? (
+                <Link href='/dashboard'>
+                  <Button
+                    size='sm'
+                    className='relative overflow-hidden bg-gradient-to-r from-primary to-secondary hover:from-primary-dark hover:to-secondary text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 ring-2 ring-white/30 flex items-center gap-2'
+                  >
+                    <svg
+                      className='w-4 h-4'
+                      fill='none'
+                      stroke='currentColor'
+                      viewBox='0 0 24 24'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'
+                      />
+                    </svg>
+                    <span className='relative z-10'>Accéder à mon espace</span>
+                  </Button>
+                </Link>
+              ) : (
+                <>
+                  <Link href='/auth/signin'>
+                    <Button
+                      variant='ghost'
+                      size='sm'
+                      className='relative overflow-hidden backdrop-blur-xl bg-white/30 hover:bg-white/50 border border-white/40 text-gray-700 hover:text-gray-900 font-semibold shadow-md hover:shadow-lg transition-all duration-200'
+                    >
+                      Se connecter
+                    </Button>
+                  </Link>
+                  <Link href='/auth/signup'>
+                    <Button
+                      size='sm'
+                      className='relative overflow-hidden bg-gradient-to-r from-primary to-secondary hover:from-primary-dark hover:to-secondary text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 ring-2 ring-white/30'
+                    >
+                      <span className='relative z-10'>Commencer</span>
+                      {/* Effet de brillance sur le bouton */}
+                      <div className='absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700' />
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
 
             {/* Bouton menu burger - Mobile/Tablet */}
@@ -308,27 +336,54 @@ export function Header({ className = '' }: HeaderProps) {
 
           {/* Boutons d'action mobile */}
           <div className='p-6 border-t border-gray-200 space-y-3'>
-            <Link
-              href='/auth/signin'
-              onClick={() => setMobileMenuOpen(false)}
-              className='block'
-            >
-              <Button
-                variant='ghost'
-                className='w-full bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-gray-900 font-semibold'
+            {isAuthenticated ? (
+              <Link
+                href='/dashboard'
+                onClick={() => setMobileMenuOpen(false)}
+                className='block'
               >
-                Se connecter
-              </Button>
-            </Link>
-            <Link
-              href='/auth/signup'
-              onClick={() => setMobileMenuOpen(false)}
-              className='block'
-            >
-              <Button className='w-full bg-gradient-to-r from-primary to-secondary hover:from-primary-dark hover:to-secondary text-white font-semibold shadow-lg'>
-                Commencer
-              </Button>
-            </Link>
+                <Button className='w-full bg-gradient-to-r from-primary to-secondary hover:from-primary-dark hover:to-secondary text-white font-semibold shadow-lg flex items-center justify-center gap-2'>
+                  <svg
+                    className='w-4 h-4'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'
+                    />
+                  </svg>
+                  Accéder à mon espace
+                </Button>
+              </Link>
+            ) : (
+              <>
+                <Link
+                  href='/auth/signin'
+                  onClick={() => setMobileMenuOpen(false)}
+                  className='block'
+                >
+                  <Button
+                    variant='ghost'
+                    className='w-full bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-gray-900 font-semibold'
+                  >
+                    Se connecter
+                  </Button>
+                </Link>
+                <Link
+                  href='/auth/signup'
+                  onClick={() => setMobileMenuOpen(false)}
+                  className='block'
+                >
+                  <Button className='w-full bg-gradient-to-r from-primary to-secondary hover:from-primary-dark hover:to-secondary text-white font-semibold shadow-lg'>
+                    Commencer
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>
