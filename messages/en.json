@@ -316,5 +316,107 @@
     "lunch": "Lunch",
     "dinner": "Dinner",
     "snack": "Snack"
+  },
+  "MealLogging": {
+    "title": "Log a meal",
+    "back": "Back",
+    "step": "Step {current}/{total}",
+    "steps": {
+      "mealType": "Meal type",
+      "addFoods": "Foods",
+      "photoNotes": "Photo & Notes"
+    },
+    "mealTypes": {
+      "breakfast": {
+        "label": "Breakfast",
+        "time": "7:00 - 9:00 AM"
+      },
+      "lunch": {
+        "label": "Lunch",
+        "time": "12:00 - 2:00 PM"
+      },
+      "dinner": {
+        "label": "Dinner",
+        "time": "7:00 - 9:00 PM"
+      },
+      "snack": {
+        "label": "Snack",
+        "time": "Anytime"
+      }
+    },
+    "selectMealType": "What meal would you like to log?",
+    "duplicate": {
+      "title": "Or duplicate a previous meal",
+      "action": "Duplicate"
+    },
+    "search": {
+      "placeholder": "Search for a food...",
+      "scanner": "Scan",
+      "results": "Results for \"{query}\"",
+      "searching": "Searching...",
+      "noResults": "No results found",
+      "recentFavorites": "Recent & Favorites"
+    },
+    "foods": {
+      "added": "Added foods",
+      "count": "{count} food(s)",
+      "empty": "No food added"
+    },
+    "portion": {
+      "title": "Quantity",
+      "standard": "Standard portions",
+      "preview": "For {quantity}{unit}",
+      "units": {
+        "g": "grams",
+        "ml": "ml",
+        "portion": "unit(s)"
+      },
+      "presets": {
+        "full": "1 serving",
+        "half": "1/2 serving",
+        "handful": "1 handful",
+        "tablespoon": "1 tablespoon"
+      }
+    },
+    "nutrition": {
+      "totalVsPlan": "Total vs Plan ({meal})",
+      "calories": "Calories",
+      "protein": "Protein",
+      "carbs": "Carbs",
+      "fat": "Fat"
+    },
+    "photo": {
+      "title": "Meal photo (optional)",
+      "dropzone": "Add a photo",
+      "hint": "Drag and drop or click to browse"
+    },
+    "notes": {
+      "title": "Notes (optional)",
+      "placeholder": "Meal context, feelings, observations..."
+    },
+    "context": {
+      "title": "Context (optional)",
+      "tags": {
+        "home": "At home",
+        "work": "At work",
+        "restaurant": "Restaurant",
+        "family": "With family",
+        "friends": "With friends",
+        "alone": "Alone"
+      }
+    },
+    "summary": {
+      "title": "Summary"
+    },
+    "actions": {
+      "back": "Back",
+      "continue": "Continue",
+      "submit": "Log meal",
+      "submitting": "Saving...",
+      "cancel": "Cancel",
+      "add": "Add"
+    },
+    "success": "Meal logged!",
+    "error": "Error while saving"
   }
 }

@@ -1,14 +1,10 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from '@/i18n/navigation';
-import { AuthGuard } from '@/components/auth/AuthGuard';
 import { useAuth } from '@/contexts/AuthContext';
 import {
-  Home,
   UtensilsCrossed,
-  ClipboardList,
   TrendingUp,
   FolderOpen,
   Calendar,
@@ -16,15 +12,12 @@ import {
   Apple,
   MessageSquare,
   Star,
-  HelpCircle,
-  User,
   Bell,
   Droplets,
   Flame,
   Target,
   ArrowRight,
   Check,
-  LogOut,
   AlertCircle,
   CheckCircle2,
   Settings,
@@ -51,13 +44,6 @@ import {
  */
 
 // ==================== TYPES ====================
-
-interface NavItem {
-  id: string;
-  label: string;
-  icon: React.ReactNode;
-  badge?: number;
-}
 
 // DASH-002: Type pour les entrées d'hydratation
 interface WaterLogEntry {
@@ -502,25 +488,7 @@ function getObjectiveCategoryInfo(category: ObjectiveCategory): {
   }
 }
 
-// Navigation principale (le badge messagerie est ajouté dynamiquement via useMemo)
-const baseNavItems: Omit<NavItem, 'badge'>[] = [
-  { id: 'dashboard', label: 'Dashboard', icon: <Home className="w-5 h-5" /> },
-  { id: 'repas', label: 'Repas', icon: <UtensilsCrossed className="w-5 h-5" /> },
-  { id: 'plan', label: 'Plan alimentaire', icon: <ClipboardList className="w-5 h-5" /> },
-  { id: 'suivi', label: 'Suivi', icon: <TrendingUp className="w-5 h-5" /> },
-  { id: 'dossier', label: 'Mon dossier', icon: <FolderOpen className="w-5 h-5" /> },
-  { id: 'agenda', label: 'Agenda', icon: <Calendar className="w-5 h-5" /> },
-  { id: 'recettes', label: 'Recettes', icon: <ChefHat className="w-5 h-5" /> },
-  { id: 'aliments', label: 'Base aliments', icon: <Apple className="w-5 h-5" /> },
-  { id: 'messagerie', label: 'Messagerie', icon: <MessageSquare className="w-5 h-5" /> },
-  { id: 'contenu', label: 'Contenu exclusif', icon: <Star className="w-5 h-5" /> },
-];
 
-// Navigation secondaire
-const navItemsBottom: NavItem[] = [
-  { id: 'aide', label: 'Aide', icon: <HelpCircle className="w-5 h-5" /> },
-  { id: 'profil', label: 'Profil', icon: <User className="w-5 h-5" /> },
-];
 
 // ==================== MOCK DATA ====================
 // Ces données seront remplacées par des appels API en temps réel
@@ -842,21 +810,10 @@ const quickAccess = [
 ];
 
 function DashboardContent() {
-  const { user, signOut } = useAuth();
-  const [activeNav, setActiveNav] = useState('dashboard');
+  const { user } = useAuth();
 
   // DASH-006: État pour les messages (sera remplacé par un hook de fetch temps réel)
   const [messagesData, setMessagesData] = useState<MessagesData>(mockMessagesData);
-
-  // DASH-006: Navigation avec badge dynamique basé sur les messages non lus
-  const navItems: NavItem[] = useMemo(() => {
-    return baseNavItems.map(item => {
-      if (item.id === 'messagerie' && messagesData.unreadCount > 0) {
-        return { ...item, badge: messagesData.unreadCount };
-      }
-      return item as NavItem;
-    });
-  }, [messagesData.unreadCount]);
 
   // État des données nutritionnelles (sera remplacé par un hook de fetch)
   // TODO: Remplacer par useQuery ou useSWR pour les mises à jour temps réel
@@ -1053,9 +1010,6 @@ function DashboardContent() {
                     user?.user_metadata?.full_name?.split(' ')[0] ||
                     'Jean';
 
-  const userEmail = user?.email || 'utilisateur@email.ch';
-  const userInitials = firstName.charAt(0).toUpperCase() + (user?.user_metadata?.last_name?.charAt(0)?.toUpperCase() || 'D');
-
   // Date formatée
   const today = new Date();
   const formattedDate = today.toLocaleDateString('fr-FR', {
@@ -1065,106 +1019,8 @@ function DashboardContent() {
     year: 'numeric',
   });
 
-  const handleSignOut = async () => {
-    await signOut();
-    window.location.href = '/';
-  };
-
   return (
-    <div className="min-h-screen bg-gray-100 flex">
-      {/* Sidebar Navigation */}
-      <aside className="w-64 bg-white border-r border-gray-200 flex flex-col fixed h-full">
-        {/* Logo */}
-        <div className="p-6 border-b border-gray-200">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#1B998B] rounded-lg flex items-center justify-center">
-              <img
-                src="/images/logo-icon-white.png"
-                alt="NutriSensia"
-                className="w-6 h-6"
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none';
-                  e.currentTarget.parentElement!.innerHTML = '<span class="text-white font-bold text-lg">N</span>';
-                }}
-              />
-            </div>
-            <span className="font-semibold text-gray-800 text-lg">NutriSensia</span>
-          </Link>
-        </div>
-
-        {/* Navigation principale */}
-        <nav className="flex-1 p-4 overflow-y-auto">
-          <ul className="space-y-1">
-            {navItems.map((item) => (
-              <li key={item.id}>
-                <button
-                  onClick={() => setActiveNav(item.id)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors ${
-                    activeNav === item.id
-                      ? 'bg-[#1B998B]/10 text-[#1B998B] font-medium'
-                      : 'text-gray-600 hover:bg-gray-50'
-                  }`}
-                >
-                  {item.icon}
-                  <span className="text-sm">{item.label}</span>
-                  {item.badge && (
-                    <span className="ml-auto bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
-                      {item.badge}
-                    </span>
-                  )}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
-        {/* Navigation secondaire */}
-        <div className="p-4 border-t border-gray-200">
-          <ul className="space-y-1">
-            {navItemsBottom.map((item) => (
-              <li key={item.id}>
-                <button
-                  onClick={() => setActiveNav(item.id)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors ${
-                    activeNav === item.id
-                      ? 'bg-[#1B998B]/10 text-[#1B998B] font-medium'
-                      : 'text-gray-600 hover:bg-gray-50'
-                  }`}
-                >
-                  {item.icon}
-                  <span className="text-sm">{item.label}</span>
-                </button>
-              </li>
-            ))}
-            {/* Bouton déconnexion */}
-            <li>
-              <button
-                onClick={handleSignOut}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors text-gray-600 hover:bg-red-50 hover:text-red-600"
-              >
-                <LogOut className="w-5 h-5" />
-                <span className="text-sm">Déconnexion</span>
-              </button>
-            </li>
-          </ul>
-        </div>
-
-        {/* User info */}
-        <div className="p-4 border-t border-gray-200">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-gray-600 font-medium">
-              {userInitials}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-800 truncate">{firstName}</p>
-              <p className="text-xs text-gray-500 truncate">{userEmail}</p>
-            </div>
-          </div>
-        </div>
-      </aside>
-
-      {/* Main Content */}
-      <main className="flex-1 flex flex-col ml-64">
+      <main className="flex-1 flex flex-col">
         {/* Header */}
         <header className="bg-white border-b border-gray-200 px-8 py-4 sticky top-0 z-10">
           <div className="flex items-center justify-between">
@@ -1951,7 +1807,7 @@ function DashboardContent() {
 
                     {/* Lien vers l'agenda */}
                     <button
-                      onClick={() => setActiveNav('agenda')}
+                      onClick={() => {}}
                       className="w-full py-2.5 text-sm text-[#1B998B] font-medium hover:bg-[#1B998B]/5 rounded-lg transition-colors flex items-center justify-center gap-1"
                     >
                       <Calendar className="w-4 h-4" />
@@ -1972,7 +1828,7 @@ function DashboardContent() {
                       Prenez rendez-vous avec votre nutritionniste
                     </p>
                     <button
-                      onClick={() => setActiveNav('agenda')}
+                      onClick={() => {}}
                       className="inline-flex items-center gap-2 px-4 py-2 bg-[#1B998B] text-white text-sm font-medium rounded-lg hover:bg-[#147569] transition-colors"
                     >
                       <Calendar className="w-4 h-4" />
@@ -2020,7 +1876,7 @@ function DashboardContent() {
                           ? 'bg-[#1B998B]/5 hover:bg-[#1B998B]/10'
                           : 'bg-gray-50 hover:bg-gray-100'
                       }`}
-                      onClick={() => setActiveNav('messagerie')}
+                      onClick={() => {}}
                     >
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-medium flex-shrink-0 ${
                         message.senderRole === 'nutritionist' ? 'bg-[#1B998B]' : 'bg-blue-500'
@@ -2058,7 +1914,7 @@ function DashboardContent() {
                 )}
 
                 <button
-                  onClick={() => setActiveNav('messagerie')}
+                  onClick={() => {}}
                   className="w-full py-2.5 mt-3 text-sm text-[#1B998B] font-medium hover:bg-[#1B998B]/5 rounded-lg transition-colors flex items-center justify-center gap-1"
                 >
                   <MessageSquare className="w-4 h-4" />
@@ -2344,14 +2200,9 @@ function DashboardContent() {
           </section>
         </div>
       </main>
-    </div>
   );
 }
 
 export default function DashboardPage() {
-  return (
-    <AuthGuard>
-      <DashboardContent />
-    </AuthGuard>
-  );
+  return <DashboardContent />;
 }

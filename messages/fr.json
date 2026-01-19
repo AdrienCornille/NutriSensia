@@ -522,5 +522,107 @@
       "successMessage": "Votre demande a été envoyée avec succès. N'oubliez pas de vérifier votre boîte de réception pour recevoir votre plan alimentaire !",
       "okButton": "OK"
     }
+  },
+  "MealLogging": {
+    "title": "Enregistrer un repas",
+    "back": "Retour",
+    "step": "Étape {current}/{total}",
+    "steps": {
+      "mealType": "Type de repas",
+      "addFoods": "Aliments",
+      "photoNotes": "Photo & Notes"
+    },
+    "mealTypes": {
+      "breakfast": {
+        "label": "Petit-déjeuner",
+        "time": "7:00 - 9:00"
+      },
+      "lunch": {
+        "label": "Déjeuner",
+        "time": "12:00 - 14:00"
+      },
+      "dinner": {
+        "label": "Dîner",
+        "time": "19:00 - 21:00"
+      },
+      "snack": {
+        "label": "Collation",
+        "time": "À tout moment"
+      }
+    },
+    "selectMealType": "Quel repas souhaitez-vous enregistrer ?",
+    "duplicate": {
+      "title": "Ou dupliquer un repas précédent",
+      "action": "Dupliquer"
+    },
+    "search": {
+      "placeholder": "Rechercher un aliment...",
+      "scanner": "Scanner",
+      "results": "Résultats pour \"{query}\"",
+      "searching": "Recherche en cours...",
+      "noResults": "Aucun résultat trouvé",
+      "recentFavorites": "Récents & Favoris"
+    },
+    "foods": {
+      "added": "Aliments ajoutés",
+      "count": "{count} aliment(s)",
+      "empty": "Aucun aliment ajouté"
+    },
+    "portion": {
+      "title": "Quantité",
+      "standard": "Portions standards",
+      "preview": "Pour {quantity}{unit}",
+      "units": {
+        "g": "grammes",
+        "ml": "ml",
+        "portion": "unité(s)"
+      },
+      "presets": {
+        "full": "1 portion",
+        "half": "1/2 portion",
+        "handful": "1 poignée",
+        "tablespoon": "1 c. à soupe"
+      }
+    },
+    "nutrition": {
+      "totalVsPlan": "Total vs Plan ({meal})",
+      "calories": "Calories",
+      "protein": "Protéines",
+      "carbs": "Glucides",
+      "fat": "Lipides"
+    },
+    "photo": {
+      "title": "Photo du repas (optionnel)",
+      "dropzone": "Ajouter une photo",
+      "hint": "Glisser-déposer ou cliquer pour parcourir"
+    },
+    "notes": {
+      "title": "Notes (optionnel)",
+      "placeholder": "Contexte du repas, ressenti, observations..."
+    },
+    "context": {
+      "title": "Contexte (optionnel)",
+      "tags": {
+        "home": "À la maison",
+        "work": "Au travail",
+        "restaurant": "Restaurant",
+        "family": "En famille",
+        "friends": "Entre amis",
+        "alone": "Seul(e)"
+      }
+    },
+    "summary": {
+      "title": "Récapitulatif"
+    },
+    "actions": {
+      "back": "Retour",
+      "continue": "Continuer",
+      "submit": "Enregistrer le repas",
+      "submitting": "Enregistrement...",
+      "cancel": "Annuler",
+      "add": "Ajouter"
+    },
+    "success": "Repas enregistré !",
+    "error": "Erreur lors de l'enregistrement"
   }
 }
