@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from '@/i18n/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   UtensilsCrossed,
@@ -1031,10 +1032,15 @@ function DashboardContent() {
               <p className="text-gray-500 text-sm mt-1 capitalize">{formattedDate}</p>
             </div>
             <div className="flex items-center gap-4">
-              <button className="p-2 text-gray-400 hover:text-gray-600 relative">
+              <Link
+                href="/dashboard/notifications"
+                className="block p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg relative transition-colors"
+              >
                 <Bell className="w-6 h-6" />
-                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-              </button>
+                <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                  3
+                </span>
+              </Link>
             </div>
           </div>
         </header>

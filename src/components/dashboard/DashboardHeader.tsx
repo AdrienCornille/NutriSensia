@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Bell } from 'lucide-react';
+import { Link } from '@/i18n/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface DashboardHeaderProps {
@@ -9,6 +10,7 @@ interface DashboardHeaderProps {
   subtitle?: string;
   showGreeting?: boolean;
   showNotifications?: boolean;
+  unreadNotificationsCount?: number;
   children?: React.ReactNode;
 }
 
@@ -17,6 +19,7 @@ export function DashboardHeader({
   subtitle,
   showGreeting = true,
   showNotifications = true,
+  unreadNotificationsCount = 3, // Default mock value
   children,
 }: DashboardHeaderProps) {
   const { user } = useAuth();
@@ -59,10 +62,17 @@ export function DashboardHeader({
         <div className="flex items-center gap-4">
           {children}
           {showNotifications && (
-            <button className="p-2 text-gray-400 hover:text-gray-600 relative">
+            <Link
+              href="/dashboard/notifications"
+              className="block p-2 text-gray-400 hover:text-gray-600 relative rounded-lg hover:bg-gray-100 transition-colors"
+            >
               <Bell className="w-6 h-6" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-            </button>
+              {unreadNotificationsCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                  {unreadNotificationsCount > 9 ? '9+' : unreadNotificationsCount}
+                </span>
+              )}
+            </Link>
           )}
         </div>
       </div>

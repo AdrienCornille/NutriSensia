@@ -29,6 +29,11 @@ export const routing = defineRouting({
     '/settings': '/settings',
     '/onboarding': '/onboarding',
     '/dashboard': '/dashboard',
+    '/dashboard/agenda': '/dashboard/agenda',
+    '/dashboard/dossier': '/dashboard/dossier',
+    '/dashboard/plan': '/dashboard/plan',
+    '/dashboard/repas': '/dashboard/repas',
+    '/dashboard/suivi': '/dashboard/suivi',
 
     // Pages avec chemins différents selon la langue
     '/about': {

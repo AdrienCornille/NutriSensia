@@ -35,18 +35,18 @@ const baseNavItems: Omit<NavItem, 'badge'>[] = [
   { id: 'dashboard', label: 'Dashboard', icon: <Home className="w-5 h-5" />, href: '/dashboard' },
   { id: 'repas', label: 'Repas', icon: <UtensilsCrossed className="w-5 h-5" />, href: '/dashboard/repas' },
   { id: 'plan', label: 'Plan alimentaire', icon: <ClipboardList className="w-5 h-5" />, href: '/dashboard/plan' },
-  { id: 'suivi', label: 'Suivi', icon: <TrendingUp className="w-5 h-5" /> },
-  { id: 'dossier', label: 'Mon dossier', icon: <FolderOpen className="w-5 h-5" /> },
-  { id: 'agenda', label: 'Agenda', icon: <Calendar className="w-5 h-5" /> },
-  { id: 'recettes', label: 'Recettes', icon: <ChefHat className="w-5 h-5" /> },
-  { id: 'aliments', label: 'Base aliments', icon: <Apple className="w-5 h-5" /> },
-  { id: 'messagerie', label: 'Messagerie', icon: <MessageSquare className="w-5 h-5" /> },
-  { id: 'contenu', label: 'Contenu exclusif', icon: <Star className="w-5 h-5" /> },
+  { id: 'suivi', label: 'Suivi', icon: <TrendingUp className="w-5 h-5" />, href: '/dashboard/suivi' },
+  { id: 'dossier', label: 'Mon dossier', icon: <FolderOpen className="w-5 h-5" />, href: '/dashboard/dossier' },
+  { id: 'agenda', label: 'Agenda', icon: <Calendar className="w-5 h-5" />, href: '/dashboard/agenda' },
+  { id: 'recettes', label: 'Recettes', icon: <ChefHat className="w-5 h-5" />, href: '/dashboard/recettes' },
+  { id: 'aliments', label: 'Base aliments', icon: <Apple className="w-5 h-5" />, href: '/dashboard/aliments' },
+  { id: 'messagerie', label: 'Messagerie', icon: <MessageSquare className="w-5 h-5" />, href: '/dashboard/messagerie' },
+  { id: 'contenu', label: 'Contenu exclusif', icon: <Star className="w-5 h-5" />, href: '/dashboard/contenu' },
 ];
 
 const navItemsBottom: NavItem[] = [
   { id: 'aide', label: 'Aide', icon: <HelpCircle className="w-5 h-5" /> },
-  { id: 'profil', label: 'Profil', icon: <User className="w-5 h-5" /> },
+  { id: 'profil', label: 'Profil', icon: <User className="w-5 h-5" />, href: '/dashboard/profil' },
 ];
 
 // ==================== COMPONENT ====================
@@ -75,7 +75,13 @@ export function DashboardSidebar({ unreadMessagesCount = 0 }: DashboardSidebarPr
     if (pathname?.includes('/dashboard/repas')) return 'repas';
     if (pathname?.includes('/dashboard/plan')) return 'plan';
     if (pathname?.includes('/dashboard/suivi')) return 'suivi';
+    if (pathname?.includes('/dashboard/dossier')) return 'dossier';
+    if (pathname?.includes('/dashboard/agenda')) return 'agenda';
+    if (pathname?.includes('/dashboard/messagerie')) return 'messagerie';
     if (pathname?.includes('/dashboard/recettes')) return 'recettes';
+    if (pathname?.includes('/dashboard/aliments')) return 'aliments';
+    if (pathname?.includes('/dashboard/contenu')) return 'contenu';
+    if (pathname?.includes('/dashboard/profil')) return 'profil';
     if (pathname === '/dashboard' || pathname === '/fr/dashboard' || pathname === '/en/dashboard') return 'dashboard';
     return activeNav;
   }, [pathname, activeNav]);
@@ -170,17 +176,31 @@ export function DashboardSidebar({ unreadMessagesCount = 0 }: DashboardSidebarPr
         <ul className="space-y-1">
           {navItemsBottom.map((item) => (
             <li key={item.id}>
-              <button
-                onClick={() => setActiveNav(item.id)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors ${
-                  isActive(item.id)
-                    ? 'bg-[#1B998B]/10 text-[#1B998B] font-medium'
-                    : 'text-gray-600 hover:bg-gray-50'
-                }`}
-              >
-                {item.icon}
-                <span className="text-sm">{item.label}</span>
-              </button>
+              {item.href ? (
+                <Link
+                  href={item.href}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors ${
+                    isActive(item.id)
+                      ? 'bg-[#1B998B]/10 text-[#1B998B] font-medium'
+                      : 'text-gray-600 hover:bg-gray-50'
+                  }`}
+                >
+                  {item.icon}
+                  <span className="text-sm">{item.label}</span>
+                </Link>
+              ) : (
+                <button
+                  onClick={() => setActiveNav(item.id)}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors ${
+                    isActive(item.id)
+                      ? 'bg-[#1B998B]/10 text-[#1B998B] font-medium'
+                      : 'text-gray-600 hover:bg-gray-50'
+                  }`}
+                >
+                  {item.icon}
+                  <span className="text-sm">{item.label}</span>
+                </button>
+              )}
             </li>
           ))}
           {/* Bouton déconnexion */}
