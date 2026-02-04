@@ -10,21 +10,41 @@ const handleI18nRouting = createIntlMiddleware(routing);
 // Routes qui nécessitent une vérification d'auth (protégées)
 const PROTECTED_ROUTES = ['/profile', '/settings', '/admin', '/dashboard'];
 
+// Routes spécifiques par rôle
+const PATIENT_ROUTES = ['/dashboard/patient'];
+const NUTRITIONIST_ROUTES = ['/dashboard/nutritionist'];
+const ADMIN_ROUTES = ['/admin'];
+
+// Routes de redirection pour nutritionnistes en attente
+const NUTRITIONIST_PENDING_ROUTES = ['/inscription/nutritionniste/en-attente'];
+const NUTRITIONIST_REJECTED_ROUTES = ['/inscription/nutritionniste/rejete'];
+const NUTRITIONIST_INFO_REQUIRED_ROUTES = ['/inscription/nutritionniste/info-requise'];
+
+// Types
+type UserRole = 'patient' | 'nutritionist' | 'admin' | null;
+type NutritionistStatus = 'pending' | 'active' | 'rejected' | 'info_required' | 'suspended' | null;
+
+interface RoleCheckResult {
+  isAuthenticated: boolean;
+  role: UserRole;
+  nutritionistStatus: NutritionistStatus;
+}
+
 /**
- * Met à jour la session Supabase UNIQUEMENT pour les routes protégées
- * Évite les appels réseau inutiles sur les pages publiques
+ * Vérifie le rôle de l'utilisateur
  */
-async function updateSession(request: NextRequest, response: NextResponse) {
-  const pathname = request.nextUrl.pathname;
-
-  // Skip l'appel Supabase pour les pages publiques (performance)
-  const isProtectedRoute = PROTECTED_ROUTES.some(route => pathname.startsWith(route));
-  if (!isProtectedRoute) {
-    return response;
-  }
-
+async function checkUserRole(
+  request: NextRequest,
+  response: NextResponse
+): Promise<{ response: NextResponse; roleData: RoleCheckResult }> {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  const defaultResult: RoleCheckResult = {
+    isAuthenticated: false,
+    role: null,
+    nutritionistStatus: null,
+  };
 
   // Vérifier si Supabase est configuré
   if (
@@ -33,7 +53,7 @@ async function updateSession(request: NextRequest, response: NextResponse) {
     supabaseUrl === 'your_supabase_project_url' ||
     supabaseAnonKey === 'your_supabase_anon_key'
   ) {
-    return response;
+    return { response, roleData: defaultResult };
   }
 
   const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
@@ -50,12 +70,209 @@ async function updateSession(request: NextRequest, response: NextResponse) {
         });
       },
     },
+    cookieOptions: {
+      name: 'nutrisensia-auth',
+      domain:
+        process.env.NODE_ENV === 'production' ? '.nutrisensia.ch' : undefined,
+      path: '/',
+      sameSite: 'lax' as const,
+      secure: process.env.NODE_ENV === 'production',
+    },
   });
 
-  // Vérifier l'utilisateur uniquement sur les routes protégées
-  await supabase.auth.getUser();
+  // Récupérer l'utilisateur
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  return response;
+  if (!user) {
+    return { response, roleData: defaultResult };
+  }
+
+  // Récupérer le rôle depuis profiles
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+
+  const role = (profile?.role as UserRole) || 'patient';
+  let nutritionistStatus: NutritionistStatus = null;
+
+  // Si nutritionniste, récupérer le statut
+  if (role === 'nutritionist') {
+    const { data: nutritionistProfile } = await supabase
+      .from('nutritionist_profiles')
+      .select('status')
+      .eq('user_id', user.id)
+      .single();
+
+    nutritionistStatus = (nutritionistProfile?.status as NutritionistStatus) || 'pending';
+  }
+
+  return {
+    response,
+    roleData: {
+      isAuthenticated: true,
+      role,
+      nutritionistStatus,
+    },
+  };
+}
+
+/**
+ * Vérifie si le chemin correspond à une des routes
+ */
+function matchesRoutes(pathname: string, routes: string[]): boolean {
+  return routes.some(route => pathname.startsWith(route));
+}
+
+/**
+ * Extrait le préfixe de locale du chemin
+ */
+function getLocalePrefix(pathname: string): string {
+  const match = pathname.match(/^\/([a-z]{2})\//);
+  if (match && ['fr', 'en'].includes(match[1])) {
+    return `/${match[1]}`;
+  }
+  return '';
+}
+
+/**
+ * Retire le préfixe de locale du chemin
+ */
+function stripLocale(pathname: string): string {
+  return pathname.replace(/^\/[a-z]{2}(?=\/)/, '');
+}
+
+/**
+ * Gère les redirections basées sur le rôle
+ */
+function handleRoleBasedRedirect(
+  request: NextRequest,
+  roleData: RoleCheckResult
+): NextResponse | null {
+  const pathname = request.nextUrl.pathname;
+  const localePrefix = getLocalePrefix(pathname);
+  const cleanPath = stripLocale(pathname);
+
+  const { isAuthenticated, role, nutritionistStatus } = roleData;
+
+  // Routes protégées : rediriger vers connexion si non authentifié
+  if (!isAuthenticated && matchesRoutes(cleanPath, PROTECTED_ROUTES)) {
+    const url = request.nextUrl.clone();
+    url.pathname = `${localePrefix}/auth/signin`;
+    url.searchParams.set('redirectTo', pathname);
+    return NextResponse.redirect(url);
+  }
+
+  // Si non authentifié, pas de redirection supplémentaire
+  if (!isAuthenticated) {
+    return null;
+  }
+
+  // Gestion des nutritionnistes avec statut spécial
+  if (role === 'nutritionist') {
+    // Nutritionniste en attente de validation
+    if (nutritionistStatus === 'pending') {
+      // Autoriser l'accès à la page d'attente
+      if (matchesRoutes(cleanPath, NUTRITIONIST_PENDING_ROUTES)) {
+        return null;
+      }
+      // Rediriger toute autre page dashboard vers la page d'attente
+      if (matchesRoutes(cleanPath, ['/dashboard'])) {
+        const url = request.nextUrl.clone();
+        url.pathname = `${localePrefix}/inscription/nutritionniste/en-attente`;
+        return NextResponse.redirect(url);
+      }
+    }
+
+    // Nutritionniste rejeté
+    if (nutritionistStatus === 'rejected') {
+      if (matchesRoutes(cleanPath, NUTRITIONIST_REJECTED_ROUTES)) {
+        return null;
+      }
+      if (matchesRoutes(cleanPath, ['/dashboard'])) {
+        const url = request.nextUrl.clone();
+        url.pathname = `${localePrefix}/inscription/nutritionniste/rejete`;
+        return NextResponse.redirect(url);
+      }
+    }
+
+    // Nutritionniste avec demande d'info
+    if (nutritionistStatus === 'info_required') {
+      if (matchesRoutes(cleanPath, NUTRITIONIST_INFO_REQUIRED_ROUTES)) {
+        return null;
+      }
+      if (matchesRoutes(cleanPath, ['/dashboard'])) {
+        const url = request.nextUrl.clone();
+        url.pathname = `${localePrefix}/inscription/nutritionniste/info-requise`;
+        return NextResponse.redirect(url);
+      }
+    }
+
+    // Nutritionniste suspendu - traiter comme rejeté pour l'instant
+    if (nutritionistStatus === 'suspended') {
+      if (matchesRoutes(cleanPath, ['/dashboard'])) {
+        const url = request.nextUrl.clone();
+        url.pathname = `${localePrefix}/inscription/nutritionniste/rejete`;
+        return NextResponse.redirect(url);
+      }
+    }
+  }
+
+  // Redirection /dashboard vers le bon dashboard selon le rôle
+  if (cleanPath === '/dashboard' || cleanPath === '/dashboard/') {
+    const url = request.nextUrl.clone();
+
+    if (role === 'patient') {
+      url.pathname = `${localePrefix}/dashboard/patient`;
+      return NextResponse.redirect(url);
+    } else if (role === 'nutritionist' && nutritionistStatus === 'active') {
+      url.pathname = `${localePrefix}/dashboard/nutritionist`;
+      return NextResponse.redirect(url);
+    } else if (role === 'admin') {
+      url.pathname = `${localePrefix}/admin`;
+      return NextResponse.redirect(url);
+    }
+  }
+
+  // Protection des routes patient
+  if (matchesRoutes(cleanPath, PATIENT_ROUTES) && role !== 'patient') {
+    const url = request.nextUrl.clone();
+    if (role === 'nutritionist' && nutritionistStatus === 'active') {
+      url.pathname = `${localePrefix}/dashboard/nutritionist`;
+    } else if (role === 'admin') {
+      url.pathname = `${localePrefix}/admin`;
+    } else {
+      url.pathname = `${localePrefix}/dashboard`;
+    }
+    return NextResponse.redirect(url);
+  }
+
+  // Protection des routes nutritionniste
+  if (matchesRoutes(cleanPath, NUTRITIONIST_ROUTES)) {
+    if (role !== 'nutritionist' || nutritionistStatus !== 'active') {
+      const url = request.nextUrl.clone();
+      if (role === 'patient') {
+        url.pathname = `${localePrefix}/dashboard/patient`;
+      } else if (role === 'admin') {
+        url.pathname = `${localePrefix}/admin`;
+      } else {
+        url.pathname = `${localePrefix}/dashboard`;
+      }
+      return NextResponse.redirect(url);
+    }
+  }
+
+  // Protection des routes admin
+  if (matchesRoutes(cleanPath, ADMIN_ROUTES) && role !== 'admin') {
+    const url = request.nextUrl.clone();
+    url.pathname = `${localePrefix}/403`;
+    return NextResponse.redirect(url);
+  }
+
+  return null;
 }
 
 /**
@@ -64,19 +281,38 @@ async function updateSession(request: NextRequest, response: NextResponse) {
  * Gère :
  * 1. Internationalisation (next-intl)
  * 2. Rafraîchissement des sessions Supabase
- * 3. En-têtes de sécurité
+ * 3. Routage basé sur le rôle (AUTH-012)
+ * 4. En-têtes de sécurité
  */
 export async function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+  const cleanPath = stripLocale(pathname);
+
   // 1. D'abord, gérer l'internationalisation
   const intlResponse = handleI18nRouting(request);
 
   // Si next-intl retourne une réponse (redirection), on l'utilise comme base
   let response = intlResponse || NextResponse.next({ request });
 
-  // 2. Rafraîchir la session Supabase (met à jour les cookies si nécessaire)
-  response = await updateSession(request, response);
+  // 2. Vérifier le rôle uniquement pour les routes protégées (performance)
+  const isProtectedRoute = matchesRoutes(cleanPath, PROTECTED_ROUTES);
 
-  // 3. Ajouter des en-têtes de sécurité
+  if (isProtectedRoute) {
+    const { response: updatedResponse, roleData } = await checkUserRole(request, response);
+    response = updatedResponse;
+
+    // 3. Gérer les redirections basées sur le rôle
+    const roleRedirect = handleRoleBasedRedirect(request, roleData);
+    if (roleRedirect) {
+      // Copier les en-têtes de sécurité vers la redirection
+      roleRedirect.headers.set('X-Frame-Options', 'DENY');
+      roleRedirect.headers.set('X-Content-Type-Options', 'nosniff');
+      roleRedirect.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+      return roleRedirect;
+    }
+  }
+
+  // 4. Ajouter des en-têtes de sécurité
   response.headers.set('X-Frame-Options', 'DENY');
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
@@ -86,14 +322,15 @@ export async function middleware(request: NextRequest) {
   if (isDev) {
     response.headers.set(
       'Content-Security-Policy',
-      "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://app.cal.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: wss:; frame-src 'self' https://app.cal.com;"
+      "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://meet.jit.si; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: wss:; frame-src 'self' https://meet.jit.si;"
     );
   }
 
   // Logs de debug pour le développement
-  if (isDev) {
+  if (isDev && isProtectedRoute) {
     console.log('🔍 [Middleware Debug]', {
       pathname: request.nextUrl.pathname,
+      isProtectedRoute,
     });
   }
 

@@ -23,6 +23,7 @@ export { CancellationConfirmModal } from './detail/CancellationConfirmModal';
 
 // Booking modal components
 export { BookingModal } from './booking/BookingModal';
+export { BookingSuccessModal } from './booking/BookingSuccessModal';
 export { BookingStepIndicator } from './booking/BookingStepIndicator';
 export { BookingStepType } from './booking/BookingStepType';
 export { BookingStepSlot } from './booking/BookingStepSlot';

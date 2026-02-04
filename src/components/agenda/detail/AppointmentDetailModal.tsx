@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { X, FolderOpen } from 'lucide-react';
+import { X, FolderOpen, CalendarPlus } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
 import type { Appointment } from '@/types/agenda';
 import {
@@ -29,6 +29,36 @@ export function AppointmentDetailModal({
   onModify,
   onCancel,
 }: AppointmentDetailModalProps) {
+  // Fonction pour télécharger le fichier .ics
+  const handleAddToCalendar = async () => {
+    if (!appointment) return;
+
+    try {
+      const response = await fetch(`/api/protected/appointments/${appointment.id}/ics`);
+      if (!response.ok) {
+        throw new Error('Erreur lors du téléchargement');
+      }
+
+      // Récupérer le fichier et le télécharger
+      const blob = await response.blob();
+      const filename =
+        response.headers.get('Content-Disposition')?.match(/filename="(.+)"/)?.[1] ||
+        `nutrisensia-rdv-${appointment.id}.ics`;
+
+      // Créer un lien de téléchargement
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Erreur lors de l\'ajout au calendrier:', error);
+    }
+  };
+
   if (!isOpen || !appointment) return null;
 
   const modeConfig = appointmentModeConfig[appointment.mode];
@@ -122,6 +152,16 @@ export function AppointmentDetailModal({
               Rejoindre la visio
             </button>
           )}
+          {/* Bouton Ajouter au calendrier - toujours visible pour les RDV confirmés ou pending */}
+          {(appointment.status === 'confirmed' || appointment.status === 'pending') && (
+            <button
+              onClick={handleAddToCalendar}
+              className="w-full py-3 bg-blue-50 text-blue-700 font-medium rounded-xl hover:bg-blue-100 transition-colors flex items-center justify-center gap-2"
+            >
+              <CalendarPlus className="w-4 h-4" />
+              Ajouter au calendrier
+            </button>
+          )}
           {appointment.status === 'confirmed' && (
             <div className="flex gap-3">
               <button
@@ -156,7 +196,7 @@ export function AppointmentDetailModal({
           {appointment.status === 'completed' && (
             <div className="space-y-3">
               <Link
-                href={{ pathname: '/dashboard/dossier', query: { tab: 'consultations' } }}
+                href={{ pathname: '/dashboard/patient/dossier', query: { tab: 'consultations' } }}
                 className="w-full py-3 bg-[#1B998B] text-white font-medium rounded-xl hover:bg-[#158578] transition-colors flex items-center justify-center gap-2"
               >
                 <FolderOpen className="w-4 h-4" />
