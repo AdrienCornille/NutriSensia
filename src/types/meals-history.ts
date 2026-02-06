@@ -3,7 +3,12 @@
  * Page: /dashboard/repas
  */
 
-import type { MealType, SelectedFood, NutritionValues, MealContext } from './meals';
+import type {
+  MealType,
+  SelectedFood,
+  NutritionValues,
+  MealContext,
+} from './meals';
 
 // ==================== VIEW MODES ====================
 
@@ -19,6 +24,7 @@ export interface LoggedMeal {
   type: MealType;
   loggedAt: Date;
   foods: SelectedFood[];
+  foodCount?: number; // Nombre d'aliments (utilisé quand foods est vide pour performance)
   totalNutrition: NutritionValues;
   photoUrl?: string | null;
   notes?: string;
@@ -193,7 +199,8 @@ export function mealsHistoryReducer(
     case 'TOGGLE_MEAL_EXPANDED':
       return {
         ...state,
-        expandedMealId: state.expandedMealId === action.mealId ? null : action.mealId,
+        expandedMealId:
+          state.expandedMealId === action.mealId ? null : action.mealId,
       };
 
     case 'COLLAPSE_MEAL':
@@ -261,5 +268,5 @@ export const mealTypeConfigs: MealTypeConfig[] = [
 ];
 
 export function getMealTypeConfig(type: MealType): MealTypeConfig {
-  return mealTypeConfigs.find((c) => c.type === type) ?? mealTypeConfigs[0];
+  return mealTypeConfigs.find(c => c.type === type) ?? mealTypeConfigs[0];
 }

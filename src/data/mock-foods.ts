@@ -468,7 +468,7 @@ export const mockFoodDatabase: FoodItem[] = [
   },
   {
     id: 'food-72',
-    name: 'Jus d\'orange frais',
+    name: "Jus d'orange frais",
     emoji: '🧃',
     caloriesPer100g: 45,
     proteinPer100g: 0.7,
@@ -480,7 +480,7 @@ export const mockFoodDatabase: FoodItem[] = [
   // Oils & Fats
   {
     id: 'food-80',
-    name: 'Huile d\'olive',
+    name: "Huile d'olive",
     emoji: '🫒',
     caloriesPer100g: 884,
     proteinPer100g: 0,
@@ -503,17 +503,17 @@ export const mockFoodDatabase: FoodItem[] = [
 // ==================== RECENT & FAVORITE FOODS ====================
 
 export const mockRecentFoods: FoodItem[] = [
-  mockFoodDatabase.find((f) => f.id === 'food-21')!, // Salade verte
-  mockFoodDatabase.find((f) => f.id === 'food-3')!,  // Œufs brouillés
-  mockFoodDatabase.find((f) => f.id === 'food-12')!, // Pain complet
-  mockFoodDatabase.find((f) => f.id === 'food-30')!, // Yaourt nature
+  mockFoodDatabase.find(f => f.id === 'food-21')!, // Salade verte
+  mockFoodDatabase.find(f => f.id === 'food-3')!, // Œufs brouillés
+  mockFoodDatabase.find(f => f.id === 'food-12')!, // Pain complet
+  mockFoodDatabase.find(f => f.id === 'food-30')!, // Yaourt nature
 ];
 
 export const mockFavoriteFoods: FoodItem[] = [
-  mockFoodDatabase.find((f) => f.id === 'food-1')!,  // Blanc de poulet
-  mockFoodDatabase.find((f) => f.id === 'food-10')!, // Riz basmati
-  mockFoodDatabase.find((f) => f.id === 'food-20')!, // Brocoli
-  mockFoodDatabase.find((f) => f.id === 'food-40')!, // Pomme
+  mockFoodDatabase.find(f => f.id === 'food-1')!, // Blanc de poulet
+  mockFoodDatabase.find(f => f.id === 'food-10')!, // Riz basmati
+  mockFoodDatabase.find(f => f.id === 'food-20')!, // Brocoli
+  mockFoodDatabase.find(f => f.id === 'food-40')!, // Pomme
 ];
 
 // ==================== SEARCH FUNCTION ====================
@@ -562,7 +562,10 @@ function fuzzyMatch(text: string, query: string): boolean {
   for (const word of words) {
     // Allow more typos for longer queries
     const maxDistance = query.length <= 4 ? 1 : query.length <= 7 ? 2 : 3;
-    if (levenshteinDistance(word.slice(0, query.length + 2), normalizedQuery) <= maxDistance) {
+    if (
+      levenshteinDistance(word.slice(0, query.length + 2), normalizedQuery) <=
+      maxDistance
+    ) {
       return true;
     }
   }
@@ -584,7 +587,7 @@ export function searchFoods(query: string): FoodItem[] {
 
   return mockFoodDatabase
     .filter(
-      (food) =>
+      food =>
         fuzzyMatch(food.name, normalizedQuery) ||
         (food.brand && fuzzyMatch(food.brand, normalizedQuery))
     )
@@ -600,12 +603,12 @@ export function searchFoods(query: string): FoodItem[] {
  * Get food by ID
  */
 export function getFoodById(id: string): FoodItem | undefined {
-  return mockFoodDatabase.find((food) => food.id === id);
+  return mockFoodDatabase.find(food => food.id === id);
 }
 
 /**
  * Get food by barcode (mock - returns undefined for now)
  */
 export function getFoodByBarcode(barcode: string): FoodItem | undefined {
-  return mockFoodDatabase.find((food) => food.barcode === barcode);
+  return mockFoodDatabase.find(food => food.barcode === barcode);
 }

@@ -5,11 +5,12 @@ import { motion } from 'framer-motion';
 import { MealCard } from './MealCard';
 import type { MealType, SelectedFood } from '@/types/meals';
 import type { DailyMealsData, LoggedMeal } from '@/types/meals-history';
-import { formatDateLabel } from '@/data/mock-meals-history';
+import { formatDateLabel } from '@/lib/date-utils';
 
 interface DayViewProps {
   data: DailyMealsData;
   expandedMealId: string | null;
+  expandedMealDetails?: LoggedMeal | null;
   onToggleExpand: (mealId: string) => void;
   onAddMeal: (type: MealType) => void;
   onEditMeal?: (mealId: string) => void;
@@ -22,6 +23,7 @@ const mealTypes: MealType[] = ['breakfast', 'lunch', 'dinner', 'snack'];
 export function DayView({
   data,
   expandedMealId,
+  expandedMealDetails,
   onToggleExpand,
   onAddMeal,
   onEditMeal,
@@ -34,11 +36,11 @@ export function DayView({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.2 }}
-      className="space-y-4"
+      className='space-y-4'
     >
       {/* Date header */}
-      <div className="mb-2">
-        <h2 className="font-semibold text-gray-800">
+      <div className='mb-2'>
+        <h2 className='font-semibold text-gray-800'>
           {formatDateLabel(data.date)}
         </h2>
       </div>
@@ -47,6 +49,13 @@ export function DayView({
       {mealTypes.map((type, index) => {
         const meal = data.meals[type];
         const mealId = meal?.id ?? `empty-${type}`;
+        const isExpanded = expandedMealId === mealId;
+
+        // Use detailed meal data if expanded and available
+        const displayMeal =
+          isExpanded && expandedMealDetails?.id === meal?.id
+            ? expandedMealDetails
+            : meal;
 
         return (
           <motion.div
@@ -57,8 +66,8 @@ export function DayView({
           >
             <MealCard
               mealType={type}
-              meal={meal}
-              isExpanded={expandedMealId === mealId}
+              meal={displayMeal}
+              isExpanded={isExpanded}
               onToggleExpand={() => onToggleExpand(mealId)}
               onAddMeal={() => onAddMeal(type)}
               onEditMeal={meal ? () => onEditMeal?.(meal.id) : undefined}

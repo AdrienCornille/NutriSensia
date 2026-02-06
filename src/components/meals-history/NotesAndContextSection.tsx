@@ -1,7 +1,15 @@
 'use client';
 
 import React from 'react';
-import { Home, Briefcase, UtensilsCrossed, Users, UserPlus, User, MessageSquare } from 'lucide-react';
+import {
+  Home,
+  Briefcase,
+  UtensilsCrossed,
+  Users,
+  UserPlus,
+  User,
+  MessageSquare,
+} from 'lucide-react';
 import type { MealContext, MealContextConfig } from '@/types/meals';
 
 interface NotesAndContextSectionProps {
@@ -28,20 +36,20 @@ export function NotesAndContextSection({
   onToggleTag,
 }: NotesAndContextSectionProps) {
   return (
-    <div className="space-y-4">
+    <div className='space-y-4'>
       {/* Context tags */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className='block text-sm font-medium text-gray-700 mb-2'>
           Contexte du repas
-          <span className="text-gray-400 font-normal ml-1">(optionnel)</span>
+          <span className='text-gray-400 font-normal ml-1'>(optionnel)</span>
         </label>
-        <div className="flex flex-wrap gap-2">
-          {contextConfigs.map((config) => {
+        <div className='flex flex-wrap gap-2'>
+          {contextConfigs.map(config => {
             const isSelected = contextTags.includes(config.id);
             return (
               <button
                 key={config.id}
-                type="button"
+                type='button'
                 onClick={() => onToggleTag(config.id)}
                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
                   isSelected
@@ -60,25 +68,25 @@ export function NotesAndContextSection({
       {/* Notes textarea */}
       <div>
         <label
-          htmlFor="meal-notes"
-          className="block text-sm font-medium text-gray-700 mb-2"
+          htmlFor='meal-notes'
+          className='block text-sm font-medium text-gray-700 mb-2'
         >
           Notes
-          <span className="text-gray-400 font-normal ml-1">(optionnel)</span>
+          <span className='text-gray-400 font-normal ml-1'>(optionnel)</span>
         </label>
-        <div className="relative">
-          <MessageSquare className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+        <div className='relative'>
+          <MessageSquare className='absolute left-3 top-3 w-4 h-4 text-gray-400' />
           <textarea
-            id="meal-notes"
+            id='meal-notes'
             value={notes}
-            onChange={(e) => onNotesChange(e.target.value)}
-            placeholder="Ex: Repas rapide entre deux réunions, très satisfaisant..."
+            onChange={e => onNotesChange(e.target.value)}
+            placeholder='Ex: Repas rapide entre deux réunions, très satisfaisant...'
             rows={3}
             maxLength={500}
-            className="w-full px-4 py-2.5 pl-10 border border-gray-200 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-[#1B998B] focus:border-transparent text-sm"
+            className='w-full px-4 py-2.5 pl-10 border border-gray-200 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-[#1B998B] focus:border-transparent text-sm'
           />
         </div>
-        <p className="text-xs text-gray-400 mt-1 text-right">
+        <p className='text-xs text-gray-400 mt-1 text-right'>
           {notes.length}/500 caractères
         </p>
       </div>

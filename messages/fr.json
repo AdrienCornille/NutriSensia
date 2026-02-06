@@ -253,7 +253,40 @@
     "yourGoals": "Vos objectifs",
     "almostDone": "Presque terminé",
     "setupComplete": "Configuration terminée",
-    "welcomeMessage": "Bienvenue dans votre espace NutriSensia !"
+    "welcomeMessage": "Bienvenue dans votre espace NutriSensia !",
+    "consultationReason": {
+      "title": "Quelle est votre raison de consultation ?",
+      "subtitle": "Cette information aidera votre nutritionniste à préparer votre première rencontre",
+      "selectLabel": "Choisissez votre raison principale (optionnel)",
+      "detailsLabel": "Détails supplémentaires (optionnel)",
+      "detailsPlaceholder": "Décrivez brièvement votre situation ou vos attentes...",
+      "skipStep": "Passer cette étape",
+      "continue": "Continuer",
+      "reasons": {
+        "menopause_perimenopause": "Ménopause / Périménopause",
+        "perte_poids_durable": "Perte de poids durable",
+        "troubles_digestifs": "Troubles digestifs",
+        "glycemie_diabete": "Glycémie / Diabète",
+        "sante_cardiovasculaire": "Santé cardiovasculaire",
+        "fatigue_energie": "Fatigue / Énergie",
+        "longevite_vieillissement": "Longévité / Anti-âge",
+        "sante_hormonale": "Santé hormonale",
+        "alimentation_saine": "Alimentation saine",
+        "autre": "Autre raison"
+      },
+      "descriptions": {
+        "menopause_perimenopause": "Accompagnement nutritionnel pendant cette transition",
+        "perte_poids_durable": "Atteindre et maintenir un poids santé",
+        "troubles_digestifs": "Ballonnements, inconfort, intolérances",
+        "glycemie_diabete": "Équilibrer sa glycémie naturellement",
+        "sante_cardiovasculaire": "Cholestérol, tension, prévention",
+        "fatigue_energie": "Retrouver vitalité et dynamisme",
+        "longevite_vieillissement": "Vieillir en bonne santé",
+        "sante_hormonale": "Équilibrer ses hormones naturellement",
+        "alimentation_saine": "Apprendre à mieux manger au quotidien",
+        "autre": "Précisez votre besoin ci-dessous"
+      }
+    }
   },
   "Errors": {
     "pageNotFound": "Page non trouvée",

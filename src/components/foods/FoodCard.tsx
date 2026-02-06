@@ -25,11 +25,11 @@ export function FoodCard({
   return (
     <div
       onClick={() => onClick(food)}
-      className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-shadow cursor-pointer group"
+      className='bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-shadow cursor-pointer group'
     >
-      <div className="flex items-start justify-between mb-3">
-        <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center">
-          <span className="text-2xl">{food.image}</span>
+      <div className='flex items-start justify-between mb-3'>
+        <div className='w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center'>
+          <span className='text-2xl'>{food.image}</span>
         </div>
         <button
           onClick={handleFavoriteClick}
@@ -41,22 +41,22 @@ export function FoodCard({
         </button>
       </div>
 
-      <h3 className="font-medium text-gray-800 group-hover:text-emerald-600 transition-colors line-clamp-2">
+      <h3 className='font-medium text-gray-800 group-hover:text-emerald-600 transition-colors line-clamp-2'>
         {food.name}
       </h3>
       {food.brand && (
-        <p className="text-xs text-gray-500 mt-0.5">{food.brand}</p>
+        <p className='text-xs text-gray-500 mt-0.5'>{food.brand}</p>
       )}
-      <p className="text-xs text-gray-400 mt-1">pour {food.per}</p>
+      <p className='text-xs text-gray-400 mt-1'>pour {food.per}</p>
 
-      <div className="mt-3 grid grid-cols-2 gap-2">
-        <div className="bg-gray-50 rounded-lg p-2 text-center">
-          <p className="text-sm font-bold text-gray-800">{food.calories}</p>
-          <p className="text-xs text-gray-500">kcal</p>
+      <div className='mt-3 grid grid-cols-2 gap-2'>
+        <div className='bg-gray-50 rounded-lg p-2 text-center'>
+          <p className='text-sm font-bold text-gray-800'>{food.calories}</p>
+          <p className='text-xs text-gray-500'>kcal</p>
         </div>
-        <div className="bg-blue-50 rounded-lg p-2 text-center">
-          <p className="text-sm font-bold text-blue-600">{food.protein}g</p>
-          <p className="text-xs text-gray-500">prot.</p>
+        <div className='bg-blue-50 rounded-lg p-2 text-center'>
+          <p className='text-sm font-bold text-blue-600'>{food.protein}g</p>
+          <p className='text-xs text-gray-500'>prot.</p>
         </div>
       </div>
     </div>

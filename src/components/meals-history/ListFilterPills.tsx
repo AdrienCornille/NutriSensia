@@ -21,9 +21,9 @@ export function ListFilterPills({
   onFilterChange,
 }: ListFilterPillsProps) {
   return (
-    <div className="flex items-center gap-2 flex-wrap">
-      <span className="text-sm text-gray-500">Filtrer :</span>
-      {filters.map((filter) => (
+    <div className='flex items-center gap-2 flex-wrap'>
+      <span className='text-sm text-gray-500'>Filtrer :</span>
+      {filters.map(filter => (
         <button
           key={filter.id}
           onClick={() => onFilterChange(filter.id)}

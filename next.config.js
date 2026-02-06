@@ -27,9 +27,6 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
 
-  // Optimisations pour améliorer les performances de compilation
-  swcMinify: true,
-
   // Optimisation des imports pour réduire la taille des bundles
   modularizeImports: {
     'lucide-react': {

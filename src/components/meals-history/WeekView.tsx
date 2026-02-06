@@ -35,9 +35,9 @@ function WeekGridCell({
       <div className={baseCellClass}>
         <button
           onClick={onClick}
-          className="w-8 h-8 bg-[#1B998B]/10 rounded-lg flex items-center justify-center cursor-pointer hover:bg-[#1B998B]/20 transition-colors"
+          className='w-8 h-8 bg-[#1B998B]/10 rounded-lg flex items-center justify-center cursor-pointer hover:bg-[#1B998B]/20 transition-colors'
         >
-          <Check className="w-4 h-4 text-[#1B998B]" />
+          <Check className='w-4 h-4 text-[#1B998B]' />
         </button>
       </div>
     );
@@ -46,7 +46,7 @@ function WeekGridCell({
   if (isFuture) {
     return (
       <div className={baseCellClass}>
-        <div className="w-8 h-8 rounded-lg border-2 border-dashed border-gray-200" />
+        <div className='w-8 h-8 rounded-lg border-2 border-dashed border-gray-200' />
       </div>
     );
   }
@@ -55,9 +55,9 @@ function WeekGridCell({
     <div className={baseCellClass}>
       <button
         onClick={onClick}
-        className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
+        className='w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors'
       >
-        <Plus className="w-4 h-4 text-gray-400" />
+        <Plus className='w-4 h-4 text-gray-400' />
       </button>
     </div>
   );
@@ -65,16 +65,16 @@ function WeekGridCell({
 
 export function WeekView({ data, onCellClick, onDayClick }: WeekViewProps) {
   const mealRows: { key: MealType; label: string; icon: string }[] =
-    mealTypeConfigs.map((config) => ({
+    mealTypeConfigs.map(config => ({
       key: config.type,
       label:
         config.type === 'breakfast'
           ? 'Petit-déj.'
           : config.type === 'lunch'
-          ? 'Déjeuner'
-          : config.type === 'dinner'
-          ? 'Dîner'
-          : 'Collation',
+            ? 'Déjeuner'
+            : config.type === 'dinner'
+              ? 'Dîner'
+              : 'Collation',
       icon: config.icon,
     }));
 
@@ -84,11 +84,11 @@ export function WeekView({ data, onCellClick, onDayClick }: WeekViewProps) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.2 }}
-      className="bg-white rounded-xl border border-gray-200 overflow-hidden"
+      className='bg-white rounded-xl border border-gray-200 overflow-hidden'
     >
       {/* Week header */}
-      <div className="grid grid-cols-8 border-b border-gray-200">
-        <div className="p-3 bg-gray-50" />
+      <div className='grid grid-cols-8 border-b border-gray-200'>
+        <div className='p-3 bg-gray-50' />
         {data.days.map((day, index) => (
           <div
             key={index}
@@ -97,7 +97,7 @@ export function WeekView({ data, onCellClick, onDayClick }: WeekViewProps) {
               day.isToday ? 'bg-[#1B998B]/10' : 'bg-gray-50'
             }`}
           >
-            <p className="text-xs text-gray-500">{day.dayName}</p>
+            <p className='text-xs text-gray-500'>{day.dayName}</p>
             <p
               className={`font-semibold ${
                 day.isToday ? 'text-[#1B998B]' : 'text-gray-800'
@@ -110,14 +110,14 @@ export function WeekView({ data, onCellClick, onDayClick }: WeekViewProps) {
       </div>
 
       {/* Meal rows */}
-      {mealRows.map((mealType) => (
+      {mealRows.map(mealType => (
         <div
           key={mealType.key}
-          className="grid grid-cols-8 border-b border-gray-100 last:border-0"
+          className='grid grid-cols-8 border-b border-gray-100 last:border-0'
         >
-          <div className="p-3 bg-gray-50 flex items-center gap-2">
+          <div className='p-3 bg-gray-50 flex items-center gap-2'>
             <span>{mealType.icon}</span>
-            <span className="text-sm text-gray-600">{mealType.label}</span>
+            <span className='text-sm text-gray-600'>{mealType.label}</span>
           </div>
           {data.days.map((day, dayIndex) => (
             <WeekGridCell
@@ -132,8 +132,8 @@ export function WeekView({ data, onCellClick, onDayClick }: WeekViewProps) {
       ))}
 
       {/* Totals row */}
-      <div className="grid grid-cols-8 bg-gray-50 border-t border-gray-200">
-        <div className="p-3 text-sm font-medium text-gray-600">Total</div>
+      <div className='grid grid-cols-8 bg-gray-50 border-t border-gray-200'>
+        <div className='p-3 text-sm font-medium text-gray-600'>Total</div>
         {data.days.map((day, index) => {
           const hasCalories = day.totalCalories > 0;
           const percentage = day.caloriePercentage;

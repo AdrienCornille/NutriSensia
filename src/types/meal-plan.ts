@@ -11,7 +11,11 @@
 
 export type MealPlanViewMode = 'day' | 'week';
 
-export type PlanMealType = 'petit-dejeuner' | 'dejeuner' | 'collation' | 'diner';
+export type PlanMealType =
+  | 'petit-dejeuner'
+  | 'dejeuner'
+  | 'collation'
+  | 'diner';
 
 export type NutrientStatus = 'good' | 'warning' | 'low';
 
@@ -213,7 +217,8 @@ export function mealPlanReducer(
     case 'TOGGLE_MEAL_EXPANDED':
       return {
         ...state,
-        expandedMealId: state.expandedMealId === action.mealId ? null : action.mealId,
+        expandedMealId:
+          state.expandedMealId === action.mealId ? null : action.mealId,
       };
     case 'COLLAPSE_MEAL':
       return { ...state, expandedMealId: null };
@@ -231,11 +236,18 @@ export function mealPlanReducer(
 /**
  * Configuration des types de repas
  */
-export const mealTypeConfig: Record<PlanMealType, { label: string; icon: string; defaultTime: string }> = {
-  'petit-dejeuner': { label: 'Petit-déjeuner', icon: '🌅', defaultTime: '7:00 - 9:00' },
-  'dejeuner': { label: 'Déjeuner', icon: '☀️', defaultTime: '12:00 - 14:00' },
-  'collation': { label: 'Collation', icon: '🍎', defaultTime: '16:00 - 17:00' },
-  'diner': { label: 'Dîner', icon: '🌙', defaultTime: '19:00 - 21:00' },
+export const mealTypeConfig: Record<
+  PlanMealType,
+  { label: string; icon: string; defaultTime: string }
+> = {
+  'petit-dejeuner': {
+    label: 'Petit-déjeuner',
+    icon: '🌅',
+    defaultTime: '7:00 - 9:00',
+  },
+  dejeuner: { label: 'Déjeuner', icon: '☀️', defaultTime: '12:00 - 14:00' },
+  collation: { label: 'Collation', icon: '🍎', defaultTime: '16:00 - 17:00' },
+  diner: { label: 'Dîner', icon: '🌙', defaultTime: '19:00 - 21:00' },
 };
 
 /**
@@ -268,7 +280,15 @@ export function generateWeekDays(weekStart: Date): WeekDay[] {
   const days: WeekDay[] = [];
   const dayNames = {
     short: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
-    full: ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'],
+    full: [
+      'Lundi',
+      'Mardi',
+      'Mercredi',
+      'Jeudi',
+      'Vendredi',
+      'Samedi',
+      'Dimanche',
+    ],
   };
 
   for (let i = 0; i < 7; i++) {
@@ -293,7 +313,7 @@ export function generateWeekDays(weekStart: Date): WeekDay[] {
  * Trouve l'index du jour actuel dans la semaine
  */
 export function findTodayIndex(weekDays: WeekDay[]): number {
-  const index = weekDays.findIndex((day) => day.isToday);
+  const index = weekDays.findIndex(day => day.isToday);
   return index >= 0 ? index : 0;
 }
 
@@ -315,8 +335,15 @@ export type MacroStatus = 'under' | 'good' | 'over';
 /**
  * Calcule les totaux nutritionnels de tous les repas d'une journée
  */
-export function calculateDailyPlanTotal(meals: Record<PlanMealType, PlanMeal>): DailyPlanTotals {
-  const mealTypes: PlanMealType[] = ['petit-dejeuner', 'dejeuner', 'collation', 'diner'];
+export function calculateDailyPlanTotal(
+  meals: Record<PlanMealType, PlanMeal>
+): DailyPlanTotals {
+  const mealTypes: PlanMealType[] = [
+    'petit-dejeuner',
+    'dejeuner',
+    'collation',
+    'diner',
+  ];
 
   return mealTypes.reduce(
     (acc, mealType) => {
@@ -356,7 +383,10 @@ export function getProgressPercentage(current: number, target: number): number {
 /**
  * Formate la différence calorique entre un aliment et son alternative
  */
-export function formatCalorieDifference(originalCalories: number, alternativeCalories: number): string {
+export function formatCalorieDifference(
+  originalCalories: number,
+  alternativeCalories: number
+): string {
   const diff = alternativeCalories - originalCalories;
   if (Math.abs(diff) <= 10) return '≈ similaire';
   return diff > 0 ? `+${diff} kcal` : `${diff} kcal`;
@@ -367,7 +397,11 @@ export function formatCalorieDifference(originalCalories: number, alternativeCal
 /**
  * Statut d'une demande de modification
  */
-export type ModificationRequestStatus = 'pending' | 'reviewed' | 'approved' | 'rejected';
+export type ModificationRequestStatus =
+  | 'pending'
+  | 'reviewed'
+  | 'approved'
+  | 'rejected';
 
 /**
  * Demande de modification du plan alimentaire
@@ -407,7 +441,7 @@ export const modificationStatusConfig: Record<
     icon: '🟡',
   },
   reviewed: {
-    label: 'En cours d\'examen',
+    label: "En cours d'examen",
     bgColor: 'bg-blue-100',
     textColor: 'text-blue-700',
     icon: '🔵',
@@ -437,7 +471,8 @@ export function formatRelativeDate(date: Date): string {
   if (diffDays === 0) return "Aujourd'hui";
   if (diffDays === 1) return 'Hier';
   if (diffDays < 7) return `Il y a ${diffDays} jours`;
-  if (diffDays < 30) return `Il y a ${Math.floor(diffDays / 7)} semaine${Math.floor(diffDays / 7) > 1 ? 's' : ''}`;
+  if (diffDays < 30)
+    return `Il y a ${Math.floor(diffDays / 7)} semaine${Math.floor(diffDays / 7) > 1 ? 's' : ''}`;
   return `Il y a ${Math.floor(diffDays / 30)} mois`;
 }
 
@@ -450,14 +485,14 @@ export const shoppingCategoryConfig: Record<
   ShoppingCategory,
   { label: string; icon: string; order: number }
 > = {
-  'legumes': { label: 'Légumes', icon: '🥬', order: 1 },
-  'fruits': { label: 'Fruits', icon: '🍎', order: 2 },
+  legumes: { label: 'Légumes', icon: '🥬', order: 1 },
+  fruits: { label: 'Fruits', icon: '🍎', order: 2 },
   'viandes-poissons': { label: 'Viandes & Poissons', icon: '🥩', order: 3 },
   'produits-laitiers': { label: 'Produits laitiers', icon: '🥛', order: 4 },
   'feculents-cereales': { label: 'Féculents & Céréales', icon: '🌾', order: 5 },
-  'oleagineux': { label: 'Oléagineux', icon: '🥜', order: 6 },
+  oleagineux: { label: 'Oléagineux', icon: '🥜', order: 6 },
   'huiles-condiments': { label: 'Huiles & Condiments', icon: '🫒', order: 7 },
-  'autres': { label: 'Autres', icon: '🍯', order: 8 },
+  autres: { label: 'Autres', icon: '🍯', order: 8 },
 };
 
 /**

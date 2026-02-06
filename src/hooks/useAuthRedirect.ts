@@ -27,7 +27,10 @@ export function useAuthRedirect() {
       // L'utilisateur est connecté, rediriger vers l'accueil
       router.push('/');
     } catch (error) {
-      console.error("Erreur lors de la vérification de l'authentification:", error);
+      console.error(
+        "Erreur lors de la vérification de l'authentification:",
+        error
+      );
       // En cas d'erreur, rediriger vers la page d'accueil
       router.push('/');
     }

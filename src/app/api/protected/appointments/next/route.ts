@@ -27,7 +27,9 @@ export async function GET(req: NextRequest) {
 
     // 3. Récupérer le patient_profiles.id (appointments.user_id référence patient_profiles.id)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: patientProfile, error: profileError } = await (supabase as any)
+    const { data: patientProfile, error: profileError } = await (
+      supabase as any
+    )
       .from('patient_profiles')
       .select('id')
       .eq('user_id', auth.user.id)
@@ -79,7 +81,9 @@ export async function GET(req: NextRequest) {
 
     if (queryError) {
       console.error('Error fetching next appointment:', queryError);
-      return apiResponse.serverError('Erreur lors de la récupération du prochain rendez-vous');
+      return apiResponse.serverError(
+        'Erreur lors de la récupération du prochain rendez-vous'
+      );
     }
 
     // 5. Calculer le countdown si un RDV existe
@@ -99,7 +103,10 @@ export async function GET(req: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
-    console.error('Unexpected error in GET /api/protected/appointments/next:', error);
+    console.error(
+      'Unexpected error in GET /api/protected/appointments/next:',
+      error
+    );
     return apiResponse.serverError('Erreur serveur');
   }
 }

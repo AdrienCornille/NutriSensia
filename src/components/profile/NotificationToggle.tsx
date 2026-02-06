@@ -8,10 +8,14 @@ interface NotificationToggleProps {
   onToggle: () => void;
 }
 
-export function NotificationToggle({ enabled, label, onToggle }: NotificationToggleProps) {
+export function NotificationToggle({
+  enabled,
+  label,
+  onToggle,
+}: NotificationToggleProps) {
   return (
-    <div className="flex items-center justify-between py-3">
-      <span className="text-gray-700">{label}</span>
+    <div className='flex items-center justify-between py-3'>
+      <span className='text-gray-700'>{label}</span>
       <button
         onClick={onToggle}
         className={`w-12 h-6 rounded-full relative transition-colors ${

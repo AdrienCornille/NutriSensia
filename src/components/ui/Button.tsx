@@ -17,7 +17,8 @@ const buttonVariants = cva(
         secondary: 'bg-secondary text-text hover:bg-secondary-dark',
         ghost: 'hover:bg-accent hover:text-accent-foreground',
         link: 'text-primary underline-offset-4 hover:underline',
-        primary: 'bg-primary text-white hover:bg-primary-dark focus:ring-primary',
+        primary:
+          'bg-primary text-white hover:bg-primary-dark focus:ring-primary',
         accent: 'bg-accent text-white hover:bg-accent-dark focus:ring-accent',
       },
       size: {
@@ -37,7 +38,8 @@ const buttonVariants = cva(
 
 // Interface étendue pour supporter à la fois l'API existante et shadcn
 interface ButtonProps
-  extends ButtonHTMLAttributes<HTMLButtonElement>,
+  extends
+    ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   children: ReactNode;
   fullWidth?: boolean;

@@ -6,15 +6,89 @@
 'use client';
 
 import React, { useState, useCallback } from 'react';
-import Joyride, {
-  CallBackProps,
-  STATUS,
-  EVENTS,
-  ACTIONS,
-  Step,
-  TooltipRenderProps,
-  Styles,
-} from 'react-joyride';
+import Joyride from './JoyrideWrapper';
+
+// Définition locale des types pour éviter l'import statique de react-joyride
+// qui cause des erreurs avec Next.js 15 (APIs React deprecated)
+interface Step {
+  target: string;
+  content: React.ReactNode;
+  title?: string;
+  placement?: 'top' | 'bottom' | 'left' | 'right' | 'center';
+  disableBeacon?: boolean;
+}
+
+interface CallBackProps {
+  action: string;
+  index: number;
+  status: string;
+  type: string;
+}
+
+interface TooltipRenderProps {
+  backProps: any;
+  closeProps: any;
+  continuous: boolean;
+  index: number;
+  primaryProps: any;
+  skipProps: any;
+  step: Step;
+  tooltipProps: any;
+  size: number;
+}
+
+interface Styles {
+  options?: any;
+  tooltip?: any;
+  tooltipContainer?: any;
+  tooltipTitle?: any;
+  tooltipContent?: any;
+  buttonNext?: any;
+  buttonBack?: any;
+  buttonSkip?: any;
+  buttonClose?: any;
+}
+
+// Constantes locales pour éviter l'import de react-joyride
+const STATUS = {
+  FINISHED: 'finished',
+  SKIPPED: 'skipped',
+  RUNNING: 'running',
+  PAUSED: 'paused',
+  READY: 'ready',
+  WAITING: 'waiting',
+  IDLE: 'idle',
+  ERROR: 'error',
+} as const;
+
+const EVENTS = {
+  STEP_AFTER: 'step:after',
+  STEP_BEFORE: 'step:before',
+  TARGET_NOT_FOUND: 'target:not_found',
+  TOUR_END: 'tour:end',
+  TOUR_START: 'tour:start',
+  TOUR_STATUS: 'tour:status',
+  BEACON: 'beacon',
+  TOOLTIP: 'tooltip',
+  TOOLTIP_CLOSE: 'close',
+  SPOTLIGHT: 'spotlight',
+  OVERLAY: 'overlay',
+  ERROR: 'error',
+} as const;
+
+const ACTIONS = {
+  INIT: 'init',
+  START: 'start',
+  STOP: 'stop',
+  RESET: 'reset',
+  RESTART: 'restart',
+  PREV: 'prev',
+  NEXT: 'next',
+  GO: 'go',
+  CLOSE: 'close',
+  SKIP: 'skip',
+  UPDATE: 'update',
+} as const;
 import { motion } from 'framer-motion';
 import { X, ArrowLeft, ArrowRight, SkipForward } from 'lucide-react';
 

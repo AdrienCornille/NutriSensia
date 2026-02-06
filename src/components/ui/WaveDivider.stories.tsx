@@ -62,15 +62,13 @@ export const Default: Story = {
   },
   decorators: [
     Story => (
-      <div className="bg-gray-100">
-        <div className="bg-white h-64 flex items-center justify-center">
-          <p className="text-2xl font-bold text-gray-800">Section au-dessus</p>
+      <div className='bg-gray-100'>
+        <div className='bg-white h-64 flex items-center justify-center'>
+          <p className='text-2xl font-bold text-gray-800'>Section au-dessus</p>
         </div>
         <Story />
-        <div className="bg-[#E8F3EF] h-64 flex items-center justify-center">
-          <p className="text-2xl font-bold text-gray-800">
-            Section en-dessous
-          </p>
+        <div className='bg-[#E8F3EF] h-64 flex items-center justify-center'>
+          <p className='text-2xl font-bold text-gray-800'>Section en-dessous</p>
         </div>
       </div>
     ),
@@ -144,15 +142,13 @@ export const Flipped: Story = {
   },
   decorators: [
     Story => (
-      <div className="bg-gray-100">
-        <div className="bg-[#E8F3EF] h-64 flex items-center justify-center">
-          <p className="text-2xl font-bold text-gray-800">Section au-dessus</p>
+      <div className='bg-gray-100'>
+        <div className='bg-[#E8F3EF] h-64 flex items-center justify-center'>
+          <p className='text-2xl font-bold text-gray-800'>Section au-dessus</p>
         </div>
         <Story />
-        <div className="bg-white h-64 flex items-center justify-center">
-          <p className="text-2xl font-bold text-gray-800">
-            Section en-dessous
-          </p>
+        <div className='bg-white h-64 flex items-center justify-center'>
+          <p className='text-2xl font-bold text-gray-800'>Section en-dessous</p>
         </div>
       </div>
     ),
@@ -171,13 +167,13 @@ export const PrimaryToSage: Story = {
   },
   decorators: [
     Story => (
-      <div className="bg-gray-100">
-        <div className="bg-[#2E7D5E] h-64 flex items-center justify-center">
-          <p className="text-2xl font-bold text-white">Section Primary</p>
+      <div className='bg-gray-100'>
+        <div className='bg-[#2E7D5E] h-64 flex items-center justify-center'>
+          <p className='text-2xl font-bold text-white'>Section Primary</p>
         </div>
         <Story />
-        <div className="bg-[#E8F3EF] h-64 flex items-center justify-center">
-          <p className="text-2xl font-bold text-gray-800">Section Sage</p>
+        <div className='bg-[#E8F3EF] h-64 flex items-center justify-center'>
+          <p className='text-2xl font-bold text-gray-800'>Section Sage</p>
         </div>
       </div>
     ),
@@ -217,50 +213,50 @@ export const SmallWave: Story = {
  */
 export const MultipleDividers: Story = {
   render: () => (
-    <div className="bg-gray-100">
+    <div className='bg-gray-100'>
       {/* Section 1 */}
-      <div className="bg-white h-64 flex items-center justify-center">
-        <p className="text-2xl font-bold text-gray-800">Section 1 - Blanc</p>
+      <div className='bg-white h-64 flex items-center justify-center'>
+        <p className='text-2xl font-bold text-gray-800'>Section 1 - Blanc</p>
       </div>
 
       {/* Divider 1 : Blanc → Sage */}
       <WaveDivider
-        variant="smooth"
-        fromColor="#ffffff"
-        toColor="#E8F3EF"
+        variant='smooth'
+        fromColor='#ffffff'
+        toColor='#E8F3EF'
         animate={true}
       />
 
       {/* Section 2 */}
-      <div className="bg-[#E8F3EF] h-64 flex items-center justify-center">
-        <p className="text-2xl font-bold text-gray-800">Section 2 - Sage</p>
+      <div className='bg-[#E8F3EF] h-64 flex items-center justify-center'>
+        <p className='text-2xl font-bold text-gray-800'>Section 2 - Sage</p>
       </div>
 
       {/* Divider 2 : Sage → Blanc (inversé) */}
       <WaveDivider
-        variant="smooth"
-        fromColor="#E8F3EF"
-        toColor="#ffffff"
+        variant='smooth'
+        fromColor='#E8F3EF'
+        toColor='#ffffff'
         animate={true}
         flip={true}
       />
 
       {/* Section 3 */}
-      <div className="bg-white h-64 flex items-center justify-center">
-        <p className="text-2xl font-bold text-gray-800">Section 3 - Blanc</p>
+      <div className='bg-white h-64 flex items-center justify-center'>
+        <p className='text-2xl font-bold text-gray-800'>Section 3 - Blanc</p>
       </div>
 
       {/* Divider 3 : Blanc → Primary */}
       <WaveDivider
-        variant="curved"
-        fromColor="#ffffff"
-        toColor="#2E7D5E"
+        variant='curved'
+        fromColor='#ffffff'
+        toColor='#2E7D5E'
         animate={true}
       />
 
       {/* Section 4 */}
-      <div className="bg-[#2E7D5E] h-64 flex items-center justify-center">
-        <p className="text-2xl font-bold text-white">Section 4 - Primary</p>
+      <div className='bg-[#2E7D5E] h-64 flex items-center justify-center'>
+        <p className='text-2xl font-bold text-white'>Section 4 - Primary</p>
       </div>
     </div>
   ),

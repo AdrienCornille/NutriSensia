@@ -274,6 +274,36 @@ export function MarketingFooter() {
                   </motion.a>
                 ))}
               </nav>
+
+              {/* Pour les professionnels */}
+              <h4
+                className={cn(
+                  "font-['Inter',system-ui,sans-serif]",
+                  'text-[1rem]',
+                  'font-semibold',
+                  'text-white',
+                  'mb-4 mt-8'
+                )}
+              >
+                Pour les professionnels
+              </h4>
+              <motion.a
+                href='/inscription/nutritionniste'
+                className={cn(
+                  'inline-block',
+                  "font-['Inter',system-ui,sans-serif]",
+                  'text-[0.95rem]',
+                  'font-medium',
+                  'text-primary',
+                  'transition-all duration-200',
+                  'hover:text-[#5FCFC0] hover:translate-x-1',
+                  'focus:outline-none focus:ring-2 focus:ring-primary/20 focus:ring-offset-2 focus:ring-offset-[#0F4F48]',
+                  'rounded px-1 py-0.5'
+                )}
+                whileHover={{ x: 4 }}
+              >
+                Devenir Nutritionniste NutriSensia
+              </motion.a>
             </div>
 
             {/* ============================================ */}

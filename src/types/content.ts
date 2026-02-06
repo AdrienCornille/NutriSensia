@@ -11,7 +11,13 @@ export type ContentCategory =
   | 'health'
   | 'lifestyle';
 
-export type ContentTab = 'all' | 'articles' | 'videos' | 'guides' | 'podcasts' | 'saved';
+export type ContentTab =
+  | 'all'
+  | 'articles'
+  | 'videos'
+  | 'guides'
+  | 'podcasts'
+  | 'saved';
 
 export interface Content {
   id: string;
@@ -93,7 +99,10 @@ export const contentInitialState: ContentState = {
   selectedContent: null,
 };
 
-export function contentReducer(state: ContentState, action: ContentAction): ContentState {
+export function contentReducer(
+  state: ContentState,
+  action: ContentAction
+): ContentState {
   switch (action.type) {
     case 'SET_ACTIVE_TAB':
       return { ...state, activeTab: action.payload };
@@ -107,15 +116,23 @@ export function contentReducer(state: ContentState, action: ContentAction): Cont
       return {
         ...state,
         savedIds: state.savedIds.includes(action.payload)
-          ? state.savedIds.filter((id) => id !== action.payload)
+          ? state.savedIds.filter(id => id !== action.payload)
           : [...state.savedIds, action.payload],
       };
     case 'OPEN_CONTENT_MODAL':
-      return { ...state, showContentModal: true, selectedContent: action.payload };
+      return {
+        ...state,
+        showContentModal: true,
+        selectedContent: action.payload,
+      };
     case 'CLOSE_CONTENT_MODAL':
       return { ...state, showContentModal: false, selectedContent: null };
     case 'OPEN_VIDEO_PLAYER':
-      return { ...state, showVideoPlayer: true, selectedContent: action.payload };
+      return {
+        ...state,
+        showVideoPlayer: true,
+        selectedContent: action.payload,
+      };
     case 'CLOSE_VIDEO_PLAYER':
       return { ...state, showVideoPlayer: false, selectedContent: null };
     case 'LOAD_SAVED_IDS':
@@ -136,12 +153,42 @@ export const tabsConfig: TabConfig[] = [
 ];
 
 export const categoriesConfig: CategoryConfig[] = [
-  { id: 'nutrition-basics', label: 'Bases de la nutrition', color: 'text-blue-700', bgColor: 'bg-blue-100' },
-  { id: 'recipes-tips', label: 'Astuces cuisine', color: 'text-amber-700', bgColor: 'bg-amber-100' },
-  { id: 'psychology', label: 'Psychologie alimentaire', color: 'text-purple-700', bgColor: 'bg-purple-100' },
-  { id: 'sport', label: 'Sport & nutrition', color: 'text-green-700', bgColor: 'bg-green-100' },
-  { id: 'health', label: 'Santé', color: 'text-red-700', bgColor: 'bg-red-100' },
-  { id: 'lifestyle', label: 'Mode de vie', color: 'text-teal-700', bgColor: 'bg-teal-100' },
+  {
+    id: 'nutrition-basics',
+    label: 'Bases de la nutrition',
+    color: 'text-blue-700',
+    bgColor: 'bg-blue-100',
+  },
+  {
+    id: 'recipes-tips',
+    label: 'Astuces cuisine',
+    color: 'text-amber-700',
+    bgColor: 'bg-amber-100',
+  },
+  {
+    id: 'psychology',
+    label: 'Psychologie alimentaire',
+    color: 'text-purple-700',
+    bgColor: 'bg-purple-100',
+  },
+  {
+    id: 'sport',
+    label: 'Sport & nutrition',
+    color: 'text-green-700',
+    bgColor: 'bg-green-100',
+  },
+  {
+    id: 'health',
+    label: 'Santé',
+    color: 'text-red-700',
+    bgColor: 'bg-red-100',
+  },
+  {
+    id: 'lifestyle',
+    label: 'Mode de vie',
+    color: 'text-teal-700',
+    bgColor: 'bg-teal-100',
+  },
 ];
 
 // Helper functions
@@ -152,7 +199,7 @@ export function filterContent(
   searchQuery: string,
   savedIds: string[]
 ): Content[] {
-  return contents.filter((content) => {
+  return contents.filter(content => {
     // Filter by tab (type)
     if (tab === 'saved') {
       if (!savedIds.includes(content.id)) return false;
@@ -213,6 +260,8 @@ export function getTypeLabel(type: ContentType): string {
   }
 }
 
-export function getCategoryConfig(categoryId: ContentCategory): CategoryConfig | undefined {
-  return categoriesConfig.find((c) => c.id === categoryId);
+export function getCategoryConfig(
+  categoryId: ContentCategory
+): CategoryConfig | undefined {
+  return categoriesConfig.find(c => c.id === categoryId);
 }

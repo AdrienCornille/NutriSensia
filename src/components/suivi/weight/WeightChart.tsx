@@ -29,23 +29,31 @@ const COLORS = {
 /**
  * Calcule la moyenne mobile sur une fenêtre de n points
  */
-function calculateMovingAverage(points: ChartPoint[], windowSize: number = 3): ChartPoint[] {
+function calculateMovingAverage(
+  points: ChartPoint[],
+  windowSize: number = 3
+): ChartPoint[] {
   if (points.length < windowSize) return points;
 
   return points.map((point, index) => {
     const start = Math.max(0, index - Math.floor(windowSize / 2));
     const end = Math.min(points.length, index + Math.ceil(windowSize / 2));
     const windowPoints = points.slice(start, end);
-    const avgValue = windowPoints.reduce((sum, p) => sum + p.entry.value, 0) / windowPoints.length;
+    const avgValue =
+      windowPoints.reduce((sum, p) => sum + p.entry.value, 0) /
+      windowPoints.length;
 
     // Recalculer la position Y pour la moyenne
-    const values = points.map((p) => p.entry.value);
+    const values = points.map(p => p.entry.value);
     const minValue = Math.min(...values) - 1;
     const maxValue = Math.max(...values) + 1;
     const range = maxValue - minValue;
     const height = 180;
     const padding = 10;
-    const avgY = height - padding - ((avgValue - minValue) / range) * (height - 2 * padding);
+    const avgY =
+      height -
+      padding -
+      ((avgValue - minValue) / range) * (height - 2 * padding);
 
     return {
       ...point,
@@ -98,7 +106,11 @@ function generateSmoothPath(points: ChartPoint[]): string {
   return path;
 }
 
-export function WeightChart({ data, timeRange, onTimeRangeChange }: WeightChartProps) {
+export function WeightChart({
+  data,
+  timeRange,
+  onTimeRangeChange,
+}: WeightChartProps) {
   const [hoveredPoint, setHoveredPoint] = useState<number | null>(null);
   const [showTrendLine, setShowTrendLine] = useState(true);
 
@@ -114,7 +126,7 @@ export function WeightChart({ data, timeRange, onTimeRangeChange }: WeightChartP
     );
 
     // Find min and max for scaling
-    const values = sortedHistory.map((e) => e.value);
+    const values = sortedHistory.map(e => e.value);
     const minValue = Math.min(...values, data.goal) - 1;
     const maxValue = Math.max(...values) + 1;
     const range = maxValue - minValue;
@@ -125,8 +137,12 @@ export function WeightChart({ data, timeRange, onTimeRangeChange }: WeightChartP
       const x =
         sortedHistory.length === 1
           ? width / 2
-          : padding + (index / (sortedHistory.length - 1)) * (width - 2 * padding);
-      const y = height - padding - ((entry.value - minValue) / range) * (height - 2 * padding);
+          : padding +
+            (index / (sortedHistory.length - 1)) * (width - 2 * padding);
+      const y =
+        height -
+        padding -
+        ((entry.value - minValue) / range) * (height - 2 * padding);
       return { x, y, entry };
     });
   }, [data.history, data.goal, chartDimensions]);
@@ -149,18 +165,22 @@ export function WeightChart({ data, timeRange, onTimeRangeChange }: WeightChartP
   // Calculate goal line position
   const goalLineY = useMemo(() => {
     if (data.history.length === 0) return 0;
-    const values = data.history.map((e) => e.value);
+    const values = data.history.map(e => e.value);
     const minValue = Math.min(...values, data.goal) - 1;
     const maxValue = Math.max(...values) + 1;
     const range = maxValue - minValue;
     const { height, padding } = chartDimensions;
-    return height - padding - ((data.goal - minValue) / range) * (height - 2 * padding);
+    return (
+      height -
+      padding -
+      ((data.goal - minValue) / range) * (height - 2 * padding)
+    );
   }, [data.history, data.goal, chartDimensions]);
 
   // Generate Y-axis labels
   const yAxisLabels = useMemo(() => {
     if (data.history.length === 0) return [];
-    const values = data.history.map((e) => e.value);
+    const values = data.history.map(e => e.value);
     const minValue = Math.min(...values, data.goal) - 1;
     const maxValue = Math.max(...values) + 1;
     const step = (maxValue - minValue) / 4;
@@ -176,8 +196,11 @@ export function WeightChart({ data, timeRange, onTimeRangeChange }: WeightChartP
     const step = Math.max(1, Math.floor(sortedHistory.length / 4));
     return sortedHistory
       .filter((_, i) => i % step === 0 || i === sortedHistory.length - 1)
-      .map((entry) =>
-        entry.date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })
+      .map(entry =>
+        entry.date.toLocaleDateString('fr-FR', {
+          day: 'numeric',
+          month: 'short',
+        })
       );
   }, [data.history]);
 
@@ -191,10 +214,10 @@ export function WeightChart({ data, timeRange, onTimeRangeChange }: WeightChartP
   };
 
   return (
-    <div className="bg-white rounded-xl p-6 border border-gray-200">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="font-semibold text-gray-800">Évolution du poids</h2>
-        <div className="flex items-center gap-4">
+    <div className='bg-white rounded-xl p-6 border border-gray-200'>
+      <div className='flex items-center justify-between mb-6'>
+        <h2 className='font-semibold text-gray-800'>Évolution du poids</h2>
+        <div className='flex items-center gap-4'>
           {/* Toggle tendance */}
           <button
             onClick={() => setShowTrendLine(!showTrendLine)}
@@ -210,15 +233,18 @@ export function WeightChart({ data, timeRange, onTimeRangeChange }: WeightChartP
             />
             Tendance
           </button>
-          <TimeRangeSelector activeRange={timeRange} onRangeChange={onTimeRangeChange} />
+          <TimeRangeSelector
+            activeRange={timeRange}
+            onRangeChange={onTimeRangeChange}
+          />
         </div>
       </div>
 
       {/* Chart */}
-      <div className="relative h-64 bg-[rgba(27,153,139,0.03)] rounded-2xl overflow-hidden">
+      <div className='relative h-64 bg-[rgba(27,153,139,0.03)] rounded-2xl overflow-hidden'>
         {/* Y-axis labels */}
         <div
-          className="absolute left-0 top-0 bottom-0 w-12 flex flex-col justify-between py-4 text-xs text-[#41556b]"
+          className='absolute left-0 top-0 bottom-0 w-12 flex flex-col justify-between py-4 text-xs text-[#41556b]'
           style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
         >
           {yAxisLabels.map((label, i) => (
@@ -227,19 +253,19 @@ export function WeightChart({ data, timeRange, onTimeRangeChange }: WeightChartP
         </div>
 
         {/* Chart area */}
-        <div className="ml-12 h-full relative">
+        <div className='ml-12 h-full relative'>
           {/* Goal line */}
           {goalLineY > 0 && goalLineY < 180 && (
             <div
-              className="absolute w-full z-10"
+              className='absolute w-full z-10'
               style={{ top: `${(goalLineY / 180) * 100}%` }}
             >
               <div
-                className="w-full border-t-2 border-dashed"
+                className='w-full border-t-2 border-dashed'
                 style={{ borderColor: COLORS.turquoise }}
               />
               <span
-                className="absolute right-2 -top-5 text-xs px-2 py-0.5 rounded-full"
+                className='absolute right-2 -top-5 text-xs px-2 py-0.5 rounded-full'
                 style={{
                   backgroundColor: COLORS.turquoisePale,
                   color: COLORS.turquoise,
@@ -254,36 +280,50 @@ export function WeightChart({ data, timeRange, onTimeRangeChange }: WeightChartP
 
           {/* SVG Chart */}
           <svg
-            className="w-full h-full"
-            viewBox="0 0 400 200"
-            preserveAspectRatio="xMidYMid meet"
+            className='w-full h-full'
+            viewBox='0 0 400 200'
+            preserveAspectRatio='xMidYMid meet'
           >
             {/* Gradient definitions */}
             <defs>
-              <linearGradient id="weightGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor={COLORS.turquoise} stopOpacity="0.3" />
-                <stop offset="100%" stopColor={COLORS.turquoise} stopOpacity="0" />
+              <linearGradient
+                id='weightGradient'
+                x1='0%'
+                y1='0%'
+                x2='0%'
+                y2='100%'
+              >
+                <stop
+                  offset='0%'
+                  stopColor={COLORS.turquoise}
+                  stopOpacity='0.3'
+                />
+                <stop
+                  offset='100%'
+                  stopColor={COLORS.turquoise}
+                  stopOpacity='0'
+                />
               </linearGradient>
-              <filter id="glow">
-                <feGaussianBlur stdDeviation="2" result="coloredBlur" />
+              <filter id='glow'>
+                <feGaussianBlur stdDeviation='2' result='coloredBlur' />
                 <feMerge>
-                  <feMergeNode in="coloredBlur" />
-                  <feMergeNode in="SourceGraphic" />
+                  <feMergeNode in='coloredBlur' />
+                  <feMergeNode in='SourceGraphic' />
                 </feMerge>
               </filter>
             </defs>
 
             {/* Horizontal grid lines */}
-            {[0, 1, 2, 3, 4].map((i) => (
+            {[0, 1, 2, 3, 4].map(i => (
               <line
                 key={i}
-                x1="10"
+                x1='10'
                 y1={10 + i * 40}
-                x2="390"
+                x2='390'
                 y2={10 + i * 40}
-                stroke="#e5e5e5"
-                strokeWidth="1"
-                strokeDasharray="4,4"
+                stroke='#e5e5e5'
+                strokeWidth='1'
+                strokeDasharray='4,4'
               />
             ))}
 
@@ -291,7 +331,7 @@ export function WeightChart({ data, timeRange, onTimeRangeChange }: WeightChartP
             {pathD && chartPoints.length > 0 && (
               <path
                 d={`${pathD} L ${chartPoints[chartPoints.length - 1]?.x || 0} 190 L ${chartPoints[0]?.x || 0} 190 Z`}
-                fill="url(#weightGradient)"
+                fill='url(#weightGradient)'
               />
             )}
 
@@ -299,13 +339,13 @@ export function WeightChart({ data, timeRange, onTimeRangeChange }: WeightChartP
             {showTrendLine && trendPathD && (
               <path
                 d={trendPathD}
-                fill="none"
+                fill='none'
                 stroke={COLORS.trend}
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeDasharray="6,4"
-                opacity="0.8"
+                strokeWidth='2'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeDasharray='6,4'
+                opacity='0.8'
               />
             )}
 
@@ -313,11 +353,11 @@ export function WeightChart({ data, timeRange, onTimeRangeChange }: WeightChartP
             {pathD && (
               <path
                 d={pathD}
-                fill="none"
+                fill='none'
                 stroke={COLORS.turquoise}
-                strokeWidth="3"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+                strokeWidth='3'
+                strokeLinecap='round'
+                strokeLinejoin='round'
               />
             )}
 
@@ -333,9 +373,9 @@ export function WeightChart({ data, timeRange, onTimeRangeChange }: WeightChartP
                     <circle
                       cx={point.x}
                       cy={point.y}
-                      r="12"
+                      r='12'
                       fill={COLORS.turquoise}
-                      opacity="0.2"
+                      opacity='0.2'
                       style={{ pointerEvents: 'none' }}
                     />
                   )}
@@ -359,8 +399,8 @@ export function WeightChart({ data, timeRange, onTimeRangeChange }: WeightChartP
                   <circle
                     cx={point.x}
                     cy={point.y}
-                    r="15"
-                    fill="transparent"
+                    r='15'
+                    fill='transparent'
                     onMouseEnter={() => setHoveredPoint(index)}
                     onMouseLeave={() => setHoveredPoint(null)}
                     style={{ cursor: 'pointer' }}
@@ -373,26 +413,26 @@ export function WeightChart({ data, timeRange, onTimeRangeChange }: WeightChartP
                       <rect
                         x={point.x - 45}
                         y={point.y - 45}
-                        width="90"
-                        height="36"
-                        rx="8"
-                        fill="#1a1a1a"
-                        opacity="0.9"
+                        width='90'
+                        height='36'
+                        rx='8'
+                        fill='#1a1a1a'
+                        opacity='0.9'
                       />
                       {/* Tooltip arrow */}
                       <polygon
                         points={`${point.x - 6},${point.y - 9} ${point.x + 6},${point.y - 9} ${point.x},${point.y - 3}`}
-                        fill="#1a1a1a"
-                        opacity="0.9"
+                        fill='#1a1a1a'
+                        opacity='0.9'
                       />
                       {/* Tooltip text - weight */}
                       <text
                         x={point.x}
                         y={point.y - 30}
-                        textAnchor="middle"
-                        fill="#fff"
-                        fontSize="12"
-                        fontWeight="600"
+                        textAnchor='middle'
+                        fill='#fff'
+                        fontSize='12'
+                        fontWeight='600'
                         fontFamily="'Plus Jakarta Sans', sans-serif"
                       >
                         {point.entry.value.toFixed(1)} kg
@@ -401,9 +441,9 @@ export function WeightChart({ data, timeRange, onTimeRangeChange }: WeightChartP
                       <text
                         x={point.x}
                         y={point.y - 17}
-                        textAnchor="middle"
-                        fill="#a0a0a0"
-                        fontSize="9"
+                        textAnchor='middle'
+                        fill='#a0a0a0'
+                        fontSize='9'
                         fontFamily="'Plus Jakarta Sans', sans-serif"
                       >
                         {formatTooltipDate(point.entry.date)}
@@ -418,7 +458,7 @@ export function WeightChart({ data, timeRange, onTimeRangeChange }: WeightChartP
 
         {/* X-axis labels */}
         <div
-          className="absolute bottom-0 left-12 right-0 flex justify-between px-4 py-2 text-xs text-[#41556b]"
+          className='absolute bottom-0 left-12 right-0 flex justify-between px-4 py-2 text-xs text-[#41556b]'
           style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
         >
           {xAxisLabels.map((label, i) => (
@@ -429,34 +469,34 @@ export function WeightChart({ data, timeRange, onTimeRangeChange }: WeightChartP
 
       {/* Legend */}
       <div
-        className="flex items-center justify-center gap-6 mt-4 text-xs"
+        className='flex items-center justify-center gap-6 mt-4 text-xs'
         style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
       >
-        <div className="flex items-center gap-2">
+        <div className='flex items-center gap-2'>
           <div
-            className="w-4 h-1 rounded"
+            className='w-4 h-1 rounded'
             style={{ backgroundColor: COLORS.turquoise }}
           />
-          <span className="text-[#41556b]">Poids mesuré</span>
+          <span className='text-[#41556b]'>Poids mesuré</span>
         </div>
         {showTrendLine && (
-          <div className="flex items-center gap-2">
+          <div className='flex items-center gap-2'>
             <div
-              className="w-4 h-0.5 rounded"
+              className='w-4 h-0.5 rounded'
               style={{
                 backgroundColor: COLORS.trend,
                 backgroundImage: `repeating-linear-gradient(90deg, ${COLORS.trend} 0, ${COLORS.trend} 3px, transparent 3px, transparent 5px)`,
               }}
             />
-            <span className="text-[#41556b]">Tendance (moy. mobile)</span>
+            <span className='text-[#41556b]'>Tendance (moy. mobile)</span>
           </div>
         )}
-        <div className="flex items-center gap-2">
+        <div className='flex items-center gap-2'>
           <div
-            className="w-4 h-0.5 rounded border-t-2 border-dashed"
+            className='w-4 h-0.5 rounded border-t-2 border-dashed'
             style={{ borderColor: COLORS.turquoise }}
           />
-          <span className="text-[#41556b]">Objectif</span>
+          <span className='text-[#41556b]'>Objectif</span>
         </div>
       </div>
     </div>

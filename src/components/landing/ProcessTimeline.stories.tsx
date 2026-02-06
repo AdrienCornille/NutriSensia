@@ -29,7 +29,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Section timeline progressive pour présenter le processus d\'accompagnement en 3 étapes claires et visuelles.',
+          "Section timeline progressive pour présenter le processus d'accompagnement en 3 étapes claires et visuelles.",
       },
     },
   },
@@ -49,8 +49,8 @@ export const Default: Story = {};
  */
 export const InContainer: Story = {
   decorators: [
-    (Story) => (
-      <div className="max-w-5xl mx-auto p-8 bg-gray-50">
+    Story => (
+      <div className='max-w-5xl mx-auto p-8 bg-gray-50'>
         <Story />
       </div>
     ),
@@ -62,8 +62,8 @@ export const InContainer: Story = {
  */
 export const DarkBackground: Story = {
   decorators: [
-    (Story) => (
-      <div className="bg-gray-900 py-12">
+    Story => (
+      <div className='bg-gray-900 py-12'>
         <Story />
       </div>
     ),

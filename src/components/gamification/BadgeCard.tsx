@@ -62,7 +62,7 @@ export function BadgeCard({
       `}
     >
       {/* Badge Icon */}
-      <div className="flex flex-col items-center text-center">
+      <div className='flex flex-col items-center text-center'>
         <div
           className={`
             ${sizes.icon} rounded-full flex items-center justify-center mb-2
@@ -72,9 +72,9 @@ export function BadgeCard({
           {isUnlocked ? (
             <span>{badge.icon}</span>
           ) : (
-            <div className="relative">
-              <span className="opacity-30">{badge.icon}</span>
-              <Lock className="w-4 h-4 text-gray-400 absolute -bottom-1 -right-1" />
+            <div className='relative'>
+              <span className='opacity-30'>{badge.icon}</span>
+              <Lock className='w-4 h-4 text-gray-400 absolute -bottom-1 -right-1' />
             </div>
           )}
         </div>
@@ -91,20 +91,22 @@ export function BadgeCard({
         </h4>
 
         {/* Description */}
-        <p className={`text-gray-500 ${sizes.desc} line-clamp-2`}>{badge.description}</p>
+        <p className={`text-gray-500 ${sizes.desc} line-clamp-2`}>
+          {badge.description}
+        </p>
 
         {/* Progress Bar (for locked badges) */}
         {!isUnlocked && showProgress && badge.maxProgress && (
-          <div className="w-full mt-3">
-            <div className="flex justify-between text-[10px] text-gray-400 mb-1">
+          <div className='w-full mt-3'>
+            <div className='flex justify-between text-[10px] text-gray-400 mb-1'>
               <span>Progression</span>
               <span>
                 {progress}/{maxProgress}
               </span>
             </div>
-            <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+            <div className='h-1.5 bg-gray-200 rounded-full overflow-hidden'>
               <div
-                className="h-full bg-[#1B998B] rounded-full transition-all duration-500"
+                className='h-full bg-[#1B998B] rounded-full transition-all duration-500'
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
@@ -113,7 +115,7 @@ export function BadgeCard({
 
         {/* Unlock Date (for unlocked badges) */}
         {isUnlocked && badge.unlockedAt && (
-          <p className="text-[10px] text-gray-400 mt-2">
+          <p className='text-[10px] text-gray-400 mt-2'>
             Débloqué le{' '}
             {badge.unlockedAt.toLocaleDateString('fr-FR', {
               day: 'numeric',

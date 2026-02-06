@@ -47,7 +47,10 @@ export default function ForfaitsPage() {
 
   // Modalités accordion state and refs
   const modalitesRef = useRef(null);
-  const modalitesInView = useInView(modalitesRef, { once: true, margin: '-100px' });
+  const modalitesInView = useInView(modalitesRef, {
+    once: true,
+    margin: '-100px',
+  });
   const [openModalite, setOpenModalite] = useState<number | null>(null);
 
   const modalitesImages: Record<number, string> = {
@@ -55,7 +58,9 @@ export default function ForfaitsPage() {
     2: 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=800&h=600&fit=crop&q=80', // Annulation
     3: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&h=600&fit=crop&q=80', // Report
   };
-  const [activeModaliteImage, setActiveModaliteImage] = useState(modalitesImages[1]);
+  const [activeModaliteImage, setActiveModaliteImage] = useState(
+    modalitesImages[1]
+  );
 
   const handleToggleModalite = (id: number) => {
     if (openModalite === id) {
@@ -68,7 +73,10 @@ export default function ForfaitsPage() {
 
   // Remboursement banner ref
   const remboursementBannerRef = useRef(null);
-  const remboursementBannerInView = useInView(remboursementBannerRef, { once: true, margin: '-50px' });
+  const remboursementBannerInView = useInView(remboursementBannerRef, {
+    once: true,
+    margin: '-50px',
+  });
 
   // Données pour les onglets de comparaison mobile
   const comparisonData = {
@@ -4481,23 +4489,33 @@ export default function ForfaitsPage() {
               flexWrap: 'wrap',
             }}
             initial={{ opacity: 0, y: 20 }}
-            animate={remboursementBannerInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            animate={
+              remboursementBannerInView
+                ? { opacity: 1, y: 0 }
+                : { opacity: 0, y: 20 }
+            }
             transition={{ duration: 0.6, ease: 'easeOut' }}
           >
             {/* Texte */}
             <motion.span
               style={{
-                fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                fontFamily:
+                  "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                 fontSize: '18px',
                 fontWeight: 600,
                 color: '#ffffff',
                 textAlign: 'center',
               }}
               initial={{ opacity: 0, x: -20 }}
-              animate={remboursementBannerInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
+              animate={
+                remboursementBannerInView
+                  ? { opacity: 1, x: 0 }
+                  : { opacity: 0, x: -20 }
+              }
               transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
             >
-              Mes consultations sont remboursées par les assurances complémentaires
+              Mes consultations sont remboursées par les assurances
+              complémentaires
             </motion.span>
 
             {/* Bouton CTA */}
@@ -4507,7 +4525,8 @@ export default function ForfaitsPage() {
                 backgroundColor: '#ffffff',
                 borderRadius: '35px',
                 padding: '14px 32px',
-                fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                fontFamily:
+                  "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                 fontSize: '14px',
                 fontWeight: 700,
                 color: '#3f6655',
@@ -4519,7 +4538,11 @@ export default function ForfaitsPage() {
                 whiteSpace: 'nowrap',
               }}
               initial={{ opacity: 0, x: 20 }}
-              animate={remboursementBannerInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }}
+              animate={
+                remboursementBannerInView
+                  ? { opacity: 1, x: 0 }
+                  : { opacity: 0, x: 20 }
+              }
               transition={{ duration: 0.6, delay: 0.4, ease: 'easeOut' }}
               onMouseEnter={e => {
                 e.currentTarget.style.backgroundColor = '#f0f0f0';
@@ -4567,7 +4590,9 @@ export default function ForfaitsPage() {
               marginBottom: '64px',
             }}
             initial={{ opacity: 0, y: 20 }}
-            animate={modalitesInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            animate={
+              modalitesInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+            }
             transition={{ duration: 0.6, ease: 'easeOut' }}
           >
             {/* Titre principal */}
@@ -4587,7 +4612,8 @@ export default function ForfaitsPage() {
             {/* Sous-titre */}
             <p
               style={{
-                fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                fontFamily:
+                  "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                 fontSize: '18px',
                 lineHeight: '28px',
                 color: '#41556b',
@@ -4617,7 +4643,9 @@ export default function ForfaitsPage() {
                   borderBottom: '1px solid #b6ccae',
                 }}
                 initial={{ opacity: 0, y: 20 }}
-                animate={modalitesInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                animate={
+                  modalitesInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+                }
                 transition={{ duration: 0.6, delay: 0.1, ease: 'easeOut' }}
               >
                 <button
@@ -4648,11 +4676,13 @@ export default function ForfaitsPage() {
                   </h3>
                   <span
                     style={{
-                      fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                      fontFamily:
+                        "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                       fontSize: '24px',
                       color: '#3f6655',
                       transition: 'transform 0.3s ease',
-                      transform: openModalite === 1 ? 'rotate(180deg)' : 'rotate(0deg)',
+                      transform:
+                        openModalite === 1 ? 'rotate(180deg)' : 'rotate(0deg)',
                     }}
                   >
                     ∨
@@ -4671,7 +4701,8 @@ export default function ForfaitsPage() {
                       <div style={{ paddingBottom: '24px' }}>
                         <h4
                           style={{
-                            fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                            fontFamily:
+                              "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                             fontSize: '16px',
                             fontWeight: 700,
                             color: '#3f6655',
@@ -4680,21 +4711,47 @@ export default function ForfaitsPage() {
                         >
                           Options acceptées :
                         </h4>
-                        <ul style={{ marginBottom: '16px', paddingLeft: '20px' }}>
-                          <li style={{ fontFamily: "'Plus Jakarta Sans'", fontSize: '16px', lineHeight: '26px', color: '#41556b', marginBottom: '4px' }}>
+                        <ul
+                          style={{ marginBottom: '16px', paddingLeft: '20px' }}
+                        >
+                          <li
+                            style={{
+                              fontFamily: "'Plus Jakarta Sans'",
+                              fontSize: '16px',
+                              lineHeight: '26px',
+                              color: '#41556b',
+                              marginBottom: '4px',
+                            }}
+                          >
                             Carte bancaire (Visa, Mastercard)
                           </li>
-                          <li style={{ fontFamily: "'Plus Jakarta Sans'", fontSize: '16px', lineHeight: '26px', color: '#41556b', marginBottom: '4px' }}>
+                          <li
+                            style={{
+                              fontFamily: "'Plus Jakarta Sans'",
+                              fontSize: '16px',
+                              lineHeight: '26px',
+                              color: '#41556b',
+                              marginBottom: '4px',
+                            }}
+                          >
                             Virement bancaire (IBAN fourni après réservation)
                           </li>
-                          <li style={{ fontFamily: "'Plus Jakarta Sans'", fontSize: '16px', lineHeight: '26px', color: '#41556b' }}>
+                          <li
+                            style={{
+                              fontFamily: "'Plus Jakarta Sans'",
+                              fontSize: '16px',
+                              lineHeight: '26px',
+                              color: '#41556b',
+                            }}
+                          >
                             Twint (pour les consultations à l'unité)
                           </li>
                         </ul>
 
                         <h4
                           style={{
-                            fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                            fontFamily:
+                              "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                             fontSize: '16px',
                             fontWeight: 700,
                             color: '#3f6655',
@@ -4703,17 +4760,44 @@ export default function ForfaitsPage() {
                         >
                           Quand :
                         </h4>
-                        <ul style={{ marginBottom: '16px', paddingLeft: '20px' }}>
-                          <li style={{ fontFamily: "'Plus Jakarta Sans'", fontSize: '16px', lineHeight: '26px', color: '#41556b', marginBottom: '4px' }}>
-                            Forfaits : Paiement en une fois au moment de la réservation
+                        <ul
+                          style={{ marginBottom: '16px', paddingLeft: '20px' }}
+                        >
+                          <li
+                            style={{
+                              fontFamily: "'Plus Jakarta Sans'",
+                              fontSize: '16px',
+                              lineHeight: '26px',
+                              color: '#41556b',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            Forfaits : Paiement en une fois au moment de la
+                            réservation
                           </li>
-                          <li style={{ fontFamily: "'Plus Jakarta Sans'", fontSize: '16px', lineHeight: '26px', color: '#41556b' }}>
-                            Consultations à l'unité : Paiement avant chaque consultation
+                          <li
+                            style={{
+                              fontFamily: "'Plus Jakarta Sans'",
+                              fontSize: '16px',
+                              lineHeight: '26px',
+                              color: '#41556b',
+                            }}
+                          >
+                            Consultations à l'unité : Paiement avant chaque
+                            consultation
                           </li>
                         </ul>
 
-                        <p style={{ fontFamily: "'Plus Jakarta Sans'", fontSize: '16px', lineHeight: '26px', color: '#41556b' }}>
-                          Un reçu vous est automatiquement envoyé pour chaque paiement.
+                        <p
+                          style={{
+                            fontFamily: "'Plus Jakarta Sans'",
+                            fontSize: '16px',
+                            lineHeight: '26px',
+                            color: '#41556b',
+                          }}
+                        >
+                          Un reçu vous est automatiquement envoyé pour chaque
+                          paiement.
                         </p>
 
                         {/* Image mobile */}
@@ -4749,7 +4833,9 @@ export default function ForfaitsPage() {
                   borderBottom: '1px solid #b6ccae',
                 }}
                 initial={{ opacity: 0, y: 20 }}
-                animate={modalitesInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                animate={
+                  modalitesInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+                }
                 transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
               >
                 <button
@@ -4780,11 +4866,13 @@ export default function ForfaitsPage() {
                   </h3>
                   <span
                     style={{
-                      fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                      fontFamily:
+                        "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                       fontSize: '24px',
                       color: '#3f6655',
                       transition: 'transform 0.3s ease',
-                      transform: openModalite === 2 ? 'rotate(180deg)' : 'rotate(0deg)',
+                      transform:
+                        openModalite === 2 ? 'rotate(180deg)' : 'rotate(0deg)',
                     }}
                   >
                     ∨
@@ -4803,7 +4891,8 @@ export default function ForfaitsPage() {
                       <div style={{ paddingBottom: '24px' }}>
                         <h4
                           style={{
-                            fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                            fontFamily:
+                              "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                             fontSize: '16px',
                             fontWeight: 700,
                             color: '#3f6655',
@@ -4812,18 +4901,36 @@ export default function ForfaitsPage() {
                         >
                           Annulation gratuite :
                         </h4>
-                        <ul style={{ marginBottom: '16px', paddingLeft: '20px' }}>
-                          <li style={{ fontFamily: "'Plus Jakarta Sans'", fontSize: '16px', lineHeight: '26px', color: '#41556b', marginBottom: '4px' }}>
+                        <ul
+                          style={{ marginBottom: '16px', paddingLeft: '20px' }}
+                        >
+                          <li
+                            style={{
+                              fontFamily: "'Plus Jakarta Sans'",
+                              fontSize: '16px',
+                              lineHeight: '26px',
+                              color: '#41556b',
+                              marginBottom: '4px',
+                            }}
+                          >
                             Jusqu'à 48h avant votre rendez-vous
                           </li>
-                          <li style={{ fontFamily: "'Plus Jakarta Sans'", fontSize: '16px', lineHeight: '26px', color: '#41556b' }}>
+                          <li
+                            style={{
+                              fontFamily: "'Plus Jakarta Sans'",
+                              fontSize: '16px',
+                              lineHeight: '26px',
+                              color: '#41556b',
+                            }}
+                          >
                             Par email ou via la plateforme
                           </li>
                         </ul>
 
                         <h4
                           style={{
-                            fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                            fontFamily:
+                              "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                             fontSize: '16px',
                             fontWeight: 700,
                             color: '#3f6655',
@@ -4833,11 +4940,27 @@ export default function ForfaitsPage() {
                           Annulation tardive (moins de 48h) :
                         </h4>
                         <ul style={{ paddingLeft: '20px' }}>
-                          <li style={{ fontFamily: "'Plus Jakarta Sans'", fontSize: '16px', lineHeight: '26px', color: '#41556b', marginBottom: '4px' }}>
+                          <li
+                            style={{
+                              fontFamily: "'Plus Jakarta Sans'",
+                              fontSize: '16px',
+                              lineHeight: '26px',
+                              color: '#41556b',
+                              marginBottom: '4px',
+                            }}
+                          >
                             La consultation est facturée et non remboursée
                           </li>
-                          <li style={{ fontFamily: "'Plus Jakarta Sans'", fontSize: '16px', lineHeight: '26px', color: '#41556b' }}>
-                            Sauf cas exceptionnel (maladie avec certificat médical)
+                          <li
+                            style={{
+                              fontFamily: "'Plus Jakarta Sans'",
+                              fontSize: '16px',
+                              lineHeight: '26px',
+                              color: '#41556b',
+                            }}
+                          >
+                            Sauf cas exceptionnel (maladie avec certificat
+                            médical)
                           </li>
                         </ul>
 
@@ -4874,7 +4997,9 @@ export default function ForfaitsPage() {
                   borderBottom: '1px solid #b6ccae',
                 }}
                 initial={{ opacity: 0, y: 20 }}
-                animate={modalitesInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                animate={
+                  modalitesInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+                }
                 transition={{ duration: 0.6, delay: 0.3, ease: 'easeOut' }}
               >
                 <button
@@ -4905,11 +5030,13 @@ export default function ForfaitsPage() {
                   </h3>
                   <span
                     style={{
-                      fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                      fontFamily:
+                        "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                       fontSize: '24px',
                       color: '#3f6655',
                       transition: 'transform 0.3s ease',
-                      transform: openModalite === 3 ? 'rotate(180deg)' : 'rotate(0deg)',
+                      transform:
+                        openModalite === 3 ? 'rotate(180deg)' : 'rotate(0deg)',
                     }}
                   >
                     ∨
@@ -4928,7 +5055,8 @@ export default function ForfaitsPage() {
                       <div style={{ paddingBottom: '24px' }}>
                         <h4
                           style={{
-                            fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                            fontFamily:
+                              "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                             fontSize: '16px',
                             fontWeight: 700,
                             color: '#3f6655',
@@ -4937,21 +5065,47 @@ export default function ForfaitsPage() {
                         >
                           En cas d'empêchement de votre part :
                         </h4>
-                        <ul style={{ marginBottom: '16px', paddingLeft: '20px' }}>
-                          <li style={{ fontFamily: "'Plus Jakarta Sans'", fontSize: '16px', lineHeight: '26px', color: '#41556b', marginBottom: '4px' }}>
+                        <ul
+                          style={{ marginBottom: '16px', paddingLeft: '20px' }}
+                        >
+                          <li
+                            style={{
+                              fontFamily: "'Plus Jakarta Sans'",
+                              fontSize: '16px',
+                              lineHeight: '26px',
+                              color: '#41556b',
+                              marginBottom: '4px',
+                            }}
+                          >
                             Possible jusqu'à 24h avant le rendez-vous
                           </li>
-                          <li style={{ fontFamily: "'Plus Jakarta Sans'", fontSize: '16px', lineHeight: '26px', color: '#41556b', marginBottom: '4px' }}>
+                          <li
+                            style={{
+                              fontFamily: "'Plus Jakarta Sans'",
+                              fontSize: '16px',
+                              lineHeight: '26px',
+                              color: '#41556b',
+                              marginBottom: '4px',
+                            }}
+                          >
                             Nous fixons ensemble une nouvelle date
                           </li>
-                          <li style={{ fontFamily: "'Plus Jakarta Sans'", fontSize: '16px', lineHeight: '26px', color: '#41556b' }}>
+                          <li
+                            style={{
+                              fontFamily: "'Plus Jakarta Sans'",
+                              fontSize: '16px',
+                              lineHeight: '26px',
+                              color: '#41556b',
+                            }}
+                          >
                             Sans frais supplémentaires
                           </li>
                         </ul>
 
                         <h4
                           style={{
-                            fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                            fontFamily:
+                              "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                             fontSize: '16px',
                             fontWeight: 700,
                             color: '#3f6655',
@@ -4961,13 +5115,36 @@ export default function ForfaitsPage() {
                           En cas d'empêchement de ma part :
                         </h4>
                         <ul style={{ paddingLeft: '20px' }}>
-                          <li style={{ fontFamily: "'Plus Jakarta Sans'", fontSize: '16px', lineHeight: '26px', color: '#41556b', marginBottom: '4px' }}>
+                          <li
+                            style={{
+                              fontFamily: "'Plus Jakarta Sans'",
+                              fontSize: '16px',
+                              lineHeight: '26px',
+                              color: '#41556b',
+                              marginBottom: '4px',
+                            }}
+                          >
                             Je vous préviens dès que possible
                           </li>
-                          <li style={{ fontFamily: "'Plus Jakarta Sans'", fontSize: '16px', lineHeight: '26px', color: '#41556b', marginBottom: '4px' }}>
+                          <li
+                            style={{
+                              fontFamily: "'Plus Jakarta Sans'",
+                              fontSize: '16px',
+                              lineHeight: '26px',
+                              color: '#41556b',
+                              marginBottom: '4px',
+                            }}
+                          >
                             Nous replanifions à votre convenance
                           </li>
-                          <li style={{ fontFamily: "'Plus Jakarta Sans'", fontSize: '16px', lineHeight: '26px', color: '#41556b' }}>
+                          <li
+                            style={{
+                              fontFamily: "'Plus Jakarta Sans'",
+                              fontSize: '16px',
+                              lineHeight: '26px',
+                              color: '#41556b',
+                            }}
+                          >
                             Aucun frais ne vous est facturé
                           </li>
                         </ul>

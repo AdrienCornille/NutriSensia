@@ -4,7 +4,12 @@
 
 // ==================== ENUMS ====================
 
-export type MessageType = 'text' | 'image' | 'document' | 'system' | 'plan-modification';
+export type MessageType =
+  | 'text'
+  | 'image'
+  | 'document'
+  | 'system'
+  | 'plan-modification';
 export type MessageStatus = 'sending' | 'sent' | 'delivered' | 'read' | 'error';
 export type NutritionistStatus = 'online' | 'offline' | 'busy';
 export type AttachmentType = 'photo' | 'document' | 'camera';
@@ -163,8 +168,10 @@ export function messagingReducer(
         ...state,
         conversation: {
           ...state.conversation,
-          messages: state.conversation.messages.map((msg) =>
-            msg.id === action.messageId ? { ...msg, status: action.status } : msg
+          messages: state.conversation.messages.map(msg =>
+            msg.id === action.messageId
+              ? { ...msg, status: action.status }
+              : msg
           ),
         },
       };
@@ -304,17 +311,19 @@ export function formatLastSeen(date: Date): string {
   const diffHours = Math.floor(diffMins / 60);
   const diffDays = Math.floor(diffHours / 24);
 
-  if (diffMins < 1) return 'À l\'instant';
+  if (diffMins < 1) return "À l'instant";
   if (diffMins < 60) return `Il y a ${diffMins} min`;
   if (diffHours < 24) return `Il y a ${diffHours}h`;
   if (diffDays === 1) return 'Hier';
   return `Il y a ${diffDays} jours`;
 }
 
-export function groupMessagesByDate(messages: Message[]): Map<string, Message[]> {
+export function groupMessagesByDate(
+  messages: Message[]
+): Map<string, Message[]> {
   const groups = new Map<string, Message[]>();
 
-  messages.forEach((message) => {
+  messages.forEach(message => {
     const dateKey = message.timestamp.toDateString();
     const existing = groups.get(dateKey) || [];
     groups.set(dateKey, [...existing, message]);
@@ -329,6 +338,6 @@ export const defaultQuickReplies: QuickReply[] = [
   { id: 'qr-2', text: 'Merci beaucoup', category: 'confirmation' },
   { id: 'qr-3', text: "J'ai une question", category: 'question' },
   { id: 'qr-4', text: "D'accord, je comprends", category: 'confirmation' },
-  { id: 'qr-5', text: 'Pouvez-vous m\'expliquer ?', category: 'question' },
+  { id: 'qr-5', text: "Pouvez-vous m'expliquer ?", category: 'question' },
   { id: 'qr-6', text: 'À bientôt !', category: 'greeting' },
 ];

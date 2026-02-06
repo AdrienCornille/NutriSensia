@@ -20,10 +20,10 @@ export function NotificationGroup({
   if (notifications.length === 0) return null;
 
   return (
-    <div className="mb-6">
-      <h3 className="text-sm font-medium text-gray-500 mb-3">{title}</h3>
-      <div className="space-y-3">
-        {notifications.map((notification) => (
+    <div className='mb-6'>
+      <h3 className='text-sm font-medium text-gray-500 mb-3'>{title}</h3>
+      <div className='space-y-3'>
+        {notifications.map(notification => (
           <NotificationItem
             key={notification.id}
             notification={notification}

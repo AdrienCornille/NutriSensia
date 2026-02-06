@@ -28,7 +28,8 @@ const mockMessages: Message[] = [
   // Day 1 - Initial conversation
   {
     id: 'msg-1',
-    content: 'Bienvenue dans votre espace de messagerie NutriSensia ! Je suis Lucie Martin, votre nutritionniste. N\'hésitez pas à me poser vos questions.',
+    content:
+      "Bienvenue dans votre espace de messagerie NutriSensia ! Je suis Lucie Martin, votre nutritionniste. N'hésitez pas à me poser vos questions.",
     type: 'system',
     timestamp: new Date('2026-01-15T09:00:00'),
     isFromUser: false,
@@ -36,7 +37,8 @@ const mockMessages: Message[] = [
   },
   {
     id: 'msg-2',
-    content: 'Bonjour Lucie ! Merci pour la première consultation. J\'ai une question sur le petit-déjeuner recommandé.',
+    content:
+      "Bonjour Lucie ! Merci pour la première consultation. J'ai une question sur le petit-déjeuner recommandé.",
     type: 'text',
     timestamp: new Date('2026-01-15T10:30:00'),
     isFromUser: true,
@@ -44,7 +46,8 @@ const mockMessages: Message[] = [
   },
   {
     id: 'msg-3',
-    content: 'Bonjour ! Bien sûr, je vous écoute. Quelle est votre question concernant le petit-déjeuner ?',
+    content:
+      'Bonjour ! Bien sûr, je vous écoute. Quelle est votre question concernant le petit-déjeuner ?',
     type: 'text',
     timestamp: new Date('2026-01-15T11:15:00'),
     isFromUser: false,
@@ -52,7 +55,8 @@ const mockMessages: Message[] = [
   },
   {
     id: 'msg-4',
-    content: 'Est-ce que je peux remplacer le yaourt grec par du fromage blanc ? Je n\'aime pas trop le yaourt.',
+    content:
+      "Est-ce que je peux remplacer le yaourt grec par du fromage blanc ? Je n'aime pas trop le yaourt.",
     type: 'text',
     timestamp: new Date('2026-01-15T11:20:00'),
     isFromUser: true,
@@ -60,7 +64,8 @@ const mockMessages: Message[] = [
   },
   {
     id: 'msg-5',
-    content: 'Tout à fait ! Le fromage blanc est une excellente alternative. Optez pour du fromage blanc à 3% de matières grasses. Les apports en protéines sont similaires.',
+    content:
+      'Tout à fait ! Le fromage blanc est une excellente alternative. Optez pour du fromage blanc à 3% de matières grasses. Les apports en protéines sont similaires.',
     type: 'text',
     timestamp: new Date('2026-01-15T11:45:00'),
     isFromUser: false,
@@ -70,7 +75,7 @@ const mockMessages: Message[] = [
   // Day 2 - Photo exchange
   {
     id: 'msg-6',
-    content: 'Voici ma préparation du déjeuner aujourd\'hui !',
+    content: "Voici ma préparation du déjeuner aujourd'hui !",
     type: 'text',
     timestamp: new Date('2026-01-16T12:30:00'),
     isFromUser: true,
@@ -93,7 +98,8 @@ const mockMessages: Message[] = [
   },
   {
     id: 'msg-8',
-    content: 'Superbe ! C\'est exactement ce type de repas équilibré que je recommande. Belles proportions de légumes et la protéine est bien présente. 👏',
+    content:
+      "Superbe ! C'est exactement ce type de repas équilibré que je recommande. Belles proportions de légumes et la protéine est bien présente. 👏",
     type: 'text',
     timestamp: new Date('2026-01-16T14:00:00'),
     isFromUser: false,
@@ -103,7 +109,7 @@ const mockMessages: Message[] = [
   // Day 3 - Plan modification
   {
     id: 'msg-9',
-    content: 'Suite à notre échange, j\'ai ajusté votre plan alimentaire.',
+    content: "Suite à notre échange, j'ai ajusté votre plan alimentaire.",
     type: 'text',
     timestamp: new Date('2026-01-20T09:00:00'),
     isFromUser: false,
@@ -134,7 +140,8 @@ const mockMessages: Message[] = [
   // Today - Recent messages
   {
     id: 'msg-12',
-    content: 'Bonjour ! Comment allez-vous cette semaine ? Avez-vous pu suivre le plan ?',
+    content:
+      'Bonjour ! Comment allez-vous cette semaine ? Avez-vous pu suivre le plan ?',
     type: 'text',
     timestamp: new Date('2026-01-22T08:00:00'),
     isFromUser: false,
@@ -142,7 +149,8 @@ const mockMessages: Message[] = [
   },
   {
     id: 'msg-13',
-    content: 'Bonjour Lucie ! Oui, tout se passe bien. J\'ai perdu 0.5kg cette semaine.',
+    content:
+      "Bonjour Lucie ! Oui, tout se passe bien. J'ai perdu 0.5kg cette semaine.",
     type: 'text',
     timestamp: new Date('2026-01-22T10:15:00'),
     isFromUser: true,
@@ -250,7 +258,7 @@ export function updateMessageStatus(
   messageId: string,
   status: MessageStatus
 ): boolean {
-  const message = mockMessages.find((m) => m.id === messageId);
+  const message = mockMessages.find(m => m.id === messageId);
   if (message) {
     message.status = status;
     return true;
@@ -273,12 +281,13 @@ export function updateNutritionistStatus(
 export function simulateNutritionistResponse(): Message {
   const responses = [
     'Merci pour votre message, je vous réponds dès que possible.',
-    'C\'est noté ! N\'hésitez pas si vous avez d\'autres questions.',
+    "C'est noté ! N'hésitez pas si vous avez d'autres questions.",
     'Excellent progrès ! Continuez comme ça.',
     'Je comprends, nous en parlerons lors de notre prochaine consultation.',
   ];
 
-  const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+  const randomResponse =
+    responses[Math.floor(Math.random() * responses.length)];
 
   const newMessage: Message = {
     id: `msg-${Date.now()}`,

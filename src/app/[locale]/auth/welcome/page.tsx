@@ -75,7 +75,8 @@ function WelcomePageContent() {
           Compte activé !
         </h1>
         <p className='text-body mb-8' style={{ color: '#41556b' }}>
-          Votre adresse email a été vérifiée avec succès. Vous êtes maintenant connecté(e) à votre compte.
+          Votre adresse email a été vérifiée avec succès. Vous êtes maintenant
+          connecté(e) à votre compte.
         </p>
 
         {/* Message de bienvenue */}
@@ -90,12 +91,14 @@ function WelcomePageContent() {
               color: '#41556b',
             }}
           >
-            Bienvenue dans la communauté NutriSensia ! Réservez dès maintenant votre première consultation pour débuter votre parcours vers une alimentation plus saine.
+            Bienvenue dans la communauté NutriSensia ! Réservez dès maintenant
+            votre première consultation pour débuter votre parcours vers une
+            alimentation plus saine.
           </p>
         </div>
 
-        {/* Bouton de réservation */}
-        <Link href='/consultation/reserver'>
+        {/* Bouton vers le dashboard */}
+        <Link href='/dashboard/patient'>
           <motion.button
             type='button'
             whileHover={{ scale: 1.02 }}
@@ -126,7 +129,7 @@ function WelcomePageContent() {
                 'linear-gradient(135deg, #1B998B 0%, #147569 100%)';
             }}
           >
-            Réserver ma consultation
+            Accéder à mon espace
           </motion.button>
         </Link>
       </motion.div>

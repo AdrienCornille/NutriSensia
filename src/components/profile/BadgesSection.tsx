@@ -1,7 +1,11 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { BadgeCollection, StreakCard, CelebrationModal } from '@/components/gamification';
+import {
+  BadgeCollection,
+  StreakCard,
+  CelebrationModal,
+} from '@/components/gamification';
 import type { Badge, StreakData, CelebrationData } from '@/types/gamification';
 import { getBadges, getStreakData } from '@/data/mock-gamification';
 
@@ -42,24 +46,19 @@ export function BadgesSection() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1B998B]" />
+      <div className='flex items-center justify-center min-h-[400px]'>
+        <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-[#1B998B]' />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className='space-y-6'>
       {/* Streak Card */}
-      {streak && (
-        <StreakCard streak={streak} variant="large" showBestStreak />
-      )}
+      {streak && <StreakCard streak={streak} variant='large' showBestStreak />}
 
       {/* Badge Collection */}
-      <BadgeCollection
-        badges={badges}
-        onBadgeClick={handleBadgeClick}
-      />
+      <BadgeCollection badges={badges} onBadgeClick={handleBadgeClick} />
 
       {/* Celebration Modal */}
       <CelebrationModal

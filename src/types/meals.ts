@@ -167,12 +167,17 @@ export function calculateNutrition(
 /**
  * Calculate total nutrition from selected foods
  */
-export function calculateTotalNutrition(foods: SelectedFood[]): NutritionValues {
+export function calculateTotalNutrition(
+  foods: SelectedFood[]
+): NutritionValues {
   return foods.reduce(
     (total, food) => ({
       calories: total.calories + food.calculatedNutrition.calories,
-      protein: Math.round((total.protein + food.calculatedNutrition.protein) * 10) / 10,
-      carbs: Math.round((total.carbs + food.calculatedNutrition.carbs) * 10) / 10,
+      protein:
+        Math.round((total.protein + food.calculatedNutrition.protein) * 10) /
+        10,
+      carbs:
+        Math.round((total.carbs + food.calculatedNutrition.carbs) * 10) / 10,
       fat: Math.round((total.fat + food.calculatedNutrition.fat) * 10) / 10,
     }),
     { calories: 0, protein: 0, carbs: 0, fat: 0 }
@@ -213,7 +218,7 @@ export function mealLoggingReducer(
     case 'UPDATE_FOOD':
       return {
         ...state,
-        foods: state.foods.map((f) =>
+        foods: state.foods.map(f =>
           f.id === action.food.id ? action.food : f
         ),
       };
@@ -221,7 +226,7 @@ export function mealLoggingReducer(
     case 'REMOVE_FOOD':
       return {
         ...state,
-        foods: state.foods.filter((f) => f.id !== action.foodId),
+        foods: state.foods.filter(f => f.id !== action.foodId),
       };
 
     case 'SET_PHOTO':
@@ -234,7 +239,7 @@ export function mealLoggingReducer(
       return {
         ...state,
         contextTags: state.contextTags.includes(action.tag)
-          ? state.contextTags.filter((t) => t !== action.tag)
+          ? state.contextTags.filter(t => t !== action.tag)
           : [...state.contextTags, action.tag],
       };
 

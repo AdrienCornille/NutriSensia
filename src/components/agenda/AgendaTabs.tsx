@@ -11,9 +11,9 @@ interface AgendaTabsProps {
 
 export function AgendaTabs({ activeTab, onTabChange }: AgendaTabsProps) {
   return (
-    <div className="bg-white border-b border-gray-200 px-8 py-4">
-      <div className="flex gap-1 bg-gray-100 p-1 rounded-xl w-fit">
-        {agendaTabsConfig.map((tab) => (
+    <div className='bg-white border-b border-gray-200 px-8 py-4'>
+      <div className='flex gap-1 bg-gray-100 p-1 rounded-xl w-fit'>
+        {agendaTabsConfig.map(tab => (
           <button
             key={tab.id}
             onClick={() => onTabChange(tab.id)}

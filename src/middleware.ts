@@ -18,11 +18,19 @@ const ADMIN_ROUTES = ['/admin'];
 // Routes de redirection pour nutritionnistes en attente
 const NUTRITIONIST_PENDING_ROUTES = ['/inscription/nutritionniste/en-attente'];
 const NUTRITIONIST_REJECTED_ROUTES = ['/inscription/nutritionniste/rejete'];
-const NUTRITIONIST_INFO_REQUIRED_ROUTES = ['/inscription/nutritionniste/info-requise'];
+const NUTRITIONIST_INFO_REQUIRED_ROUTES = [
+  '/inscription/nutritionniste/info-requise',
+];
 
 // Types
 type UserRole = 'patient' | 'nutritionist' | 'admin' | null;
-type NutritionistStatus = 'pending' | 'active' | 'rejected' | 'info_required' | 'suspended' | null;
+type NutritionistStatus =
+  | 'pending'
+  | 'active'
+  | 'rejected'
+  | 'info_required'
+  | 'suspended'
+  | null;
 
 interface RoleCheckResult {
   isAuthenticated: boolean;
@@ -107,7 +115,8 @@ async function checkUserRole(
       .eq('user_id', user.id)
       .single();
 
-    nutritionistStatus = (nutritionistProfile?.status as NutritionistStatus) || 'pending';
+    nutritionistStatus =
+      (nutritionistProfile?.status as NutritionistStatus) || 'pending';
   }
 
   return {
@@ -298,7 +307,10 @@ export async function middleware(request: NextRequest) {
   const isProtectedRoute = matchesRoutes(cleanPath, PROTECTED_ROUTES);
 
   if (isProtectedRoute) {
-    const { response: updatedResponse, roleData } = await checkUserRole(request, response);
+    const { response: updatedResponse, roleData } = await checkUserRole(
+      request,
+      response
+    );
     response = updatedResponse;
 
     // 3. Gérer les redirections basées sur le rôle
@@ -307,7 +319,10 @@ export async function middleware(request: NextRequest) {
       // Copier les en-têtes de sécurité vers la redirection
       roleRedirect.headers.set('X-Frame-Options', 'DENY');
       roleRedirect.headers.set('X-Content-Type-Options', 'nosniff');
-      roleRedirect.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+      roleRedirect.headers.set(
+        'Referrer-Policy',
+        'strict-origin-when-cross-origin'
+      );
       return roleRedirect;
     }
   }

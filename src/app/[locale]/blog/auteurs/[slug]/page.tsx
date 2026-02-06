@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useRef, use } from 'react';
 import { Link } from '@/i18n/navigation';
 import { MarketingHeader } from '@/components/landing/MarketingHeader';
 import { MarketingFooter } from '@/components/landing/MarketingFooter';
@@ -12,9 +12,9 @@ import { motion, useInView } from 'framer-motion';
 import { useFirstVisit } from '@/hooks/useFirstVisit';
 
 interface PageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 interface ArticleData {
@@ -157,7 +157,9 @@ function AuthorArticleCard({ article }: { article: ArticleData }) {
  * Page Auteur - Style NutriSensia inspiré de Finary
  */
 export default function AuthorPage({ params }: PageProps) {
-  const author = getAuthorBySlug(params.slug);
+  // Next.js 15: params est une Promise, utiliser use() pour l'unwrap
+  const { slug } = use(params);
+  const author = getAuthorBySlug(slug);
 
   if (!author) {
     notFound();

@@ -2,6 +2,9 @@ import type { Metadata } from 'next';
 import { Providers } from '../providers';
 import '../globals.css';
 
+// Force dynamic rendering pour les pages auth qui utilisent useSearchParams
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Authentification | NutriSensia',
   description:

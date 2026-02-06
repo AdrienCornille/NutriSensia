@@ -43,9 +43,9 @@ export function IntroSection({ className }: IntroSectionProps) {
       )}
     >
       {/* Decorative elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 right-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 left-10 w-96 h-96 bg-accent-teal/5 rounded-full blur-3xl" />
+      <div className='absolute inset-0 overflow-hidden pointer-events-none'>
+        <div className='absolute top-20 right-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl' />
+        <div className='absolute bottom-20 left-10 w-96 h-96 bg-accent-teal/5 rounded-full blur-3xl' />
       </div>
 
       <div className='container mx-auto px-16dp sm:px-24dp lg:px-32dp relative z-10'>
@@ -59,14 +59,18 @@ export function IntroSection({ className }: IntroSectionProps) {
           }}
         >
           {/* Titre principal - Hero style */}
-          <h1 className='mb-32dp text-center font-sans text-primary-dark sm:leading-[1.1] lg:leading-[1.05]
-            text-5xl sm:text-6xl lg:text-7xl font-bold'>
+          <h1
+            className='mb-32dp text-center font-sans text-primary-dark sm:leading-[1.1] lg:leading-[1.05]
+            text-5xl sm:text-6xl lg:text-7xl font-bold'
+          >
             Mon Approche Nutritionnelle
           </h1>
 
           {/* Sous-titre - Hero style */}
-          <p className='text-center font-sans font-semibold text-accent-teal leading-[1.4]
-            text-2xl sm:text-3xl lg:text-4xl max-w-3xl mx-auto'>
+          <p
+            className='text-center font-sans font-semibold text-accent-teal leading-[1.4]
+            text-2xl sm:text-3xl lg:text-4xl max-w-3xl mx-auto'
+          >
             Une méthode scientifique, personnalisée et bienveillante qui
             respecte votre corps et votre vie
           </p>

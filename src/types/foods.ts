@@ -18,7 +18,12 @@ export type FoodCategory =
 
 export type ViewMode = 'grid' | 'list';
 
-export type SortOption = 'name-asc' | 'name-desc' | 'calories-asc' | 'calories-desc' | 'protein-desc';
+export type SortOption =
+  | 'name-asc'
+  | 'name-desc'
+  | 'calories-asc'
+  | 'calories-desc'
+  | 'protein-desc';
 
 // ==================== INTERFACES ====================
 
@@ -106,7 +111,10 @@ export const foodsInitialState: FoodsState = {
   recentSearches: [],
 };
 
-export function foodsReducer(state: FoodsState, action: FoodsAction): FoodsState {
+export function foodsReducer(
+  state: FoodsState,
+  action: FoodsAction
+): FoodsState {
   switch (action.type) {
     case 'SET_SEARCH_QUERY':
       return { ...state, searchQuery: action.payload };
@@ -129,12 +137,12 @@ export function foodsReducer(state: FoodsState, action: FoodsAction): FoodsState
       return {
         ...state,
         favorites: isFavorite
-          ? state.favorites.filter((id) => id !== action.payload)
+          ? state.favorites.filter(id => id !== action.payload)
           : [...state.favorites, action.payload],
       };
     }
     case 'ADD_RECENT_SEARCH': {
-      const filtered = state.recentSearches.filter((s) => s !== action.payload);
+      const filtered = state.recentSearches.filter(s => s !== action.payload);
       return {
         ...state,
         recentSearches: [action.payload, ...filtered].slice(0, 5),
@@ -156,7 +164,12 @@ export const categoryConfig: CategoryConfig[] = [
   { id: 'viandes', label: 'Viandes', emoji: '🥩', count: 124 },
   { id: 'poissons', label: 'Poissons', emoji: '🐟', count: 89 },
   { id: 'feculents', label: 'Féculents', emoji: '🍚', count: 167 },
-  { id: 'produits-laitiers', label: 'Produits laitiers', emoji: '🥛', count: 134 },
+  {
+    id: 'produits-laitiers',
+    label: 'Produits laitiers',
+    emoji: '🥛',
+    count: 134,
+  },
   { id: 'oeufs', label: 'Œufs', emoji: '🥚', count: 23 },
   { id: 'legumineuses', label: 'Légumineuses', emoji: '🫘', count: 45 },
   { id: 'noix-graines', label: 'Noix & Graines', emoji: '🥜', count: 67 },
@@ -181,12 +194,13 @@ export function filterFoods(
   category: FoodCategory,
   searchQuery: string
 ): Food[] {
-  return foods.filter((food) => {
+  return foods.filter(food => {
     const matchesCategory = category === 'all' || food.category === category;
     const matchesSearch =
       !searchQuery ||
       food.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (food.brand && food.brand.toLowerCase().includes(searchQuery.toLowerCase()));
+      (food.brand &&
+        food.brand.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesCategory && matchesSearch;
   });
 }
@@ -209,7 +223,10 @@ export function sortFoods(foods: Food[], sortOption: SortOption): Food[] {
   }
 }
 
-export function calculateNutrition(food: Food, grams: number): {
+export function calculateNutrition(
+  food: Food,
+  grams: number
+): {
   calories: number;
   protein: number;
   carbs: number;
@@ -227,11 +244,11 @@ export function calculateNutrition(food: Food, grams: number): {
 }
 
 export function getCategoryLabel(categoryId: FoodCategory): string {
-  const category = categoryConfig.find((c) => c.id === categoryId);
+  const category = categoryConfig.find(c => c.id === categoryId);
   return category ? category.label : 'Tous les aliments';
 }
 
 export function getCategoryEmoji(categoryId: FoodCategory): string {
-  const category = categoryConfig.find((c) => c.id === categoryId);
+  const category = categoryConfig.find(c => c.id === categoryId);
   return category ? category.emoji : '🍽';
 }

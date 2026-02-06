@@ -32,7 +32,10 @@ export { FoodSearchItem } from './FoodSearchItem';
 export { BarcodeScannerModal } from './BarcodeScannerModal';
 export { QuantitySelectorModal } from './QuantitySelectorModal';
 export { PhotoCaptureSection } from './PhotoCaptureSection';
-export { NotesAndContextSection, contextConfigs } from './NotesAndContextSection';
+export {
+  NotesAndContextSection,
+  contextConfigs,
+} from './NotesAndContextSection';
 export { FrequentMealsSection } from './FrequentMealsSection';
 
 // Modals

@@ -21,7 +21,7 @@ const COMPRESSION_QUALITY = 0.8;
 async function compressImage(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = e => {
       const img = new window.Image();
       img.onload = () => {
         // Calculate new dimensions
@@ -50,7 +50,10 @@ async function compressImage(file: File): Promise<string> {
         ctx.drawImage(img, 0, 0, width, height);
 
         // Convert to compressed JPEG
-        const compressedDataUrl = canvas.toDataURL('image/jpeg', COMPRESSION_QUALITY);
+        const compressedDataUrl = canvas.toDataURL(
+          'image/jpeg',
+          COMPRESSION_QUALITY
+        );
         resolve(compressedDataUrl);
       };
       img.onerror = () => reject(new Error('Failed to load image'));
@@ -95,7 +98,7 @@ export function PhotoCaptureSection({
         onPhotoChange(compressedUrl);
       } catch (err) {
         console.error('Error compressing image:', err);
-        setError('Erreur lors du traitement de l\'image');
+        setError("Erreur lors du traitement de l'image");
       } finally {
         setIsProcessing(false);
         // Reset input
@@ -120,126 +123,126 @@ export function PhotoCaptureSection({
   }, [handleRemovePhoto]);
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <label className="block text-sm font-medium text-gray-700">
+    <div className='space-y-3'>
+      <div className='flex items-center justify-between'>
+        <label className='block text-sm font-medium text-gray-700'>
           Photo du repas
-          <span className="text-gray-400 font-normal ml-1">(optionnel)</span>
+          <span className='text-gray-400 font-normal ml-1'>(optionnel)</span>
         </label>
         {photoUrl && (
           <button
             onClick={handleRemovePhoto}
-            className="text-xs text-red-500 hover:text-red-600 flex items-center gap-1"
+            className='text-xs text-red-500 hover:text-red-600 flex items-center gap-1'
           >
-            <X className="w-3 h-3" />
+            <X className='w-3 h-3' />
             Supprimer
           </button>
         )}
       </div>
 
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode='wait'>
         {!photoUrl ? (
           <motion.div
-            key="capture-buttons"
+            key='capture-buttons'
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="space-y-2"
+            className='space-y-2'
           >
             {/* Hidden file inputs */}
             <input
               ref={cameraInputRef}
-              type="file"
-              accept="image/*"
-              capture="environment"
+              type='file'
+              accept='image/*'
+              capture='environment'
               onChange={handleFileSelect}
-              className="hidden"
-              id="photo-camera-input"
+              className='hidden'
+              id='photo-camera-input'
             />
             <input
               ref={galleryInputRef}
-              type="file"
-              accept="image/*"
+              type='file'
+              accept='image/*'
               onChange={handleFileSelect}
-              className="hidden"
-              id="photo-gallery-input"
+              className='hidden'
+              id='photo-gallery-input'
             />
 
             {/* Capture buttons */}
-            <div className="flex gap-2">
+            <div className='flex gap-2'>
               <button
-                type="button"
+                type='button'
                 onClick={() => cameraInputRef.current?.click()}
                 disabled={isProcessing}
-                className="flex-1 flex items-center justify-center gap-2 py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-600 hover:border-[#1B998B] hover:text-[#1B998B] hover:bg-[#1B998B]/5 transition-colors disabled:opacity-50"
+                className='flex-1 flex items-center justify-center gap-2 py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-600 hover:border-[#1B998B] hover:text-[#1B998B] hover:bg-[#1B998B]/5 transition-colors disabled:opacity-50'
               >
-                <Camera className="w-5 h-5" />
-                <span className="text-sm font-medium">Prendre une photo</span>
+                <Camera className='w-5 h-5' />
+                <span className='text-sm font-medium'>Prendre une photo</span>
               </button>
 
               <button
-                type="button"
+                type='button'
                 onClick={() => galleryInputRef.current?.click()}
                 disabled={isProcessing}
-                className="flex-1 flex items-center justify-center gap-2 py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-600 hover:border-[#1B998B] hover:text-[#1B998B] hover:bg-[#1B998B]/5 transition-colors disabled:opacity-50"
+                className='flex-1 flex items-center justify-center gap-2 py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-600 hover:border-[#1B998B] hover:text-[#1B998B] hover:bg-[#1B998B]/5 transition-colors disabled:opacity-50'
               >
-                <Upload className="w-5 h-5" />
-                <span className="text-sm font-medium">Importer</span>
+                <Upload className='w-5 h-5' />
+                <span className='text-sm font-medium'>Importer</span>
               </button>
             </div>
 
             {/* Processing indicator */}
             {isProcessing && (
-              <div className="flex items-center justify-center gap-2 py-2 text-sm text-gray-500">
-                <div className="w-4 h-4 border-2 border-[#1B998B] border-t-transparent rounded-full animate-spin" />
+              <div className='flex items-center justify-center gap-2 py-2 text-sm text-gray-500'>
+                <div className='w-4 h-4 border-2 border-[#1B998B] border-t-transparent rounded-full animate-spin' />
                 Traitement en cours...
               </div>
             )}
 
             {/* Error message */}
             {error && (
-              <p className="text-sm text-red-500 text-center">{error}</p>
+              <p className='text-sm text-red-500 text-center'>{error}</p>
             )}
           </motion.div>
         ) : (
           <motion.div
-            key="photo-preview"
+            key='photo-preview'
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="relative"
+            className='relative'
           >
             {/* Photo preview */}
-            <div className="relative rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+            <div className='relative rounded-xl overflow-hidden border border-gray-200 shadow-sm'>
               <img
                 src={photoUrl}
-                alt="Aperçu du repas"
-                className="w-full h-48 object-cover"
+                alt='Aperçu du repas'
+                className='w-full h-48 object-cover'
               />
 
               {/* Overlay with actions */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 hover:opacity-100 transition-opacity flex items-end justify-center pb-4 gap-3">
+              <div className='absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 hover:opacity-100 transition-opacity flex items-end justify-center pb-4 gap-3'>
                 <button
-                  type="button"
+                  type='button'
                   onClick={handleRetake}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-white/90 text-gray-700 rounded-lg text-sm font-medium hover:bg-white transition-colors"
+                  className='flex items-center gap-1.5 px-3 py-1.5 bg-white/90 text-gray-700 rounded-lg text-sm font-medium hover:bg-white transition-colors'
                 >
-                  <RotateCcw className="w-4 h-4" />
+                  <RotateCcw className='w-4 h-4' />
                   Reprendre
                 </button>
                 <button
-                  type="button"
+                  type='button'
                   onClick={handleRemovePhoto}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-red-500/90 text-white rounded-lg text-sm font-medium hover:bg-red-500 transition-colors"
+                  className='flex items-center gap-1.5 px-3 py-1.5 bg-red-500/90 text-white rounded-lg text-sm font-medium hover:bg-red-500 transition-colors'
                 >
-                  <X className="w-4 h-4" />
+                  <X className='w-4 h-4' />
                   Supprimer
                 </button>
               </div>
 
               {/* Photo badge */}
-              <div className="absolute top-2 left-2 flex items-center gap-1 px-2 py-1 bg-black/50 text-white rounded-full text-xs">
-                <ImageIcon className="w-3 h-3" />
+              <div className='absolute top-2 left-2 flex items-center gap-1 px-2 py-1 bg-black/50 text-white rounded-full text-xs'>
+                <ImageIcon className='w-3 h-3' />
                 Photo ajoutée
               </div>
             </div>

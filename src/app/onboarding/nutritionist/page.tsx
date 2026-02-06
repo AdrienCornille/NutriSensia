@@ -14,6 +14,9 @@ import { NutritionistOnboardingData } from '@/types/onboarding';
 import { supabase } from '@/lib/supabase';
 import { useNotification } from '@/components/ui/Notification';
 
+// Force dynamic rendering - cette page utilise useAuth qui nécessite AuthProvider
+export const dynamic = 'force-dynamic';
+
 /**
  * Page d'onboarding des nutritionnistes
  */

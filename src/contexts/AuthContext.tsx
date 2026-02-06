@@ -6,10 +6,18 @@ import React, {
   useEffect,
   useState,
   ReactNode,
+  useMemo,
 } from 'react';
-import { User, Session } from '@supabase/supabase-js';
-import { supabase, auth, AuthError } from '@/lib/supabase';
+import { User, Session, SupabaseClient } from '@supabase/supabase-js';
+import { createClient } from '@/lib/supabase/client';
 import { useAppStore } from '@/lib/store';
+
+// Types pour l'authentification
+export interface AuthError {
+  message: string;
+  status?: number;
+  code?: string;
+}
 
 // Types pour le contexte d'authentification
 interface AuthContextType {
@@ -79,8 +87,39 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+// Messages d'erreur traduits en français
+const errorMessages: { [key: string]: string } = {
+  'Invalid login credentials': 'Email ou mot de passe incorrect',
+  'Email not confirmed':
+    'Veuillez confirmer votre email avant de vous connecter',
+  'Too many requests':
+    'Trop de tentatives de connexion. Veuillez réessayer plus tard',
+  'User not found': 'Aucun compte trouvé avec cet email',
+  'User already registered': 'Un compte existe déjà avec cet email',
+  'Password should be at least 6 characters':
+    'Le mot de passe doit contenir au moins 6 caractères',
+  'Invalid email': 'Adresse email invalide',
+  'Unable to validate email address': "Impossible de valider l'adresse email",
+};
+
+// Fonction pour traduire les erreurs
+const translateError = (error: any): AuthError => {
+  const message =
+    errorMessages[error?.message] ||
+    error?.message ||
+    'Une erreur est survenue';
+  return {
+    message,
+    status: error?.status,
+    code: error?.code || error?.name,
+  };
+};
+
 // Provider du contexte d'authentification
 export function AuthProvider({ children }: AuthProviderProps) {
+  // Créer le client Supabase SSR une seule fois
+  const supabase = useMemo(() => createClient(), []);
+
   // État local pour l'authentification
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -114,7 +153,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     // Récupérer la session initiale
     const getInitialSession = async () => {
       try {
-        const { data, error: sessionError } = await auth.getSession();
+        const { data, error: sessionError } = await supabase.auth.getSession();
 
         if (!mounted) return;
 
@@ -123,7 +162,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             'Erreur lors de la récupération de la session:',
             sessionError
           );
-          setError(sessionError);
+          setError(translateError(sessionError));
         } else {
           setSession(data?.session || null);
           setUser(data?.session?.user || null);
@@ -152,10 +191,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     // Écouter les changements d'authentification
     const {
       data: { subscription },
-    } = auth.onAuthStateChange(async (event, session) => {
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (!mounted) return;
 
-      // Auth state changed
+      console.log('Auth state changed:', event, session?.user?.email);
 
       setSession(session);
       setUser(session?.user ?? null);
@@ -168,7 +207,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       mounted = false;
       subscription.unsubscribe();
     };
-  }, [setStoreUser, setAuthenticated]);
+  }, [supabase, setStoreUser, setAuthenticated]);
 
   // Fonctions d'authentification
   const signInWithPassword = async (email: string, password: string) => {
@@ -176,13 +215,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setError(null);
 
     try {
-      const { data, error: authError } = await auth.signInWithPassword(
-        email,
-        password
+      const { data, error: authError } = await supabase.auth.signInWithPassword(
+        {
+          email,
+          password,
+        }
       );
+
       if (authError) {
-        setError(authError);
-        return { data: null, error: authError };
+        const translatedError = translateError(authError);
+        setError(translatedError);
+        return { data: null, error: translatedError };
       }
       return { data, error: null };
     } catch (error: any) {
@@ -202,11 +245,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setError(null);
 
     try {
-      const { data, error: authError } =
-        await auth.signInWithGoogle(redirectTo);
+      const { data, error: authError } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: redirectTo || `${window.location.origin}/auth/callback`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
+        },
+      });
+
       if (authError) {
-        setError(authError);
-        return { data: null, error: authError };
+        const translatedError = translateError(authError);
+        setError(translatedError);
+        return { data: null, error: translatedError };
       }
       return { data, error: null };
     } catch (error: any) {
@@ -235,14 +288,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setError(null);
 
     try {
-      const { data, error: authError } = await auth.signUp(
+      const { data, error: authError } = await supabase.auth.signUp({
         email,
         password,
-        metadata
-      );
+        options: {
+          data: metadata,
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+
       if (authError) {
-        setError(authError);
-        return { data: null, error: authError };
+        const translatedError = translateError(authError);
+        setError(translatedError);
+        return { data: null, error: translatedError };
       }
       return { data, error: null };
     } catch (error: any) {
@@ -262,10 +320,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setError(null);
 
     try {
-      const { data, error: authError } = await auth.signOut();
+      const { error: authError } = await supabase.auth.signOut();
+
       if (authError) {
-        setError(authError);
-        return { error: authError };
+        const translatedError = translateError(authError);
+        setError(translatedError);
+        return { error: translatedError };
       }
       return { error: null };
     } catch (error: any) {
@@ -285,13 +345,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setError(null);
 
     try {
-      const { data, error: authError } = await auth.resetPasswordForEmail(
-        email,
-        redirectTo
-      );
+      const { data, error: authError } =
+        await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: redirectTo || `${window.location.origin}/auth/callback`,
+        });
+
       if (authError) {
-        setError(authError);
-        return { data: null, error: authError };
+        const translatedError = translateError(authError);
+        setError(translatedError);
+        return { data: null, error: translatedError };
       }
       return { data, error: null };
     } catch (error: any) {
@@ -312,10 +374,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setError(null);
 
     try {
-      const { data, error: authError } = await auth.updatePassword(password);
+      const { data, error: authError } = await supabase.auth.updateUser({
+        password,
+      });
+
       if (authError) {
-        setError(authError);
-        return { data: null, error: authError };
+        const translatedError = translateError(authError);
+        setError(translatedError);
+        return { data: null, error: translatedError };
       }
       return { data, error: null };
     } catch (error: any) {

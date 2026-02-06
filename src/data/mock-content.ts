@@ -25,7 +25,8 @@ export const mockContents: Content[] = [
     id: 'content-1',
     type: 'video',
     title: 'Meal prep du dimanche : organiser sa semaine',
-    description: 'Apprenez à préparer vos repas de la semaine en 2 heures chrono.',
+    description:
+      'Apprenez à préparer vos repas de la semaine en 2 heures chrono.',
     image: '/images/content/meal-prep.jpg',
     category: 'recipes-tips',
     author: 'Lucie Martin',
@@ -70,7 +71,8 @@ export const mockContents: Content[] = [
     id: 'content-4',
     type: 'podcast',
     title: 'Épisode 5 : Gérer les fêtes sans culpabiliser',
-    description: 'Comment profiter des repas de fête tout en maintenant ses objectifs.',
+    description:
+      'Comment profiter des repas de fête tout en maintenant ses objectifs.',
     image: '/images/content/podcast-fetes.jpg',
     category: 'psychology',
     author: 'Lucie Martin',
@@ -84,7 +86,8 @@ export const mockContents: Content[] = [
     id: 'content-5',
     type: 'video',
     title: '5 recettes healthy en moins de 15 minutes',
-    description: 'Des idées de repas rapides pour les soirs de semaine chargés.',
+    description:
+      'Des idées de repas rapides pour les soirs de semaine chargés.',
     image: '/images/content/quick-recipes.jpg',
     category: 'recipes-tips',
     author: 'Lucie Martin',
@@ -98,7 +101,8 @@ export const mockContents: Content[] = [
     id: 'content-6',
     type: 'article',
     title: "L'importance du sommeil dans la perte de poids",
-    description: 'Pourquoi dormir suffisamment est aussi important que bien manger.',
+    description:
+      'Pourquoi dormir suffisamment est aussi important que bien manger.',
     image: '/images/content/sleep.jpg',
     category: 'health',
     author: 'Lucie Martin',
@@ -112,7 +116,8 @@ export const mockContents: Content[] = [
     id: 'content-7',
     type: 'guide',
     title: 'Nutrition et sport : adapter son alimentation',
-    description: "Comment manger avant, pendant et après l'effort selon votre activité.",
+    description:
+      "Comment manger avant, pendant et après l'effort selon votre activité.",
     image: '/images/content/sport-nutrition.jpg',
     category: 'sport',
     author: 'Lucie Martin',
@@ -127,7 +132,8 @@ export const mockContents: Content[] = [
     id: 'content-8',
     type: 'article',
     title: "Hydratation : combien d'eau boire vraiment ?",
-    description: "Démêlez le vrai du faux sur les besoins en eau et les signes de déshydratation.",
+    description:
+      'Démêlez le vrai du faux sur les besoins en eau et les signes de déshydratation.',
     image: '/images/content/hydration.jpg',
     category: 'nutrition-basics',
     author: 'Lucie Martin',
@@ -141,7 +147,8 @@ export const mockContents: Content[] = [
     id: 'content-9',
     type: 'video',
     title: 'Les bases de la cuisine saine',
-    description: 'Techniques de cuisson et astuces pour préserver les nutriments.',
+    description:
+      'Techniques de cuisson et astuces pour préserver les nutriments.',
     image: '/images/content/cooking-basics.jpg',
     category: 'recipes-tips',
     author: 'Lucie Martin',
@@ -155,7 +162,8 @@ export const mockContents: Content[] = [
     id: 'content-10',
     type: 'podcast',
     title: 'Épisode 4 : Manger en pleine conscience',
-    description: "Découvrez comment être présent pendant vos repas change tout.",
+    description:
+      'Découvrez comment être présent pendant vos repas change tout.',
     image: '/images/content/mindful-eating.jpg',
     category: 'psychology',
     author: 'Lucie Martin',
@@ -169,7 +177,8 @@ export const mockContents: Content[] = [
     id: 'content-11',
     type: 'article',
     title: 'Les super-aliments : mythe ou réalité ?',
-    description: 'Une analyse objective des aliments dits "super" et leurs vrais bénéfices.',
+    description:
+      'Une analyse objective des aliments dits "super" et leurs vrais bénéfices.',
     image: '/images/content/superfoods.jpg',
     category: 'nutrition-basics',
     author: 'Lucie Martin',
@@ -183,7 +192,8 @@ export const mockContents: Content[] = [
     id: 'content-12',
     type: 'guide',
     title: 'Planifier ses repas de la semaine',
-    description: "Un guide pratique pour organiser vos menus et gagner du temps.",
+    description:
+      'Un guide pratique pour organiser vos menus et gagner du temps.',
     image: '/images/content/meal-planning.jpg',
     category: 'lifestyle',
     author: 'Lucie Martin',
@@ -198,7 +208,8 @@ export const mockContents: Content[] = [
     id: 'content-13',
     type: 'video',
     title: 'Récupération musculaire : que manger ?',
-    description: "Les meilleurs aliments pour optimiser votre récupération après l'effort.",
+    description:
+      "Les meilleurs aliments pour optimiser votre récupération après l'effort.",
     image: '/images/content/recovery.jpg',
     category: 'sport',
     author: 'Lucie Martin',
@@ -212,7 +223,8 @@ export const mockContents: Content[] = [
     id: 'content-14',
     type: 'article',
     title: 'Comprendre les calories : au-delà des chiffres',
-    description: 'Pourquoi toutes les calories ne se valent pas et comment les aborder sainement.',
+    description:
+      'Pourquoi toutes les calories ne se valent pas et comment les aborder sainement.',
     image: '/images/content/calories.jpg',
     category: 'nutrition-basics',
     author: 'Lucie Martin',
@@ -226,7 +238,8 @@ export const mockContents: Content[] = [
     id: 'content-15',
     type: 'podcast',
     title: 'Épisode 3 : Surmonter les plateaux',
-    description: 'Que faire quand la progression stagne ? Stratégies et mindset.',
+    description:
+      'Que faire quand la progression stagne ? Stratégies et mindset.',
     image: '/images/content/plateau.jpg',
     category: 'psychology',
     author: 'Lucie Martin',
@@ -240,7 +253,8 @@ export const mockContents: Content[] = [
     id: 'content-16',
     type: 'article',
     title: 'Gestion du stress et alimentation',
-    description: 'Comment le stress affecte vos choix alimentaires et comment y remédier.',
+    description:
+      'Comment le stress affecte vos choix alimentaires et comment y remédier.',
     image: '/images/content/stress.jpg',
     category: 'health',
     author: 'Lucie Martin',
@@ -272,15 +286,22 @@ export const progressCourses: ProgressCourse[] = [
 ];
 
 // Default saved content IDs (for demo)
-export const defaultSavedIds: string[] = ['content-1', 'content-3', 'content-6', 'content-12'];
+export const defaultSavedIds: string[] = [
+  'content-1',
+  'content-3',
+  'content-6',
+  'content-12',
+];
 
 // Helper to get saved contents
 export function getSavedContents(savedIds: string[]): Content[] {
-  return mockContents.filter((content) => savedIds.includes(content.id));
+  return mockContents.filter(content => savedIds.includes(content.id));
 }
 
 // Helper to count contents by type
-export function countContentsByType(contents: Content[]): Record<string, number> {
+export function countContentsByType(
+  contents: Content[]
+): Record<string, number> {
   return contents.reduce(
     (acc, content) => {
       acc[content.type] = (acc[content.type] || 0) + 1;

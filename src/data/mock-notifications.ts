@@ -19,7 +19,8 @@ const mockNotifications: Notification[] = [
     id: '2',
     type: 'appointment',
     title: 'Rappel : Consultation demain',
-    description: 'Votre consultation de suivi avec Lucie Martin est prévue demain à 14h00',
+    description:
+      'Votre consultation de suivi avec Lucie Martin est prévue demain à 14h00',
     timestamp: 'Il y a 3 heures',
     read: false,
     icon: '📅',
@@ -29,7 +30,8 @@ const mockNotifications: Notification[] = [
     id: '3',
     type: 'achievement',
     title: 'Félicitations ! Streak de 7 jours',
-    description: 'Vous avez enregistré vos repas pendant 7 jours consécutifs. Continuez ainsi !',
+    description:
+      'Vous avez enregistré vos repas pendant 7 jours consécutifs. Continuez ainsi !',
     timestamp: 'Il y a 5 heures',
     read: false,
     icon: '🏆',
@@ -50,7 +52,8 @@ const mockNotifications: Notification[] = [
     id: '5',
     type: 'reminder',
     title: "N'oubliez pas de vous peser",
-    description: 'Votre dernière pesée date de 5 jours. Pensez à enregistrer votre poids.',
+    description:
+      'Votre dernière pesée date de 5 jours. Pensez à enregistrer votre poids.',
     timestamp: 'Hier à 08:00',
     read: true,
     icon: '⚖️',
@@ -60,7 +63,8 @@ const mockNotifications: Notification[] = [
     id: '6',
     type: 'content',
     title: 'Nouveau contenu disponible',
-    description: 'Article : "Comment maintenir sa motivation sur le long terme"',
+    description:
+      'Article : "Comment maintenir sa motivation sur le long terme"',
     timestamp: 'Il y a 2 jours',
     read: true,
     icon: '📚',
@@ -74,7 +78,10 @@ const mockNotifications: Notification[] = [
     timestamp: 'Il y a 2 jours',
     read: true,
     icon: '💧',
-    action: { label: "Ajouter de l'eau", link: '/dashboard/suivi?tab=hydratation' },
+    action: {
+      label: "Ajouter de l'eau",
+      link: '/dashboard/suivi?tab=hydratation',
+    },
   },
   {
     id: '8',
@@ -95,13 +102,17 @@ const mockNotifications: Notification[] = [
     timestamp: 'Il y a 3 jours',
     read: true,
     icon: '✅',
-    action: { label: 'Voir le résumé', link: '/dashboard/dossier?tab=consultations' },
+    action: {
+      label: 'Voir le résumé',
+      link: '/dashboard/dossier?tab=consultations',
+    },
   },
   {
     id: '10',
     type: 'achievement',
     title: 'Objectif atteint : -3 kg',
-    description: 'Vous avez atteint 43% de votre objectif de perte de poids. Bravo !',
+    description:
+      'Vous avez atteint 43% de votre objectif de perte de poids. Bravo !',
     timestamp: 'Il y a 5 jours',
     read: true,
     icon: '🎯',
@@ -131,7 +142,7 @@ export function getNotifications(): Notification[] {
  * Marque une notification comme lue
  */
 export function markNotificationAsRead(id: string): Notification | null {
-  const notification = mockNotifications.find((n) => n.id === id);
+  const notification = mockNotifications.find(n => n.id === id);
   if (notification) {
     notification.read = true;
     return notification;
@@ -143,7 +154,7 @@ export function markNotificationAsRead(id: string): Notification | null {
  * Marque toutes les notifications comme lues
  */
 export function markAllNotificationsAsRead(): void {
-  mockNotifications.forEach((n) => {
+  mockNotifications.forEach(n => {
     n.read = true;
   });
 }
@@ -152,7 +163,7 @@ export function markAllNotificationsAsRead(): void {
  * Supprime une notification
  */
 export function deleteNotification(id: string): boolean {
-  const index = mockNotifications.findIndex((n) => n.id === id);
+  const index = mockNotifications.findIndex(n => n.id === id);
   if (index !== -1) {
     mockNotifications.splice(index, 1);
     return true;

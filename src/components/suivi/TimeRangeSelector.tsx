@@ -21,20 +21,23 @@ const timeRangeLabels: Record<TimeRange, { short: string; full: string }> = {
 // Périodes à afficher (selon les critères d'acceptation BIO-002)
 const displayedRanges: TimeRange[] = ['1S', '1M', '3M', 'Tout'];
 
-export function TimeRangeSelector({ activeRange, onRangeChange }: TimeRangeSelectorProps) {
+export function TimeRangeSelector({
+  activeRange,
+  onRangeChange,
+}: TimeRangeSelectorProps) {
   return (
     <div
-      className="flex items-center gap-1 bg-[rgba(27,153,139,0.05)] p-1 rounded-xl"
-      role="tablist"
-      aria-label="Sélection de la période"
+      className='flex items-center gap-1 bg-[rgba(27,153,139,0.05)] p-1 rounded-xl'
+      role='tablist'
+      aria-label='Sélection de la période'
     >
-      {displayedRanges.map((range) => {
+      {displayedRanges.map(range => {
         const isActive = activeRange === range;
         return (
           <button
             key={range}
             onClick={() => onRangeChange(range)}
-            role="tab"
+            role='tab'
             aria-selected={isActive}
             aria-label={timeRangeLabels[range].full}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${

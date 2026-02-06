@@ -31,12 +31,16 @@ export async function POST(request: NextRequest) {
     }
 
     // Créer le client admin pour les opérations de base de données
-    const supabaseAdmin = createSupabaseClient(supabaseUrl, supabaseServiceKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-      },
-    });
+    const supabaseAdmin = createSupabaseClient(
+      supabaseUrl,
+      supabaseServiceKey,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false,
+        },
+      }
+    );
 
     // Vérifier si un Bearer token est fourni (cas du callback OAuth)
     const authHeader = request.headers.get('Authorization');
@@ -46,52 +50,60 @@ export async function POST(request: NextRequest) {
 
     if (bearerToken) {
       // Utiliser le token directement pour authentifier
-      const supabaseWithToken = createSupabaseClient(supabaseUrl, supabaseAnonKey, {
-        global: {
-          headers: {
-            Authorization: `Bearer ${bearerToken}`,
+      const supabaseWithToken = createSupabaseClient(
+        supabaseUrl,
+        supabaseAnonKey,
+        {
+          global: {
+            headers: {
+              Authorization: `Bearer ${bearerToken}`,
+            },
           },
-        },
-      });
+        }
+      );
 
-      const { data: userData, error: userError } = await supabaseWithToken.auth.getUser(bearerToken);
+      const { data: userData, error: userError } =
+        await supabaseWithToken.auth.getUser(bearerToken);
 
       if (userError || !userData.user) {
         console.error('Erreur auth avec token:', userError);
-        return NextResponse.json(
-          { error: 'Token invalide' },
-          { status: 401 }
-        );
+        return NextResponse.json({ error: 'Token invalide' }, { status: 401 });
       }
 
       user = userData.user;
     } else {
       // Utiliser les cookies (session normale)
       const supabase = await createClient();
-      const { data: { user: cookieUser }, error: authError } = await supabase.auth.getUser();
+      const {
+        data: { user: cookieUser },
+        error: authError,
+      } = await supabase.auth.getUser();
 
       if (authError || !cookieUser) {
-        return NextResponse.json(
-          { error: 'Non authentifié' },
-          { status: 401 }
-        );
+        return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
       }
 
       user = cookieUser;
     }
 
     // Vérifier si un profil existe déjà (utiliser admin pour bypass RLS)
-    const { data: existingProfile, error: existingProfileError } = await supabaseAdmin
-      .from('profiles')
-      .select('id, consultation_reason')
-      .eq('id', user.id)
-      .single();
+    const { data: existingProfile, error: existingProfileError } =
+      await supabaseAdmin
+        .from('profiles')
+        .select('id, consultation_reason')
+        .eq('id', user.id)
+        .single();
 
     if (existingProfile && !existingProfileError) {
       // Profil existe déjà - vérifier s'il est complet
       // Un profil est considéré "complet" si consultation_reason existe ET n'est pas 'autre' (placeholder)
-      const profile = existingProfile as { id: string; consultation_reason: string | null };
-      const isComplete = !!profile.consultation_reason && profile.consultation_reason !== 'autre';
+      const profile = existingProfile as {
+        id: string;
+        consultation_reason: string | null;
+      };
+      const isComplete =
+        !!profile.consultation_reason &&
+        profile.consultation_reason !== 'autre';
       return NextResponse.json({
         success: true,
         profileExists: true,
@@ -128,6 +140,7 @@ export async function POST(request: NextRequest) {
         email: user.email!,
         first_name: firstName,
         last_name: lastName,
+        role: 'patient', // AUTH-001: Rôle explicitement défini
         auth_provider: authProvider,
         account_status: 'trial',
         trial_started_at: new Date().toISOString(),
@@ -148,7 +161,9 @@ export async function POST(request: NextRequest) {
           .eq('id', user.id)
           .single();
 
-        const isComplete = existingProfile?.consultation_reason && existingProfile.consultation_reason !== 'autre';
+        const isComplete =
+          existingProfile?.consultation_reason &&
+          existingProfile.consultation_reason !== 'autre';
         return NextResponse.json({
           success: true,
           profileExists: true,
@@ -170,7 +185,7 @@ export async function POST(request: NextRequest) {
             message: profileError.message,
             code: profileError.code,
             hint: profileError.hint,
-          }
+          },
         },
         { status: 500 }
       );

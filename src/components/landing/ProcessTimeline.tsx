@@ -58,7 +58,7 @@ const steps: TimelineStep[] = [
       items: [
         'Vous comprenez mieux votre corps',
         'Vous gagnez en confiance pour adapter',
-        'Les résultats s\'installent naturellement',
+        "Les résultats s'installent naturellement",
       ],
     },
   },
@@ -72,7 +72,7 @@ const steps: TimelineStep[] = [
       title: 'Le résultat',
       items: [
         'Vous gagnez en autonomie',
-        'Les changements s\'inscrivent durablement',
+        "Les changements s'inscrivent durablement",
         'Vous trouvez votre équilibre personnel',
       ],
     },
@@ -81,37 +81,39 @@ const steps: TimelineStep[] = [
 
 export default function ProcessTimeline() {
   return (
-    <section className={cn(
-      'relative w-full bg-gradient-to-b from-background-primary to-sage-50',
-      'py-64dp'
-    )}>
-      <div className="container mx-auto px-16dp sm:px-24dp lg:px-32dp max-w-5xl">
+    <section
+      className={cn(
+        'relative w-full bg-gradient-to-b from-background-primary to-sage-50',
+        'py-64dp'
+      )}
+    >
+      <div className='container mx-auto px-16dp sm:px-24dp lg:px-32dp max-w-5xl'>
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.3, ease: [0.4, 0.0, 0.2, 1] }}
-          className="text-center mb-48dp"
+          className='text-center mb-48dp'
         >
-          <p className="mb-12dp font-sans text-caption uppercase tracking-wider text-primary">
+          <p className='mb-12dp font-sans text-caption uppercase tracking-wider text-primary'>
             LE PROCESSUS
           </p>
-          <h2 className="mb-16dp font-sans text-h2 text-primary-dark sm:text-4xl sm:leading-[1.2]">
+          <h2 className='mb-16dp font-sans text-h2 text-primary-dark sm:text-4xl sm:leading-[1.2]'>
             Comment nous travaillons ensemble
           </h2>
-          <p className="mx-auto max-w-3xl font-sans text-body-large leading-relaxed text-neutral-dark">
+          <p className='mx-auto max-w-3xl font-sans text-body-large leading-relaxed text-neutral-dark'>
             Un accompagnement en 3 étapes pour des résultats durables
           </p>
         </motion.div>
 
         {/* Timeline */}
-        <div className="relative">
+        <div className='relative'>
           {/* Vertical line */}
-          <div className="absolute left-32dp md:left-48dp top-0 bottom-0 w-[2px] bg-gradient-to-b from-primary via-secondary to-accent-teal" />
+          <div className='absolute left-32dp md:left-48dp top-0 bottom-0 w-[2px] bg-gradient-to-b from-primary via-secondary to-accent-teal' />
 
           {/* Steps */}
-          <div className="space-y-48dp">
+          <div className='space-y-48dp'>
             {steps.map((step, index) => (
               <motion.div
                 key={step.number}
@@ -121,44 +123,46 @@ export default function ProcessTimeline() {
                 transition={{
                   duration: 0.3,
                   delay: index * 0.1,
-                  ease: [0.4, 0.0, 0.2, 1]
+                  ease: [0.4, 0.0, 0.2, 1],
                 }}
-                className="relative"
+                className='relative'
               >
                 {/* Number Circle */}
-                <div className="absolute left-16dp md:left-32dp flex items-center justify-center w-64dp h-64dp bg-primary text-white rounded-full shadow-card-primary border-4 border-white z-10">
-                  <span className="font-sans text-h3 font-bold">{step.number}</span>
+                <div className='absolute left-16dp md:left-32dp flex items-center justify-center w-64dp h-64dp bg-primary text-white rounded-full shadow-card-primary border-4 border-white z-10'>
+                  <span className='font-sans text-h3 font-bold'>
+                    {step.number}
+                  </span>
                 </div>
 
                 {/* Content Card */}
-                <div className="ml-96dp md:ml-[120px] bg-background-primary rounded-16dp shadow-card-primary hover:shadow-card-dashboard transition-shadow duration-emphasis overflow-hidden">
+                <div className='ml-96dp md:ml-[120px] bg-background-primary rounded-16dp shadow-card-primary hover:shadow-card-dashboard transition-shadow duration-emphasis overflow-hidden'>
                   {/* Card Header */}
-                  <div className="bg-gradient-to-r from-sage-50 to-background-primary p-24dp border-b border-neutral-border">
-                    <h3 className="font-sans text-h3 text-primary-dark mb-8dp sm:text-3xl">
+                  <div className='bg-gradient-to-r from-sage-50 to-background-primary p-24dp border-b border-neutral-border'>
+                    <h3 className='font-sans text-h3 text-primary-dark mb-8dp sm:text-3xl'>
                       {step.number} • {step.title}
                     </h3>
-                    <p className="font-sans text-body-small text-neutral-medium font-medium">
+                    <p className='font-sans text-body-small text-neutral-medium font-medium'>
                       {step.duration}
                     </p>
                   </div>
 
                   {/* Card Body */}
-                  <div className="p-24dp space-y-24dp">
+                  <div className='p-24dp space-y-24dp'>
                     {/* Description */}
-                    <p className="font-sans text-body-large leading-relaxed text-neutral-dark">
+                    <p className='font-sans text-body-large leading-relaxed text-neutral-dark'>
                       {step.description}
                     </p>
 
                     {/* Highlight Box */}
-                    <div className="bg-sage-50 rounded-12dp p-16dp border border-sage-100">
-                      <h4 className="font-sans text-caption font-bold text-primary uppercase tracking-wider mb-12dp">
+                    <div className='bg-sage-50 rounded-12dp p-16dp border border-sage-100'>
+                      <h4 className='font-sans text-caption font-bold text-primary uppercase tracking-wider mb-12dp'>
                         {step.highlight.title}
                       </h4>
-                      <ul className="space-y-8dp">
+                      <ul className='space-y-8dp'>
                         {step.highlight.items.map((item, idx) => (
-                          <li key={idx} className="flex items-start gap-8dp">
-                            <Check className="w-16dp h-16dp text-accent-teal flex-shrink-0 mt-4dp" />
-                            <span className="font-sans text-body text-neutral-dark">
+                          <li key={idx} className='flex items-start gap-8dp'>
+                            <Check className='w-16dp h-16dp text-accent-teal flex-shrink-0 mt-4dp' />
+                            <span className='font-sans text-body text-neutral-dark'>
                               {item}
                             </span>
                           </li>
@@ -178,15 +182,15 @@ export default function ProcessTimeline() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-50px' }}
           transition={{ duration: 0.3, delay: 0.3, ease: [0.4, 0.0, 0.2, 1] }}
-          className="mt-64dp text-center"
+          className='mt-64dp text-center'
         >
           <Button
-            size="lg"
-            className="bg-primary hover:bg-primary-dark text-white px-32dp py-16dp font-sans text-button rounded-full shadow-card-primary hover:shadow-card-dashboard transition-all duration-emphasis"
+            size='lg'
+            className='bg-primary hover:bg-primary-dark text-white px-32dp py-16dp font-sans text-button rounded-full shadow-card-primary hover:shadow-card-dashboard transition-all duration-emphasis'
           >
             Réserver ma consultation
           </Button>
-          <p className="mt-16dp font-sans text-body-small text-neutral-medium">
+          <p className='mt-16dp font-sans text-body-small text-neutral-medium'>
             Première consultation découverte • 1h30 en visioconférence
           </p>
         </motion.div>

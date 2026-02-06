@@ -10,7 +10,14 @@ interface WellbeingInsightProps {
 // Configuration des styles par type d'insight
 const insightStyles: Record<
   InsightType,
-  { bg: string; border: string; iconBg: string; title: string; titleColor: string; textColor: string }
+  {
+    bg: string;
+    border: string;
+    iconBg: string;
+    title: string;
+    titleColor: string;
+    textColor: string;
+  }
 > = {
   positive: {
     bg: 'bg-emerald-50',
@@ -24,7 +31,7 @@ const insightStyles: Record<
     bg: 'bg-amber-50',
     border: 'border-amber-100',
     iconBg: 'bg-amber-100',
-    title: 'Point d\'attention',
+    title: "Point d'attention",
     titleColor: 'text-amber-800',
     textColor: 'text-amber-700',
   },
@@ -42,25 +49,29 @@ export function WellbeingInsight({ insights }: WellbeingInsightProps) {
   if (!insights || insights.length === 0) return null;
 
   return (
-    <div className="space-y-4">
-      <h2 className="font-semibold text-gray-800">Insights automatiques</h2>
-      <div className="grid gap-4">
-        {insights.map((insight) => {
+    <div className='space-y-4'>
+      <h2 className='font-semibold text-gray-800'>Insights automatiques</h2>
+      <div className='grid gap-4'>
+        {insights.map(insight => {
           const style = insightStyles[insight.type];
           return (
             <div
               key={insight.id}
               className={`${style.bg} rounded-xl p-5 border ${style.border}`}
             >
-              <div className="flex items-start gap-4">
+              <div className='flex items-start gap-4'>
                 <div
                   className={`w-10 h-10 ${style.iconBg} rounded-full flex items-center justify-center flex-shrink-0`}
                 >
-                  <span className="text-xl">{insight.icon || '💡'}</span>
+                  <span className='text-xl'>{insight.icon || '💡'}</span>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className={`font-medium ${style.titleColor}`}>{style.title}</h3>
-                  <p className={`text-sm ${style.textColor} mt-1`}>{insight.message}</p>
+                <div className='flex-1 min-w-0'>
+                  <h3 className={`font-medium ${style.titleColor}`}>
+                    {style.title}
+                  </h3>
+                  <p className={`text-sm ${style.textColor} mt-1`}>
+                    {insight.message}
+                  </p>
                 </div>
               </div>
             </div>

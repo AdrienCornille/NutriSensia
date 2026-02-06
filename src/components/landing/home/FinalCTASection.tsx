@@ -62,7 +62,7 @@ export function FinalCTASection() {
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.6, delay: 0.2 }}
             className={cn(
-              "font-sans",
+              'font-sans',
               'text-[2rem] md:text-[2.5rem]',
               'font-bold',
               'text-white',
@@ -94,7 +94,8 @@ export function FinalCTASection() {
                 'mb-4'
               )}
             >
-              Vous n'avez pas besoin d'un énième régime miracle qui promet la lune.
+              Vous n'avez pas besoin d'un énième régime miracle qui promet la
+              lune.
             </p>
 
             <p
@@ -107,7 +108,8 @@ export function FinalCTASection() {
                 'mb-4'
               )}
             >
-              Vous n'avez pas besoin de vous priver pendant des semaines pour voir des résultats qui disparaissent en un weekend.
+              Vous n'avez pas besoin de vous priver pendant des semaines pour
+              voir des résultats qui disparaissent en un weekend.
             </p>
 
             <p
@@ -120,8 +122,10 @@ export function FinalCTASection() {
                 'mb-4'
               )}
             >
-              Vous avez besoin de comprendre <strong>VOTRE</strong> corps.<br />
-              De créer des habitudes qui fonctionnent pour <strong>VOUS</strong>.<br />
+              Vous avez besoin de comprendre <strong>VOTRE</strong> corps.
+              <br />
+              De créer des habitudes qui fonctionnent pour <strong>VOUS</strong>
+              .<br />
               D'avoir quelqu'un à vos côtés qui vous écoute vraiment.
             </p>
 
@@ -174,10 +178,7 @@ export function FinalCTASection() {
                 'min-h-[56px] md:min-h-[64px]'
               )}
             >
-              <Calendar
-                className='w-5 h-5 md:w-6 md:h-6'
-                strokeWidth={2.5}
-              />
+              <Calendar className='w-5 h-5 md:w-6 md:h-6' strokeWidth={2.5} />
               <span>Réserver ma première consultation</span>
             </motion.button>
           </motion.div>

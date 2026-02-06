@@ -1,6 +1,10 @@
 'use client';
 
-import { AuthSplitLayout, CompleteProfileForm, AuthGuard } from '@/components/auth';
+import {
+  AuthSplitLayout,
+  CompleteProfileForm,
+  AuthGuard,
+} from '@/components/auth';
 
 /**
  * Page de complétion du profil pour les utilisateurs OAuth

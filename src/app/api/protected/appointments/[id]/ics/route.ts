@@ -45,7 +45,9 @@ export async function GET(
 
     // 4. Récupérer le patient_profile.id (car appointments.user_id = patient_profiles.id)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: patientProfile, error: profileError } = await (supabase as any)
+    const { data: patientProfile, error: profileError } = await (
+      supabase as any
+    )
       .from('patient_profiles')
       .select('id')
       .eq('user_id', auth.user.id)
@@ -60,9 +62,12 @@ export async function GET(
 
     // 5. Récupérer le rendez-vous avec les infos nécessaires
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: appointment, error: appointmentError } = await (supabase as any)
+    const { data: appointment, error: appointmentError } = await (
+      supabase as any
+    )
       .from('appointments')
-      .select(`
+      .select(
+        `
         id,
         scheduled_at,
         scheduled_end_at,
@@ -75,14 +80,20 @@ export async function GET(
           id,
           user_id
         )
-      `)
+      `
+      )
       .eq('id', appointmentId)
       .eq('user_id', patientProfile.id)
       .single();
 
     if (appointmentError || !appointment) {
       console.log('[ICS] Appointment error:', appointmentError);
-      console.log('[ICS] Query params - appointmentId:', appointmentId, 'user_id (patient_profile.id):', patientProfile.id);
+      console.log(
+        '[ICS] Query params - appointmentId:',
+        appointmentId,
+        'user_id (patient_profile.id):',
+        patientProfile.id
+      );
       return apiResponse.error('Rendez-vous non trouvé', 404);
     }
 
@@ -109,7 +120,9 @@ export async function GET(
       .single();
 
     // 8. Générer le fichier .ics
-    const locale = req.headers.get('accept-language')?.startsWith('en') ? 'en' : 'fr';
+    const locale = req.headers.get('accept-language')?.startsWith('en')
+      ? 'en'
+      : 'fr';
 
     const icsEventData = createICSEventFromAppointment(
       {
@@ -121,7 +134,10 @@ export async function GET(
     );
 
     const icsContent = generateICSContent(icsEventData);
-    const filename = generateICSFilename(icsEventData.title, icsEventData.startDate);
+    const filename = generateICSFilename(
+      icsEventData.title,
+      icsEventData.startDate
+    );
 
     // 9. Retourner le fichier .ics
     return new NextResponse(icsContent, {
@@ -134,6 +150,8 @@ export async function GET(
     });
   } catch (error) {
     console.error('Error generating ICS file:', error);
-    return apiResponse.serverError('Erreur lors de la génération du fichier calendrier');
+    return apiResponse.serverError(
+      'Erreur lors de la génération du fichier calendrier'
+    );
   }
 }

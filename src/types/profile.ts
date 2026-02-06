@@ -1,5 +1,12 @@
 // ==================== TYPES ====================
-export type ProfileSection = 'profile' | 'security' | 'notifications' | 'integrations' | 'preferences' | 'data' | 'badges';
+export type ProfileSection =
+  | 'profile'
+  | 'security'
+  | 'notifications'
+  | 'integrations'
+  | 'preferences'
+  | 'data'
+  | 'badges';
 
 export type AppearanceMode = 'light' | 'dark' | 'system';
 export type WeightUnit = 'kg' | 'lb';
@@ -131,8 +138,14 @@ export type ProfileAction =
   | { type: 'SET_ACTIVE_SECTION'; payload: ProfileSection }
   | { type: 'UPDATE_PROFILE'; payload: Partial<UserProfile> }
   | { type: 'UPDATE_SECURITY_SETTINGS'; payload: Partial<SecuritySettings> }
-  | { type: 'TOGGLE_EMAIL_NOTIFICATION'; payload: keyof EmailNotificationSettings }
-  | { type: 'TOGGLE_PUSH_NOTIFICATION'; payload: keyof PushNotificationSettings }
+  | {
+      type: 'TOGGLE_EMAIL_NOTIFICATION';
+      payload: keyof EmailNotificationSettings;
+    }
+  | {
+      type: 'TOGGLE_PUSH_NOTIFICATION';
+      payload: keyof PushNotificationSettings;
+    }
   | { type: 'UPDATE_QUIET_HOURS'; payload: Partial<QuietHoursSettings> }
   | { type: 'UPDATE_PREFERENCES'; payload: Partial<UserPreferences> }
   | { type: 'CONNECT_DEVICE'; payload: string }
@@ -152,16 +165,25 @@ export type ProfileAction =
   | { type: 'SET_ERROR'; payload: string | null };
 
 // ==================== REDUCER ====================
-export function profileReducer(state: ProfileState, action: ProfileAction): ProfileState {
+export function profileReducer(
+  state: ProfileState,
+  action: ProfileAction
+): ProfileState {
   switch (action.type) {
     case 'SET_ACTIVE_SECTION':
       return { ...state, activeSection: action.payload };
 
     case 'UPDATE_PROFILE':
-      return { ...state, userProfile: { ...state.userProfile, ...action.payload } };
+      return {
+        ...state,
+        userProfile: { ...state.userProfile, ...action.payload },
+      };
 
     case 'UPDATE_SECURITY_SETTINGS':
-      return { ...state, securitySettings: { ...state.securitySettings, ...action.payload } };
+      return {
+        ...state,
+        securitySettings: { ...state.securitySettings, ...action.payload },
+      };
 
     case 'TOGGLE_EMAIL_NOTIFICATION':
       return {
@@ -192,19 +214,29 @@ export function profileReducer(state: ProfileState, action: ProfileAction): Prof
         ...state,
         notificationSettings: {
           ...state.notificationSettings,
-          quietHours: { ...state.notificationSettings.quietHours, ...action.payload },
+          quietHours: {
+            ...state.notificationSettings.quietHours,
+            ...action.payload,
+          },
         },
       };
 
     case 'UPDATE_PREFERENCES':
-      return { ...state, preferences: { ...state.preferences, ...action.payload } };
+      return {
+        ...state,
+        preferences: { ...state.preferences, ...action.payload },
+      };
 
     case 'CONNECT_DEVICE':
       return {
         ...state,
-        connectedDevices: state.connectedDevices.map((device) =>
+        connectedDevices: state.connectedDevices.map(device =>
           device.id === action.payload
-            ? { ...device, status: 'connected' as DeviceStatus, lastSync: 'Maintenant' }
+            ? {
+                ...device,
+                status: 'connected' as DeviceStatus,
+                lastSync: 'Maintenant',
+              }
             : device
         ),
       };
@@ -212,9 +244,14 @@ export function profileReducer(state: ProfileState, action: ProfileAction): Prof
     case 'DISCONNECT_DEVICE':
       return {
         ...state,
-        connectedDevices: state.connectedDevices.map((device) =>
+        connectedDevices: state.connectedDevices.map(device =>
           device.id === action.payload
-            ? { ...device, status: 'disconnected' as DeviceStatus, lastSync: null, dataTypes: [] }
+            ? {
+                ...device,
+                status: 'disconnected' as DeviceStatus,
+                lastSync: null,
+                dataTypes: [],
+              }
             : device
         ),
       };
@@ -222,20 +259,35 @@ export function profileReducer(state: ProfileState, action: ProfileAction): Prof
     case 'DISCONNECT_SESSION':
       return {
         ...state,
-        activeSessions: state.activeSessions.filter((session) => session.id !== action.payload),
+        activeSessions: state.activeSessions.filter(
+          session => session.id !== action.payload
+        ),
       };
 
     case 'OPEN_EDIT_MODAL':
-      return { ...state, modals: { ...state.modals, showEditModal: true, editField: action.payload } };
+      return {
+        ...state,
+        modals: {
+          ...state.modals,
+          showEditModal: true,
+          editField: action.payload,
+        },
+      };
 
     case 'CLOSE_EDIT_MODAL':
-      return { ...state, modals: { ...state.modals, showEditModal: false, editField: null } };
+      return {
+        ...state,
+        modals: { ...state.modals, showEditModal: false, editField: null },
+      };
 
     case 'OPEN_PASSWORD_MODAL':
       return { ...state, modals: { ...state.modals, showPasswordModal: true } };
 
     case 'CLOSE_PASSWORD_MODAL':
-      return { ...state, modals: { ...state.modals, showPasswordModal: false } };
+      return {
+        ...state,
+        modals: { ...state.modals, showPasswordModal: false },
+      };
 
     case 'OPEN_2FA_MODAL':
       return { ...state, modals: { ...state.modals, show2FAModal: true } };
@@ -267,7 +319,11 @@ export function profileReducer(state: ProfileState, action: ProfileAction): Prof
 }
 
 // ==================== CONFIGURATIONS ====================
-export const sectionConfig: { id: ProfileSection; label: string; icon: string }[] = [
+export const sectionConfig: {
+  id: ProfileSection;
+  label: string;
+  icon: string;
+}[] = [
   { id: 'profile', label: 'Informations personnelles', icon: '👤' },
   { id: 'security', label: 'Sécurité', icon: '🔒' },
   { id: 'notifications', label: 'Notifications', icon: '🔔' },
@@ -276,7 +332,11 @@ export const sectionConfig: { id: ProfileSection; label: string; icon: string }[
   { id: 'data', label: 'Mes données', icon: '📊' },
 ];
 
-export const languageOptions: { value: Language; label: string; flag: string }[] = [
+export const languageOptions: {
+  value: Language;
+  label: string;
+  flag: string;
+}[] = [
   { value: 'fr', label: 'Français', flag: '🇫🇷' },
   { value: 'de', label: 'Deutsch', flag: '🇩🇪' },
   { value: 'it', label: 'Italiano', flag: '🇮🇹' },
@@ -309,7 +369,11 @@ export const liquidUnitOptions: { value: LiquidUnit; label: string }[] = [
   { value: 'oz', label: 'Onces (oz)' },
 ];
 
-export const appearanceOptions: { value: AppearanceMode; label: string; icon: string }[] = [
+export const appearanceOptions: {
+  value: AppearanceMode;
+  label: string;
+  icon: string;
+}[] = [
   { value: 'light', label: 'Clair', icon: '☀️' },
   { value: 'dark', label: 'Sombre', icon: '🌙' },
   { value: 'system', label: 'Système', icon: '💻' },
@@ -324,6 +388,17 @@ export const exportDataCategories = [
 ];
 
 export const quietHoursOptions = [
-  '18:00', '19:00', '20:00', '21:00', '22:00', '23:00', '00:00',
-  '05:00', '06:00', '07:00', '08:00', '09:00', '10:00',
+  '18:00',
+  '19:00',
+  '20:00',
+  '21:00',
+  '22:00',
+  '23:00',
+  '00:00',
+  '05:00',
+  '06:00',
+  '07:00',
+  '08:00',
+  '09:00',
+  '10:00',
 ];

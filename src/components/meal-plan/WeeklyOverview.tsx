@@ -9,11 +9,17 @@ interface WeeklyOverviewProps {
   onDayClick?: (dayIndex: number) => void;
 }
 
-export function WeeklyOverview({ days, targets, onDayClick }: WeeklyOverviewProps) {
+export function WeeklyOverview({
+  days,
+  targets,
+  onDayClick,
+}: WeeklyOverviewProps) {
   return (
-    <div className="bg-white rounded-xl p-6 border border-gray-200">
-      <h2 className="font-semibold text-gray-800 mb-4">Vue d&apos;ensemble de la semaine</h2>
-      <div className="grid grid-cols-7 gap-3">
+    <div className='bg-white rounded-xl p-6 border border-gray-200'>
+      <h2 className='font-semibold text-gray-800 mb-4'>
+        Vue d&apos;ensemble de la semaine
+      </h2>
+      <div className='grid grid-cols-7 gap-3'>
         {days.map((dayData, index) => (
           <button
             key={dayData.day.short}
@@ -26,15 +32,19 @@ export function WeeklyOverview({ days, targets, onDayClick }: WeeklyOverviewProp
           >
             {/* Badge Aujourd'hui */}
             {dayData.day.isToday && (
-              <span className="absolute -top-2 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-[#1B998B] text-white text-[10px] font-medium rounded-full whitespace-nowrap">
+              <span className='absolute -top-2 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-[#1B998B] text-white text-[10px] font-medium rounded-full whitespace-nowrap'>
                 Aujourd&apos;hui
               </span>
             )}
 
-            <p className={`text-xs font-medium ${dayData.day.isToday ? 'text-[#1B998B]' : 'text-gray-500'}`}>
+            <p
+              className={`text-xs font-medium ${dayData.day.isToday ? 'text-[#1B998B]' : 'text-gray-500'}`}
+            >
               {dayData.day.short}
             </p>
-            <p className={`text-lg font-bold ${dayData.day.isToday ? 'text-[#1B998B]' : 'text-gray-800'}`}>
+            <p
+              className={`text-lg font-bold ${dayData.day.isToday ? 'text-[#1B998B]' : 'text-gray-800'}`}
+            >
               {dayData.day.date}
             </p>
             <p
@@ -42,16 +52,16 @@ export function WeeklyOverview({ days, targets, onDayClick }: WeeklyOverviewProp
                 dayData.totalCalories > targets.calories
                   ? 'text-amber-600'
                   : dayData.day.isToday
-                  ? 'text-[#1B998B]'
-                  : 'text-gray-700'
+                    ? 'text-[#1B998B]'
+                    : 'text-gray-700'
               }`}
             >
               {dayData.totalCalories}
             </p>
-            <p className="text-xs text-gray-400">kcal</p>
+            <p className='text-xs text-gray-400'>kcal</p>
 
             {/* Indicateur objectif */}
-            <div className="mt-2 h-1 bg-gray-200 rounded-full overflow-hidden">
+            <div className='mt-2 h-1 bg-gray-200 rounded-full overflow-hidden'>
               <div
                 className={`h-full rounded-full transition-all ${
                   dayData.totalCalories > targets.calories

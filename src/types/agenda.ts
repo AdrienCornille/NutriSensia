@@ -15,13 +15,37 @@
 
 // ==================== ENUMS ====================
 
-export type AgendaTab = 'upcoming' | 'past';
+export type AgendaTab = 'upcoming' | 'past' | 'cancelled';
 
-export type AppointmentStatus = 'confirmed' | 'pending' | 'cancelled' | 'completed';
+export type AppointmentStatus =
+  | 'confirmed'
+  | 'pending'
+  | 'cancelled'
+  | 'completed';
+
+// Statuts détaillés pour l'annulation (utilisé côté DB et reporting)
+export type CancellationSource = 'patient' | 'nutritionist';
 
 export type AppointmentMode = 'visio' | 'cabinet';
 
 export type ConsultationType = 'suivi' | 'approfondi' | 'urgence';
+
+/** Type de consultation provenant de la base de données (par nutritionniste) */
+export interface ConsultationTypeDB {
+  id: string;
+  code: string;
+  name_fr: string;
+  name_en?: string;
+  description_fr?: string;
+  description_en?: string;
+  default_duration: number;
+  default_price: number;
+  icon?: string;
+  color?: string;
+  visio_available: boolean;
+  cabinet_available: boolean;
+  phone_available?: boolean;
+}
 
 export type BookingStep = 1 | 2 | 3;
 
@@ -42,13 +66,19 @@ export interface Appointment {
   duration: number;
   type: ConsultationType;
   typeName: string;
+  consultationTypeId?: string;
   mode: AppointmentMode;
   status: AppointmentStatus;
+  cancelledBy?: CancellationSource; // Qui a annulé (patient ou nutritionniste)
+  cancellationReason?: string; // Raison de l'annulation/refus
+  isDeclinedByNutritionist?: boolean; // true = refus d'une demande, false/undefined = annulation d'un RDV confirmé
   nutritionist: Nutritionist;
   visioLink?: string;
   notes?: string;
   summary?: string;
   price: number;
+  isCounterProposal?: boolean; // Nutritionniste a proposé un nouvel horaire
+  counterProposalMessage?: string; // Message du nutritionniste pour la contre-proposition
 }
 
 export interface ConsultationTypeConfig {
@@ -66,6 +96,7 @@ export interface AvailableSlot {
 }
 
 export interface AvailableDay {
+  dateStr: string; // YYYY-MM-DD (clé unique, insensible au DST)
   date: Date;
   dayNumber: number;
   dayName: string;
@@ -76,6 +107,10 @@ export interface AvailableDay {
 
 export interface BookingFormData {
   consultationType: ConsultationType | null;
+  /** ID de la consultation_type en base (UUID) */
+  consultationTypeId: string | null;
+  /** Données complètes du type de consultation sélectionné */
+  consultationTypeData: ConsultationTypeDB | null;
   selectedDate: Date | null;
   selectedTime: string | null;
   mode: AppointmentMode | null;
@@ -143,6 +178,8 @@ export type AgendaAction =
 
 export const initialBookingFormData: BookingFormData = {
   consultationType: null,
+  consultationTypeId: null,
+  consultationTypeData: null,
   selectedDate: null,
   selectedTime: null,
   mode: null,
@@ -178,7 +215,10 @@ export const initialAgendaState: AgendaState = {
 
 // ==================== REDUCER ====================
 
-export function agendaReducer(state: AgendaState, action: AgendaAction): AgendaState {
+export function agendaReducer(
+  state: AgendaState,
+  action: AgendaAction
+): AgendaState {
   switch (action.type) {
     case 'SET_TAB':
       return { ...state, activeTab: action.tab };
@@ -218,7 +258,10 @@ export function agendaReducer(state: AgendaState, action: AgendaAction): AgendaS
     case 'SET_BOOKING_SUBMITTING':
       return {
         ...state,
-        bookingState: { ...state.bookingState, isSubmitting: action.isSubmitting },
+        bookingState: {
+          ...state.bookingState,
+          isSubmitting: action.isSubmitting,
+        },
       };
 
     case 'SET_BOOKING_ERROR':
@@ -262,7 +305,10 @@ export function agendaReducer(state: AgendaState, action: AgendaAction): AgendaS
     case 'ADD_APPOINTMENT':
       return {
         ...state,
-        upcomingAppointments: [...state.upcomingAppointments, action.appointment].sort(
+        upcomingAppointments: [
+          ...state.upcomingAppointments,
+          action.appointment,
+        ].sort(
           (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
         ),
       };
@@ -270,8 +316,10 @@ export function agendaReducer(state: AgendaState, action: AgendaAction): AgendaS
     case 'CANCEL_APPOINTMENT':
       return {
         ...state,
-        upcomingAppointments: state.upcomingAppointments.map((apt) =>
-          apt.id === action.appointmentId ? { ...apt, status: 'cancelled' as AppointmentStatus } : apt
+        upcomingAppointments: state.upcomingAppointments.map(apt =>
+          apt.id === action.appointmentId
+            ? { ...apt, status: 'cancelled' as AppointmentStatus }
+            : apt
         ),
       };
 
@@ -288,6 +336,8 @@ export function agendaReducer(state: AgendaState, action: AgendaAction): AgendaS
           step: 2, // Skip type selection, go directly to slot selection
           formData: {
             consultationType: action.appointment.type,
+            consultationTypeId: action.appointment.consultationTypeId || null,
+            consultationTypeData: null,
             selectedDate: new Date(action.appointment.date),
             selectedTime: action.appointment.time,
             mode: action.appointment.mode,
@@ -303,9 +353,13 @@ export function agendaReducer(state: AgendaState, action: AgendaAction): AgendaS
         showBookingModal: false,
         editingAppointment: null,
         bookingState: initialBookingState,
-        upcomingAppointments: state.upcomingAppointments.map((apt) =>
-          apt.id === action.appointment.id ? action.appointment : apt
-        ).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()),
+        upcomingAppointments: state.upcomingAppointments
+          .map(apt =>
+            apt.id === action.appointment.id ? action.appointment : apt
+          )
+          .sort(
+            (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+          ),
       };
 
     // AGENDA-008: Annulation RDV
@@ -334,6 +388,7 @@ export function agendaReducer(state: AgendaState, action: AgendaAction): AgendaS
 export const agendaTabsConfig: { id: AgendaTab; label: string }[] = [
   { id: 'upcoming', label: 'À venir' },
   { id: 'past', label: 'Passés' },
+  { id: 'cancelled', label: 'Annulés/Refusés' },
 ];
 
 export const appointmentStatusConfig: Record<
@@ -346,12 +401,12 @@ export const appointmentStatusConfig: Record<
     textColor: 'text-emerald-700',
   },
   pending: {
-    label: 'En attente',
+    label: 'En attente de confirmation',
     bgColor: 'bg-amber-100',
     textColor: 'text-amber-700',
   },
   cancelled: {
-    label: 'Annulé',
+    label: 'Annulé', // Label par défaut, utiliser getStatusLabel() pour le label contextuel
     bgColor: 'bg-red-100',
     textColor: 'text-red-700',
   },
@@ -361,6 +416,26 @@ export const appointmentStatusConfig: Record<
     textColor: 'text-gray-600',
   },
 };
+
+/**
+ * Retourne le label de statut contextuel selon qui a annulé
+ */
+export function getStatusLabel(
+  status: AppointmentStatus,
+  cancelledBy?: CancellationSource,
+  isCounterProposal?: boolean,
+  isDeclinedByNutritionist?: boolean,
+): string {
+  if (status === 'pending' && isCounterProposal) {
+    return "Proposition d'un nouvel horaire";
+  }
+  if (status === 'cancelled' && cancelledBy === 'nutritionist') {
+    return isDeclinedByNutritionist
+      ? 'Refusé par le nutritionniste'
+      : 'Annulé par le nutritionniste';
+  }
+  return appointmentStatusConfig[status].label;
+}
 
 export const appointmentModeConfig: Record<
   AppointmentMode,
@@ -380,7 +455,10 @@ export const appointmentModeConfig: Record<
   },
 };
 
-export const consultationTypeConfig: Record<ConsultationType, ConsultationTypeConfig> = {
+export const consultationTypeConfig: Record<
+  ConsultationType,
+  ConsultationTypeConfig
+> = {
   suivi: {
     id: 'suivi',
     label: 'Consultation de suivi',
@@ -423,7 +501,9 @@ export function getCountdown(appointmentDate: Date, time: string): string {
   if (diffMs < 0) return 'Passé';
 
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const diffHours = Math.floor(
+    (diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+  );
 
   if (diffDays > 0) {
     return `Dans ${diffDays} jour${diffDays > 1 ? 's' : ''}`;
@@ -437,7 +517,10 @@ export function getCountdown(appointmentDate: Date, time: string): string {
 /**
  * Vérifie si le bouton "Rejoindre visio" doit être actif (15 min avant)
  */
-export function isVisioLinkActive(appointmentDate: Date, time: string): boolean {
+export function isVisioLinkActive(
+  appointmentDate: Date,
+  time: string
+): boolean {
   const [hours, minutes] = time.split(':').map(Number);
   const appointmentDateTime = new Date(appointmentDate);
   appointmentDateTime.setHours(hours, minutes, 0, 0);
@@ -453,7 +536,10 @@ export function isVisioLinkActive(appointmentDate: Date, time: string): boolean 
 /**
  * Vérifie si un RDV peut être modifié (plus de 24h avant)
  */
-export function canModifyAppointment(appointmentDate: Date, time: string): boolean {
+export function canModifyAppointment(
+  appointmentDate: Date,
+  time: string
+): boolean {
   const [hours, minutes] = time.split(':').map(Number);
   const appointmentDateTime = new Date(appointmentDate);
   appointmentDateTime.setHours(hours, minutes, 0, 0);
@@ -503,11 +589,13 @@ export function formatDateParts(date: Date): { day: string; month: string } {
 /**
  * Retourne le prochain RDV à venir
  */
-export function getNextAppointment(appointments: Appointment[]): Appointment | null {
+export function getNextAppointment(
+  appointments: Appointment[]
+): Appointment | null {
   const now = new Date();
 
   const upcoming = appointments
-    .filter((apt) => {
+    .filter(apt => {
       const [hours, minutes] = apt.time.split(':').map(Number);
       const aptDate = new Date(apt.date);
       aptDate.setHours(hours, minutes, 0, 0);
@@ -531,7 +619,7 @@ export function calculateAgendaStats(appointments: Appointment[]): {
   followUpDuration: string;
 } {
   const completedAppointments = appointments
-    .filter((apt) => apt.status === 'completed')
+    .filter(apt => apt.status === 'completed')
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   const firstDate = completedAppointments[0]?.date || null;

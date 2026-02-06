@@ -28,12 +28,41 @@ export const routing = defineRouting({
     '/profile': '/profile',
     '/settings': '/settings',
     '/onboarding': '/onboarding',
+    // Dashboard redirect
     '/dashboard': '/dashboard',
-    '/dashboard/agenda': '/dashboard/agenda',
-    '/dashboard/dossier': '/dashboard/dossier',
-    '/dashboard/plan': '/dashboard/plan',
-    '/dashboard/repas': '/dashboard/repas',
-    '/dashboard/suivi': '/dashboard/suivi',
+
+    // Patient dashboard routes
+    '/dashboard/patient': '/dashboard/patient',
+    '/dashboard/patient/agenda': '/dashboard/patient/agenda',
+    '/dashboard/patient/dossier': '/dashboard/patient/dossier',
+    '/dashboard/patient/plan': '/dashboard/patient/plan',
+    '/dashboard/patient/repas': '/dashboard/patient/repas',
+    '/dashboard/patient/suivi': '/dashboard/patient/suivi',
+    '/dashboard/patient/notifications': '/dashboard/patient/notifications',
+    '/dashboard/patient/profil': '/dashboard/patient/profil',
+    '/dashboard/patient/recettes': '/dashboard/patient/recettes',
+    '/dashboard/patient/aliments': '/dashboard/patient/aliments',
+    '/dashboard/patient/messagerie': '/dashboard/patient/messagerie',
+    '/dashboard/patient/contenu': '/dashboard/patient/contenu',
+
+    // Nutritionist dashboard routes
+    '/dashboard/nutritionist': '/dashboard/nutritionist',
+    '/dashboard/nutritionist/disponibilites':
+      '/dashboard/nutritionist/disponibilites',
+    '/dashboard/nutritionist/agenda': '/dashboard/nutritionist/agenda',
+    '/dashboard/nutritionist/patients': '/dashboard/nutritionist/patients',
+    '/dashboard/nutritionist/messagerie': '/dashboard/nutritionist/messagerie',
+    '/dashboard/nutritionist/parametres/types-consultation':
+      '/dashboard/nutritionist/parametres/types-consultation',
+
+    // Nutritionist registration status pages
+    '/inscription/nutritionniste': '/inscription/nutritionniste',
+    '/inscription/nutritionniste/en-attente':
+      '/inscription/nutritionniste/en-attente',
+    '/inscription/nutritionniste/rejete': '/inscription/nutritionniste/rejete',
+    '/inscription/nutritionniste/info-requise':
+      '/inscription/nutritionniste/info-requise',
+    '/inscription/nutritionniste/valide': '/inscription/nutritionniste/valide',
 
     // Pages avec chemins différents selon la langue
     '/about': {

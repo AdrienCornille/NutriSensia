@@ -91,8 +91,7 @@ export const handleAdminError = (error: unknown): AdminError => {
   const err = error as { message?: string; status?: number; code?: string };
 
   return {
-    message:
-      errorMessages[err.message || ''] || err.message || 'Erreur admin',
+    message: errorMessages[err.message || ''] || err.message || 'Erreur admin',
     status: err.status,
     code: err.code || 'ADMIN_ERROR',
   };

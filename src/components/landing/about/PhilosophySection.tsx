@@ -129,7 +129,9 @@ export function PhilosophySection() {
               )}
             >
               {/* Emoji */}
-              <div className='text-[2.5rem] leading-none'>{principle.emoji}</div>
+              <div className='text-[2.5rem] leading-none'>
+                {principle.emoji}
+              </div>
 
               {/* Title */}
               <h3
@@ -163,16 +165,3 @@ export function PhilosophySection() {
 }
 
 export default PhilosophySection;
-
-
-
-
-
-
-
-
-
-
-
-
-

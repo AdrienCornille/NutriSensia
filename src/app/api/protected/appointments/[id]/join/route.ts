@@ -37,7 +37,9 @@ export async function GET(
 
     // 3. Récupérer le patient_profiles.id
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: patientProfile, error: profileError } = await (supabase as any)
+    const { data: patientProfile, error: profileError } = await (
+      supabase as any
+    )
       .from('patient_profiles')
       .select('id')
       .eq('user_id', auth.user.id)
@@ -88,7 +90,7 @@ export async function GET(
       return NextResponse.json(
         {
           can_join: false,
-          message: 'Ce rendez-vous n\'est pas en visioconférence',
+          message: "Ce rendez-vous n'est pas en visioconférence",
           mode: appointment.mode,
         },
         { status: 200 }
@@ -198,7 +200,10 @@ export async function GET(
       { status: 200 }
     );
   } catch (error) {
-    console.error('Unexpected error in GET /api/protected/appointments/[id]/join:', error);
+    console.error(
+      'Unexpected error in GET /api/protected/appointments/[id]/join:',
+      error
+    );
     return apiResponse.serverError('Erreur serveur');
   }
 }

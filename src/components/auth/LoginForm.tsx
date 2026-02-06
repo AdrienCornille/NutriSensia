@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { Input } from '@/components/ui';
 import { AuthDivider } from './OAuthButtons';
-import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { createClient, isSupabaseConfigured } from '@/lib/supabase/client';
 import { Link } from '@/i18n/navigation';
 
 // Logo Google officiel en SVG avec couleurs
@@ -206,6 +206,17 @@ const loginSchema = z.object({
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
+const REMEMBER_EMAIL_KEY = 'nutrisensia-remember-email';
+
+/**
+ * Formate les secondes en minutes:secondes (ex: 14:32)
+ */
+function formatTime(seconds: number): string {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
 interface LoginFormProps {
   onSuccess?: () => void;
   redirectTo?: string;
@@ -224,6 +235,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 }) => {
   const t = useTranslations('Auth.Login');
   const router = useRouter();
+  const supabase = createClient(); // Utiliser le client SSR pour la cohérence des sessions
   const [isLoading, setIsLoading] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -242,10 +254,12 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     type: 'success',
     message: '',
   });
+  const [lockoutSeconds, setLockoutSeconds] = useState<number | null>(null);
 
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -254,6 +268,33 @@ export const LoginForm: React.FC<LoginFormProps> = ({
       rememberMe: false,
     },
   });
+
+  // Charger l'email mémorisé au montage du composant
+  useEffect(() => {
+    const savedEmail = localStorage.getItem(REMEMBER_EMAIL_KEY);
+    if (savedEmail) {
+      setValue('email', savedEmail);
+      setValue('rememberMe', true);
+    }
+  }, [setValue]);
+
+  // Compte à rebours pour le temps de blocage
+  useEffect(() => {
+    if (lockoutSeconds === null || lockoutSeconds <= 0) return;
+
+    const timer = setInterval(() => {
+      setLockoutSeconds(prev => {
+        if (prev === null || prev <= 1) {
+          clearInterval(timer);
+          setMessage(null); // Effacer le message quand le temps est écoulé
+          return null;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [lockoutSeconds]);
 
   const onSubmit = async (data: LoginFormData) => {
     if (!isSupabaseConfigured) {
@@ -269,13 +310,65 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     setEmailNotConfirmed(false);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      // Utiliser l'API avec rate limiting
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password,
+        }),
+      });
+
+      const result = await response.json();
+
+      // Cas: Compte bloqué
+      if (response.status === 429) {
+        const remaining = result.remainingSeconds ?? 900; // 15 min par défaut
+        setLockoutSeconds(remaining);
+        setMessage({
+          type: 'error',
+          text: `Compte temporairement bloqué. Réessayez dans ${formatTime(remaining)}.`,
+        });
+        return;
+      }
+
+      // Cas: Échec de connexion
+      if (!response.ok) {
+        // Afficher le nombre de tentatives restantes si proche du blocage
+        let errorMessage = result.error || 'Email ou mot de passe incorrect';
+
+        if (
+          result.remainingAttempts !== undefined &&
+          result.remainingAttempts <= 2
+        ) {
+          errorMessage += ` (${result.remainingAttempts} tentative${result.remainingAttempts > 1 ? 's' : ''} restante${result.remainingAttempts > 1 ? 's' : ''})`;
+        }
+
+        if (result.code === 'EMAIL_NOT_CONFIRMED') {
+          setEmailNotConfirmed(true);
+          setCurrentEmail(data.email);
+        }
+
+        setMessage({
+          type: 'error',
+          text: errorMessage,
+        });
+        return;
+      }
+
+      // Connexion réussie via l'API - maintenant authentifier côté client
+      // pour établir la session dans le navigateur
+      const { error: clientError } = await supabase.auth.signInWithPassword({
         email: data.email,
         password: data.password,
       });
 
-      if (error) {
-        throw error;
+      if (clientError) {
+        // Si l'API a réussi mais pas le client, c'est bizarre mais on continue
+        console.warn('Client-side auth failed after API success:', clientError);
       }
 
       // Connexion réussie
@@ -284,31 +377,27 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         text: 'Connexion réussie ! Redirection...',
       });
 
+      // Gérer "Se souvenir de moi"
+      if (data.rememberMe) {
+        localStorage.setItem(REMEMBER_EMAIL_KEY, data.email);
+      } else {
+        localStorage.removeItem(REMEMBER_EMAIL_KEY);
+      }
+
       if (onSuccess) {
         onSuccess();
       }
 
+      // Utiliser window.location.href pour forcer un rechargement complet
+      // Cela garantit que les cookies de session sont envoyés avec la requête
       setTimeout(() => {
-        router.push(redirectTo);
+        window.location.href = redirectTo;
       }, 1000);
     } catch (error: unknown) {
-      const errorObj = error as { message?: string };
-      // Traduire les erreurs Supabase en français
-      let errorMessage = 'Email ou mot de passe incorrect';
-
-      if (errorObj.message?.includes('Invalid login credentials')) {
-        errorMessage = 'Email ou mot de passe incorrect';
-      } else if (errorObj.message?.includes('Email not confirmed')) {
-        errorMessage = 'Veuillez confirmer votre email avant de vous connecter';
-        setEmailNotConfirmed(true);
-        setCurrentEmail(data.email);
-      } else if (errorObj.message?.includes('Too many requests')) {
-        errorMessage = 'Trop de tentatives. Veuillez réessayer plus tard';
-      }
-
+      console.error('Login error:', error);
       setMessage({
         type: 'error',
-        text: errorMessage,
+        text: "Une erreur s'est produite lors de la connexion",
       });
     } finally {
       setIsLoading(false);
@@ -398,7 +487,11 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         </div>
 
         {/* Formulaire */}
-        <form onSubmit={handleSubmit(onSubmit)} noValidate className='space-y-5'>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          noValidate
+          className='space-y-5'
+        >
           {/* Email */}
           <Input
             id='email'
@@ -480,7 +573,17 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                     : 'bg-functional-error/10 text-functional-error border border-functional-error/20'
               }`}
             >
-              {message.text}
+              {lockoutSeconds !== null && lockoutSeconds > 0 ? (
+                <span>
+                  Compte temporairement bloqué. Réessayez dans{' '}
+                  <span className='font-semibold'>
+                    {formatTime(lockoutSeconds)}
+                  </span>
+                  .
+                </span>
+              ) : (
+                message.text
+              )}
             </motion.div>
           )}
 
@@ -489,18 +592,20 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="p-3 rounded-lg bg-amber-50 border border-amber-200"
+              className='p-3 rounded-lg bg-amber-50 border border-amber-200'
             >
-              <p className="text-body-small text-amber-800 mb-2">
+              <p className='text-body-small text-amber-800 mb-2'>
                 Vous n'avez pas reçu l'email de confirmation ?
               </p>
               <button
-                type="button"
+                type='button'
                 onClick={handleResendConfirmation}
                 disabled={isResending}
-                className="text-body-small font-medium text-amber-700 hover:text-amber-900 underline disabled:opacity-50 disabled:cursor-not-allowed"
+                className='text-body-small font-medium text-amber-700 hover:text-amber-900 underline disabled:opacity-50 disabled:cursor-not-allowed'
               >
-                {isResending ? 'Envoi en cours...' : 'Renvoyer l\'email de confirmation'}
+                {isResending
+                  ? 'Envoi en cours...'
+                  : "Renvoyer l'email de confirmation"}
               </button>
             </motion.div>
           )}
@@ -508,9 +613,21 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           {/* Bouton de connexion - Style CTA NutriSensia */}
           <motion.button
             type='submit'
-            disabled={isLoading}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            disabled={
+              isLoading || (lockoutSeconds !== null && lockoutSeconds > 0)
+            }
+            whileHover={{
+              scale:
+                isLoading || (lockoutSeconds !== null && lockoutSeconds > 0)
+                  ? 1
+                  : 1.02,
+            }}
+            whileTap={{
+              scale:
+                isLoading || (lockoutSeconds !== null && lockoutSeconds > 0)
+                  ? 1
+                  : 0.98,
+            }}
             style={{
               width: '100%',
               display: 'flex',
@@ -525,15 +642,24 @@ export const LoginForm: React.FC<LoginFormProps> = ({
               fontWeight: 600,
               lineHeight: '25.2px',
               textAlign: 'center',
-              cursor: isLoading ? 'not-allowed' : 'pointer',
+              cursor:
+                isLoading || (lockoutSeconds !== null && lockoutSeconds > 0)
+                  ? 'not-allowed'
+                  : 'pointer',
               transition: 'all 0.3s ease',
               border: 'none',
               background: 'linear-gradient(135deg, #1B998B 0%, #147569 100%)',
               color: '#FDFCFB',
-              opacity: isLoading ? 0.7 : 1,
+              opacity:
+                isLoading || (lockoutSeconds !== null && lockoutSeconds > 0)
+                  ? 0.7
+                  : 1,
             }}
             onMouseEnter={e => {
-              if (!isLoading) {
+              if (
+                !isLoading &&
+                !(lockoutSeconds !== null && lockoutSeconds > 0)
+              ) {
                 e.currentTarget.style.background =
                   'linear-gradient(135deg, #147569 0%, #0f5a50 100%)';
               }

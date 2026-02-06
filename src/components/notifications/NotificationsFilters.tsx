@@ -1,7 +1,10 @@
 'use client';
 
 import React from 'react';
-import type { NotificationFilter, NotificationFilterConfig } from '@/types/notifications';
+import type {
+  NotificationFilter,
+  NotificationFilterConfig,
+} from '@/types/notifications';
 
 interface NotificationsFiltersProps {
   filters: NotificationFilterConfig[];
@@ -15,8 +18,8 @@ export function NotificationsFilters({
   onFilterChange,
 }: NotificationsFiltersProps) {
   return (
-    <div className="flex gap-2 overflow-x-auto pb-1">
-      {filters.map((filter) => (
+    <div className='flex gap-2 overflow-x-auto pb-1'>
+      {filters.map(filter => (
         <button
           key={filter.id}
           onClick={() => onFilterChange(filter.id)}

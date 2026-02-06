@@ -53,10 +53,7 @@ export async function POST(request: NextRequest) {
     } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Non authentifié' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
     }
 
     // Vérifier si un profil existe déjà
@@ -117,7 +114,9 @@ export async function POST(request: NextRequest) {
 
     // Déterminer le provider auth
     const authProvider =
-      user.app_metadata?.provider || user.app_metadata?.providers?.[0] || 'email';
+      user.app_metadata?.provider ||
+      user.app_metadata?.providers?.[0] ||
+      'email';
 
     // Créer le profil via le client Supabase admin
     // Note: On utilise le service role key pour bypass RLS
@@ -132,9 +131,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Importer dynamiquement createClient de @supabase/supabase-js
-    const { createClient: createAdminClient } = await import(
-      '@supabase/supabase-js'
-    );
+    const { createClient: createAdminClient } =
+      await import('@supabase/supabase-js');
     const supabaseAdmin = createAdminClient(supabaseUrl, supabaseServiceKey, {
       auth: {
         autoRefreshToken: false,

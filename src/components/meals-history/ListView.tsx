@@ -27,18 +27,18 @@ export function ListView({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.2 }}
-      className="space-y-6"
+      className='space-y-6'
     >
       {/* Filters */}
       <ListFilterPills activeFilter={filter} onFilterChange={onFilterChange} />
 
       {/* Grouped by date */}
-      {data.groups.map((group) => (
+      {data.groups.map(group => (
         <div key={group.label}>
-          <h3 className="text-sm font-medium text-gray-500 mb-3">
+          <h3 className='text-sm font-medium text-gray-500 mb-3'>
             {group.label}
           </h3>
-          <div className="space-y-3">
+          <div className='space-y-3'>
             {group.meals.map((meal, index) => (
               <motion.div
                 key={meal.id}
@@ -46,7 +46,10 @@ export function ListView({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
               >
-                <ListMealCard meal={meal} onClick={() => onMealClick(meal.id)} />
+                <ListMealCard
+                  meal={meal}
+                  onClick={() => onMealClick(meal.id)}
+                />
               </motion.div>
             ))}
           </div>
@@ -55,17 +58,27 @@ export function ListView({
 
       {/* Empty state */}
       {data.groups.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-gray-500">Aucun repas trouvé</p>
+        <div className='text-center py-12 px-6'>
+          <div className='inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4'>
+            <span className='text-3xl'>🍽️</span>
+          </div>
+          <p className='text-lg font-medium text-gray-800 mb-2'>
+            Aucun repas trouvé
+          </p>
+          <p className='text-sm text-gray-500'>
+            {filter === 'all'
+              ? 'Commencez à enregistrer vos repas pour suivre votre alimentation'
+              : `Aucun ${filter === 'breakfast' ? 'petit-déjeuner' : filter === 'lunch' ? 'déjeuner' : filter === 'dinner' ? 'dîner' : 'collation'} enregistré`}
+          </p>
         </div>
       )}
 
       {/* Load more */}
       {data.hasMore && (
-        <div className="text-center pt-4">
+        <div className='text-center pt-4'>
           <button
             onClick={onLoadMore}
-            className="px-6 py-2 text-[#1B998B] font-medium hover:bg-[#1B998B]/10 rounded-lg transition-colors"
+            className='px-6 py-2 text-[#1B998B] font-medium hover:bg-[#1B998B]/10 rounded-lg transition-colors'
           >
             Charger plus de repas
           </button>
@@ -74,7 +87,7 @@ export function ListView({
 
       {/* Total count */}
       {data.totalCount > 0 && (
-        <p className="text-center text-sm text-gray-400">
+        <p className='text-center text-sm text-gray-400'>
           {data.totalCount} repas au total
         </p>
       )}

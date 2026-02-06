@@ -80,16 +80,13 @@ export function AppleStyleGuaranteeSection() {
 
   // Calculer quel item est actif basé sur le scroll
   useEffect(() => {
-    const unsubscribe = scrollYProgress.on('change', (latest) => {
+    const unsubscribe = scrollYProgress.on('change', latest => {
       // Diviser le scroll en segments pour chaque item
       // On laisse plus de temps pour le dernier item (75% du scroll pour les 4 items)
       const totalItems = guaranteeItems.length;
       const scrollThreshold = 0.75; // Les items occupent 75% du scroll
       const progress = Math.max(0, Math.min(latest / scrollThreshold, 1));
-      const index = Math.min(
-        Math.floor(progress * totalItems),
-        totalItems - 1
-      );
+      const index = Math.min(Math.floor(progress * totalItems), totalItems - 1);
       setActiveIndex(index);
     });
 
@@ -171,7 +168,7 @@ export function AppleStyleGuaranteeSection() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
                 className={cn(
-                  "font-sans",
+                  'font-sans',
                   'text-[2rem] md:text-[2.5rem] lg:text-[3rem]',
                   'font-bold',
                   'text-[#2C3E3C]',

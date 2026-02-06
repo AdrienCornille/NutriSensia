@@ -4,10 +4,22 @@
 
 // ==================== ENUMS ====================
 
-export type RecipeCategory = 'petit-dejeuner' | 'dejeuner' | 'diner' | 'collation' | 'dessert' | 'boisson';
+export type RecipeCategory =
+  | 'petit-dejeuner'
+  | 'dejeuner'
+  | 'diner'
+  | 'collation'
+  | 'dessert'
+  | 'boisson';
 export type RecipeDifficulty = 'Facile' | 'Moyen' | 'Difficile';
 export type RecipeTime = '< 15 min' | '15-30 min' | '30-60 min' | '> 1h';
-export type RecipeDiet = 'Sans gluten' | 'Sans lactose' | 'Végétarien' | 'Végan' | 'Pauvre en sel' | 'Riche en protéines';
+export type RecipeDiet =
+  | 'Sans gluten'
+  | 'Sans lactose'
+  | 'Végétarien'
+  | 'Végan'
+  | 'Pauvre en sel'
+  | 'Riche en protéines';
 export type RecipesTab = 'discover' | 'favorites' | 'recommended' | 'shopping';
 
 // ==================== INTERFACES ====================
@@ -109,7 +121,11 @@ export type RecipesAction =
   | { type: 'SET_FAVORITES'; favorites: string[] }
   | { type: 'SET_SHOPPING_LIST'; shoppingList: ShoppingList }
   | { type: 'TOGGLE_SHOPPING_ITEM'; categoryIndex: number; itemId: string }
-  | { type: 'ADD_SHOPPING_ITEM'; category: string; item: Omit<ShoppingListItem, 'id'> }
+  | {
+      type: 'ADD_SHOPPING_ITEM';
+      category: string;
+      item: Omit<ShoppingListItem, 'id'>;
+    }
   | { type: 'ADD_RECIPE_TO_SHOPPING_LIST'; ingredients: RecipeIngredient[] };
 
 // ==================== REDUCER ====================
@@ -175,7 +191,7 @@ export function recipesReducer(
     case 'TOGGLE_FAVORITE': {
       const isFavorite = state.favorites.includes(action.recipeId);
       const newFavorites = isFavorite
-        ? state.favorites.filter((id) => id !== action.recipeId)
+        ? state.favorites.filter(id => id !== action.recipeId)
         : [...state.favorites, action.recipeId];
       return {
         ...state,
@@ -200,8 +216,10 @@ export function recipesReducer(
         if (index !== action.categoryIndex) return cat;
         return {
           ...cat,
-          items: cat.items.map((item) =>
-            item.id === action.itemId ? { ...item, checked: !item.checked } : item
+          items: cat.items.map(item =>
+            item.id === action.itemId
+              ? { ...item, checked: !item.checked }
+              : item
           ),
         };
       });
@@ -216,7 +234,7 @@ export function recipesReducer(
 
     case 'ADD_SHOPPING_ITEM': {
       const categoryIndex = state.shoppingList.categories.findIndex(
-        (cat) => cat.category === action.category
+        cat => cat.category === action.category
       );
       const newItem: ShoppingListItem = {
         ...action.item,
@@ -259,10 +277,10 @@ export function recipesReducer(
       // Add ingredients to shopping list, merging with existing items
       const newCategories = [...state.shoppingList.categories];
       const othersCategoryIndex = newCategories.findIndex(
-        (cat) => cat.category === 'Autres'
+        cat => cat.category === 'Autres'
       );
 
-      action.ingredients.forEach((ing) => {
+      action.ingredients.forEach(ing => {
         const newItem: ShoppingListItem = {
           id: `item-${Date.now()}-${Math.random()}`,
           name: ing.name,
@@ -276,7 +294,7 @@ export function recipesReducer(
         } else {
           // Check if item already exists
           const existingItem = newCategories[othersCategoryIndex].items.find(
-            (item) => item.name.toLowerCase() === ing.name.toLowerCase()
+            item => item.name.toLowerCase() === ing.name.toLowerCase()
           );
           if (!existingItem) {
             newCategories[othersCategoryIndex].items.push(newItem);
@@ -312,8 +330,17 @@ export const categoryConfig: Record<
   boisson: { label: 'Boisson', emoji: '🥤' },
 };
 
-export const difficultyOptions: RecipeDifficulty[] = ['Facile', 'Moyen', 'Difficile'];
-export const timeOptions: RecipeTime[] = ['< 15 min', '15-30 min', '30-60 min', '> 1h'];
+export const difficultyOptions: RecipeDifficulty[] = [
+  'Facile',
+  'Moyen',
+  'Difficile',
+];
+export const timeOptions: RecipeTime[] = [
+  '< 15 min',
+  '15-30 min',
+  '30-60 min',
+  '> 1h',
+];
 export const dietOptions: RecipeDiet[] = [
   'Sans gluten',
   'Sans lactose',
@@ -339,7 +366,7 @@ export function filterRecipes(
   favorites: string[],
   activeTab: RecipesTab
 ): Recipe[] {
-  return recipes.filter((recipe) => {
+  return recipes.filter(recipe => {
     // Tab filter
     if (activeTab === 'favorites' && !favorites.includes(recipe.id)) {
       return false;
@@ -352,10 +379,10 @@ export function filterRecipes(
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       const matchesTitle = recipe.title.toLowerCase().includes(query);
-      const matchesTags = recipe.tags.some((tag) =>
+      const matchesTags = recipe.tags.some(tag =>
         tag.toLowerCase().includes(query)
       );
-      const matchesIngredients = recipe.ingredients?.some((ing) =>
+      const matchesIngredients = recipe.ingredients?.some(ing =>
         ing.name.toLowerCase().includes(query)
       );
       if (!matchesTitle && !matchesTags && !matchesIngredients) {
@@ -364,22 +391,42 @@ export function filterRecipes(
     }
 
     // Category filter
-    if (filters.category.length > 0 && !filters.category.includes(recipe.category)) {
+    if (
+      filters.category.length > 0 &&
+      !filters.category.includes(recipe.category)
+    ) {
       return false;
     }
 
     // Difficulty filter
-    if (filters.difficulty.length > 0 && !filters.difficulty.includes(recipe.difficulty)) {
+    if (
+      filters.difficulty.length > 0 &&
+      !filters.difficulty.includes(recipe.difficulty)
+    ) {
       return false;
     }
 
     // Time filter (simplified matching)
     if (filters.time.length > 0) {
       // This is a simplified check - in production, you'd parse the time properly
-      const matchesTime = filters.time.some((timeFilter) => {
-        if (timeFilter === '< 15 min') return recipe.time.includes('5 min') || recipe.time.includes('10 min');
-        if (timeFilter === '15-30 min') return recipe.time.includes('15') || recipe.time.includes('20') || recipe.time.includes('25') || recipe.time.includes('30');
-        if (timeFilter === '30-60 min') return recipe.time.includes('35') || recipe.time.includes('40') || recipe.time.includes('45');
+      const matchesTime = filters.time.some(timeFilter => {
+        if (timeFilter === '< 15 min')
+          return (
+            recipe.time.includes('5 min') || recipe.time.includes('10 min')
+          );
+        if (timeFilter === '15-30 min')
+          return (
+            recipe.time.includes('15') ||
+            recipe.time.includes('20') ||
+            recipe.time.includes('25') ||
+            recipe.time.includes('30')
+          );
+        if (timeFilter === '30-60 min')
+          return (
+            recipe.time.includes('35') ||
+            recipe.time.includes('40') ||
+            recipe.time.includes('45')
+          );
         if (timeFilter === '> 1h') return recipe.time.includes('h');
         return false;
       });
@@ -388,8 +435,8 @@ export function filterRecipes(
 
     // Diet filter
     if (filters.diet.length > 0) {
-      const matchesDiet = filters.diet.some((diet) =>
-        recipe.tags.some((tag) => tag.toLowerCase().includes(diet.toLowerCase()))
+      const matchesDiet = filters.diet.some(diet =>
+        recipe.tags.some(tag => tag.toLowerCase().includes(diet.toLowerCase()))
       );
       if (!matchesDiet) return false;
     }
@@ -415,8 +462,8 @@ export function getShoppingListProgress(shoppingList: ShoppingList): {
   let checked = 0;
   let total = 0;
 
-  shoppingList.categories.forEach((cat) => {
-    cat.items.forEach((item) => {
+  shoppingList.categories.forEach(cat => {
+    cat.items.forEach(item => {
       total++;
       if (item.checked) checked++;
     });

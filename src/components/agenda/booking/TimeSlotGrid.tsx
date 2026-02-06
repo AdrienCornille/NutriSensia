@@ -9,10 +9,14 @@ interface TimeSlotGridProps {
   onTimeSelect: (time: string) => void;
 }
 
-export function TimeSlotGrid({ slots, selectedTime, onTimeSelect }: TimeSlotGridProps) {
+export function TimeSlotGrid({
+  slots,
+  selectedTime,
+  onTimeSelect,
+}: TimeSlotGridProps) {
   if (slots.length === 0) {
     return (
-      <div className="text-center py-4 text-gray-500">
+      <div className='text-center py-4 text-gray-500'>
         Aucun créneau disponible pour cette date
       </div>
     );
@@ -20,9 +24,9 @@ export function TimeSlotGrid({ slots, selectedTime, onTimeSelect }: TimeSlotGrid
 
   return (
     <div>
-      <h4 className="font-medium text-gray-800 mb-4">Choisissez un horaire</h4>
-      <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
-        {slots.map((slot) => (
+      <h4 className='font-medium text-gray-800 mb-4'>Choisissez un horaire</h4>
+      <div className='grid grid-cols-4 sm:grid-cols-5 gap-2'>
+        {slots.map(slot => (
           <button
             key={slot.time}
             disabled={!slot.available}

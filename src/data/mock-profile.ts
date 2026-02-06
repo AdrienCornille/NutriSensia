@@ -170,15 +170,28 @@ export function getProfileFields(profile: UserProfile) {
   return [
     { key: 'firstName', label: 'Prénom', value: profile.firstName },
     { key: 'lastName', label: 'Nom', value: profile.lastName },
-    { key: 'email', label: 'Email', value: profile.email, type: 'email' as const },
-    { key: 'phone', label: 'Téléphone', value: profile.phone, type: 'tel' as const },
+    {
+      key: 'email',
+      label: 'Email',
+      value: profile.email,
+      type: 'email' as const,
+    },
+    {
+      key: 'phone',
+      label: 'Téléphone',
+      value: profile.phone,
+      type: 'tel' as const,
+    },
     { key: 'birthDate', label: 'Date de naissance', value: profile.birthDate },
     { key: 'gender', label: 'Sexe', value: profile.gender },
     { key: 'address', label: 'Adresse', value: profile.address },
   ];
 }
 
-export function getEmailNotificationLabels(): Record<keyof NotificationSettings['email'], string> {
+export function getEmailNotificationLabels(): Record<
+  keyof NotificationSettings['email'],
+  string
+> {
   return {
     appointments: 'Rappels de rendez-vous',
     messages: 'Nouveaux messages',
@@ -188,7 +201,10 @@ export function getEmailNotificationLabels(): Record<keyof NotificationSettings[
   };
 }
 
-export function getPushNotificationLabels(): Record<keyof NotificationSettings['push'], string> {
+export function getPushNotificationLabels(): Record<
+  keyof NotificationSettings['push'],
+  string
+> {
   return {
     appointments: 'Rappels de rendez-vous',
     messages: 'Nouveaux messages',

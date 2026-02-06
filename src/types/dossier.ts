@@ -12,7 +12,12 @@
 
 // ==================== ENUMS ====================
 
-export type DossierTab = 'anamnese' | 'questionnaires' | 'documents' | 'consultations' | 'objectifs';
+export type DossierTab =
+  | 'anamnese'
+  | 'questionnaires'
+  | 'documents'
+  | 'consultations'
+  | 'objectifs';
 
 export type AnamneseSectionId =
   | 'identite'
@@ -141,17 +146,25 @@ export const initialDossierState: DossierState = {
 
 // ==================== REDUCER ====================
 
-export function dossierReducer(state: DossierState, action: DossierAction): DossierState {
+export function dossierReducer(
+  state: DossierState,
+  action: DossierAction
+): DossierState {
   switch (action.type) {
     case 'SET_TAB':
       return { ...state, activeTab: action.tab };
     case 'TOGGLE_SECTION':
       return {
         ...state,
-        expandedSection: state.expandedSection === action.section ? null : action.section,
+        expandedSection:
+          state.expandedSection === action.section ? null : action.section,
       };
     case 'OPEN_DOCUMENT_MODAL':
-      return { ...state, showDocumentModal: true, selectedDocument: action.document };
+      return {
+        ...state,
+        showDocumentModal: true,
+        selectedDocument: action.document,
+      };
     case 'CLOSE_DOCUMENT_MODAL':
       return { ...state, showDocumentModal: false, selectedDocument: null };
     case 'SET_DOCUMENT_FILTER':
@@ -163,7 +176,11 @@ export function dossierReducer(state: DossierState, action: DossierAction): Doss
 
 // ==================== CONFIGURATIONS ====================
 
-export const dossierTabsConfig: { id: DossierTab; label: string; icon: string }[] = [
+export const dossierTabsConfig: {
+  id: DossierTab;
+  label: string;
+  icon: string;
+}[] = [
   { id: 'anamnese', label: 'Anamnèse', icon: '📋' },
   { id: 'questionnaires', label: 'Questionnaires', icon: '📝' },
   { id: 'documents', label: 'Documents', icon: '📁' },
@@ -175,27 +192,64 @@ export const statusConfig: Record<
   ObjectiveStatus | QuestionnaireStatus,
   { label: string; bgColor: string; textColor: string }
 > = {
-  'on-track': { label: 'En bonne voie', bgColor: 'bg-emerald-100', textColor: 'text-emerald-700' },
-  'in-progress': { label: 'En cours', bgColor: 'bg-blue-100', textColor: 'text-blue-700' },
-  'needs-attention': { label: 'À améliorer', bgColor: 'bg-amber-100', textColor: 'text-amber-700' },
-  completed: { label: 'Complété', bgColor: 'bg-emerald-100', textColor: 'text-emerald-700' },
-  pending: { label: 'En attente', bgColor: 'bg-gray-100', textColor: 'text-gray-600' },
+  'on-track': {
+    label: 'En bonne voie',
+    bgColor: 'bg-emerald-100',
+    textColor: 'text-emerald-700',
+  },
+  'in-progress': {
+    label: 'En cours',
+    bgColor: 'bg-blue-100',
+    textColor: 'text-blue-700',
+  },
+  'needs-attention': {
+    label: 'À améliorer',
+    bgColor: 'bg-amber-100',
+    textColor: 'text-amber-700',
+  },
+  completed: {
+    label: 'Complété',
+    bgColor: 'bg-emerald-100',
+    textColor: 'text-emerald-700',
+  },
+  pending: {
+    label: 'En attente',
+    bgColor: 'bg-gray-100',
+    textColor: 'text-gray-600',
+  },
 };
 
-export const objectiveCategoryConfig: Record<ObjectiveCategory, { icon: string; bgColor: string }> = {
+export const objectiveCategoryConfig: Record<
+  ObjectiveCategory,
+  { icon: string; bgColor: string }
+> = {
   Poids: { icon: '⚖️', bgColor: 'bg-blue-100' },
   Habitude: { icon: '🔄', bgColor: 'bg-emerald-100' },
   Comportement: { icon: '🧠', bgColor: 'bg-purple-100' },
 };
 
-export const consultationModeConfig: Record<ConsultationMode, { bgColor: string; textColor: string }> = {
+export const consultationModeConfig: Record<
+  ConsultationMode,
+  { bgColor: string; textColor: string }
+> = {
   Cabinet: { bgColor: 'bg-blue-100', textColor: 'text-blue-700' },
   Visio: { bgColor: 'bg-purple-100', textColor: 'text-purple-700' },
 };
 
-export const documentUploaderConfig: Record<DocumentUploader, { label: string; bgColor: string; textColor: string }> = {
-  nutritionist: { label: 'Nutritionniste', bgColor: 'bg-emerald-100', textColor: 'text-emerald-700' },
-  patient: { label: 'Vous', bgColor: 'bg-blue-100', textColor: 'text-blue-700' },
+export const documentUploaderConfig: Record<
+  DocumentUploader,
+  { label: string; bgColor: string; textColor: string }
+> = {
+  nutritionist: {
+    label: 'Nutritionniste',
+    bgColor: 'bg-emerald-100',
+    textColor: 'text-emerald-700',
+  },
+  patient: {
+    label: 'Vous',
+    bgColor: 'bg-blue-100',
+    textColor: 'text-blue-700',
+  },
 };
 
 // ==================== HELPERS ====================
@@ -212,7 +266,9 @@ export function calculateGlobalProgress(objectives: Objective[]): number {
 /**
  * Retourne la configuration de status pour un badge
  */
-export function getStatusBadgeConfig(status: ObjectiveStatus | QuestionnaireStatus) {
+export function getStatusBadgeConfig(
+  status: ObjectiveStatus | QuestionnaireStatus
+) {
   return statusConfig[status];
 }
 
@@ -224,5 +280,5 @@ export function filterDocumentsByCategory(
   filter: DocumentCategory | 'all'
 ): PatientDocument[] {
   if (filter === 'all') return documents;
-  return documents.filter((doc) => doc.category === filter);
+  return documents.filter(doc => doc.category === filter);
 }

@@ -22,7 +22,7 @@ export function WhyNutriSensiaSection() {
   // Points de différenciation adaptés au format liste
   const bulletPoints = [
     {
-      text: 'Prend le temps d\'écouter votre histoire',
+      text: "Prend le temps d'écouter votre histoire",
       isBold: true,
     },
     {
@@ -38,7 +38,7 @@ export function WhyNutriSensiaSection() {
       isBold: true,
     },
     {
-      text: 'S\'appuie sur la science et les dernières recherches en nutrition',
+      text: "S'appuie sur la science et les dernières recherches en nutrition",
       isBold: false,
     },
     {
@@ -55,11 +55,7 @@ export function WhyNutriSensiaSection() {
     <section
       id='ce-qui-change'
       ref={ref}
-      className={cn(
-        'relative',
-        'bg-white',
-        'py-[96px]'
-      )}
+      className={cn('relative', 'bg-white', 'py-[96px]')}
       style={{ padding: 'var(--spacing-3xl, 96px) 0' }}
     >
       {/* Container principal */}
@@ -151,7 +147,8 @@ export function WhyNutriSensiaSection() {
                 'mb-6'
               )}
               style={{
-                fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                fontFamily:
+                  "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                 color: '#2D3748',
                 textAlign: 'left',
                 marginBottom: 'var(--spacing-md, 24px)',
@@ -173,7 +170,9 @@ export function WhyNutriSensiaSection() {
                 <motion.li
                   key={index}
                   initial={{ opacity: 0, x: 20 }}
-                  animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }}
+                  animate={
+                    isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }
+                  }
                   transition={{
                     duration: 0.5,
                     delay: 0.4 + index * 0.1,
@@ -188,7 +187,8 @@ export function WhyNutriSensiaSection() {
                     'text-left'
                   )}
                   style={{
-                    fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                    fontFamily:
+                      "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                     color: '#41556b',
                     lineHeight: '20.8px',
                     margin: '0 0 0 16px',
@@ -231,7 +231,8 @@ export function WhyNutriSensiaSection() {
                   lineHeight: '16px',
                   color: '#fff',
                   display: 'inline-block',
-                  fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                  fontFamily:
+                    "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                   fontSize: '14px',
                   fontWeight: 700,
                   textAlign: 'center',

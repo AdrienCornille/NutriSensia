@@ -21,7 +21,12 @@ export type BadgeId =
   | 'variety_master'
   | 'consistency_king';
 
-export type BadgeCategory = 'streak' | 'nutrition' | 'hydration' | 'social' | 'milestone';
+export type BadgeCategory =
+  | 'streak'
+  | 'nutrition'
+  | 'hydration'
+  | 'social'
+  | 'milestone';
 
 export type BadgeRarity = 'common' | 'rare' | 'epic' | 'legendary';
 
@@ -128,14 +133,16 @@ export function gamificationReducer(
     case 'UNLOCK_BADGE':
       return {
         ...state,
-        badges: state.badges.map((b) =>
-          b.id === action.badgeId ? { ...b, unlockedAt: action.unlockedAt, progress: 100 } : b
+        badges: state.badges.map(b =>
+          b.id === action.badgeId
+            ? { ...b, unlockedAt: action.unlockedAt, progress: 100 }
+            : b
         ),
       };
     case 'UPDATE_BADGE_PROGRESS':
       return {
         ...state,
-        badges: state.badges.map((b) =>
+        badges: state.badges.map(b =>
           b.id === action.badgeId ? { ...b, progress: action.progress } : b
         ),
       };
@@ -166,7 +173,10 @@ export function gamificationReducer(
     case 'ADD_MILESTONE':
       return {
         ...state,
-        recentMilestones: [action.milestone, ...state.recentMilestones].slice(0, 10),
+        recentMilestones: [action.milestone, ...state.recentMilestones].slice(
+          0,
+          10
+        ),
       };
     case 'SET_CELEBRATION':
       return { ...state, pendingCelebration: action.celebration };
@@ -181,7 +191,10 @@ export function gamificationReducer(
 
 // ==================== CONFIGURATIONS ====================
 
-export const badgeCategoryConfig: Record<BadgeCategory, { label: string; color: string }> = {
+export const badgeCategoryConfig: Record<
+  BadgeCategory,
+  { label: string; color: string }
+> = {
   streak: { label: 'Régularité', color: 'orange' },
   nutrition: { label: 'Nutrition', color: 'emerald' },
   hydration: { label: 'Hydratation', color: 'cyan' },
@@ -226,29 +239,32 @@ export const badgeRarityConfig: Record<
  */
 export function getUnlockedBadgesPercentage(badges: Badge[]): number {
   if (badges.length === 0) return 0;
-  const unlocked = badges.filter((b) => b.unlockedAt !== null).length;
+  const unlocked = badges.filter(b => b.unlockedAt !== null).length;
   return Math.round((unlocked / badges.length) * 100);
 }
 
 /**
  * Filtre les badges par catégorie
  */
-export function getBadgesByCategory(badges: Badge[], category: BadgeCategory): Badge[] {
-  return badges.filter((b) => b.category === category);
+export function getBadgesByCategory(
+  badges: Badge[],
+  category: BadgeCategory
+): Badge[] {
+  return badges.filter(b => b.category === category);
 }
 
 /**
  * Récupère les badges débloqués
  */
 export function getUnlockedBadges(badges: Badge[]): Badge[] {
-  return badges.filter((b) => b.unlockedAt !== null);
+  return badges.filter(b => b.unlockedAt !== null);
 }
 
 /**
  * Récupère les badges verrouillés
  */
 export function getLockedBadges(badges: Badge[]): Badge[] {
-  return badges.filter((b) => b.unlockedAt === null);
+  return badges.filter(b => b.unlockedAt === null);
 }
 
 /**
@@ -256,13 +272,15 @@ export function getLockedBadges(badges: Badge[]): Badge[] {
  */
 export function checkStreakMilestone(streak: number): number | null {
   const milestones = [7, 14, 30, 60, 90, 180, 365];
-  return milestones.find((m) => streak === m) || null;
+  return milestones.find(m => streak === m) || null;
 }
 
 /**
  * Génère un message d'encouragement bienveillant
  */
-export function getEncouragementMessage(context: 'streak_broken' | 'goal_missed' | 'general'): string {
+export function getEncouragementMessage(
+  context: 'streak_broken' | 'goal_missed' | 'general'
+): string {
   const messages = {
     streak_broken: [
       'Pas de souci, chaque jour est une nouvelle opportunité !',
@@ -288,10 +306,13 @@ export function getEncouragementMessage(context: 'streak_broken' | 'goal_missed'
 /**
  * Génère les statistiques de gamification
  */
-export function getGamificationStats(badges: Badge[], streak: StreakData): GamificationStats {
+export function getGamificationStats(
+  badges: Badge[],
+  streak: StreakData
+): GamificationStats {
   return {
     totalBadges: badges.length,
-    unlockedBadges: badges.filter((b) => b.unlockedAt !== null).length,
+    unlockedBadges: badges.filter(b => b.unlockedAt !== null).length,
     currentStreak: streak.current,
     bestStreak: streak.best,
     totalMealsLogged: 0, // À connecter avec les vraies données

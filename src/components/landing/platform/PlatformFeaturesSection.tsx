@@ -40,8 +40,9 @@ export function PlatformFeaturesSection() {
       ],
       whyUseful:
         'Plus besoin de fouiller. Tout est centralisé, clair, accessible.',
-      image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=400&fit=crop&q=80',
-      alt: "Tableau de bord avec graphiques et métriques de santé",
+      image:
+        'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=400&fit=crop&q=80',
+      alt: 'Tableau de bord avec graphiques et métriques de santé',
     },
     {
       id: 2,
@@ -58,8 +59,9 @@ export function PlatformFeaturesSection() {
         'Adapté à : Vos contraintes (végétarien, allergies), vos goûts, votre emploi du temps, vos objectifs.',
       whyUseful:
         "Ce n'est pas un PDF figé. C'est un plan vivant que j'ajuste après chaque consultation.",
-      image: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&h=400&fit=crop&q=80',
-      alt: "Assiette équilibrée avec légumes colorés et protéines",
+      image:
+        'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&h=400&fit=crop&q=80',
+      alt: 'Assiette équilibrée avec légumes colorés et protéines',
     },
     {
       id: 3,
@@ -77,8 +79,9 @@ export function PlatformFeaturesSection() {
       ],
       whyUseful:
         'Fini les courses à tâtons. Vous savez exactement quoi acheter.',
-      image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&h=400&fit=crop&q=80',
-      alt: "Panier de courses avec fruits et légumes frais",
+      image:
+        'https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&h=400&fit=crop&q=80',
+      alt: 'Panier de courses avec fruits et légumes frais',
     },
     {
       id: 4,
@@ -95,7 +98,8 @@ export function PlatformFeaturesSection() {
         'Ce que ça vous permet : Prendre conscience de vos habitudes réelles, Identifier les moments de stress/ennui vs faim, Me montrer votre alimentation pour ajuster précisément',
       whyUseful:
         "Le journal n'est pas là pour juger ou compter obsessionnellement. C'est un outil de conscience et de dialogue.",
-      image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&h=400&fit=crop&q=80',
+      image:
+        'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&h=400&fit=crop&q=80',
       alt: "Photo d'une assiette saine vue du dessus",
     },
     {
@@ -110,8 +114,9 @@ export function PlatformFeaturesSection() {
       ],
       whyUseful:
         "Souvent, vous perdez 0g certaines semaines mais vous dormez mieux, avez plus d'énergie, vos ballonnements ont disparu. Ces victoires comptent autant. Les graphiques vous montrent vos progrès réels, même quand vous avez l'impression de stagner.",
-      image: 'https://images.unsplash.com/photo-1434494878577-86c23bcb06b9?w=600&h=400&fit=crop&q=80',
-      alt: "Montre connectée affichant des données de santé",
+      image:
+        'https://images.unsplash.com/photo-1434494878577-86c23bcb06b9?w=600&h=400&fit=crop&q=80',
+      alt: 'Montre connectée affichant des données de santé',
     },
     {
       id: 6,
@@ -123,8 +128,9 @@ export function PlatformFeaturesSection() {
         'Bibliothèque de ressources : Articles explicatifs (index glycémique, hormones, inflammation), Guides pratiques (restaurant, lire les étiquettes), Recettes saines et simples, Contenus adaptés à votre forfait',
       whyUseful:
         "Vous ne devriez pas attendre 2 semaines pour une réponse qui vous bloque aujourd'hui. Et plus vous comprenez, moins vous avez besoin de moi.",
-      image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&h=400&fit=crop&q=80',
-      alt: "Personne utilisant une application de messagerie sur tablette",
+      image:
+        'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&h=400&fit=crop&q=80',
+      alt: 'Personne utilisant une application de messagerie sur tablette',
     },
   ];
 
@@ -166,7 +172,8 @@ export function PlatformFeaturesSection() {
           </h2>
           <p
             style={{
-              fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+              fontFamily:
+                "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
               fontSize: '18px',
               lineHeight: '28px',
               color: '#41556b',

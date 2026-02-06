@@ -37,7 +37,7 @@ export function BadgeUnlockToast({
           initial={{ opacity: 0, y: -100, x: '-50%' }}
           animate={{ opacity: 1, y: 0, x: '-50%' }}
           exit={{ opacity: 0, y: -100, x: '-50%' }}
-          className="fixed top-4 left-1/2 z-50 max-w-sm w-full mx-4"
+          className='fixed top-4 left-1/2 z-50 max-w-sm w-full mx-4'
         >
           <div
             className={`
@@ -46,16 +46,18 @@ export function BadgeUnlockToast({
             `}
           >
             {/* Header gradient */}
-            <div className="bg-gradient-to-r from-[#1B998B] to-emerald-400 px-4 py-2">
-              <div className="flex items-center gap-2 text-white">
-                <Award className="w-4 h-4" />
-                <span className="text-sm font-medium">Nouveau badge débloqué !</span>
+            <div className='bg-gradient-to-r from-[#1B998B] to-emerald-400 px-4 py-2'>
+              <div className='flex items-center gap-2 text-white'>
+                <Award className='w-4 h-4' />
+                <span className='text-sm font-medium'>
+                  Nouveau badge débloqué !
+                </span>
               </div>
             </div>
 
             {/* Content */}
-            <div className="p-4">
-              <div className="flex items-center gap-4">
+            <div className='p-4'>
+              <div className='flex items-center gap-4'>
                 {/* Badge icon */}
                 <motion.div
                   initial={{ scale: 0, rotate: -180 }}
@@ -66,13 +68,15 @@ export function BadgeUnlockToast({
                     ${rarityConfig.bgColor}
                   `}
                 >
-                  <span className="text-3xl">{badge.icon}</span>
+                  <span className='text-3xl'>{badge.icon}</span>
                 </motion.div>
 
                 {/* Badge info */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <h4 className="font-semibold text-gray-800 truncate">{badge.name}</h4>
+                <div className='flex-1 min-w-0'>
+                  <div className='flex items-center gap-2'>
+                    <h4 className='font-semibold text-gray-800 truncate'>
+                      {badge.name}
+                    </h4>
                     {badge.rarity !== 'common' && (
                       <span
                         className={`
@@ -84,15 +88,17 @@ export function BadgeUnlockToast({
                       </span>
                     )}
                   </div>
-                  <p className="text-sm text-gray-500 truncate">{badge.description}</p>
+                  <p className='text-sm text-gray-500 truncate'>
+                    {badge.description}
+                  </p>
                 </div>
 
                 {/* Close button */}
                 <button
                   onClick={onClose}
-                  className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
+                  className='p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0'
                 >
-                  <X className="w-5 h-5" />
+                  <X className='w-5 h-5' />
                 </button>
               </div>
 
@@ -103,7 +109,7 @@ export function BadgeUnlockToast({
                     onViewCollection();
                     onClose();
                   }}
-                  className="w-full mt-3 py-2 text-sm text-[#1B998B] font-medium hover:bg-emerald-50 rounded-lg transition-colors"
+                  className='w-full mt-3 py-2 text-sm text-[#1B998B] font-medium hover:bg-emerald-50 rounded-lg transition-colors'
                 >
                   Voir ma collection
                 </button>

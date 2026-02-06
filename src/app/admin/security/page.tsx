@@ -6,6 +6,9 @@
 import { Metadata } from 'next';
 import SecurityDashboard from '@/components/security/SecurityDashboard';
 
+// Force dynamic rendering - cette page utilise useAuth qui nécessite AuthProvider
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Tableau de bord sécurité | NutriSensia Admin',
   description: 'Monitoring et alertes de sécurité en temps réel',

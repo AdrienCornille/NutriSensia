@@ -17,6 +17,10 @@ export { PastAppointmentItem } from './past/PastAppointmentItem';
 export { PastAppointmentsList } from './past/PastAppointmentsList';
 export { AgendaStats } from './past/AgendaStats';
 
+// Cancelled appointments components
+export { CancelledAppointmentItem } from './cancelled/CancelledAppointmentItem';
+export { CancelledAppointmentsList } from './cancelled/CancelledAppointmentsList';
+
 // Detail modal
 export { AppointmentDetailModal } from './detail/AppointmentDetailModal';
 export { CancellationConfirmModal } from './detail/CancellationConfirmModal';

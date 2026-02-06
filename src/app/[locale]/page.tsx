@@ -4,31 +4,52 @@ import dynamic from 'next/dynamic';
 import { MarketingHeader, MarketingFooter } from '@/components/landing';
 import { SmoothScrollProvider } from '@/components/ui/SmoothScrollProvider';
 // Sections critiques (above the fold) - chargement immédiat
-import { HeroSection, AccordionBenefitsSection } from '@/components/landing/home';
+import {
+  HeroSection,
+  AccordionBenefitsSection,
+} from '@/components/landing/home';
 
 // Sections below the fold - lazy loading pour améliorer les performances
 const HowItWorksSection = dynamic(
-  () => import('@/components/landing/home/HowItWorksSection').then(mod => ({ default: mod.HowItWorksSection })),
+  () =>
+    import('@/components/landing/home/HowItWorksSection').then(mod => ({
+      default: mod.HowItWorksSection,
+    })),
   { ssr: true }
 );
 const IsThisForYouSection = dynamic(
-  () => import('@/components/landing/home/IsThisForYouSection').then(mod => ({ default: mod.IsThisForYouSection })),
+  () =>
+    import('@/components/landing/home/IsThisForYouSection').then(mod => ({
+      default: mod.IsThisForYouSection,
+    })),
   { ssr: true }
 );
 const CTABannerSection = dynamic(
-  () => import('@/components/landing/home/CTABannerSection').then(mod => ({ default: mod.CTABannerSection })),
+  () =>
+    import('@/components/landing/home/CTABannerSection').then(mod => ({
+      default: mod.CTABannerSection,
+    })),
   { ssr: true }
 );
 const AboutMeSection = dynamic(
-  () => import('@/components/landing/home/AboutMeSection').then(mod => ({ default: mod.AboutMeSection })),
+  () =>
+    import('@/components/landing/home/AboutMeSection').then(mod => ({
+      default: mod.AboutMeSection,
+    })),
   { ssr: true }
 );
 const BlogPreviewSection = dynamic(
-  () => import('@/components/landing/home/BlogPreviewSection').then(mod => ({ default: mod.BlogPreviewSection })),
+  () =>
+    import('@/components/landing/home/BlogPreviewSection').then(mod => ({
+      default: mod.BlogPreviewSection,
+    })),
   { ssr: true }
 );
 const FAQSection = dynamic(
-  () => import('@/components/landing/home/FAQSection').then(mod => ({ default: mod.FAQSection })),
+  () =>
+    import('@/components/landing/home/FAQSection').then(mod => ({
+      default: mod.FAQSection,
+    })),
   { ssr: true }
 );
 

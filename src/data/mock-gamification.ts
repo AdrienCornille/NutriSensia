@@ -23,7 +23,7 @@ export const allBadges: Badge[] = [
   {
     id: 'streak_7',
     name: 'En feu',
-    description: '7 jours consécutifs d\'enregistrement',
+    description: "7 jours consécutifs d'enregistrement",
     icon: '🔥',
     category: 'streak',
     rarity: 'rare',
@@ -35,7 +35,7 @@ export const allBadges: Badge[] = [
   {
     id: 'streak_30',
     name: 'Imparable',
-    description: '30 jours consécutifs d\'enregistrement',
+    description: "30 jours consécutifs d'enregistrement",
     icon: '⚡',
     category: 'streak',
     rarity: 'epic',
@@ -51,7 +51,7 @@ export const allBadges: Badge[] = [
     icon: '💧',
     category: 'hydration',
     rarity: 'rare',
-    requirement: 'Atteindre l\'objectif hydratation 7 jours',
+    requirement: "Atteindre l'objectif hydratation 7 jours",
     unlockedAt: new Date('2025-12-28'),
     progress: 100,
     maxProgress: 7,
@@ -148,7 +148,7 @@ export const mockMilestones: Milestone[] = [
     title: 'Badge débloqué !',
     description: 'Vous avez obtenu le badge "Hydraté"',
     achievedAt: new Date('2025-12-28'),
-    badge: allBadges.find((b) => b.id === 'hydration_7'),
+    badge: allBadges.find(b => b.id === 'hydration_7'),
   },
   {
     id: '2',
@@ -164,7 +164,7 @@ export const mockMilestones: Milestone[] = [
     title: 'Badge débloqué !',
     description: 'Vous avez obtenu le badge "En feu"',
     achievedAt: new Date('2025-12-22'),
-    badge: allBadges.find((b) => b.id === 'streak_7'),
+    badge: allBadges.find(b => b.id === 'streak_7'),
   },
   {
     id: '4',
@@ -172,7 +172,7 @@ export const mockMilestones: Milestone[] = [
     title: 'Badge débloqué !',
     description: 'Vous avez obtenu le badge "Connecté"',
     achievedAt: new Date('2025-12-16'),
-    badge: allBadges.find((b) => b.id === 'first_message'),
+    badge: allBadges.find(b => b.id === 'first_message'),
   },
   {
     id: '5',
@@ -180,7 +180,7 @@ export const mockMilestones: Milestone[] = [
     title: 'Badge débloqué !',
     description: 'Vous avez obtenu le badge "Premier pas"',
     achievedAt: new Date('2025-12-15'),
-    badge: allBadges.find((b) => b.id === 'first_meal'),
+    badge: allBadges.find(b => b.id === 'first_meal'),
   },
 ];
 
@@ -211,7 +211,7 @@ export function getRecentMilestones(): Milestone[] {
  * Simule le déblocage d'un badge
  */
 export function unlockBadge(badgeId: string): Badge | null {
-  const badge = allBadges.find((b) => b.id === badgeId);
+  const badge = allBadges.find(b => b.id === badgeId);
   if (badge && !badge.unlockedAt) {
     badge.unlockedAt = new Date();
     badge.progress = 100;
@@ -236,7 +236,7 @@ export function incrementStreak(): StreakData {
  */
 export function getNextBadgeToUnlock(): Badge | null {
   const locked = allBadges
-    .filter((b) => !b.unlockedAt && b.progress !== undefined)
+    .filter(b => !b.unlockedAt && b.progress !== undefined)
     .sort((a, b) => (b.progress || 0) - (a.progress || 0));
   return locked[0] || null;
 }

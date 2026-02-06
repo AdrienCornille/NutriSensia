@@ -243,13 +243,12 @@ export const supabase = createClient<Database>(
       persistSession: isValidSupabaseConfig,
       detectSessionInUrl: isValidSupabaseConfig,
       // Configuration pour la gestion des cookies
+      // IMPORTANT: Utiliser le même nom que @/lib/supabase/client.ts pour la cohérence
       cookieOptions: {
-        name: 'nutrisensia-auth-token',
+        name: 'nutrisensia-auth',
         lifetime: 60 * 60 * 24 * 7, // 7 jours
         domain:
-          process.env.NODE_ENV === 'production'
-            ? '.nutrisensia.com'
-            : 'localhost',
+          process.env.NODE_ENV === 'production' ? '.nutrisensia.ch' : undefined,
         path: '/',
         sameSite: 'lax',
       },

@@ -28,19 +28,19 @@ export function NotificationsList({
         onDelete={onDelete}
       />
       <NotificationGroup
-        title="Hier"
+        title='Hier'
         notifications={groupedNotifications.yesterday}
         onMarkAsRead={onMarkAsRead}
         onDelete={onDelete}
       />
       <NotificationGroup
-        title="Cette semaine"
+        title='Cette semaine'
         notifications={groupedNotifications.thisWeek}
         onMarkAsRead={onMarkAsRead}
         onDelete={onDelete}
       />
       <NotificationGroup
-        title="Plus ancien"
+        title='Plus ancien'
         notifications={groupedNotifications.older}
         onMarkAsRead={onMarkAsRead}
         onDelete={onDelete}
@@ -48,8 +48,11 @@ export function NotificationsList({
 
       {/* Clear all */}
       {totalCount > 0 && (
-        <div className="mt-8 text-center">
-          <button onClick={onClearAll} className="text-sm text-gray-500 hover:text-gray-700">
+        <div className='mt-8 text-center'>
+          <button
+            onClick={onClearAll}
+            className='text-sm text-gray-500 hover:text-gray-700'
+          >
             Effacer toutes les notifications
           </button>
         </div>

@@ -11,11 +11,10 @@ import {
 /**
  * Props du formulaire de contact général
  */
-export interface GeneralContactFormProps
-  extends Omit<
-    ContactFormProps<GeneralContactFormData>,
-    'schema' | 'fields' | 'formType'
-  > {
+export interface GeneralContactFormProps extends Omit<
+  ContactFormProps<GeneralContactFormData>,
+  'schema' | 'fields' | 'formType'
+> {
   /**
    * Masquer certains champs (optionnel)
    */

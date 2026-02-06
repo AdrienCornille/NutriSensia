@@ -294,18 +294,3 @@ export function ClientQualificationSection() {
 }
 
 export default ClientQualificationSection;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

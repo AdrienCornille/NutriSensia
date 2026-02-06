@@ -16,8 +16,7 @@ export type InputSize = 'sm' | 'md' | 'lg';
 /**
  * Props du composant Input
  */
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   /**
    * Variante de l'input selon le design system
    */
@@ -59,8 +58,7 @@ export interface InputProps
 /**
  * Props du composant Textarea
  */
-export interface TextareaProps
-  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   /**
    * Label du textarea
    */

@@ -53,24 +53,24 @@ export function getWeightData(timeRange: TimeRange): WeightData {
     '3M': 90,
     '6M': 180,
     '1A': 365,
-    'Tout': Infinity,
+    Tout: Infinity,
   };
 
   const days = daysMap[timeRange];
   if (days !== Infinity) {
     const cutoffDate = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
-    filteredHistory = weightHistory.filter((entry) => entry.date >= cutoffDate);
+    filteredHistory = weightHistory.filter(entry => entry.date >= cutoffDate);
   }
 
   const current = weightHistory[0].value;
   const initial = 82.0;
   const goal = 75.0;
   const change = current - initial;
-  const changePercent = ((change / initial) * 100);
+  const changePercent = (change / initial) * 100;
 
   // Calculate weekly change (last 7 days)
   const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-  const weekAgoEntry = weightHistory.find((e) => e.date <= weekAgo);
+  const weekAgoEntry = weightHistory.find(e => e.date <= weekAgo);
   const weeklyChange = weekAgoEntry ? current - weekAgoEntry.value : -0.4;
 
   return {
@@ -141,7 +141,12 @@ const measurementsData: Measurement[] = [
 ];
 
 // Historique des mesures pour BIO-004
-const measurementsHistory: { id: string; type: MeasurementType; date: Date; value: number }[] = [
+const measurementsHistory: {
+  id: string;
+  type: MeasurementType;
+  date: Date;
+  value: number;
+}[] = [
   // Tour de taille (le plus suivi)
   { id: 'mh1', type: 'taille', date: new Date('2026-01-15'), value: 84 },
   { id: 'mh2', type: 'taille', date: new Date('2026-01-08'), value: 85 },
@@ -310,26 +315,35 @@ const wellbeingHistory: WellbeingEntry[] = [
  * BIO-006: Analyse automatique des corrélations bien-être
  * Détecte les patterns sur les 2 dernières semaines minimum
  */
-function analyzeWellbeingInsights(history: WellbeingEntry[]): WellbeingInsightData[] {
+function analyzeWellbeingInsights(
+  history: WellbeingEntry[]
+): WellbeingInsightData[] {
   const insights: WellbeingInsightData[] = [];
 
   // Besoin de 14 jours minimum pour une analyse pertinente
   if (history.length < 14) {
-    return [{
-      id: 'insufficient-data',
-      type: 'info',
-      message: 'Continuez à renseigner vos données quotidiennes pour obtenir des insights personnalisés.',
-      icon: '📊',
-    }];
+    return [
+      {
+        id: 'insufficient-data',
+        type: 'info',
+        message:
+          'Continuez à renseigner vos données quotidiennes pour obtenir des insights personnalisés.',
+        icon: '📊',
+      },
+    ];
   }
 
   // 1. Corrélation sommeil/énergie
-  const goodSleepDays = history.filter((e) => e.sleep >= 7);
-  const poorSleepDays = history.filter((e) => e.sleep < 7);
+  const goodSleepDays = history.filter(e => e.sleep >= 7);
+  const poorSleepDays = history.filter(e => e.sleep < 7);
 
   if (goodSleepDays.length > 0 && poorSleepDays.length > 0) {
-    const avgEnergyGoodSleep = goodSleepDays.reduce((acc, e) => acc + e.energy, 0) / goodSleepDays.length;
-    const avgEnergyPoorSleep = poorSleepDays.reduce((acc, e) => acc + e.energy, 0) / poorSleepDays.length;
+    const avgEnergyGoodSleep =
+      goodSleepDays.reduce((acc, e) => acc + e.energy, 0) /
+      goodSleepDays.length;
+    const avgEnergyPoorSleep =
+      poorSleepDays.reduce((acc, e) => acc + e.energy, 0) /
+      poorSleepDays.length;
 
     if (avgEnergyGoodSleep - avgEnergyPoorSleep >= 0.8) {
       insights.push({
@@ -342,16 +356,18 @@ function analyzeWellbeingInsights(history: WellbeingEntry[]): WellbeingInsightDa
   }
 
   // 2. Analyse des problèmes digestifs récurrents
-  const digestionIssues = history.filter((e) => e.digestion !== 'normal');
+  const digestionIssues = history.filter(e => e.digestion !== 'normal');
   const issueRate = (digestionIssues.length / history.length) * 100;
 
   if (issueRate >= 25) {
     // Identifier le problème le plus fréquent
     const issueTypes: Record<string, number> = {};
-    digestionIssues.forEach((e) => {
+    digestionIssues.forEach(e => {
       issueTypes[e.digestion] = (issueTypes[e.digestion] || 0) + 1;
     });
-    const mostFrequent = Object.entries(issueTypes).sort((a, b) => b[1] - a[1])[0];
+    const mostFrequent = Object.entries(issueTypes).sort(
+      (a, b) => b[1] - a[1]
+    )[0];
     const issueLabels: Record<string, string> = {
       bloating: 'ballonnements',
       constipation: 'constipation',
@@ -379,27 +395,34 @@ function analyzeWellbeingInsights(history: WellbeingEntry[]): WellbeingInsightDa
     bad: 1,
   };
 
-  const avgMoodRecent = recentWeek.reduce((acc, e) => acc + moodScores[e.mood], 0) / recentWeek.length;
-  const avgMoodPrevious = previousWeek.reduce((acc, e) => acc + moodScores[e.mood], 0) / previousWeek.length;
+  const avgMoodRecent =
+    recentWeek.reduce((acc, e) => acc + moodScores[e.mood], 0) /
+    recentWeek.length;
+  const avgMoodPrevious =
+    previousWeek.reduce((acc, e) => acc + moodScores[e.mood], 0) /
+    previousWeek.length;
 
   if (avgMoodRecent - avgMoodPrevious >= 0.5) {
     insights.push({
       id: 'mood-improving',
       type: 'positive',
-      message: 'Votre humeur s\'améliore cette semaine par rapport à la précédente. Continuez ainsi !',
+      message:
+        "Votre humeur s'améliore cette semaine par rapport à la précédente. Continuez ainsi !",
       icon: '📈',
     });
   } else if (avgMoodPrevious - avgMoodRecent >= 0.5) {
     insights.push({
       id: 'mood-declining',
       type: 'warning',
-      message: 'Votre humeur semble en baisse cette semaine. Prenez soin de vous et n\'hésitez pas à en parler.',
+      message:
+        "Votre humeur semble en baisse cette semaine. Prenez soin de vous et n'hésitez pas à en parler.",
       icon: '💬',
     });
   }
 
   // 4. Moyenne de sommeil insuffisante
-  const avgSleep = history.reduce((acc, e) => acc + e.sleep, 0) / history.length;
+  const avgSleep =
+    history.reduce((acc, e) => acc + e.sleep, 0) / history.length;
   if (avgSleep < 7) {
     insights.push({
       id: 'sleep-deficit',
@@ -421,7 +444,8 @@ function analyzeWellbeingInsights(history: WellbeingEntry[]): WellbeingInsightDa
     insights.push({
       id: 'all-good',
       type: 'info',
-      message: 'Vos indicateurs de bien-être sont stables. Continuez à maintenir ces bonnes habitudes !',
+      message:
+        'Vos indicateurs de bien-être sont stables. Continuez à maintenir ces bonnes habitudes !',
       icon: '✨',
     });
   }
@@ -433,7 +457,7 @@ export function getWellbeingData(): WellbeingData {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const todayEntry = wellbeingHistory.find((entry) => {
+  const todayEntry = wellbeingHistory.find(entry => {
     const entryDate = new Date(entry.date);
     entryDate.setHours(0, 0, 0, 0);
     return entryDate.getTime() === today.getTime();
@@ -507,11 +531,17 @@ export function getActivityData(): ActivityData {
   weekStart.setHours(0, 0, 0, 0);
 
   const thisWeekActivities = activityHistory.filter(
-    (activity) => activity.date >= weekStart
+    activity => activity.date >= weekStart
   );
 
-  const totalMinutes = thisWeekActivities.reduce((acc, a) => acc + a.duration, 0);
-  const totalCalories = thisWeekActivities.reduce((acc, a) => acc + a.calories, 0);
+  const totalMinutes = thisWeekActivities.reduce(
+    (acc, a) => acc + a.duration,
+    0
+  );
+  const totalCalories = thisWeekActivities.reduce(
+    (acc, a) => acc + a.calories,
+    0
+  );
 
   return {
     thisWeek: {
@@ -537,20 +567,21 @@ const hydrationHistory: HydrationDayEntry[] = [
 ];
 
 export function getHydrationData(): HydrationData {
-  const today = hydrationHistory.find((h) => h.dayLabel === 'Ven');
+  const today = hydrationHistory.find(h => h.dayLabel === 'Ven');
   const todayValue = today?.value || 0;
   const goal = 2.0;
 
   // Calculate week average (only days with data)
-  const daysWithData = hydrationHistory.filter((h) => h.value !== null);
+  const daysWithData = hydrationHistory.filter(h => h.value !== null);
   const weekAverage =
     daysWithData.length > 0
-      ? daysWithData.reduce((acc, h) => acc + (h.value || 0), 0) / daysWithData.length
+      ? daysWithData.reduce((acc, h) => acc + (h.value || 0), 0) /
+        daysWithData.length
       : 0;
 
   // Calculate days with goal reached
   const daysWithGoalReached = daysWithData.filter(
-    (h) => h.value !== null && h.value >= h.goal
+    h => h.value !== null && h.value >= h.goal
   ).length;
 
   return {
@@ -572,7 +603,11 @@ export const hydrationQuickAddOptions = [
   { amount: 150, label: '1 tasse', icon: '☕' },
 ];
 
-export const activityOptions: { type: ActivityType; label: string; icon: string }[] = [
+export const activityOptions: {
+  type: ActivityType;
+  label: string;
+  icon: string;
+}[] = [
   { type: 'running', label: 'Course', icon: '🏃' },
   { type: 'cycling', label: 'Vélo', icon: '🚴' },
   { type: 'gym', label: 'Musculation', icon: '🏋️' },

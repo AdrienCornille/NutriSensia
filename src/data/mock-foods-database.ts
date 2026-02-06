@@ -713,23 +713,23 @@ export const defaultFavorites: string[] = [
 ];
 
 export function getFoodById(id: string): Food | undefined {
-  return mockFoodsDatabase.find((food) => food.id === id);
+  return mockFoodsDatabase.find(food => food.id === id);
 }
 
 export function getFoodsByCategory(category: string): Food[] {
   if (category === 'all') return mockFoodsDatabase;
-  return mockFoodsDatabase.filter((food) => food.category === category);
+  return mockFoodsDatabase.filter(food => food.category === category);
 }
 
 export function searchFoodsDatabase(query: string): Food[] {
   const lowerQuery = query.toLowerCase();
   return mockFoodsDatabase.filter(
-    (food) =>
+    food =>
       food.name.toLowerCase().includes(lowerQuery) ||
       (food.brand && food.brand.toLowerCase().includes(lowerQuery))
   );
 }
 
 export function getFavoriteFoods(favoriteIds: string[]): Food[] {
-  return mockFoodsDatabase.filter((food) => favoriteIds.includes(food.id));
+  return mockFoodsDatabase.filter(food => favoriteIds.includes(food.id));
 }

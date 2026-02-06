@@ -1,6 +1,5 @@
-import { createServerClient } from '@supabase/ssr';
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+import { createClient as createSupabaseClient } from '@/lib/supabase/server';
 
 // Types pour les permissions API
 export interface APIPermissions {
@@ -19,35 +18,14 @@ export interface AuthResult {
 
 /**
  * Créer un client Supabase côté serveur pour les routes API
+ * Utilise la même configuration que server.ts pour la cohérence des cookies
+ *
+ * IMPORTANT: Ce client utilise l'anon key avec les cookies de session.
+ * Pour que auth.uid() fonctionne dans les politiques RLS, la session
+ * doit être valide et le JWT doit être correctement passé à la base de données.
  */
-export function createServerSupabaseClient() {
-  const cookieStore = cookies();
-
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
-        },
-        set(name: string, value: string, options: any) {
-          try {
-            cookieStore.set(name, value, options);
-          } catch (error) {
-            // Ignorer les erreurs de cookies en mode développement
-          }
-        },
-        remove(name: string, options: any) {
-          try {
-            cookieStore.set(name, '', { ...options, maxAge: 0 });
-          } catch (error) {
-            // Ignorer les erreurs de cookies en mode développement
-          }
-        },
-      },
-    }
-  );
+export async function createServerSupabaseClient() {
+  return createSupabaseClient();
 }
 
 /**
@@ -56,7 +34,7 @@ export function createServerSupabaseClient() {
 export async function verifyAuth(
   permissions: APIPermissions = {}
 ): Promise<AuthResult> {
-  const supabase = createServerSupabaseClient();
+  const supabase = await createServerSupabaseClient();
 
   try {
     // Récupérer la session
@@ -86,10 +64,27 @@ export async function verifyAuth(
       return { user: null, session: null, error: 'Utilisateur invalide' };
     }
 
+    // Récupérer le profil si des vérifications de rôle sont nécessaires
+    let userRole = user.user_metadata?.role || 'patient';
+
+    if (
+      permissions.requiredRole ||
+      permissions.requiredRoles ||
+      permissions.require2FA
+    ) {
+      // Récupérer le rôle depuis la table profiles (source de vérité)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: profile } = await (supabase as any)
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+      userRole = profile?.role || user.user_metadata?.role || 'patient';
+    }
+
     // Vérifier les rôles requis
     if (permissions.requiredRole || permissions.requiredRoles) {
-      const userRole = user.user_metadata?.role || 'patient';
-
       if (permissions.requiredRole && userRole !== permissions.requiredRole) {
         return {
           user: null,
@@ -112,7 +107,6 @@ export async function verifyAuth(
 
     // Vérifier 2FA si requis
     if (permissions.require2FA) {
-      const userRole = user.user_metadata?.role || 'patient';
       const requires2FA = userRole === 'nutritionist' || userRole === 'admin';
 
       if (requires2FA && !user.user_metadata?.two_factor_verified) {

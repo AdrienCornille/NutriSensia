@@ -95,13 +95,17 @@ export const CompleteProfileForm: React.FC = () => {
       const supabase = createClient();
 
       // Récupérer la session pour avoir le token
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
       if (session?.access_token) {
         setAccessToken(session.access_token);
       }
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (user) {
         const firstName =
           user.user_metadata?.first_name ||
@@ -175,9 +179,7 @@ export const CompleteProfileForm: React.FC = () => {
       }, 1500);
     } catch (error: unknown) {
       const errorMessage =
-        error instanceof Error
-          ? error.message
-          : "Une erreur s'est produite";
+        error instanceof Error ? error.message : "Une erreur s'est produite";
 
       setMessage({
         type: 'error',
@@ -234,7 +236,8 @@ export const CompleteProfileForm: React.FC = () => {
             className='w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold text-lg'
             style={{ backgroundColor: '#1B998B' }}
           >
-            {userInfo.firstName.charAt(0)}{userInfo.lastName.charAt(0)}
+            {userInfo.firstName.charAt(0)}
+            {userInfo.lastName.charAt(0)}
           </div>
         )}
         <div>
@@ -255,7 +258,8 @@ export const CompleteProfileForm: React.FC = () => {
             htmlFor='consultationReason'
             className='block text-body-small font-medium text-neutral-dark mb-1.5'
           >
-            Raison de votre consultation <span className='text-functional-error'>*</span>
+            Raison de votre consultation{' '}
+            <span className='text-functional-error'>*</span>
           </label>
           <select
             id='consultationReason'
@@ -293,7 +297,8 @@ export const CompleteProfileForm: React.FC = () => {
             htmlFor='marketingConsent'
             className='text-body-small text-neutral-medium cursor-pointer'
           >
-            J'accepte de recevoir des conseils nutritionnels et des offres par email
+            J'accepte de recevoir des conseils nutritionnels et des offres par
+            email
           </label>
         </div>
 

@@ -6,6 +6,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 NutriSensia is a Swiss-based personalized nutrition platform built with Next.js 14, offering online consultations with certified nutritionists (ASCA/RME), custom meal plans, and AI-powered nutritional recommendations. The application is GDPR-compliant with EU-West hosting.
 
+## Claude Code Workflow
+
+**IMPORTANT**: Claude Code must follow the standardized workflow defined in [docs/claude-workflow.md](docs/claude-workflow.md).
+
+This workflow document defines:
+- How to classify tasks by complexity (Trivial, Medium, Complex, Refactoring)
+- When and how to use sub-agents (Explore, Plan, Bash, general-purpose)
+- Step-by-step workflows for each complexity level
+- Todo list management rules
+- NutriSensia-specific patterns (pages, API routes, components, database)
+- Quality checklists before finalizing features
+- Templates for sub-agent prompts
+
+**Default behavior**: Always follow the workflow in `docs/claude-workflow.md` unless explicitly instructed otherwise by the user. This ensures:
+- Efficient use of context window via sub-agents
+- Consistent code quality and patterns
+- Proper exploration before implementation
+- Systematic todo management
+- User validation at key decision points
+
 ## Key Technologies
 
 - **Frontend**: Next.js 14.2.32 (App Router), React 18.3.1, TypeScript 5.5.4

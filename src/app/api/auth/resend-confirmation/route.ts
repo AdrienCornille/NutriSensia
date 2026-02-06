@@ -67,7 +67,8 @@ export async function POST(request: NextRequest) {
     if (!checkRateLimit(email)) {
       return NextResponse.json(
         {
-          error: 'Trop de tentatives. Veuillez attendre une minute avant de réessayer.',
+          error:
+            'Trop de tentatives. Veuillez attendre une minute avant de réessayer.',
           code: 'RATE_LIMITED',
         },
         { status: 429 }
@@ -129,7 +130,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (resendError) {
-      console.error('Erreur lors du renvoi de l\'email:', resendError);
+      console.error("Erreur lors du renvoi de l'email:", resendError);
 
       // Gérer les erreurs spécifiques
       if (resendError.message?.includes('rate limit')) {
@@ -144,7 +145,7 @@ export async function POST(request: NextRequest) {
       }
 
       return NextResponse.json(
-        { error: 'Erreur lors de l\'envoi de l\'email de confirmation' },
+        { error: "Erreur lors de l'envoi de l'email de confirmation" },
         { status: 500 }
       );
     }

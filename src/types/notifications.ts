@@ -95,25 +95,31 @@ export function notificationsReducer(
 ): NotificationsState {
   switch (action.type) {
     case 'SET_NOTIFICATIONS':
-      return { ...state, notifications: action.notifications, isLoading: false };
+      return {
+        ...state,
+        notifications: action.notifications,
+        isLoading: false,
+      };
     case 'SET_FILTER':
       return { ...state, activeFilter: action.filter };
     case 'MARK_AS_READ':
       return {
         ...state,
-        notifications: state.notifications.map((n) =>
+        notifications: state.notifications.map(n =>
           n.id === action.notificationId ? { ...n, read: true } : n
         ),
       };
     case 'MARK_ALL_AS_READ':
       return {
         ...state,
-        notifications: state.notifications.map((n) => ({ ...n, read: true })),
+        notifications: state.notifications.map(n => ({ ...n, read: true })),
       };
     case 'DELETE_NOTIFICATION':
       return {
         ...state,
-        notifications: state.notifications.filter((n) => n.id !== action.notificationId),
+        notifications: state.notifications.filter(
+          n => n.id !== action.notificationId
+        ),
       };
     case 'CLEAR_ALL':
       return { ...state, notifications: [] };
@@ -162,25 +168,32 @@ export function filterNotifications(
     case 'all':
       return notifications;
     case 'unread':
-      return notifications.filter((n) => !n.read);
+      return notifications.filter(n => !n.read);
     case 'reminder':
-      return notifications.filter((n) => ['reminder', 'hydration'].includes(n.type));
+      return notifications.filter(n =>
+        ['reminder', 'hydration'].includes(n.type)
+      );
     default:
-      return notifications.filter((n) => n.type === filter);
+      return notifications.filter(n => n.type === filter);
   }
 }
 
 /**
  * Groupe les notifications par date
  */
-export function groupNotificationsByDate(notifications: Notification[]): GroupedNotifications {
+export function groupNotificationsByDate(
+  notifications: Notification[]
+): GroupedNotifications {
   const today: Notification[] = [];
   const yesterday: Notification[] = [];
   const thisWeek: Notification[] = [];
   const older: Notification[] = [];
 
-  notifications.forEach((notif) => {
-    if (notif.timestamp.includes('heure') || notif.timestamp.includes('minute')) {
+  notifications.forEach(notif => {
+    if (
+      notif.timestamp.includes('heure') ||
+      notif.timestamp.includes('minute')
+    ) {
       today.push(notif);
     } else if (notif.timestamp.includes('Hier')) {
       yesterday.push(notif);
@@ -198,35 +211,43 @@ export function groupNotificationsByDate(notifications: Notification[]): Grouped
  * Calcule le nombre de notifications non lues
  */
 export function getUnreadCount(notifications: Notification[]): number {
-  return notifications.filter((n) => !n.read).length;
+  return notifications.filter(n => !n.read).length;
 }
 
 /**
  * Génère la configuration des filtres avec les compteurs
  */
-export function getFiltersConfig(notifications: Notification[]): NotificationFilterConfig[] {
+export function getFiltersConfig(
+  notifications: Notification[]
+): NotificationFilterConfig[] {
   return [
     { id: 'all', label: filterLabels.all, count: notifications.length },
-    { id: 'unread', label: filterLabels.unread, count: notifications.filter((n) => !n.read).length },
+    {
+      id: 'unread',
+      label: filterLabels.unread,
+      count: notifications.filter(n => !n.read).length,
+    },
     {
       id: 'message',
       label: filterLabels.message,
-      count: notifications.filter((n) => n.type === 'message').length,
+      count: notifications.filter(n => n.type === 'message').length,
     },
     {
       id: 'appointment',
       label: filterLabels.appointment,
-      count: notifications.filter((n) => n.type === 'appointment').length,
+      count: notifications.filter(n => n.type === 'appointment').length,
     },
     {
       id: 'reminder',
       label: filterLabels.reminder,
-      count: notifications.filter((n) => ['reminder', 'hydration'].includes(n.type)).length,
+      count: notifications.filter(n =>
+        ['reminder', 'hydration'].includes(n.type)
+      ).length,
     },
     {
       id: 'achievement',
       label: filterLabels.achievement,
-      count: notifications.filter((n) => n.type === 'achievement').length,
+      count: notifications.filter(n => n.type === 'achievement').length,
     },
   ];
 }
@@ -240,8 +261,10 @@ export function getNotificationsStats(notifications: Notification[]): {
   reminders: number;
 } {
   return {
-    messages: notifications.filter((n) => n.type === 'message').length,
-    achievements: notifications.filter((n) => n.type === 'achievement').length,
-    reminders: notifications.filter((n) => ['reminder', 'hydration'].includes(n.type)).length,
+    messages: notifications.filter(n => n.type === 'message').length,
+    achievements: notifications.filter(n => n.type === 'achievement').length,
+    reminders: notifications.filter(n =>
+      ['reminder', 'hydration'].includes(n.type)
+    ).length,
   };
 }

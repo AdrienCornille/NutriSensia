@@ -14,9 +14,9 @@ export function FoodsCategoryFilter({
   onCategoryChange,
 }: FoodsCategoryFilterProps) {
   return (
-    <div className="bg-white px-4 py-4 border-b border-gray-100">
-      <div className="flex flex-wrap items-center gap-2">
-        {categoryConfig.map((cat) => {
+    <div className='bg-white px-4 py-4 border-b border-gray-100'>
+      <div className='flex flex-wrap items-center gap-2'>
+        {categoryConfig.map(cat => {
           const isActive = activeCategory === cat.id;
           return (
             <button
@@ -30,7 +30,9 @@ export function FoodsCategoryFilter({
             >
               <span>{cat.emoji}</span>
               <span>{cat.label}</span>
-              <span className={`text-xs ${isActive ? 'text-white/80' : 'text-gray-400'}`}>
+              <span
+                className={`text-xs ${isActive ? 'text-white/80' : 'text-gray-400'}`}
+              >
                 {cat.count}
               </span>
             </button>

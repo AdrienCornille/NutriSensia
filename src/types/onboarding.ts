@@ -16,6 +16,7 @@ export type NutritionistOnboardingStep =
 
 export type PatientOnboardingStep =
   | 'welcome'
+  | 'consultation-reason'
   | 'personal-info'
   | 'health-profile'
   | 'dietary-preferences'
@@ -79,11 +80,28 @@ export interface NutritionistOnboardingData {
   marketingConsent?: boolean;
 }
 
+// Types pour les raisons de consultation (AUTH-004)
+export type ConsultationReasonType =
+  | 'menopause_perimenopause'
+  | 'perte_poids_durable'
+  | 'troubles_digestifs'
+  | 'glycemie_diabete'
+  | 'sante_cardiovasculaire'
+  | 'fatigue_energie'
+  | 'longevite_vieillissement'
+  | 'sante_hormonale'
+  | 'alimentation_saine'
+  | 'autre';
+
 // Interface pour les données d'onboarding des patients
 export interface PatientOnboardingData {
   // Étape de bienvenue
   welcomeViewed?: boolean;
   onboardingStartedAt?: string;
+
+  // Raison de consultation (AUTH-004)
+  consultationReason?: ConsultationReasonType;
+  consultationReasonDetails?: string;
 
   // Informations personnelles
   firstName?: string;
@@ -314,8 +332,6 @@ export interface PatientProfile {
 
 // Types combinés pour les vues complètes
 export interface CompleteNutritionistProfile
-  extends BaseProfile,
-    Omit<NutritionistProfile, 'id'> {}
+  extends BaseProfile, Omit<NutritionistProfile, 'id'> {}
 export interface CompletePatientProfile
-  extends BaseProfile,
-    Omit<PatientProfile, 'id'> {}
+  extends BaseProfile, Omit<PatientProfile, 'id'> {}

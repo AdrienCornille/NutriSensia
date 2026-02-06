@@ -2,7 +2,12 @@
  * Route API pour l'inscription d'un patient
  * POST /api/auth/register
  *
- * Crée l'utilisateur dans Supabase Auth ET dans la table profiles
+ * AUTH-001: Création de compte patient
+ * - Crée l'utilisateur dans Supabase Auth
+ * - Crée le profil dans la table profiles avec role='patient'
+ * - Crée le patient_profiles avec assignation au nutritionniste par défaut
+ * - Crée les user_settings avec valeurs par défaut
+ * - Envoie l'email de confirmation
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -37,6 +42,7 @@ const registerSchema = z.object({
     'alimentation_saine',
     'autre',
   ]),
+  consultationReasonDetails: z.string().optional(),
   marketingConsent: z.boolean().optional().default(false),
   acceptTerms: z.boolean().refine(val => val === true, {
     message: 'Vous devez accepter les conditions',
@@ -57,6 +63,32 @@ const errorMessages: Record<string, string> = {
 
 function translateError(message: string): string {
   return errorMessages[message] || message;
+}
+
+/**
+ * Récupère l'ID du nutritionniste par défaut (NutriSensia)
+ * Utilise la variable d'environnement ou cherche le premier nutritionniste actif
+ */
+async function getDefaultNutritionistId(
+  supabaseAdmin: ReturnType<typeof createClient<Database>>
+): Promise<string | null> {
+  // 1. Vérifier la variable d'environnement
+  const defaultId = process.env.DEFAULT_NUTRITIONIST_ID;
+  if (defaultId) {
+    return defaultId;
+  }
+
+  // 2. Sinon, chercher le premier nutritionniste actif et vérifié
+  const { data: nutritionist } = await supabaseAdmin
+    .from('nutritionist_profiles')
+    .select('id')
+    .eq('is_active', true)
+    .not('verified_at', 'is', null)
+    .order('created_at', { ascending: true })
+    .limit(1)
+    .single();
+
+  return nutritionist?.id || null;
 }
 
 export async function POST(request: NextRequest) {
@@ -101,6 +133,9 @@ export async function POST(request: NextRequest) {
 
     const data: RegisterInput = validationResult.data;
 
+    // Récupérer le nutritionniste par défaut
+    const defaultNutritionistId = await getDefaultNutritionistId(supabaseAdmin);
+
     // 1. Créer l'utilisateur dans Supabase Auth
     const { data: authData, error: authError } =
       await supabaseAdmin.auth.admin.createUser({
@@ -111,6 +146,7 @@ export async function POST(request: NextRequest) {
           first_name: data.firstName,
           last_name: data.lastName,
           full_name: `${data.firstName} ${data.lastName}`,
+          role: 'patient', // Rôle stocké dans les métadonnées
         },
       });
 
@@ -129,14 +165,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 2. Créer le profil dans la table profiles
+    const userId = authData.user.id;
+
+    // Fonction de nettoyage en cas d'erreur
+    const cleanupOnError = async () => {
+      await supabaseAdmin.auth.admin.deleteUser(userId);
+    };
+
+    // 2. Créer le profil dans la table profiles avec role='patient'
     const { data: profileData, error: profileError } = await supabaseAdmin
       .from('profiles')
       .insert({
-        id: authData.user.id,
+        id: userId,
         email: data.email,
         first_name: data.firstName,
         last_name: data.lastName,
+        role: 'patient', // AUTH-001: Rôle explicitement défini
         phone: data.phone || null,
         consultation_reason: data.consultationReason,
         marketing_consent: data.marketingConsent,
@@ -144,26 +188,75 @@ export async function POST(request: NextRequest) {
         account_status: 'trial',
         auth_provider: 'email',
         trial_started_at: new Date().toISOString(),
-        // trial_ends_at sera calculé selon la logique métier
       })
       .select()
       .single();
 
     if (profileError) {
       console.error('Erreur création profil:', profileError);
-
-      // En cas d'erreur, supprimer l'utilisateur auth créé pour éviter l'incohérence
-      await supabaseAdmin.auth.admin.deleteUser(authData.user.id);
-
+      await cleanupOnError();
       return NextResponse.json(
         { error: 'Erreur lors de la création du profil' },
         { status: 500 }
       );
     }
 
-    // 3. Envoyer l'email de confirmation
-    // IMPORTANT: auth.admin.createUser() n'envoie PAS automatiquement d'email.
-    // Il faut explicitement déclencher l'envoi avec auth.resend()
+    // 3. Créer le patient_profiles avec assignation au nutritionniste par défaut
+    const { data: patientProfileData, error: patientProfileError } =
+      await supabaseAdmin
+        .from('patient_profiles')
+        .insert({
+          user_id: userId,
+          first_name: data.firstName,
+          last_name: data.lastName,
+          phone: data.phone || null,
+          nutritionist_id: defaultNutritionistId,
+          assigned_at: defaultNutritionistId ? new Date().toISOString() : null,
+          consultation_reason: data.consultationReason,
+          consultation_reason_details: data.consultationReasonDetails || null,
+          consent_data_processing: true, // Accepté via les conditions
+          consent_data_processing_at: new Date().toISOString(),
+          consent_marketing: data.marketingConsent || false,
+          consent_marketing_at: data.marketingConsent
+            ? new Date().toISOString()
+            : null,
+          consent_sharing_nutritionist: true,
+          consent_sharing_nutritionist_at: new Date().toISOString(),
+          status: 'pending',
+          onboarding_step: 0,
+        })
+        .select()
+        .single();
+
+    if (patientProfileError) {
+      console.error('Erreur création patient_profiles:', patientProfileError);
+      // Supprimer le profil créé
+      await supabaseAdmin.from('profiles').delete().eq('id', userId);
+      await cleanupOnError();
+      return NextResponse.json(
+        { error: 'Erreur lors de la création du profil patient' },
+        { status: 500 }
+      );
+    }
+
+    // 4. Créer les user_settings avec valeurs par défaut
+    const { error: settingsError } = await supabaseAdmin
+      .from('user_settings')
+      .insert({
+        user_id: userId,
+        // Valeurs par défaut - le reste sera défini par la BDD
+        language: 'fr',
+        timezone: 'Europe/Zurich',
+        email_newsletter: data.marketingConsent || false,
+      });
+
+    if (settingsError) {
+      console.error('Erreur création user_settings:', settingsError);
+      // Ne pas bloquer l'inscription pour cette erreur mineure
+      // Les paramètres peuvent être créés plus tard
+    }
+
+    // 5. Envoyer l'email de confirmation
     const { error: emailError } = await supabaseAdmin.auth.resend({
       type: 'signup',
       email: data.email,
@@ -175,7 +268,6 @@ export async function POST(request: NextRequest) {
     if (emailError) {
       console.error('Erreur envoi email confirmation:', emailError);
       // On ne supprime pas le compte car l'utilisateur pourra renvoyer l'email
-      // via la page de confirmation ou de connexion
     }
 
     // Réponse succès
@@ -185,20 +277,25 @@ export async function POST(request: NextRequest) {
         message:
           'Compte créé avec succès. Veuillez vérifier votre email pour confirmer votre inscription.',
         user: {
-          id: authData.user.id,
+          id: userId,
           email: authData.user.email,
         },
         profile: {
           id: profileData.id,
           firstName: profileData.first_name,
           lastName: profileData.last_name,
+          role: 'patient',
           accountStatus: profileData.account_status,
+        },
+        patientProfile: {
+          id: patientProfileData.id,
+          nutritionistAssigned: !!defaultNutritionistId,
         },
       },
       { status: 201 }
     );
   } catch (error) {
-    console.error('Erreur inattendue lors de l\'inscription:', error);
+    console.error("Erreur inattendue lors de l'inscription:", error);
     return NextResponse.json(
       { error: "Une erreur inattendue s'est produite" },
       { status: 500 }

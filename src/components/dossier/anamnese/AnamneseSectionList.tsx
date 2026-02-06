@@ -2,7 +2,10 @@
 
 import React from 'react';
 import { AnamneseSection } from './AnamneseSection';
-import type { AnamneseSection as AnamneseSectionType, AnamneseSectionId } from '@/types/dossier';
+import type {
+  AnamneseSection as AnamneseSectionType,
+  AnamneseSectionId,
+} from '@/types/dossier';
 
 interface AnamneseSectionListProps {
   sections: AnamneseSectionType[];
@@ -16,8 +19,8 @@ export function AnamneseSectionList({
   onToggleSection,
 }: AnamneseSectionListProps) {
   return (
-    <div className="space-y-4">
-      {sections.map((section) => (
+    <div className='space-y-4'>
+      {sections.map(section => (
         <AnamneseSection
           key={section.id}
           section={section}

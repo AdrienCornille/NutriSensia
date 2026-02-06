@@ -30,7 +30,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Section d\'introduction simple et élégante qui présente l\'approche nutritionnelle de manière humaine et scientifique.',
+          "Section d'introduction simple et élégante qui présente l'approche nutritionnelle de manière humaine et scientifique.",
       },
     },
   },

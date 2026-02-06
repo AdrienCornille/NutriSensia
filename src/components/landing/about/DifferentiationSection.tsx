@@ -222,18 +222,3 @@ export function DifferentiationSection() {
 }
 
 export default DifferentiationSection;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -22,18 +22,22 @@ export function DocumentsList({
   const filteredDocuments = filterDocumentsByCategory(documents, filter);
 
   return (
-    <div className="bg-white rounded-xl p-6 border border-gray-200">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="font-semibold text-gray-800">Mes documents</h2>
+    <div className='bg-white rounded-xl p-6 border border-gray-200'>
+      <div className='flex items-center justify-between mb-4'>
+        <h2 className='font-semibold text-gray-800'>Mes documents</h2>
         <select
           value={filter}
-          onChange={(e) => {
+          onChange={e => {
             const value = e.target.value;
-            onFilterChange(value === 'Toutes les catégories' ? 'all' : (value as DocumentCategory));
+            onFilterChange(
+              value === 'Toutes les catégories'
+                ? 'all'
+                : (value as DocumentCategory)
+            );
           }}
-          className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1B998B] bg-white"
+          className='px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1B998B] bg-white'
         >
-          {documentCategories.map((cat) => (
+          {documentCategories.map(cat => (
             <option key={cat} value={cat}>
               {cat}
             </option>
@@ -41,13 +45,19 @@ export function DocumentsList({
         </select>
       </div>
 
-      <div className="space-y-3">
+      <div className='space-y-3'>
         {filteredDocuments.length > 0 ? (
-          filteredDocuments.map((doc) => (
-            <DocumentItem key={doc.id} document={doc} onClick={onDocumentClick} />
+          filteredDocuments.map(doc => (
+            <DocumentItem
+              key={doc.id}
+              document={doc}
+              onClick={onDocumentClick}
+            />
           ))
         ) : (
-          <p className="text-center text-gray-500 py-8">Aucun document dans cette catégorie</p>
+          <p className='text-center text-gray-500 py-8'>
+            Aucun document dans cette catégorie
+          </p>
         )}
       </div>
     </div>

@@ -75,7 +75,10 @@ const signupSchema = z
       .min(8, 'Le mot de passe doit contenir au moins 8 caractères')
       .regex(/[A-Z]/, 'Le mot de passe doit contenir au moins 1 majuscule')
       .regex(/[0-9]/, 'Le mot de passe doit contenir au moins 1 chiffre')
-      .regex(/[^A-Za-z0-9]/, 'Le mot de passe doit contenir au moins 1 caractère spécial'),
+      .regex(
+        /[^A-Za-z0-9]/,
+        'Le mot de passe doit contenir au moins 1 caractère spécial'
+      ),
     confirmPassword: z.string().min(1, 'Veuillez confirmer votre mot de passe'),
     consultationReason: z.enum([
       'menopause_perimenopause',
@@ -337,7 +340,8 @@ export const SignupForm: React.FC<SignupFormProps> = ({
             htmlFor='consultationReason'
             className='block text-body-small font-medium text-neutral-dark mb-1.5'
           >
-            Raison de votre consultation <span className='text-functional-error'>*</span>
+            Raison de votre consultation{' '}
+            <span className='text-functional-error'>*</span>
           </label>
           <select
             id='consultationReason'
@@ -375,7 +379,8 @@ export const SignupForm: React.FC<SignupFormProps> = ({
             htmlFor='marketingConsent'
             className='text-body-small text-neutral-medium cursor-pointer'
           >
-            J'accepte de recevoir des conseils nutritionnels et des offres par email
+            J'accepte de recevoir des conseils nutritionnels et des offres par
+            email
           </label>
         </div>
 

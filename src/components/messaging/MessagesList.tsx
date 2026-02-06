@@ -26,28 +26,30 @@ export function MessagesList({ messages, onImageClick }: MessagesListProps) {
 
   if (messages.length === 0) {
     return (
-      <div className="flex items-center justify-center p-8 h-full">
-        <div className="text-center text-gray-500">
-          <p className="text-lg font-medium">Aucun message</p>
-          <p className="text-sm mt-1">Commencez la conversation avec votre nutritionniste</p>
+      <div className='flex items-center justify-center p-8 h-full'>
+        <div className='text-center text-gray-500'>
+          <p className='text-lg font-medium'>Aucun message</p>
+          <p className='text-sm mt-1'>
+            Commencez la conversation avec votre nutritionniste
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="px-4 py-4">
+    <div className='px-4 py-4'>
       {Array.from(groupedMessages.entries()).map(([dateKey, dayMessages]) => (
         <div key={dateKey}>
           {/* Date separator */}
-          <div className="flex items-center justify-center my-4">
-            <div className="bg-gray-200 text-gray-600 text-xs font-medium px-3 py-1 rounded-full">
+          <div className='flex items-center justify-center my-4'>
+            <div className='bg-gray-200 text-gray-600 text-xs font-medium px-3 py-1 rounded-full'>
               {formatMessageDate(dayMessages[0].timestamp)}
             </div>
           </div>
 
           {/* Messages for this day */}
-          {dayMessages.map((message) => (
+          {dayMessages.map(message => (
             <MessageBubble
               key={message.id}
               message={message}

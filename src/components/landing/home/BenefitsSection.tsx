@@ -40,7 +40,7 @@ export function BenefitsSection() {
         "Vous identifiez les aliments qui VOUS donnent de l'énergie",
         'Vous comprenez POURQUOI certains choix fonctionnent pour vous',
       ],
-      conclusion: 'Plus de confusion. Juste de la clarté.'
+      conclusion: 'Plus de confusion. Juste de la clarté.',
     },
     {
       id: 2,
@@ -48,13 +48,14 @@ export function BenefitsSection() {
       iconColor: 'text-amber-500',
       iconBg: 'bg-amber-50',
       title: 'Énergie retrouvée',
-      mainBenefit: 'Vous en avez marre de ces coups de barre de 15h qui vous assomment ? D\'être toujours fatiguée, même après une nuit de sommeil ?',
+      mainBenefit:
+        "Vous en avez marre de ces coups de barre de 15h qui vous assomment ? D'être toujours fatiguée, même après une nuit de sommeil ?",
       bullets: [
         'Une énergie stable tout au long de la journée',
         'Un sommeil vraiment réparateur qui vous régénère',
-        'Une concentration qui vous permet enfin d\'être présente au travail et avec vos proches',
+        "Une concentration qui vous permet enfin d'être présente au travail et avec vos proches",
       ],
-      conclusion: 'Fini l\'épuisement constant. Vous retrouvez votre vitalité.'
+      conclusion: "Fini l'épuisement constant. Vous retrouvez votre vitalité.",
     },
     {
       id: 3,
@@ -62,13 +63,14 @@ export function BenefitsSection() {
       iconColor: 'text-teal-500',
       iconBg: 'bg-teal-50',
       title: 'Liberté',
-      mainBenefit: 'Imaginez manger sans culpabilité. Sans calculer. Sans vous priver.',
+      mainBenefit:
+        'Imaginez manger sans culpabilité. Sans calculer. Sans vous priver.',
       bullets: [
         'Une relation enfin apaisée avec la nourriture',
         "Des habitudes qui s'intègrent naturellement à votre vie, sans effort constant",
         'Des résultats qui durent, sans effet rebond',
       ],
-      conclusion: 'Plus de régimes yo-yo. Juste une vraie liberté qui dure.'
+      conclusion: 'Plus de régimes yo-yo. Juste une vraie liberté qui dure.',
     },
   ];
 
@@ -126,7 +128,7 @@ export function BenefitsSection() {
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
             transition={{ duration: 0.6, delay: 0.1 }}
             className={cn(
-              "font-sans",
+              'font-sans',
               'text-[2rem] md:text-[2.5rem]',
               'font-bold',
               'text-[#2C3E3C]'
@@ -165,24 +167,24 @@ export function BenefitsSection() {
             {[
               {
                 title: 'Une nutritionniste dédiée qui vous écoute vraiment',
-                desc: 'Pas de consultation expédiée en 15 minutes. On prend le temps de comprendre VOTRE situation, vos défis, votre histoire.'
+                desc: 'Pas de consultation expédiée en 15 minutes. On prend le temps de comprendre VOTRE situation, vos défis, votre histoire.',
               },
               {
                 title: 'Un plan alimentaire adapté à votre réalité',
-                desc: 'À votre corps, vos goûts, vos contraintes, votre mode de vie. Pas un régime photocopié, mais quelque chose que vous pouvez suivre dans la vraie vie.'
+                desc: 'À votre corps, vos goûts, vos contraintes, votre mode de vie. Pas un régime photocopié, mais quelque chose que vous pouvez suivre dans la vraie vie.',
               },
               {
                 title: 'Des outils simples et applicables immédiatement',
-                desc: 'Plans de repas personnalisés, listes de courses automatiques, journal alimentaire par photo. Tout pour vous faciliter la vie.'
+                desc: 'Plans de repas personnalisés, listes de courses automatiques, journal alimentaire par photo. Tout pour vous faciliter la vie.',
               },
               {
                 title: 'Un suivi continu entre les consultations',
-                desc: 'Vous avez une question ? Je vous réponds dans les 24h. Vous n\'êtes jamais seule dans votre parcours.'
+                desc: "Vous avez une question ? Je vous réponds dans les 24h. Vous n'êtes jamais seule dans votre parcours.",
               },
               {
                 title: 'Un espace sans jugement ni culpabilité',
-                desc: 'Ici, vous avancez à votre rythme. Pas de pression, pas de reproches. Juste du soutien et de la bienveillance.'
-              }
+                desc: 'Ici, vous avancez à votre rythme. Pas de pression, pas de reproches. Juste du soutien et de la bienveillance.',
+              },
             ].map((item, idx) => (
               <li key={idx} className='flex items-start gap-3'>
                 <div
@@ -198,20 +200,25 @@ export function BenefitsSection() {
                   <Check className='w-4 h-4 text-white' strokeWidth={3} />
                 </div>
                 <div>
-                  <strong className={cn(
-                    "font-['Inter',system-ui,sans-serif]",
-                    'text-[1rem] md:text-[1.05rem]',
-                    'text-[#2C3E3C]',
-                    'font-semibold'
-                  )}>
+                  <strong
+                    className={cn(
+                      "font-['Inter',system-ui,sans-serif]",
+                      'text-[1rem] md:text-[1.05rem]',
+                      'text-[#2C3E3C]',
+                      'font-semibold'
+                    )}
+                  >
                     {item.title}
                   </strong>
-                  <span className={cn(
-                    "font-['Inter',system-ui,sans-serif]",
-                    'text-[0.95rem]',
-                    'text-[#667674]'
-                  )}>
-                    {' — '}{item.desc}
+                  <span
+                    className={cn(
+                      "font-['Inter',system-ui,sans-serif]",
+                      'text-[0.95rem]',
+                      'text-[#667674]'
+                    )}
+                  >
+                    {' — '}
+                    {item.desc}
                   </span>
                 </div>
               </li>
@@ -394,7 +401,10 @@ export function BenefitsSection() {
               'mb-6'
             )}
           >
-            "Chaque consultation est un espace où vous pouvez enfin avancer à votre rythme. Mon objectif n'est pas de vous rendre dépendante, mais de vous donner les clés pour comprendre votre corps et savoir comment le nourrir pour la vie."
+            "Chaque consultation est un espace où vous pouvez enfin avancer à
+            votre rythme. Mon objectif n'est pas de vous rendre dépendante, mais
+            de vous donner les clés pour comprendre votre corps et savoir
+            comment le nourrir pour la vie."
           </blockquote>
 
           {/* Values */}
@@ -407,7 +417,8 @@ export function BenefitsSection() {
               'mb-4'
             )}
           >
-            <strong className='text-[#2C3E3C]'>Mes valeurs :</strong> Bienveillance, personnalisation, autonomie et résultats durables.
+            <strong className='text-[#2C3E3C]'>Mes valeurs :</strong>{' '}
+            Bienveillance, personnalisation, autonomie et résultats durables.
           </div>
 
           {/* Author Attribution */}

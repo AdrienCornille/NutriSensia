@@ -12,11 +12,10 @@ import {
 /**
  * Props du formulaire de partenariat nutritionniste
  */
-export interface NutritionistPartnershipFormProps
-  extends Omit<
-    ContactFormProps<NutritionistPartnershipFormData>,
-    'schema' | 'fields' | 'formType'
-  > {
+export interface NutritionistPartnershipFormProps extends Omit<
+  ContactFormProps<NutritionistPartnershipFormData>,
+  'schema' | 'fields' | 'formType'
+> {
   /**
    * Masquer certains champs (optionnel)
    */

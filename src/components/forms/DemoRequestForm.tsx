@@ -12,11 +12,10 @@ import {
 /**
  * Props du formulaire de demande de démo
  */
-export interface DemoRequestFormProps
-  extends Omit<
-    ContactFormProps<DemoRequestFormData>,
-    'schema' | 'fields' | 'formType'
-  > {
+export interface DemoRequestFormProps extends Omit<
+  ContactFormProps<DemoRequestFormData>,
+  'schema' | 'fields' | 'formType'
+> {
   /**
    * Masquer certains champs (optionnel)
    */

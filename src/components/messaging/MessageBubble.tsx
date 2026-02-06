@@ -1,9 +1,16 @@
 'use client';
 
 import React from 'react';
-import { Check, CheckCheck, AlertCircle, FileText, ArrowRight } from 'lucide-react';
+import {
+  Check,
+  CheckCheck,
+  AlertCircle,
+  Clock,
+  FileText,
+  ArrowRight,
+} from 'lucide-react';
 import type { Message, MessageAttachment } from '@/types/messaging';
-import { formatMessageTime, messageStatusConfig } from '@/types/messaging';
+import { formatMessageTime } from '@/types/messaging';
 
 interface MessageBubbleProps {
   message: Message;
@@ -11,13 +18,21 @@ interface MessageBubbleProps {
 }
 
 export function MessageBubble({ message, onImageClick }: MessageBubbleProps) {
-  const { content, type, timestamp, isFromUser, status, attachment, planModification } = message;
+  const {
+    content,
+    type,
+    timestamp,
+    isFromUser,
+    status,
+    attachment,
+    planModification,
+  } = message;
 
   // System message style
   if (type === 'system') {
     return (
-      <div className="flex justify-center my-4">
-        <div className="bg-gray-100 text-gray-600 text-sm px-4 py-2 rounded-full max-w-[85%] text-center">
+      <div className='flex justify-center my-4'>
+        <div className='bg-gray-100 text-gray-600 text-sm px-4 py-2 rounded-full max-w-[85%] text-center'>
           {content}
         </div>
       </div>
@@ -27,21 +42,25 @@ export function MessageBubble({ message, onImageClick }: MessageBubbleProps) {
   // Plan modification message
   if (type === 'plan-modification' && planModification) {
     return (
-      <div className="flex justify-start mb-3">
-        <div className="bg-emerald-50 border border-emerald-200 rounded-2xl px-4 py-3 max-w-[85%]">
-          <div className="flex items-center gap-2 text-emerald-700 font-medium text-sm mb-2">
-            <FileText className="w-4 h-4" />
+      <div className='flex justify-start mb-3'>
+        <div className='bg-emerald-50 border border-emerald-200 rounded-2xl px-4 py-3 max-w-[85%]'>
+          <div className='flex items-center gap-2 text-emerald-700 font-medium text-sm mb-2'>
+            <FileText className='w-4 h-4' />
             Modification du plan alimentaire
           </div>
-          <div className="text-sm text-gray-600">
-            <span className="font-medium">{planModification.field}</span>
+          <div className='text-sm text-gray-600'>
+            <span className='font-medium'>{planModification.field}</span>
           </div>
-          <div className="flex items-center gap-2 mt-2 text-sm">
-            <span className="text-gray-500 line-through">{planModification.oldValue}</span>
-            <ArrowRight className="w-4 h-4 text-gray-400" />
-            <span className="text-emerald-700 font-medium">{planModification.newValue}</span>
+          <div className='flex items-center gap-2 mt-2 text-sm'>
+            <span className='text-gray-500 line-through'>
+              {planModification.oldValue}
+            </span>
+            <ArrowRight className='w-4 h-4 text-gray-400' />
+            <span className='text-emerald-700 font-medium'>
+              {planModification.newValue}
+            </span>
           </div>
-          <div className="text-xs text-gray-400 mt-2">
+          <div className='text-xs text-gray-400 mt-2'>
             {formatMessageTime(timestamp)}
           </div>
         </div>
@@ -51,46 +70,49 @@ export function MessageBubble({ message, onImageClick }: MessageBubbleProps) {
 
   // Regular message bubble
   const bubbleClasses = isFromUser
-    ? 'bg-[#1B998B] text-white rounded-2xl rounded-br-md'
-    : 'bg-gray-100 text-gray-800 rounded-2xl rounded-bl-md';
+    ? 'bg-[#1B998B] text-white rounded-2xl rounded-br-sm'
+    : 'bg-gray-100 text-gray-800 rounded-2xl rounded-bl-sm';
 
   const containerClasses = isFromUser ? 'justify-end' : 'justify-start';
 
-  // Status icon for user messages - MSG-004
-  const renderStatusIcon = () => {
+  // Status indicator for sent messages (WhatsApp-style)
+  const renderStatus = () => {
     if (!isFromUser) return null;
-
-    const statusInfo = messageStatusConfig[status];
 
     switch (status) {
       case 'sending':
         return (
-          <span className="text-white/60 text-xs" title={statusInfo.label}>
-            ○
+          <span className='flex items-center gap-1 text-gray-400'>
+            <Clock className='w-3 h-3' />
+            <span>Envoi...</span>
           </span>
         );
       case 'sent':
         return (
-          <span title={statusInfo.label}>
-            <Check className="w-3.5 h-3.5 text-white/60" />
+          <span className='flex items-center gap-1 text-gray-400'>
+            <Check className='w-3 h-3' />
+            <span>Envoyé</span>
           </span>
         );
       case 'delivered':
         return (
-          <span title={statusInfo.label}>
-            <CheckCheck className="w-3.5 h-3.5 text-white/60" />
+          <span className='flex items-center gap-1 text-gray-400'>
+            <CheckCheck className='w-3 h-3' />
+            <span>Distribué</span>
           </span>
         );
       case 'read':
         return (
-          <span title={statusInfo.label}>
-            <CheckCheck className="w-3.5 h-3.5 text-blue-300" />
+          <span className='flex items-center gap-1 text-[#1B998B]'>
+            <CheckCheck className='w-3 h-3' />
+            <span>Lu</span>
           </span>
         );
       case 'error':
         return (
-          <span title={statusInfo.label}>
-            <AlertCircle className="w-3.5 h-3.5 text-red-300" />
+          <span className='flex items-center gap-1 text-red-500'>
+            <AlertCircle className='w-3 h-3' />
+            <span>Erreur</span>
           </span>
         );
       default:
@@ -99,18 +121,19 @@ export function MessageBubble({ message, onImageClick }: MessageBubbleProps) {
   };
 
   return (
-    <div className={`flex ${containerClasses} mb-3`}>
+    <div className={`flex flex-col ${isFromUser ? 'items-end' : 'items-start'} mb-3`}>
+      {/* Bubble */}
       <div className={`${bubbleClasses} px-4 py-2.5 max-w-[85%]`}>
         {/* Image attachment */}
         {type === 'image' && attachment && (
           <button
             onClick={() => onImageClick?.(attachment)}
-            className="block mb-2 -mx-2 -mt-1 rounded-xl overflow-hidden hover:opacity-90 transition-opacity"
+            className='block mb-2 -mx-2 -mt-1 rounded-xl overflow-hidden hover:opacity-90 transition-opacity'
           >
             <img
               src={attachment.thumbnailUrl || attachment.url}
               alt={attachment.name}
-              className="w-full max-w-[240px] h-auto object-cover"
+              className='w-full max-w-[240px] h-auto object-cover'
             />
           </button>
         )}
@@ -119,28 +142,46 @@ export function MessageBubble({ message, onImageClick }: MessageBubbleProps) {
         {type === 'document' && attachment && (
           <a
             href={attachment.url}
-            target="_blank"
-            rel="noopener noreferrer"
+            target='_blank'
+            rel='noopener noreferrer'
             className={`flex items-center gap-2 mb-2 p-2 rounded-lg ${
-              isFromUser ? 'bg-white/10 hover:bg-white/20' : 'bg-gray-200 hover:bg-gray-300'
+              isFromUser
+                ? 'bg-white/10 hover:bg-white/20'
+                : 'bg-gray-200 hover:bg-gray-300'
             } transition-colors`}
           >
-            <FileText className={`w-5 h-5 ${isFromUser ? 'text-white' : 'text-gray-600'}`} />
-            <span className="text-sm truncate">{attachment.name}</span>
+            <FileText
+              className={`w-5 h-5 ${isFromUser ? 'text-white' : 'text-gray-600'}`}
+            />
+            <span className='text-sm truncate'>{attachment.name}</span>
           </a>
         )}
 
         {/* Text content */}
-        {content && <p className="text-sm leading-relaxed whitespace-pre-wrap">{content}</p>}
+        {content && (
+          <p className='text-sm leading-relaxed whitespace-pre-wrap'>
+            {content}
+          </p>
+        )}
 
-        {/* Timestamp and status */}
-        <div className={`flex items-center gap-1 mt-1 ${isFromUser ? 'justify-end' : 'justify-start'}`}>
-          <span className={`text-xs ${isFromUser ? 'text-white/60' : 'text-gray-400'}`}>
+        {/* Timestamp inside bubble */}
+        <div
+          className={`flex items-center mt-1 ${isFromUser ? 'justify-end' : 'justify-start'}`}
+        >
+          <span
+            className={`text-[11px] ${isFromUser ? 'text-white/60' : 'text-gray-400'}`}
+          >
             {formatMessageTime(timestamp)}
           </span>
-          {renderStatusIcon()}
         </div>
       </div>
+
+      {/* Status below bubble (sent messages only) */}
+      {isFromUser && (
+        <div className='text-[11px] mt-0.5 mr-1'>
+          {renderStatus()}
+        </div>
+      )}
     </div>
   );
 }

@@ -44,15 +44,25 @@ export async function GET(req: NextRequest) {
 
     // 4. Récupérer le patient_profiles.id
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: patientProfile, error: profileError } = await (supabase as any)
+    const { data: patientProfile, error: profileError } = await (
+      supabase as any
+    )
       .from('patient_profiles')
       .select('id')
       .eq('user_id', auth.user.id)
       .single();
 
     if (profileError || !patientProfile) {
-      console.error('Error finding patient profile for user_id:', auth.user.id, 'Error:', profileError);
-      return apiResponse.error(`Profil patient non trouvé: ${profileError?.message || 'aucun profil'}`, 404);
+      console.error(
+        'Error finding patient profile for user_id:',
+        auth.user.id,
+        'Error:',
+        profileError
+      );
+      return apiResponse.error(
+        `Profil patient non trouvé: ${profileError?.message || 'aucun profil'}`,
+        404
+      );
     }
 
     // Note: appointments.user_id référence patient_profiles.id (pas auth.users.id)
@@ -95,11 +105,29 @@ export async function GET(req: NextRequest) {
     if (filter === 'upcoming') {
       query = query
         .gte('scheduled_at', now)
-        .not('status', 'in', '("cancelled","no_show")')
+        .not(
+          'status',
+          'in',
+          '("cancelled","cancelled_by_patient","cancelled_by_nutritionist","no_show")'
+        )
         .order('scheduled_at', { ascending: true });
     } else if (filter === 'past') {
       query = query
         .or(`scheduled_at.lt.${now},status.eq.completed`)
+        .not(
+          'status',
+          'in',
+          '("cancelled","cancelled_by_patient","cancelled_by_nutritionist")'
+        )
+        .order('scheduled_at', { ascending: false });
+    } else if (filter === 'cancelled') {
+      // RDV annulés uniquement
+      query = query
+        .in('status', [
+          'cancelled',
+          'cancelled_by_patient',
+          'cancelled_by_nutritionist',
+        ])
         .order('scheduled_at', { ascending: false });
     } else {
       // 'all' - tous les RDV triés par date décroissante
@@ -113,24 +141,55 @@ export async function GET(req: NextRequest) {
     const { data: appointments, error: queryError, count } = await query;
 
     if (queryError) {
-      console.error('Error fetching appointments:', JSON.stringify(queryError, null, 2));
-      console.error('Query details - patientProfileId:', patientProfileId, 'filter:', filter, 'now:', now);
-      return apiResponse.serverError(`Erreur DB: ${queryError.message || 'Erreur lors de la récupération des rendez-vous'}`);
+      console.error(
+        'Error fetching appointments:',
+        JSON.stringify(queryError, null, 2)
+      );
+      console.error(
+        'Query details - patientProfileId:',
+        patientProfileId,
+        'filter:',
+        filter,
+        'now:',
+        now
+      );
+      return apiResponse.serverError(
+        `Erreur DB: ${queryError.message || 'Erreur lors de la récupération des rendez-vous'}`
+      );
     }
 
-    // 9. Compter les RDV à venir et passés pour les statistiques
+    // 9. Compter les RDV pour les statistiques par onglet
     const { count: upcomingCount } = await (supabase as any)
       .from('appointments')
       .select('id', { count: 'exact', head: true })
       .eq('user_id', patientProfileId)
       .gte('scheduled_at', now)
-      .not('status', 'in', '("cancelled","no_show")');
+      .not(
+        'status',
+        'in',
+        '("cancelled","cancelled_by_patient","cancelled_by_nutritionist","no_show")'
+      );
 
     const { count: pastCount } = await (supabase as any)
       .from('appointments')
       .select('id', { count: 'exact', head: true })
       .eq('user_id', patientProfileId)
-      .lt('scheduled_at', now);
+      .lt('scheduled_at', now)
+      .not(
+        'status',
+        'in',
+        '("cancelled","cancelled_by_patient","cancelled_by_nutritionist")'
+      );
+
+    const { count: cancelledCount } = await (supabase as any)
+      .from('appointments')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', patientProfileId)
+      .in('status', [
+        'cancelled',
+        'cancelled_by_patient',
+        'cancelled_by_nutritionist',
+      ]);
 
     return NextResponse.json(
       {
@@ -138,12 +197,17 @@ export async function GET(req: NextRequest) {
         total: count || appointments?.length || 0,
         upcoming_count: upcomingCount || 0,
         past_count: pastCount || 0,
+        cancelled_count: cancelledCount || 0,
       },
       { status: 200 }
     );
   } catch (error) {
-    console.error('Unexpected error in GET /api/protected/appointments:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Erreur serveur inconnue';
+    console.error(
+      'Unexpected error in GET /api/protected/appointments:',
+      error
+    );
+    const errorMessage =
+      error instanceof Error ? error.message : 'Erreur serveur inconnue';
     return apiResponse.serverError(`Erreur: ${errorMessage}`);
   }
 }
@@ -187,7 +251,9 @@ export async function POST(req: NextRequest) {
 
     // 4. Récupérer le patient_id depuis patient_profiles
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: patientProfile, error: profileError } = await (supabase as any)
+    const { data: patientProfile, error: profileError } = await (
+      supabase as any
+    )
       .from('patient_profiles')
       .select('id, nutritionist_id')
       .eq('user_id', auth.user.id)
@@ -200,7 +266,8 @@ export async function POST(req: NextRequest) {
 
     // Déterminer le nutritionist_id à utiliser
     // Si non fourni dans la requête, utiliser celui assigné au patient
-    const nutritionistId = validatedData.nutritionist_id || patientProfile.nutritionist_id;
+    const nutritionistId =
+      validatedData.nutritionist_id || patientProfile.nutritionist_id;
 
     if (!nutritionistId) {
       return apiResponse.error(
@@ -235,13 +302,17 @@ export async function POST(req: NextRequest) {
       .from('appointments')
       .select('id')
       .eq('nutritionist_id', nutritionistId)
-      .not('status', 'in', '("cancelled","no_show")')
+      .not(
+        'status',
+        'in',
+        '("cancelled","cancelled_by_patient","cancelled_by_nutritionist","no_show")'
+      )
       .lt('scheduled_at', scheduledEndAt.toISOString())
       .gt('scheduled_end_at', scheduledAt.toISOString());
 
     if (conflicts && conflicts.length > 0) {
       return apiResponse.error(
-        'Ce créneau n\'est plus disponible. Veuillez en choisir un autre.',
+        "Ce créneau n'est plus disponible. Veuillez en choisir un autre.",
         409
       );
     }
@@ -261,7 +332,7 @@ export async function POST(req: NextRequest) {
     const { data: newAppointment, error: insertError } = await (supabase as any)
       .from('appointments')
       .insert({
-        user_id: patientProfile.id,    // Référence patient_profiles.id (requis par RLS)
+        user_id: patientProfile.id, // Référence patient_profiles.id (requis par RLS)
         nutritionist_id: nutritionistId,
         consultation_type_id: consultationType.id,
         consultation_type_code: consultationType.code,
@@ -309,7 +380,9 @@ export async function POST(req: NextRequest) {
 
     if (insertError) {
       console.error('Error creating appointment:', insertError);
-      return apiResponse.serverError('Erreur lors de la création du rendez-vous');
+      return apiResponse.serverError(
+        'Erreur lors de la création du rendez-vous'
+      );
     }
 
     // Les rappels sont créés automatiquement par le trigger DB (trigger_create_appointment_reminders)
@@ -328,14 +401,20 @@ export async function POST(req: NextRequest) {
       });
     } catch (notifError) {
       // Ne pas bloquer la création si la notification échoue
-      console.error('Error sending appointment confirmation notification:', notifError);
+      console.error(
+        'Error sending appointment confirmation notification:',
+        notifError
+      );
     }
 
     // TODO: Envoyer email de confirmation (nécessite configuration email service)
 
     return NextResponse.json(newAppointment, { status: 201 });
   } catch (error) {
-    console.error('Unexpected error in POST /api/protected/appointments:', error);
+    console.error(
+      'Unexpected error in POST /api/protected/appointments:',
+      error
+    );
     return apiResponse.serverError('Erreur serveur');
   }
 }

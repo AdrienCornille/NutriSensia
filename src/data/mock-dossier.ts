@@ -45,8 +45,14 @@ const anamneseSections: AnamneseSection[] = [
     fields: [
       { label: 'Poids minimum adulte', value: '72 kg (2015)' },
       { label: 'Poids maximum adulte', value: '85 kg (2023)' },
-      { label: 'Variations notables', value: 'Prise de 8 kg après naissance du 2e enfant' },
-      { label: 'Régimes antérieurs', value: 'Régime Dukan (2019) - abandonné après 2 mois, effet yoyo' },
+      {
+        label: 'Variations notables',
+        value: 'Prise de 8 kg après naissance du 2e enfant',
+      },
+      {
+        label: 'Régimes antérieurs',
+        value: 'Régime Dukan (2019) - abandonné après 2 mois, effet yoyo',
+      },
     ],
   },
   {
@@ -58,8 +64,14 @@ const anamneseSections: AnamneseSection[] = [
       { label: 'Allergies alimentaires', value: 'Aucune' },
       { label: 'Intolérances', value: 'Légère intolérance au lactose' },
       { label: 'Traitements en cours', value: 'Aucun' },
-      { label: 'Compléments alimentaires', value: 'Vitamine D (octobre à mars)' },
-      { label: 'Antécédents familiaux', value: 'Diabète type 2 (père), Hypertension (mère)' },
+      {
+        label: 'Compléments alimentaires',
+        value: 'Vitamine D (octobre à mars)',
+      },
+      {
+        label: 'Antécédents familiaux',
+        value: 'Diabète type 2 (père), Hypertension (mère)',
+      },
     ],
   },
   {
@@ -68,7 +80,10 @@ const anamneseSections: AnamneseSection[] = [
     icon: '🍽',
     fields: [
       { label: 'Nombre de repas/jour', value: '3 repas + 1 collation' },
-      { label: 'Petit-déjeuner type', value: 'Café + tartines beurre/confiture, parfois sauté' },
+      {
+        label: 'Petit-déjeuner type',
+        value: 'Café + tartines beurre/confiture, parfois sauté',
+      },
       { label: 'Déjeuner type', value: 'Cantine entreprise, choix variable' },
       { label: 'Dîner type', value: 'Repas familial, cuisine maison' },
       { label: 'Grignotage', value: 'Fréquent en soirée (biscuits, fromage)' },
@@ -83,10 +98,19 @@ const anamneseSections: AnamneseSection[] = [
     icon: '🏃',
     fields: [
       { label: 'Activité professionnelle', value: 'Sédentaire (bureau)' },
-      { label: 'Activité physique', value: 'Course à pied 1x/semaine, irrégulier' },
+      {
+        label: 'Activité physique',
+        value: 'Course à pied 1x/semaine, irrégulier',
+      },
       { label: "Temps d'écran", value: '8-10h/jour (travail + loisirs)' },
-      { label: 'Qualité du sommeil', value: 'Moyenne, coucher tardif (~23h30)' },
-      { label: 'Niveau de stress', value: 'Modéré à élevé (charge de travail)' },
+      {
+        label: 'Qualité du sommeil',
+        value: 'Moyenne, coucher tardif (~23h30)',
+      },
+      {
+        label: 'Niveau de stress',
+        value: 'Modéré à élevé (charge de travail)',
+      },
       { label: 'Tabac', value: 'Non-fumeur' },
     ],
   },
@@ -95,11 +119,23 @@ const anamneseSections: AnamneseSection[] = [
     label: 'Motivation & Objectifs',
     icon: '💪',
     fields: [
-      { label: 'Raison de consultation', value: "Perte de poids, améliorer l'énergie au quotidien" },
+      {
+        label: 'Raison de consultation',
+        value: "Perte de poids, améliorer l'énergie au quotidien",
+      },
       { label: 'Objectif pondéral', value: 'Atteindre 75 kg' },
-      { label: 'Motivation principale', value: 'Être en meilleure forme pour jouer avec ses enfants' },
-      { label: 'Freins identifiés', value: 'Manque de temps, grignotage émotionnel le soir' },
-      { label: 'Soutien entourage', value: 'Épouse motivée à adapter les repas familiaux' },
+      {
+        label: 'Motivation principale',
+        value: 'Être en meilleure forme pour jouer avec ses enfants',
+      },
+      {
+        label: 'Freins identifiés',
+        value: 'Manque de temps, grignotage émotionnel le soir',
+      },
+      {
+        label: 'Soutien entourage',
+        value: 'Épouse motivée à adapter les repas familiaux',
+      },
     ],
   },
 ];
@@ -287,4 +323,10 @@ export function getObjectivesData(): Objective[] {
 
 // ==================== DOCUMENT CATEGORIES ====================
 
-export const documentCategories = ['Toutes les catégories', 'Analyses', 'Plans', 'Ressources', 'Autre'] as const;
+export const documentCategories = [
+  'Toutes les catégories',
+  'Analyses',
+  'Plans',
+  'Ressources',
+  'Autre',
+] as const;

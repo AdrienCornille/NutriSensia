@@ -40,36 +40,42 @@ export function DashboardHeader({
   });
 
   return (
-    <header className="bg-white border-b border-gray-200 px-8 py-4 sticky top-0 z-20">
-      <div className="flex items-center justify-between">
+    <header className='bg-white border-b border-gray-200 px-8 py-4 sticky top-0 z-20'>
+      <div className='flex items-center justify-between'>
         <div>
           {showGreeting ? (
             <>
-              <h1 className="text-2xl font-semibold text-gray-800">
+              <h1 className='text-2xl font-semibold text-gray-800'>
                 Bonjour {firstName} 👋
               </h1>
-              <p className="text-gray-500 text-sm mt-1 capitalize">{formattedDate}</p>
+              <p className='text-gray-500 text-sm mt-1 capitalize'>
+                {formattedDate}
+              </p>
             </>
           ) : (
             <>
               {title && (
-                <h1 className="text-2xl font-semibold text-gray-800">{title}</h1>
+                <h1 className='text-2xl font-semibold text-gray-800'>
+                  {title}
+                </h1>
               )}
-              {subtitle && <p className="text-gray-500">{subtitle}</p>}
+              {subtitle && <p className='text-gray-500'>{subtitle}</p>}
             </>
           )}
         </div>
-        <div className="flex items-center gap-4">
+        <div className='flex items-center gap-4'>
           {children}
           {showNotifications && (
             <Link
-              href="/dashboard/notifications"
-              className="block p-2 text-gray-400 hover:text-gray-600 relative rounded-lg hover:bg-gray-100 transition-colors"
+              href='/dashboard/patient/notifications'
+              className='block p-2 text-gray-400 hover:text-gray-600 relative rounded-lg hover:bg-gray-100 transition-colors'
             >
-              <Bell className="w-6 h-6" />
+              <Bell className='w-6 h-6' />
               {unreadNotificationsCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
-                  {unreadNotificationsCount > 9 ? '9+' : unreadNotificationsCount}
+                <span className='absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center'>
+                  {unreadNotificationsCount > 9
+                    ? '9+'
+                    : unreadNotificationsCount}
                 </span>
               )}
             </Link>

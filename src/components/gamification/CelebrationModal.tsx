@@ -12,7 +12,15 @@ interface CelebrationModalProps {
 
 // Confetti particle component
 function ConfettiParticle({ index }: { index: number }) {
-  const colors = ['#1B998B', '#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7'];
+  const colors = [
+    '#1B998B',
+    '#FFD700',
+    '#FF6B6B',
+    '#4ECDC4',
+    '#45B7D1',
+    '#96CEB4',
+    '#FFEAA7',
+  ];
   const color = colors[index % colors.length];
   const size = Math.random() * 10 + 5;
   const initialX = Math.random() * 100;
@@ -63,7 +71,10 @@ function Confetti({ count = 50 }: { count?: number }) {
   );
 }
 
-export function CelebrationModal({ celebration, onClose }: CelebrationModalProps) {
+export function CelebrationModal({
+  celebration,
+  onClose,
+}: CelebrationModalProps) {
   const [showConfetti, setShowConfetti] = useState(false);
 
   useEffect(() => {
@@ -89,7 +100,7 @@ export function CelebrationModal({ celebration, onClose }: CelebrationModalProps
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+            className='fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4'
           >
             {/* Modal */}
             <motion.div
@@ -97,15 +108,15 @@ export function CelebrationModal({ celebration, onClose }: CelebrationModalProps
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.5, opacity: 0, y: 50 }}
               transition={{ type: 'spring', damping: 15, stiffness: 300 }}
-              onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-2xl p-8 max-w-sm w-full text-center relative overflow-hidden"
+              onClick={e => e.stopPropagation()}
+              className='bg-white rounded-2xl p-8 max-w-sm w-full text-center relative overflow-hidden'
             >
               {/* Close button */}
               <button
                 onClick={onClose}
-                className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+                className='absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors'
               >
-                <X className="w-5 h-5" />
+                <X className='w-5 h-5' />
               </button>
 
               {/* Celebration icon */}
@@ -113,14 +124,14 @@ export function CelebrationModal({ celebration, onClose }: CelebrationModalProps
                 initial={{ scale: 0, rotate: -180 }}
                 animate={{ scale: 1, rotate: 0 }}
                 transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-                className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-amber-100 to-amber-200 rounded-full flex items-center justify-center"
+                className='w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-amber-100 to-amber-200 rounded-full flex items-center justify-center'
               >
                 {celebration.badge ? (
-                  <span className="text-5xl">{celebration.badge.icon}</span>
+                  <span className='text-5xl'>{celebration.badge.icon}</span>
                 ) : celebration.icon ? (
-                  <span className="text-5xl">{celebration.icon}</span>
+                  <span className='text-5xl'>{celebration.icon}</span>
                 ) : (
-                  <PartyPopper className="w-12 h-12 text-amber-500" />
+                  <PartyPopper className='w-12 h-12 text-amber-500' />
                 )}
               </motion.div>
 
@@ -129,7 +140,7 @@ export function CelebrationModal({ celebration, onClose }: CelebrationModalProps
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="text-2xl font-bold text-gray-800 mb-2"
+                className='text-2xl font-bold text-gray-800 mb-2'
               >
                 {celebration.title}
               </motion.h2>
@@ -139,7 +150,7 @@ export function CelebrationModal({ celebration, onClose }: CelebrationModalProps
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
-                className="text-gray-600 mb-6"
+                className='text-gray-600 mb-6'
               >
                 {celebration.message}
               </motion.p>
@@ -150,10 +161,14 @@ export function CelebrationModal({ celebration, onClose }: CelebrationModalProps
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 }}
-                  className="bg-gray-50 rounded-xl p-4 mb-6"
+                  className='bg-gray-50 rounded-xl p-4 mb-6'
                 >
-                  <p className="text-sm font-medium text-gray-800">{celebration.badge.name}</p>
-                  <p className="text-xs text-gray-500">{celebration.badge.description}</p>
+                  <p className='text-sm font-medium text-gray-800'>
+                    {celebration.badge.name}
+                  </p>
+                  <p className='text-xs text-gray-500'>
+                    {celebration.badge.description}
+                  </p>
                 </motion.div>
               )}
 
@@ -163,7 +178,7 @@ export function CelebrationModal({ celebration, onClose }: CelebrationModalProps
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6 }}
                 onClick={onClose}
-                className="w-full py-3 bg-[#1B998B] text-white font-medium rounded-xl hover:bg-[#158578] transition-colors"
+                className='w-full py-3 bg-[#1B998B] text-white font-medium rounded-xl hover:bg-[#158578] transition-colors'
               >
                 Super !
               </motion.button>

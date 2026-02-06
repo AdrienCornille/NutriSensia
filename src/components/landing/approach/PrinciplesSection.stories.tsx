@@ -34,7 +34,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Section présentant les 3 piliers de l\'approche nutritionnelle avec design system NutriSensia.',
+          "Section présentant les 3 piliers de l'approche nutritionnelle avec design system NutriSensia.",
       },
     },
   },

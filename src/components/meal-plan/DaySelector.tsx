@@ -15,8 +15,8 @@ export function DaySelector({
   onDaySelect,
 }: DaySelectorProps) {
   return (
-    <div className="bg-white border-b border-gray-200 px-8 py-4">
-      <div className="flex gap-2">
+    <div className='bg-white border-b border-gray-200 px-8 py-4'>
+      <div className='flex gap-2'>
         {weekDays.map((day, index) => (
           <button
             key={day.short}
@@ -25,12 +25,12 @@ export function DaySelector({
               selectedDayIndex === index
                 ? 'bg-[#1B998B] text-white'
                 : day.isToday
-                ? 'bg-[#1B998B]/10 text-[#1B998B] border-2 border-[#1B998B]/30'
-                : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+                  ? 'bg-[#1B998B]/10 text-[#1B998B] border-2 border-[#1B998B]/30'
+                  : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
             }`}
           >
-            <p className="text-xs font-medium">{day.short}</p>
-            <p className="text-lg font-bold">{day.date}</p>
+            <p className='text-xs font-medium'>{day.short}</p>
+            <p className='text-lg font-bold'>{day.date}</p>
           </button>
         ))}
       </div>

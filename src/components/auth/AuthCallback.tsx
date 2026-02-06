@@ -72,13 +72,7 @@ const ErrorIcon = () => (
     fill='none'
     xmlns='http://www.w3.org/2000/svg'
   >
-    <circle
-      cx='12'
-      cy='12'
-      r='10'
-      stroke='#EF4444'
-      strokeWidth='2'
-    />
+    <circle cx='12' cy='12' r='10' stroke='#EF4444' strokeWidth='2' />
     <path
       d='M15 9L9 15M9 9l6 6'
       stroke='#EF4444'
@@ -106,7 +100,34 @@ export function AuthCallback() {
       try {
         setMessage("Récupération des paramètres d'authentification...");
 
-        // Récupérer les paramètres de l'URL
+        // Vérifier s'il y a une erreur dans les query params (erreur Supabase Auth)
+        const queryParams = new URLSearchParams(window.location.search);
+        const errorCode = queryParams.get('error');
+        const errorDescription = queryParams.get('error_description');
+
+        if (errorCode) {
+          // Traduire les erreurs Supabase en messages français
+          let errorMessage =
+            errorDescription?.replace(/\+/g, ' ') || 'Erreur de connexion';
+
+          if (
+            errorDescription?.includes('Database+error+saving+new+user') ||
+            errorDescription?.includes('Database error saving new user')
+          ) {
+            errorMessage =
+              'Erreur lors de la création du compte. Veuillez réessayer ou contacter le support.';
+          } else if (
+            errorDescription?.includes('Email+already+registered') ||
+            errorDescription?.includes('Email already registered')
+          ) {
+            errorMessage =
+              'Cette adresse email est déjà enregistrée. Essayez de vous connecter.';
+          }
+
+          throw new Error(errorMessage);
+        }
+
+        // Récupérer les paramètres de l'URL (tokens dans le hash)
         const urlParams = new URLSearchParams(
           window.location.hash.substring(1)
         );
@@ -145,14 +166,17 @@ export function AuthCallback() {
 
           // Appeler l'API pour créer/vérifier le profil OAuth
           // Passer le token directement car les cookies ne sont pas encore disponibles
-          const profileResponse = await fetch('/api/auth/create-oauth-profile', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${accessToken}`,
-            },
-            credentials: 'include',
-          });
+          const profileResponse = await fetch(
+            '/api/auth/create-oauth-profile',
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${accessToken}`,
+              },
+              credentials: 'include',
+            }
+          );
 
           const profileResult = await profileResponse.json();
 
@@ -164,24 +188,27 @@ export function AuthCallback() {
           setMessage('Connexion réussie !');
           setStatus('success');
 
-          // Rediriger selon l'état du profil
+          // AUTH-001: Rediriger vers la page appropriée selon la complétion du profil
+          // - Si profil incomplet (pas de consultation_reason ou 'autre'): page de complétion
+          // - Si profil complet: dashboard
+          const isProfileComplete = profileResult.isComplete === true;
+          const redirectUrl = isProfileComplete
+            ? '/dashboard'
+            : '/auth/complete-profile';
+
+          // Utiliser window.location.href pour forcer un rechargement complet
+          // Cela garantit que les cookies de session sont envoyés avec la requête
           setTimeout(() => {
-            if (profileResult.isComplete) {
-              // Profil complet - aller au dashboard (connexion suivante)
-              router.push('/dashboard');
-            } else {
-              // Profil incomplet - aller compléter le profil (raison consultation)
-              router.push('/auth/complete-profile');
-            }
+            window.location.href = redirectUrl;
           }, 1500);
         } else {
           // Connexion email classique - aller au dashboard
           setMessage('Connexion réussie !');
           setStatus('success');
 
-          // Redirection vers le dashboard
+          // Redirection vers le dashboard avec rechargement complet
           setTimeout(() => {
-            router.push('/dashboard');
+            window.location.href = '/dashboard';
           }, 1500);
         }
       } catch (error: unknown) {
@@ -190,7 +217,8 @@ export function AuthCallback() {
           error
         );
         setStatus('error');
-        const errorMessage = error instanceof Error ? error.message : 'Une erreur est survenue';
+        const errorMessage =
+          error instanceof Error ? error.message : 'Une erreur est survenue';
         setMessage(errorMessage);
 
         // Rediriger vers la page de connexion en cas d'erreur
@@ -200,11 +228,14 @@ export function AuthCallback() {
       }
     };
 
-    // Vérifier si nous sommes sur une page de callback
-    if (window.location.hash.includes('access_token')) {
+    // Vérifier si nous sommes sur une page de callback (tokens OU erreur)
+    const hasTokens = window.location.hash.includes('access_token');
+    const hasError = window.location.search.includes('error=');
+
+    if (hasTokens || hasError) {
       handleAuthCallback();
     } else {
-      // Si pas de tokens, rediriger vers la page d'accueil
+      // Si pas de tokens ni d'erreur, rediriger vers la page d'accueil
       router.push('/');
     }
   }, [router]);
@@ -370,10 +401,7 @@ export function AuthCallback() {
           transition={{ duration: 0.5, delay: 0.6 }}
           className='text-center mt-8'
         >
-          <p
-            className='text-body-small'
-            style={{ color: '#A89888' }}
-          >
+          <p className='text-body-small' style={{ color: '#A89888' }}>
             NutriSensia
           </p>
         </motion.div>

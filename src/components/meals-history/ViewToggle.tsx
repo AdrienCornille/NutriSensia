@@ -16,8 +16,8 @@ const views: { id: ViewMode; label: string }[] = [
 
 export function ViewToggle({ activeView, onViewChange }: ViewToggleProps) {
   return (
-    <div className="flex bg-gray-100 rounded-lg p-1">
-      {views.map((view) => (
+    <div className='flex bg-gray-100 rounded-lg p-1'>
+      {views.map(view => (
         <button
           key={view.id}
           onClick={() => onViewChange(view.id)}

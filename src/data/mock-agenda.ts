@@ -81,7 +81,8 @@ const mockAppointments: Appointment[] = [
     mode: 'cabinet',
     status: 'completed',
     nutritionist: mockNutritionist,
-    summary: 'Anamnèse complète, définition des objectifs, mise en place du plan initial.',
+    summary:
+      'Anamnèse complète, définition des objectifs, mise en place du plan initial.',
     price: 150,
   },
 ];
@@ -95,10 +96,14 @@ export function getUpcomingAppointments(): Appointment[] {
   now.setHours(0, 0, 0, 0);
 
   return mockAppointments
-    .filter((apt) => {
+    .filter(apt => {
       const aptDate = new Date(apt.date);
       aptDate.setHours(0, 0, 0, 0);
-      return aptDate >= now && apt.status !== 'cancelled' && apt.status !== 'completed';
+      return (
+        aptDate >= now &&
+        apt.status !== 'cancelled' &&
+        apt.status !== 'completed'
+      );
     })
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 }
@@ -108,7 +113,7 @@ export function getPastAppointments(): Appointment[] {
   now.setHours(0, 0, 0, 0);
 
   return mockAppointments
-    .filter((apt) => {
+    .filter(apt => {
       const aptDate = new Date(apt.date);
       aptDate.setHours(0, 0, 0, 0);
       return aptDate < now || apt.status === 'completed';
@@ -203,9 +208,10 @@ export function getAvailableDays(month: Date): AvailableDay[] {
     const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
 
     const slots = generateTimeSlots(date);
-    const availableSlots = slots.filter((s) => s.available);
+    const availableSlots = slots.filter(s => s.available);
 
     days.push({
+      dateStr: `${year}-${String(monthNum + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`,
       date,
       dayNumber: day,
       dayName: dayNames[dayOfWeek],
@@ -233,7 +239,9 @@ export function getReminderSettings(): ReminderSettings {
   return { ...mockReminderSettings };
 }
 
-export function updateReminderSettings(settings: Partial<ReminderSettings>): ReminderSettings {
+export function updateReminderSettings(
+  settings: Partial<ReminderSettings>
+): ReminderSettings {
   mockReminderSettings = { ...mockReminderSettings, ...settings };
   return { ...mockReminderSettings };
 }
@@ -263,7 +271,10 @@ export function createAppointment(data: {
     mode: data.mode,
     status: 'pending',
     nutritionist: mockNutritionist,
-    visioLink: data.mode === 'visio' ? `https://meet.nutrisensia.ch/${Date.now()}` : undefined,
+    visioLink:
+      data.mode === 'visio'
+        ? `https://meet.nutrisensia.ch/${Date.now()}`
+        : undefined,
     notes: data.message,
     price: config.price,
   };
@@ -273,7 +284,7 @@ export function createAppointment(data: {
 }
 
 export function cancelAppointment(id: string): boolean {
-  const index = mockAppointments.findIndex((apt) => apt.id === id);
+  const index = mockAppointments.findIndex(apt => apt.id === id);
   if (index !== -1) {
     mockAppointments[index].status = 'cancelled';
     return true;
@@ -286,7 +297,7 @@ export function modifyAppointment(
   id: string,
   formData: BookingFormData
 ): Appointment | null {
-  const index = mockAppointments.findIndex((apt) => apt.id === id);
+  const index = mockAppointments.findIndex(apt => apt.id === id);
   if (index === -1) return null;
 
   if (
@@ -312,7 +323,10 @@ export function modifyAppointment(
     type: formData.consultationType,
     typeName: config.label,
     mode: formData.mode,
-    visioLink: formData.mode === 'visio' ? `https://meet.nutrisensia.ch/${Date.now()}` : undefined,
+    visioLink:
+      formData.mode === 'visio'
+        ? `https://meet.nutrisensia.ch/${Date.now()}`
+        : undefined,
     notes: formData.message || mockAppointments[index].notes,
     price: config.price,
   };

@@ -20,11 +20,11 @@ export function StepIndicator({
   onStepClick,
 }: StepIndicatorProps) {
   return (
-    <div className="flex items-center gap-2">
-      <span className="text-sm text-gray-500">
+    <div className='flex items-center gap-2'>
+      <span className='text-sm text-gray-500'>
         Étape {currentStep}/{steps.length}
       </span>
-      <div className="flex gap-1">
+      <div className='flex gap-1'>
         {steps.map((step, index) => {
           const stepNumber = index + 1;
           const isCompleted = stepNumber < currentStep;
@@ -44,16 +44,13 @@ export function StepIndicator({
               `}
               initial={false}
               animate={{
-                backgroundColor: isCompleted || isActive ? '#10B981' : '#E5E7EB',
+                backgroundColor:
+                  isCompleted || isActive ? '#10B981' : '#E5E7EB',
               }}
               transition={{ duration: 0.2 }}
               title={step.label}
               aria-label={`${step.label} - ${
-                isCompleted
-                  ? 'Complété'
-                  : isActive
-                    ? 'En cours'
-                    : 'À venir'
+                isCompleted ? 'Complété' : isActive ? 'En cours' : 'À venir'
               }`}
             />
           );
@@ -75,8 +72,8 @@ export function StepIndicatorExtended({
   showLabels = true,
 }: StepIndicatorExtendedProps) {
   return (
-    <div className="w-full">
-      <div className="flex items-center justify-between">
+    <div className='w-full'>
+      <div className='flex items-center justify-between'>
         {steps.map((step, index) => {
           const stepNumber = index + 1;
           const isCompleted = stepNumber < currentStep;
@@ -87,7 +84,7 @@ export function StepIndicatorExtended({
           return (
             <React.Fragment key={index}>
               {/* Step circle and label */}
-              <div className="flex flex-col items-center">
+              <div className='flex flex-col items-center'>
                 <motion.button
                   onClick={() => isClickable && onStepClick(stepNumber)}
                   disabled={!isClickable}
@@ -105,20 +102,20 @@ export function StepIndicatorExtended({
                   `}
                   whileTap={isClickable ? { scale: 0.95 } : undefined}
                   aria-label={`${step.label} - ${
-                    isCompleted
-                      ? 'Complété'
-                      : isActive
-                        ? 'En cours'
-                        : 'À venir'
+                    isCompleted ? 'Complété' : isActive ? 'En cours' : 'À venir'
                   }`}
                 >
                   {isCompleted ? (
                     <motion.div
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
-                      transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                      transition={{
+                        type: 'spring',
+                        stiffness: 500,
+                        damping: 30,
+                      }}
                     >
-                      <Check className="w-5 h-5" />
+                      <Check className='w-5 h-5' />
                     </motion.div>
                   ) : (
                     stepNumber
@@ -139,9 +136,9 @@ export function StepIndicatorExtended({
 
               {/* Connector line */}
               {!isLast && (
-                <div className="flex-1 mx-2 h-0.5 bg-gray-200 relative">
+                <div className='flex-1 mx-2 h-0.5 bg-gray-200 relative'>
                   <motion.div
-                    className="absolute inset-y-0 left-0 bg-emerald-500"
+                    className='absolute inset-y-0 left-0 bg-emerald-500'
                     initial={false}
                     animate={{
                       width: isCompleted ? '100%' : '0%',

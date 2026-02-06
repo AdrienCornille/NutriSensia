@@ -69,11 +69,11 @@ export function WaveDivider({
       style={{
         height: `${height.mobile || 60}px`,
       }}
-      aria-hidden="true"
+      aria-hidden='true'
     >
       {/* Dégradé de fond */}
       <div
-        className="absolute inset-0"
+        className='absolute inset-0'
         style={{
           background: `linear-gradient(to bottom, ${fromColor}, ${toColor})`,
         }}
@@ -81,9 +81,9 @@ export function WaveDivider({
 
       {/* SVG Wave - Couche principale */}
       <svg
-        className="absolute bottom-0 left-0 w-full"
-        viewBox="0 0 2000 100"
-        preserveAspectRatio="none"
+        className='absolute bottom-0 left-0 w-full'
+        viewBox='0 0 2000 100'
+        preserveAspectRatio='none'
         style={{
           height: '100%',
           width: '100%',
@@ -112,9 +112,9 @@ export function WaveDivider({
       {/* SVG Wave - Couche secondaire avec opacité pour effet de profondeur */}
       {animate && (
         <svg
-          className="absolute bottom-0 left-0 w-full opacity-40"
-          viewBox="0 0 2000 100"
-          preserveAspectRatio="none"
+          className='absolute bottom-0 left-0 w-full opacity-40'
+          viewBox='0 0 2000 100'
+          preserveAspectRatio='none'
           style={{
             height: '100%',
             width: '100%',
@@ -156,9 +156,9 @@ export const WaveDividerPresets = {
   // Transition blanc vers sage clair (pour section Why → Benefits)
   whiteToSage: (
     <WaveDivider
-      variant="smooth"
-      fromColor="#ffffff"
-      toColor="#E8F3EF"
+      variant='smooth'
+      fromColor='#ffffff'
+      toColor='#E8F3EF'
       animate={true}
     />
   ),
@@ -166,9 +166,9 @@ export const WaveDividerPresets = {
   // Transition sage vers blanc
   sageToWhite: (
     <WaveDivider
-      variant="smooth"
-      fromColor="#E8F3EF"
-      toColor="#ffffff"
+      variant='smooth'
+      fromColor='#E8F3EF'
+      toColor='#ffffff'
       animate={true}
     />
   ),
@@ -176,9 +176,9 @@ export const WaveDividerPresets = {
   // Transition avec vague plus prononcée
   wavyTransition: (
     <WaveDivider
-      variant="wavy"
-      fromColor="#ffffff"
-      toColor="#E8F3EF"
+      variant='wavy'
+      fromColor='#ffffff'
+      toColor='#E8F3EF'
       animate={true}
       height={{ mobile: 80, desktop: 120 }}
     />
@@ -187,9 +187,9 @@ export const WaveDividerPresets = {
   // Transition courbe élégante
   curvedTransition: (
     <WaveDivider
-      variant="curved"
-      fromColor="#ffffff"
-      toColor="#E8F3EF"
+      variant='curved'
+      fromColor='#ffffff'
+      toColor='#E8F3EF'
       animate={true}
       height={{ mobile: 70, desktop: 110 }}
     />

@@ -32,57 +32,62 @@ export function CalendarPicker({
 
   const weekDays = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
 
+  // Filter days to only show days from the current month (using dateStr for reliability)
+  const currentYear = currentMonth.getFullYear();
+  const currentMonthNum = currentMonth.getMonth() + 1;
+  const monthPrefix = `${currentYear}-${String(currentMonthNum).padStart(2, '0')}-`;
+
+  const daysInMonth = availableDays.filter(day =>
+    day.dateStr.startsWith(monthPrefix)
+  );
+
   const isSelectedDate = (day: AvailableDay) => {
     if (!selectedDate) return false;
-    return (
-      day.date.getDate() === selectedDate.getDate() &&
-      day.date.getMonth() === selectedDate.getMonth() &&
-      day.date.getFullYear() === selectedDate.getFullYear()
-    );
+    return day.dateStr === `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
   };
 
   return (
     <div>
-      <h4 className="font-medium text-gray-800 mb-4">Choisissez une date</h4>
+      <h4 className='font-medium text-gray-800 mb-4'>Choisissez une date</h4>
 
-      <div className="flex items-center gap-2 mb-4">
+      <div className='flex items-center gap-2 mb-4'>
         <button
           onClick={() => onMonthChange('prev')}
-          className="p-2 hover:bg-gray-100 rounded-lg text-gray-400"
+          className='p-2 hover:bg-gray-100 rounded-lg text-gray-400'
         >
-          <ChevronLeft className="w-5 h-5" />
+          <ChevronLeft className='w-5 h-5' />
         </button>
-        <span className="text-sm font-medium text-gray-600 capitalize">
+        <span className='text-sm font-medium text-gray-600 capitalize'>
           {formatMonthYear(currentMonth)}
         </span>
         <button
           onClick={() => onMonthChange('next')}
-          className="p-2 hover:bg-gray-100 rounded-lg text-gray-400"
+          className='p-2 hover:bg-gray-100 rounded-lg text-gray-400'
         >
-          <ChevronRight className="w-5 h-5" />
+          <ChevronRight className='w-5 h-5' />
         </button>
       </div>
 
       {/* Week day headers */}
-      <div className="grid grid-cols-7 gap-1 mb-2">
-        {weekDays.map((day) => (
-          <div key={day} className="text-center text-xs text-gray-400 py-1">
+      <div className='grid grid-cols-7 gap-1 mb-2'>
+        {weekDays.map(day => (
+          <div key={day} className='text-center text-xs text-gray-400 py-1'>
             {day}
           </div>
         ))}
       </div>
 
       {/* Calendar grid */}
-      <div className="grid grid-cols-7 gap-1">
+      <div className='grid grid-cols-7 gap-1'>
         {/* Empty cells for days before the first of the month */}
         {Array.from({ length: startOffset }).map((_, index) => (
-          <div key={`empty-${index}`} className="p-3" />
+          <div key={`empty-${index}`} className='p-3' />
         ))}
 
         {/* Actual days */}
-        {availableDays.map((day) => (
+        {daysInMonth.map(day => (
           <button
-            key={day.dayNumber}
+            key={day.dateStr}
             disabled={!day.isAvailable}
             onClick={() => onDateSelect(day.date)}
             className={`p-2 rounded-xl text-center transition-all ${
@@ -93,7 +98,7 @@ export function CalendarPicker({
                   : 'bg-gray-50 hover:bg-emerald-50 text-gray-700'
             }`}
           >
-            <p className="font-bold text-sm">{day.dayNumber}</p>
+            <p className='font-bold text-sm'>{day.dayNumber}</p>
             {day.isAvailable && (
               <p
                 className={`text-xs mt-0.5 ${

@@ -40,7 +40,9 @@ export interface ApproachPageWithIntroProps {
  * <ApproachPageWithIntro />
  * ```
  */
-export function ApproachPageWithIntro({ className }: ApproachPageWithIntroProps) {
+export function ApproachPageWithIntro({
+  className,
+}: ApproachPageWithIntroProps) {
   // Active le smooth scrolling avec momentum (effet mobile)
   useSmoothScroll({
     duration: 1.2, // Durée de l'animation en secondes
@@ -60,19 +62,18 @@ export function ApproachPageWithIntro({ className }: ApproachPageWithIntroProps)
 
       {/* Contenu principal */}
       <main>
-
         {/* Section 1 : Mes Principes - Les 3 piliers de l'approche */}
-        <div id="principles">
+        <div id='principles'>
           <PrinciplesSection />
         </div>
 
         {/* Section 2 : Mes Méthodes - Les 5 approches thérapeutiques */}
-        <div id="methods">
+        <div id='methods'>
           <MethodsSection />
         </div>
 
         {/* Section 3 : Comment nous travaillons ensemble - Cartes défilantes */}
-        <div id="process">
+        <div id='process'>
           <ProcessTimelineCards />
         </div>
       </main>

@@ -14,7 +14,10 @@ interface SectionScrollbarProps {
   className?: string;
 }
 
-export function SectionScrollbar({ sections, className = '' }: SectionScrollbarProps) {
+export function SectionScrollbar({
+  sections,
+  className = '',
+}: SectionScrollbarProps) {
   const [activeSection, setActiveSection] = useState<string>('');
   const [hoveredSection, setHoveredSection] = useState<string | null>(null);
 
@@ -68,9 +71,10 @@ export function SectionScrollbar({ sections, className = '' }: SectionScrollbarP
         const progress = Math.min(timeElapsed / duration, 1);
 
         // Fonction d'easing (easeInOutCubic) pour un mouvement plus naturel
-        const ease = progress < 0.5
-          ? 4 * progress * progress * progress
-          : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+        const ease =
+          progress < 0.5
+            ? 4 * progress * progress * progress
+            : 1 - Math.pow(-2 * progress + 2, 3) / 2;
 
         window.scrollTo(0, startPosition + distance * ease);
 
@@ -100,12 +104,12 @@ export function SectionScrollbar({ sections, className = '' }: SectionScrollbarP
   return (
     <div
       className={`fixed right-0 top-0 bottom-0 z-50 hidden lg:flex items-center justify-end pr-4 ${className}`}
-      role="navigation"
-      aria-label="Navigation par sections"
+      role='navigation'
+      aria-label='Navigation par sections'
     >
-      <div className="relative" style={{ height: '85vh' }}>
+      <div className='relative' style={{ height: '85vh' }}>
         {/* Ligne de fond - plus fine et discrète */}
-        <div className="absolute right-0 top-0 bottom-0 w-px bg-gray-200/60" />
+        <div className='absolute right-0 top-0 bottom-0 w-px bg-gray-200/60' />
 
         {/* Segments de sections */}
         {sections.map((section, index) => {
@@ -117,7 +121,7 @@ export function SectionScrollbar({ sections, className = '' }: SectionScrollbarP
           return (
             <div
               key={section.id}
-              className="absolute right-0 group"
+              className='absolute right-0 group'
               style={{
                 top: `${segmentPosition}vh`,
                 height: `${segmentHeight}vh`,
@@ -129,14 +133,14 @@ export function SectionScrollbar({ sections, className = '' }: SectionScrollbarP
                   isActive
                     ? 'bg-primary/90'
                     : isHovered
-                    ? 'bg-gray-400/70'
-                    : 'bg-transparent'
+                      ? 'bg-gray-400/70'
+                      : 'bg-transparent'
                 }`}
                 style={{ height: '100%' }}
               />
 
               {/* Conteneur du numéro positionné en bas du segment */}
-              <div className="absolute bottom-0 right-0 flex items-center justify-end">
+              <div className='absolute bottom-0 right-0 flex items-center justify-end'>
                 {/* Label au survol - même style que le numéro */}
                 <AnimatePresence>
                   {isHovered && (
@@ -145,11 +149,13 @@ export function SectionScrollbar({ sections, className = '' }: SectionScrollbarP
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: 4 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute right-8 whitespace-nowrap"
+                      className='absolute right-8 whitespace-nowrap'
                     >
-                      <span className={`text-[10px] font-semibold ${
-                        isActive ? 'text-primary' : 'text-gray-700'
-                      }`}>
+                      <span
+                        className={`text-[10px] font-semibold ${
+                          isActive ? 'text-primary' : 'text-gray-700'
+                        }`}
+                      >
                         {section.label}
                       </span>
                     </motion.div>
@@ -161,7 +167,7 @@ export function SectionScrollbar({ sections, className = '' }: SectionScrollbarP
                   onClick={() => scrollToSection(section.id)}
                   onMouseEnter={() => setHoveredSection(section.id)}
                   onMouseLeave={() => setHoveredSection(null)}
-                  className="relative flex items-center transition-all duration-200 hover:cursor-pointer"
+                  className='relative flex items-center transition-all duration-200 hover:cursor-pointer'
                   aria-label={`Aller à ${section.label}`}
                 >
                   {/* Numéro de section - complètement à gauche de la scrollbar avec marge */}
@@ -170,11 +176,11 @@ export function SectionScrollbar({ sections, className = '' }: SectionScrollbarP
                       isActive
                         ? 'bg-primary/10 text-primary scale-100'
                         : isHovered
-                        ? 'bg-gray-100 text-gray-700 scale-95'
-                        : 'bg-transparent text-gray-300 scale-90'
+                          ? 'bg-gray-100 text-gray-700 scale-95'
+                          : 'bg-transparent text-gray-300 scale-90'
                     }`}
                   >
-                    <span className="text-[10px] font-semibold">
+                    <span className='text-[10px] font-semibold'>
                       {String(section.order).padStart(2, '0')}
                     </span>
                   </div>
@@ -182,8 +188,8 @@ export function SectionScrollbar({ sections, className = '' }: SectionScrollbarP
                   {/* Indicateur de position active - plus subtil */}
                   {isActive && (
                     <motion.div
-                      layoutId="activeIndicator"
-                      className="absolute right-[-2px] w-1 h-1 bg-primary rounded-full"
+                      layoutId='activeIndicator'
+                      className='absolute right-[-2px] w-1 h-1 bg-primary rounded-full'
                       transition={{
                         type: 'spring',
                         stiffness: 400,

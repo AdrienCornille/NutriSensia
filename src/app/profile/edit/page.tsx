@@ -12,18 +12,24 @@ export default function EditProfilePage() {
     try {
       // Logique personnalisée après la sauvegarde Supabase
       console.log('Données sauvegardées dans Supabase:', data);
-      
+
       // Ici vous pouvez ajouter une logique personnalisée si nécessaire
       // Par exemple, envoyer des notifications, mettre à jour d'autres services, etc.
-      
+
       // Afficher un message de succès
-      showSuccess('Profil mis à jour !', 'Vos modifications ont été sauvegardées avec succès dans Supabase.');
-      
+      showSuccess(
+        'Profil mis à jour !',
+        'Vos modifications ont été sauvegardées avec succès dans Supabase.'
+      );
+
       // Rediriger vers la page de profil
       router.push('/profile');
     } catch (error) {
       console.error('Erreur lors de la sauvegarde:', error);
-      showError('Erreur de sauvegarde', 'Une erreur est survenue lors de la mise à jour du profil');
+      showError(
+        'Erreur de sauvegarde',
+        'Une erreur est survenue lors de la mise à jour du profil'
+      );
       throw error; // Re-lancer l'erreur pour que le formulaire la gère
     }
   };
@@ -33,11 +39,11 @@ export default function EditProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className='min-h-screen bg-gray-50'>
       <AuthenticatedProfileForm
         onSave={handleSave}
         onCancel={handleCancel}
-        redirectAfterSave="/profile"
+        redirectAfterSave='/profile'
       />
     </div>
   );

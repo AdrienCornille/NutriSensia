@@ -8,6 +8,9 @@
 import { Metadata } from 'next';
 import AdminDashboardClient from './AdminDashboardClient';
 
+// Force dynamic rendering - cette page utilise useAuth qui nécessite AuthProvider
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Dashboard Administrateur - NutriSensia',
   description:

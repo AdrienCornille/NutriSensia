@@ -252,7 +252,40 @@
     "yourGoals": "Your Goals",
     "almostDone": "Almost Done",
     "setupComplete": "Setup Complete",
-    "welcomeMessage": "Welcome to your NutriSensia space!"
+    "welcomeMessage": "Welcome to your NutriSensia space!",
+    "consultationReason": {
+      "title": "What is your reason for consultation?",
+      "subtitle": "This information will help your nutritionist prepare for your first meeting",
+      "selectLabel": "Choose your main reason (optional)",
+      "detailsLabel": "Additional details (optional)",
+      "detailsPlaceholder": "Briefly describe your situation or expectations...",
+      "skipStep": "Skip this step",
+      "continue": "Continue",
+      "reasons": {
+        "menopause_perimenopause": "Menopause / Perimenopause",
+        "perte_poids_durable": "Sustainable weight loss",
+        "troubles_digestifs": "Digestive issues",
+        "glycemie_diabete": "Blood sugar / Diabetes",
+        "sante_cardiovasculaire": "Cardiovascular health",
+        "fatigue_energie": "Fatigue / Energy",
+        "longevite_vieillissement": "Longevity / Anti-aging",
+        "sante_hormonale": "Hormonal health",
+        "alimentation_saine": "Healthy eating",
+        "autre": "Other reason"
+      },
+      "descriptions": {
+        "menopause_perimenopause": "Nutritional support during this transition",
+        "perte_poids_durable": "Achieve and maintain a healthy weight",
+        "troubles_digestifs": "Bloating, discomfort, intolerances",
+        "glycemie_diabete": "Balance blood sugar naturally",
+        "sante_cardiovasculaire": "Cholesterol, blood pressure, prevention",
+        "fatigue_energie": "Regain vitality and energy",
+        "longevite_vieillissement": "Age healthily",
+        "sante_hormonale": "Balance hormones naturally",
+        "alimentation_saine": "Learn to eat better daily",
+        "autre": "Specify your needs below"
+      }
+    }
   },
   "Errors": {
     "pageNotFound": "Page Not Found",

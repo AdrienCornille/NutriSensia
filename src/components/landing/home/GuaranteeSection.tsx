@@ -90,7 +90,7 @@ export function GuaranteeSection() {
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.6, delay: 0.3 }}
             className={cn(
-              "font-sans",
+              'font-sans',
               'text-[2rem] md:text-[2.5rem]',
               'font-bold',
               'text-[#2C3E3C]',

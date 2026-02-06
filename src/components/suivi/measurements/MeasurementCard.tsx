@@ -23,17 +23,17 @@ export function MeasurementCard({ measurement }: MeasurementCardProps) {
   const icon = measurementIcons[measurement.type];
 
   return (
-    <div className="bg-white rounded-xl p-5 border border-gray-200">
-      <div className="flex items-start justify-between">
-        <div className="flex items-start gap-3">
-          <div className="w-10 h-10 bg-[#1B998B]/10 rounded-full flex items-center justify-center flex-shrink-0">
-            <span className="text-lg">{icon}</span>
+    <div className='bg-white rounded-xl p-5 border border-gray-200'>
+      <div className='flex items-start justify-between'>
+        <div className='flex items-start gap-3'>
+          <div className='w-10 h-10 bg-[#1B998B]/10 rounded-full flex items-center justify-center flex-shrink-0'>
+            <span className='text-lg'>{icon}</span>
           </div>
           <div>
-            <p className="text-sm text-gray-500">{measurement.label}</p>
-            <p className="text-2xl font-bold text-gray-800 mt-1">
+            <p className='text-sm text-gray-500'>{measurement.label}</p>
+            <p className='text-2xl font-bold text-gray-800 mt-1'>
               {measurement.current}{' '}
-              <span className="text-base font-normal text-gray-400">
+              <span className='text-base font-normal text-gray-400'>
                 {measurement.unit}
               </span>
             </p>
@@ -44,16 +44,16 @@ export function MeasurementCard({ measurement }: MeasurementCardProps) {
             isLoss
               ? 'bg-[#1B998B]/20 text-[#1B998B]'
               : isGain
-              ? 'bg-blue-100 text-blue-700'
-              : 'bg-gray-100 text-gray-600'
+                ? 'bg-blue-100 text-blue-700'
+                : 'bg-gray-100 text-gray-600'
           }`}
         >
           {measurement.change > 0 ? '+' : ''}
           {measurement.change} {measurement.unit}
         </span>
       </div>
-      <div className="mt-4">
-        <div className="flex justify-between text-xs text-gray-500 mb-1">
+      <div className='mt-4'>
+        <div className='flex justify-between text-xs text-gray-500 mb-1'>
           <span>
             Départ: {measurement.initial} {measurement.unit}
           </span>
@@ -61,12 +61,14 @@ export function MeasurementCard({ measurement }: MeasurementCardProps) {
             Actuel: {measurement.current} {measurement.unit}
           </span>
         </div>
-        <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+        <div className='h-2 bg-gray-200 rounded-full overflow-hidden'>
           <div
             className={`h-full rounded-full transition-all duration-300 ${
               isLoss ? 'bg-[#1B998B]' : 'bg-blue-500'
             }`}
-            style={{ width: `${Math.min(Math.abs(measurement.change) * 10, 100)}%` }}
+            style={{
+              width: `${Math.min(Math.abs(measurement.change) * 10, 100)}%`,
+            }}
           />
         </div>
       </div>

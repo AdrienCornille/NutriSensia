@@ -24,10 +24,10 @@ export function FoodsGrid({
 }: FoodsGridProps) {
   if (foods.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 px-4">
-        <span className="text-5xl mb-4">{emptyIcon}</span>
-        <p className="text-gray-500 text-center">{emptyMessage}</p>
-        <p className="text-sm text-gray-400 mt-2 text-center">
+      <div className='flex flex-col items-center justify-center py-16 px-4'>
+        <span className='text-5xl mb-4'>{emptyIcon}</span>
+        <p className='text-gray-500 text-center'>{emptyMessage}</p>
+        <p className='text-sm text-gray-400 mt-2 text-center'>
           Essayez avec d'autres termes ou scannez un code-barres
         </p>
       </div>
@@ -35,8 +35,8 @@ export function FoodsGrid({
   }
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
-      {foods.map((food) => (
+    <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4'>
+      {foods.map(food => (
         <FoodCard
           key={food.id}
           food={food}

@@ -28,23 +28,23 @@ export function WellbeingForm({ initialData, onSubmit }: WellbeingFormProps) {
   };
 
   return (
-    <div className="bg-white rounded-xl p-6 border border-gray-200">
-      <h2 className="font-semibold text-gray-800 mb-4">
+    <div className='bg-white rounded-xl p-6 border border-gray-200'>
+      <h2 className='font-semibold text-gray-800 mb-4'>
         Comment vous sentez-vous aujourd&apos;hui ?
       </h2>
 
       <form onSubmit={handleSubmit}>
-        <div className="grid grid-cols-2 gap-6">
+        <div className='grid grid-cols-2 gap-6'>
           {/* Energy */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
+            <label className='block text-sm font-medium text-gray-700 mb-3'>
               Niveau d&apos;énergie
             </label>
-            <div className="flex gap-2">
-              {[1, 2, 3, 4, 5].map((level) => (
+            <div className='flex gap-2'>
+              {[1, 2, 3, 4, 5].map(level => (
                 <button
                   key={level}
-                  type="button"
+                  type='button'
                   onClick={() => setEnergy(level)}
                   className={`flex-1 py-3 rounded-lg font-medium transition-colors ${
                     energy === level
@@ -56,7 +56,7 @@ export function WellbeingForm({ initialData, onSubmit }: WellbeingFormProps) {
                 </button>
               ))}
             </div>
-            <div className="flex justify-between text-xs text-gray-400 mt-1">
+            <div className='flex justify-between text-xs text-gray-400 mt-1'>
               <span>Épuisé</span>
               <span>Plein d&apos;énergie</span>
             </div>
@@ -64,57 +64,60 @@ export function WellbeingForm({ initialData, onSubmit }: WellbeingFormProps) {
 
           {/* Sleep */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
+            <label className='block text-sm font-medium text-gray-700 mb-3'>
               Heures de sommeil
             </label>
-            <div className="flex items-center gap-3">
+            <div className='flex items-center gap-3'>
               <input
-                type="number"
-                step="0.5"
+                type='number'
+                step='0.5'
                 value={sleep}
-                onChange={(e) => setSleep(e.target.value)}
-                className="flex-1 px-4 py-3 border border-gray-200 rounded-lg text-lg font-medium focus:outline-none focus:ring-2 focus:ring-[#1B998B]"
+                onChange={e => setSleep(e.target.value)}
+                className='flex-1 px-4 py-3 border border-gray-200 rounded-lg text-lg font-medium focus:outline-none focus:ring-2 focus:ring-[#1B998B]'
               />
-              <span className="text-gray-500">heures</span>
+              <span className='text-gray-500'>heures</span>
             </div>
           </div>
 
           {/* Mood */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
+            <label className='block text-sm font-medium text-gray-700 mb-3'>
               Humeur
             </label>
-            <div className="flex gap-2">
-              {(Object.entries(moodConfig) as [MoodType, { emoji: string; label: string }][]).map(
-                ([key, { emoji, label }]) => (
-                  <button
-                    key={key}
-                    type="button"
-                    onClick={() => setMood(key)}
-                    className={`flex-1 py-3 rounded-lg flex flex-col items-center transition-colors ${
-                      mood === key
-                        ? 'bg-[#1B998B]/10 border-2 border-[#1B998B]'
-                        : 'bg-gray-100 hover:bg-gray-200 border-2 border-transparent'
-                    }`}
-                  >
-                    <span className="text-2xl">{emoji}</span>
-                    <span className="text-xs text-gray-600 mt-1">{label}</span>
-                  </button>
-                )
-              )}
+            <div className='flex gap-2'>
+              {(
+                Object.entries(moodConfig) as [
+                  MoodType,
+                  { emoji: string; label: string },
+                ][]
+              ).map(([key, { emoji, label }]) => (
+                <button
+                  key={key}
+                  type='button'
+                  onClick={() => setMood(key)}
+                  className={`flex-1 py-3 rounded-lg flex flex-col items-center transition-colors ${
+                    mood === key
+                      ? 'bg-[#1B998B]/10 border-2 border-[#1B998B]'
+                      : 'bg-gray-100 hover:bg-gray-200 border-2 border-transparent'
+                  }`}
+                >
+                  <span className='text-2xl'>{emoji}</span>
+                  <span className='text-xs text-gray-600 mt-1'>{label}</span>
+                </button>
+              ))}
             </div>
           </div>
 
           {/* Digestion */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
+            <label className='block text-sm font-medium text-gray-700 mb-3'>
               Digestion
             </label>
-            <div className="flex flex-wrap gap-2">
-              {digestionConfig.map((option) => (
+            <div className='flex flex-wrap gap-2'>
+              {digestionConfig.map(option => (
                 <button
                   key={option.id}
-                  type="button"
+                  type='button'
                   onClick={() => setDigestion(option.id)}
                   className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                     digestion === option.id
@@ -130,8 +133,8 @@ export function WellbeingForm({ initialData, onSubmit }: WellbeingFormProps) {
         </div>
 
         <button
-          type="submit"
-          className="w-full mt-6 py-3 bg-[#1B998B] text-white font-medium rounded-lg hover:bg-[#147569] transition-colors"
+          type='submit'
+          className='w-full mt-6 py-3 bg-[#1B998B] text-white font-medium rounded-lg hover:bg-[#147569] transition-colors'
         >
           Enregistrer mon bien-être
         </button>

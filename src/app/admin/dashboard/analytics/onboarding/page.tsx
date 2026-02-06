@@ -21,6 +21,9 @@ import { AdminGuard } from '@/components/auth/AuthGuard';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePermissions } from '@/contexts/AuthContext';
 
+// Force dynamic rendering - cette page utilise useAuth qui nécessite AuthProvider
+export const dynamic = 'force-dynamic';
+
 /**
  * Page des analytics d'onboarding
  */

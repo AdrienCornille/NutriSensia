@@ -80,7 +80,8 @@ export const handleSupabaseError = (error: unknown): SupabaseError => {
   const err = error as { message?: string; status?: number; code?: string };
 
   return {
-    message: errorMessages[err.message || ''] || err.message || 'Erreur inconnue',
+    message:
+      errorMessages[err.message || ''] || err.message || 'Erreur inconnue',
     status: err.status,
     code: err.code || 'UNKNOWN_ERROR',
   };

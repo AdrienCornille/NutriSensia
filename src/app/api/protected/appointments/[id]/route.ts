@@ -50,7 +50,9 @@ export async function GET(
 
     // 3. Récupérer le patient_profiles.id (appointments.user_id référence patient_profiles.id)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: patientProfile, error: profileError } = await (supabase as any)
+    const { data: patientProfile, error: profileError } = await (
+      supabase as any
+    )
       .from('patient_profiles')
       .select('id')
       .eq('user_id', auth.user.id)
@@ -106,7 +108,10 @@ export async function GET(
 
     return NextResponse.json(appointment, { status: 200 });
   } catch (error) {
-    console.error('Unexpected error in GET /api/protected/appointments/[id]:', error);
+    console.error(
+      'Unexpected error in GET /api/protected/appointments/[id]:',
+      error
+    );
     return apiResponse.serverError('Erreur serveur');
   }
 }
@@ -174,7 +179,9 @@ export async function PATCH(
 
     // 4. Récupérer le rendez-vous existant
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: existingAppointment, error: fetchError } = await (supabase as any)
+    const { data: existingAppointment, error: fetchError } = await (
+      supabase as any
+    )
       .from('appointments')
       .select('*, consultation_type:consultation_types(default_duration)')
       .eq('id', id)
@@ -192,7 +199,8 @@ export async function PATCH(
     // 6. Vérifier que le RDV peut être modifié (> 24h avant)
     const scheduledAt = new Date(existingAppointment.scheduled_at);
     const now = new Date();
-    const hoursUntilAppointment = (scheduledAt.getTime() - now.getTime()) / (1000 * 60 * 60);
+    const hoursUntilAppointment =
+      (scheduledAt.getTime() - now.getTime()) / (1000 * 60 * 60);
 
     if (hoursUntilAppointment < 24) {
       return apiResponse.error(
@@ -202,11 +210,16 @@ export async function PATCH(
     }
 
     // 7. Vérifier que le statut permet la modification
-    if (['cancelled', 'completed', 'no_show'].includes(existingAppointment.status)) {
-      return apiResponse.error(
-        'Ce rendez-vous ne peut plus être modifié',
-        403
-      );
+    if (
+      [
+        'cancelled',
+        'cancelled_by_patient',
+        'cancelled_by_nutritionist',
+        'completed',
+        'no_show',
+      ].includes(existingAppointment.status)
+    ) {
+      return apiResponse.error('Ce rendez-vous ne peut plus être modifié', 403);
     }
 
     // 9. Préparer les données de mise à jour
@@ -216,8 +229,12 @@ export async function PATCH(
 
     if (validatedData.scheduled_at) {
       const newScheduledAt = new Date(validatedData.scheduled_at);
-      const duration = existingAppointment.consultation_type?.default_duration || existingAppointment.duration;
-      const newScheduledEndAt = new Date(newScheduledAt.getTime() + duration * 60 * 1000);
+      const duration =
+        existingAppointment.consultation_type?.default_duration ||
+        existingAppointment.duration;
+      const newScheduledEndAt = new Date(
+        newScheduledAt.getTime() + duration * 60 * 1000
+      );
 
       // Vérifier que le nouveau créneau est disponible
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -226,19 +243,28 @@ export async function PATCH(
         .select('id')
         .eq('nutritionist_id', existingAppointment.nutritionist_id)
         .neq('id', id)
-        .not('status', 'in', '("cancelled_by_patient","cancelled_by_nutritionist")')
+        .not(
+          'status',
+          'in',
+          '("cancelled","cancelled_by_patient","cancelled_by_nutritionist","no_show")'
+        )
         .lt('scheduled_at', newScheduledEndAt.toISOString())
         .gt('scheduled_end_at', newScheduledAt.toISOString());
 
       if (conflicts && conflicts.length > 0) {
         return apiResponse.error(
-          'Ce créneau n\'est plus disponible. Veuillez en choisir un autre.',
+          "Ce créneau n'est plus disponible. Veuillez en choisir un autre.",
           409
         );
       }
 
       updateData.scheduled_at = newScheduledAt.toISOString();
       updateData.scheduled_end_at = newScheduledEndAt.toISOString();
+
+      // Repasser en pending pour que le nutritionniste valide le nouvel horaire
+      updateData.status = 'pending';
+      updateData.status_reason = null;
+      updateData.status_changed_at = new Date().toISOString();
     }
 
     if (validatedData.mode) {
@@ -258,7 +284,9 @@ export async function PATCH(
 
     // 10. Mettre à jour le rendez-vous
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: updatedAppointment, error: updateError } = await (supabase as any)
+    const { data: updatedAppointment, error: updateError } = await (
+      supabase as any
+    )
       .from('appointments')
       .update(updateData)
       .eq('id', id)
@@ -291,7 +319,9 @@ export async function PATCH(
 
     if (updateError) {
       console.error('Error updating appointment:', updateError);
-      return apiResponse.serverError('Erreur lors de la modification du rendez-vous');
+      return apiResponse.serverError(
+        'Erreur lors de la modification du rendez-vous'
+      );
     }
 
     // Le changement est loggé automatiquement par le trigger DB (trigger_log_appointment_change)
@@ -323,7 +353,10 @@ export async function PATCH(
 
     return NextResponse.json(updatedAppointment, { status: 200 });
   } catch (error) {
-    console.error('Unexpected error in PATCH /api/protected/appointments/[id]:', error);
+    console.error(
+      'Unexpected error in PATCH /api/protected/appointments/[id]:',
+      error
+    );
     return apiResponse.serverError('Erreur serveur');
   }
 }
@@ -382,7 +415,9 @@ export async function DELETE(
 
     // 4. Récupérer le rendez-vous existant
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: existingAppointment, error: fetchError } = await (supabase as any)
+    const { data: existingAppointment, error: fetchError } = await (
+      supabase as any
+    )
       .from('appointments')
       .select('*')
       .eq('id', id)
@@ -400,7 +435,8 @@ export async function DELETE(
     // 6. Vérifier que le RDV peut être annulé (> 24h avant)
     const scheduledAt = new Date(existingAppointment.scheduled_at);
     const now = new Date();
-    const hoursUntilAppointment = (scheduledAt.getTime() - now.getTime()) / (1000 * 60 * 60);
+    const hoursUntilAppointment =
+      (scheduledAt.getTime() - now.getTime()) / (1000 * 60 * 60);
 
     if (hoursUntilAppointment < 24) {
       return apiResponse.error(
@@ -410,11 +446,16 @@ export async function DELETE(
     }
 
     // 7. Vérifier que le statut permet l'annulation
-    if (['cancelled', 'completed', 'no_show'].includes(existingAppointment.status)) {
-      return apiResponse.error(
-        'Ce rendez-vous ne peut plus être annulé',
-        403
-      );
+    if (
+      [
+        'cancelled',
+        'cancelled_by_patient',
+        'cancelled_by_nutritionist',
+        'completed',
+        'no_show',
+      ].includes(existingAppointment.status)
+    ) {
+      return apiResponse.error('Ce rendez-vous ne peut plus être annulé', 403);
     }
 
     // 8. Annuler le rendez-vous (soft delete)
@@ -422,7 +463,7 @@ export async function DELETE(
     const { error: updateError } = await (supabase as any)
       .from('appointments')
       .update({
-        status: 'cancelled',
+        status: 'cancelled_by_patient',
         status_changed_at: new Date().toISOString(),
         status_reason: reason,
         cancelled_by: auth.user.id,
@@ -433,7 +474,9 @@ export async function DELETE(
 
     if (updateError) {
       console.error('Error cancelling appointment:', updateError);
-      return apiResponse.serverError('Erreur lors de l\'annulation du rendez-vous');
+      return apiResponse.serverError(
+        "Erreur lors de l'annulation du rendez-vous"
+      );
     }
 
     // Le changement est loggé automatiquement par le trigger DB (trigger_log_appointment_change)
@@ -472,7 +515,10 @@ export async function DELETE(
       { status: 200 }
     );
   } catch (error) {
-    console.error('Unexpected error in DELETE /api/protected/appointments/[id]:', error);
+    console.error(
+      'Unexpected error in DELETE /api/protected/appointments/[id]:',
+      error
+    );
     return apiResponse.serverError('Erreur serveur');
   }
 }

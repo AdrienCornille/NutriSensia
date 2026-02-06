@@ -122,7 +122,7 @@ export const updateHydrationLogSchema = z.object({
 export const updateHydrationGoalSchema = z.object({
   daily_goal_ml: z
     .number()
-    .positive('L\'objectif doit être positif')
+    .positive("L'objectif doit être positif")
     .min(500, 'Objectif minimum: 500ml')
     .max(10000, 'Objectif maximum: 10000ml (10L)'),
 });
@@ -158,7 +158,7 @@ export const updateWeightGoalSchema = z.object({
     .optional(),
   weekly_goal_kg: z
     .number()
-    .positive('L\'objectif hebdomadaire doit être positif')
+    .positive("L'objectif hebdomadaire doit être positif")
     .max(2, 'Objectif hebdomadaire maximum: 2kg')
     .optional(),
 });
@@ -209,8 +209,12 @@ export const updateMeasurementEntrySchema = z.object({
     .optional(),
 });
 
-export type CreateMeasurementEntryData = z.infer<typeof createMeasurementEntrySchema>;
-export type UpdateMeasurementEntryData = z.infer<typeof updateMeasurementEntrySchema>;
+export type CreateMeasurementEntryData = z.infer<
+  typeof createMeasurementEntrySchema
+>;
+export type UpdateMeasurementEntryData = z.infer<
+  typeof updateMeasurementEntrySchema
+>;
 
 // @deprecated - Ancien schéma (noms anglais, pas aligné avec DB)
 // Utilisez createMeasurementEntrySchema à la place
@@ -251,14 +255,20 @@ export const createBodyMeasurementsSchema = z.object({
 // =====================================================
 
 // Humeur
-export const moodEnum = z.enum(['very_bad', 'bad', 'neutral', 'good', 'excellent']);
+export const moodEnum = z.enum([
+  'very_bad',
+  'bad',
+  'neutral',
+  'good',
+  'excellent',
+]);
 
 // Niveau d'énergie
 export const energyLevelSchema = z
   .number()
-  .int('Le niveau d\'énergie doit être un entier')
-  .min(1, 'Niveau d\'énergie minimum: 1')
-  .max(5, 'Niveau d\'énergie maximum: 5');
+  .int("Le niveau d'énergie doit être un entier")
+  .min(1, "Niveau d'énergie minimum: 1")
+  .max(5, "Niveau d'énergie maximum: 5");
 
 // Tags digestion
 export const digestionTagEnum = z.enum([
@@ -293,8 +303,19 @@ export const createWellnessLogSchema = z.object({
 // =====================================================
 
 // Enums DB (format base de données pour wellbeing_logs)
-export const moodAPIEnum = z.enum(['very_good', 'good', 'neutral', 'bad', 'very_bad']);
-export const digestionQualityAPIEnum = z.enum(['poor', 'average', 'good', 'excellent']);
+export const moodAPIEnum = z.enum([
+  'very_good',
+  'good',
+  'neutral',
+  'bad',
+  'very_bad',
+]);
+export const digestionQualityAPIEnum = z.enum([
+  'poor',
+  'average',
+  'good',
+  'excellent',
+]);
 
 // Schéma pour créer un log de bien-être (POST /api/protected/wellbeing)
 export const createWellbeingLogSchema = z.object({
@@ -304,9 +325,9 @@ export const createWellbeingLogSchema = z.object({
     .optional(), // Défaut = today
   energy_level: z
     .number()
-    .int('Le niveau d\'énergie doit être un entier')
-    .min(1, 'Niveau d\'énergie minimum: 1')
-    .max(10, 'Niveau d\'énergie maximum: 10'),
+    .int("Le niveau d'énergie doit être un entier")
+    .min(1, "Niveau d'énergie minimum: 1")
+    .max(10, "Niveau d'énergie maximum: 10"),
   sleep_hours: z
     .number()
     .positive('Les heures de sommeil doivent être positives')
@@ -332,9 +353,9 @@ export const updateWellbeingLogSchema = z
   .object({
     energy_level: z
       .number()
-      .int('Le niveau d\'énergie doit être un entier')
-      .min(1, 'Niveau d\'énergie minimum: 1')
-      .max(10, 'Niveau d\'énergie maximum: 10')
+      .int("Le niveau d'énergie doit être un entier")
+      .min(1, "Niveau d'énergie minimum: 1")
+      .max(10, "Niveau d'énergie maximum: 10")
       .optional(),
     sleep_hours: z
       .number()
@@ -355,7 +376,7 @@ export const updateWellbeingLogSchema = z
       .max(500, 'Notes trop longues (max 500 caractères)')
       .optional(),
   })
-  .refine((data) => Object.keys(data).length > 0, {
+  .refine(data => Object.keys(data).length > 0, {
     message: 'Au moins un champ doit être fourni pour la mise à jour',
   });
 
@@ -379,7 +400,12 @@ export const activityTypeEnum = z.enum([
 ]);
 
 // Intensité (aligné avec l'enum PostgreSQL activity_intensity)
-export const intensityEnum = z.enum(['light', 'moderate', 'vigorous', 'very_vigorous']);
+export const intensityEnum = z.enum([
+  'light',
+  'moderate',
+  'vigorous',
+  'very_vigorous',
+]);
 
 // Schéma pour ajouter une activité
 export const createActivityLogSchema = z.object({
@@ -435,7 +461,7 @@ export const updateActivityLogSchema = z
       .regex(/^\d{4}-\d{2}-\d{2}$/, 'Format de date invalide (YYYY-MM-DD)')
       .optional(),
   })
-  .refine((data) => Object.keys(data).length > 0, {
+  .refine(data => Object.keys(data).length > 0, {
     message: 'Au moins un champ doit être fourni pour la mise à jour',
   });
 
@@ -461,15 +487,15 @@ export const objectiveItemSchema = z.object({
   id: z.string().optional(), // Généré côté serveur si non fourni
   category: objectiveCategoryEnum,
   label: z.string().min(3, 'Label trop court').max(100, 'Label trop long'),
-  description: z
-    .string()
-    .max(300, 'Description trop longue')
-    .optional(),
+  description: z.string().max(300, 'Description trop longue').optional(),
   target: z.number().positive('La cible doit être positive'),
   unit: z.string().min(1, 'Unité requise').max(20, 'Unité trop longue'),
   definedBy: z.object({
     name: z.string().min(2, 'Nom trop court'),
-    initials: z.string().min(1, 'Initiales requises').max(3, 'Initiales trop longues'),
+    initials: z
+      .string()
+      .min(1, 'Initiales requises')
+      .max(3, 'Initiales trop longues'),
     role: objectiveRoleEnum,
   }),
 });
@@ -532,6 +558,68 @@ export const updateAppointmentSchema = z.object({
     .optional(),
 });
 
+// Schéma pour modifier un rendez-vous (côté nutritionniste)
+export const nutritionistUpdateAppointmentSchema = z.object({
+  scheduled_at: z.string().datetime('Date/heure invalide').optional(),
+  mode: consultationModeEnum.optional(),
+  nutritionist_notes: z
+    .string()
+    .max(500, 'Notes trop longues (max 500 caractères)')
+    .optional(),
+  message: z
+    .string()
+    .max(500, 'Message trop long (max 500 caractères)')
+    .optional(),
+});
+
+export type NutritionistUpdateAppointmentData = z.infer<
+  typeof nutritionistUpdateAppointmentSchema
+>;
+
+// =====================================================
+// SCHÉMAS POUR LA RÉPONSE NUTRITIONNISTE AUX DEMANDES DE RDV
+// =====================================================
+
+// Réponse nutritionniste à une demande de rendez-vous
+export const nutritionistAppointmentResponseSchema = z.discriminatedUnion(
+  'action',
+  [
+    z.object({ action: z.literal('accept') }),
+    z.object({
+      action: z.literal('decline'),
+      reason: z
+        .string()
+        .min(5, 'Veuillez indiquer une raison (min 5 caractères)')
+        .max(500, 'Raison trop longue (max 500 caractères)'),
+    }),
+    z.object({
+      action: z.literal('propose_new_time'),
+      proposed_at: z.string().datetime('Date/heure proposée invalide'),
+      message: z
+        .string()
+        .max(500, 'Message trop long (max 500 caractères)')
+        .optional(),
+    }),
+  ]
+);
+
+export type NutritionistAppointmentResponseData = z.infer<
+  typeof nutritionistAppointmentResponseSchema
+>;
+
+// Réponse patient à une contre-proposition du nutritionniste
+export const patientCounterProposalResponseSchema = z.object({
+  action: z.enum(['accept', 'decline']),
+  reason: z
+    .string()
+    .max(500, 'Raison trop longue (max 500 caractères)')
+    .optional(),
+});
+
+export type PatientCounterProposalResponseData = z.infer<
+  typeof patientCounterProposalResponseSchema
+>;
+
 // =====================================================
 // SCHÉMAS POUR LA MESSAGERIE (MESSAGING)
 // =====================================================
@@ -542,6 +630,33 @@ export const createMessageSchema = z.object({
     .string()
     .min(1, 'Le message ne peut pas être vide')
     .max(5000, 'Message trop long (max 5000 caractères)'),
+});
+
+// Query params pour les messages (pagination cursor-based)
+export const messagesQuerySchema = z.object({
+  limit: z
+    .string()
+    .regex(/^\d+$/)
+    .transform(Number)
+    .pipe(z.number().int().min(1).max(100))
+    .default('50'),
+  before_id: z.string().uuid('ID de message invalide').optional(),
+});
+
+// Query params pour les conversations
+export const conversationsQuerySchema = z.object({
+  limit: z
+    .string()
+    .regex(/^\d+$/)
+    .transform(Number)
+    .pipe(z.number().int().min(1).max(50))
+    .default('20'),
+  offset: z
+    .string()
+    .regex(/^\d+$/)
+    .transform(Number)
+    .pipe(z.number().int().min(0))
+    .default('0'),
 });
 
 // =====================================================
@@ -606,3 +721,233 @@ export type UpdateAppointmentData = z.infer<typeof updateAppointmentSchema>;
 
 // Types pour la messagerie
 export type CreateMessageData = z.infer<typeof createMessageSchema>;
+export type MessagesQueryParams = z.infer<typeof messagesQuerySchema>;
+export type ConversationsQueryParams = z.infer<typeof conversationsQuerySchema>;
+
+// =====================================================
+// SCHÉMAS POUR LES DISPONIBILITÉS NUTRITIONNISTE
+// =====================================================
+
+// Type de disponibilité
+export const availabilityTypeEnum = z.enum([
+  'recurring',
+  'exception',
+  'blocked',
+]);
+
+// Schéma pour créer une disponibilité
+export const createAvailabilitySchema = z
+  .object({
+    availability_type: availabilityTypeEnum,
+    day_of_week: z
+      .number()
+      .int('Le jour doit être un entier')
+      .min(0, 'Jour minimum: 0 (dimanche)')
+      .max(6, 'Jour maximum: 6 (samedi)')
+      .optional(),
+    start_time: z
+      .string()
+      .regex(/^\d{2}:\d{2}$/, 'Format de temps invalide (HH:mm)'),
+    end_time: z
+      .string()
+      .regex(/^\d{2}:\d{2}$/, 'Format de temps invalide (HH:mm)'),
+    specific_date: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, 'Format de date invalide (YYYY-MM-DD)')
+      .optional(),
+    visio_available: z.boolean().default(true),
+    cabinet_available: z.boolean().default(true),
+    valid_from: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, 'Format de date invalide (YYYY-MM-DD)')
+      .optional(),
+    valid_until: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, 'Format de date invalide (YYYY-MM-DD)')
+      .optional(),
+    consultation_type_id: z
+      .string()
+      .uuid('ID type de consultation invalide')
+      .optional(),
+    notes: z
+      .string()
+      .max(500, 'Notes trop longues (max 500 caractères)')
+      .optional(),
+  })
+  .refine(
+    data => {
+      // Si type = recurring, day_of_week est requis
+      if (data.availability_type === 'recurring') {
+        return data.day_of_week !== undefined && data.day_of_week !== null;
+      }
+      return true;
+    },
+    {
+      message: 'day_of_week est requis pour les disponibilités récurrentes',
+      path: ['day_of_week'],
+    }
+  )
+  .refine(
+    data => {
+      // Si type = exception ou blocked, specific_date est requis
+      if (
+        data.availability_type === 'exception' ||
+        data.availability_type === 'blocked'
+      ) {
+        return data.specific_date !== undefined && data.specific_date !== null;
+      }
+      return true;
+    },
+    {
+      message: 'specific_date est requis pour les exceptions et blocages',
+      path: ['specific_date'],
+    }
+  )
+  .refine(
+    data => {
+      // Vérifier que end_time > start_time
+      const [startH, startM] = data.start_time.split(':').map(Number);
+      const [endH, endM] = data.end_time.split(':').map(Number);
+      const startMinutes = startH * 60 + startM;
+      const endMinutes = endH * 60 + endM;
+      return endMinutes > startMinutes;
+    },
+    {
+      message: "L'heure de fin doit être après l'heure de début",
+      path: ['end_time'],
+    }
+  );
+
+// Schéma pour mettre à jour une disponibilité
+export const updateAvailabilitySchema = z
+  .object({
+    start_time: z
+      .string()
+      .regex(/^\d{2}:\d{2}$/, 'Format de temps invalide (HH:mm)')
+      .optional(),
+    end_time: z
+      .string()
+      .regex(/^\d{2}:\d{2}$/, 'Format de temps invalide (HH:mm)')
+      .optional(),
+    visio_available: z.boolean().optional(),
+    cabinet_available: z.boolean().optional(),
+    consultation_type_id: z
+      .string()
+      .uuid('ID type de consultation invalide')
+      .optional()
+      .nullable(),
+    valid_from: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, 'Format de date invalide (YYYY-MM-DD)')
+      .optional()
+      .nullable(),
+    valid_until: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, 'Format de date invalide (YYYY-MM-DD)')
+      .optional()
+      .nullable(),
+    notes: z
+      .string()
+      .max(500, 'Notes trop longues (max 500 caractères)')
+      .optional()
+      .nullable(),
+    is_active: z.boolean().optional(),
+  })
+  .refine(data => Object.keys(data).length > 0, {
+    message: 'Au moins un champ doit être fourni pour la mise à jour',
+  });
+
+// Types pour les disponibilités
+export type AvailabilityType = z.infer<typeof availabilityTypeEnum>;
+export type CreateAvailabilityData = z.infer<typeof createAvailabilitySchema>;
+export type UpdateAvailabilityData = z.infer<typeof updateAvailabilitySchema>;
+
+// ============================================================================
+// SCHEMAS: CONSULTATION TYPES (par nutritionniste)
+// ============================================================================
+
+/**
+ * Schéma de validation pour la création d'un type de consultation
+ */
+export const createConsultationTypeSchema = z.object({
+  code: z
+    .string()
+    .min(2, 'Code requis (min 2 caractères)')
+    .max(50, 'Code trop long (max 50 caractères)')
+    .regex(
+      /^[a-z0-9_]+$/,
+      'Code invalide (lettres minuscules, chiffres et _ uniquement)'
+    ),
+  name_fr: z
+    .string()
+    .min(3, 'Nom requis (min 3 caractères)')
+    .max(100, 'Nom trop long (max 100 caractères)'),
+  description_fr: z
+    .string()
+    .max(500, 'Description trop longue (max 500 caractères)')
+    .optional()
+    .nullable(),
+  default_duration: z
+    .number()
+    .int('La durée doit être un nombre entier')
+    .min(15, 'Durée minimum 15 minutes')
+    .max(180, 'Durée maximum 180 minutes'),
+  default_price: z
+    .number()
+    .min(0, 'Le prix ne peut pas être négatif')
+    .max(1000, 'Prix maximum 1000 CHF'),
+  visio_available: z.boolean().default(true),
+  cabinet_available: z.boolean().default(true),
+});
+
+/**
+ * Schéma de validation pour la mise à jour d'un type de consultation
+ */
+export const updateConsultationTypeSchema = z
+  .object({
+    code: z
+      .string()
+      .min(2, 'Code requis (min 2 caractères)')
+      .max(50, 'Code trop long (max 50 caractères)')
+      .regex(
+        /^[a-z0-9_]+$/,
+        'Code invalide (lettres minuscules, chiffres et _ uniquement)'
+      )
+      .optional(),
+    name_fr: z
+      .string()
+      .min(3, 'Nom requis (min 3 caractères)')
+      .max(100, 'Nom trop long (max 100 caractères)')
+      .optional(),
+    description_fr: z
+      .string()
+      .max(500, 'Description trop longue (max 500 caractères)')
+      .optional()
+      .nullable(),
+    default_duration: z
+      .number()
+      .int('La durée doit être un nombre entier')
+      .min(15, 'Durée minimum 15 minutes')
+      .max(180, 'Durée maximum 180 minutes')
+      .optional(),
+    default_price: z
+      .number()
+      .min(0, 'Le prix ne peut pas être négatif')
+      .max(1000, 'Prix maximum 1000 CHF')
+      .optional(),
+    visio_available: z.boolean().optional(),
+    cabinet_available: z.boolean().optional(),
+    is_active: z.boolean().optional(),
+    sort_order: z.number().int().min(0).optional(),
+  })
+  .refine(data => Object.keys(data).length > 0, {
+    message: 'Au moins un champ doit être fourni pour la mise à jour',
+  });
+
+// Types pour les types de consultation
+export type CreateConsultationTypeData = z.infer<
+  typeof createConsultationTypeSchema
+>;
+export type UpdateConsultationTypeData = z.infer<
+  typeof updateConsultationTypeSchema
+>;

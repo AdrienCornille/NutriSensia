@@ -50,10 +50,10 @@ export function MessageInput({
   const canSend = value.trim().length > 0 && !isSending;
 
   return (
-    <div className="bg-white px-4 py-3">
-      <div className="flex items-end gap-2">
+    <div className='bg-white px-4 py-3'>
+      <div className='flex items-end gap-2'>
         {/* Attachment button */}
-        <div className="relative">
+        <div className='relative'>
           <button
             onClick={onToggleAttachmentMenu}
             className={`p-2 rounded-full transition-colors ${
@@ -61,10 +61,10 @@ export function MessageInput({
                 ? 'bg-[#1B998B] text-white'
                 : 'hover:bg-gray-100 text-gray-500'
             }`}
-            aria-label="Ajouter une pièce jointe"
+            aria-label='Ajouter une pièce jointe'
             aria-expanded={showAttachmentMenu}
           >
-            <Paperclip className="w-5 h-5" />
+            <Paperclip className='w-5 h-5' />
           </button>
 
           <AttachmentMenu
@@ -75,25 +75,25 @@ export function MessageInput({
         </div>
 
         {/* Text input */}
-        <div className="flex-1 relative">
+        <div className='flex-1 relative'>
           <textarea
             ref={textareaRef}
             value={value}
-            onChange={(e) => onChange(e.target.value)}
+            onChange={e => onChange(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder={placeholder}
             rows={1}
-            className="w-full px-4 py-2.5 bg-gray-100 rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-[#1B998B]/20 text-sm placeholder-gray-400"
+            className='w-full px-4 py-2.5 bg-gray-100 rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-[#1B998B]/20 text-sm placeholder-gray-400'
             disabled={isSending}
           />
         </div>
 
         {/* Emoji button (placeholder) */}
         <button
-          className="p-2 hover:bg-gray-100 rounded-full text-gray-500 transition-colors"
-          aria-label="Ajouter un emoji"
+          className='p-2 hover:bg-gray-100 rounded-full text-gray-500 transition-colors'
+          aria-label='Ajouter un emoji'
         >
-          <Smile className="w-5 h-5" />
+          <Smile className='w-5 h-5' />
         </button>
 
         {/* Send button */}
@@ -105,15 +105,15 @@ export function MessageInput({
               ? 'bg-[#1B998B] text-white hover:bg-[#158578]'
               : 'bg-gray-200 text-gray-400 cursor-not-allowed'
           }`}
-          aria-label="Envoyer"
+          aria-label='Envoyer'
         >
-          <Send className="w-5 h-5" />
+          <Send className='w-5 h-5' />
         </button>
       </div>
 
       {/* Sending indicator */}
       {isSending && (
-        <div className="text-xs text-gray-500 mt-2 text-center">
+        <div className='text-xs text-gray-500 mt-2 text-center'>
           Envoi en cours...
         </div>
       )}

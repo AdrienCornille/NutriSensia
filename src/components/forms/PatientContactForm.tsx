@@ -13,11 +13,10 @@ import {
 /**
  * Props du formulaire de contact patient
  */
-export interface PatientContactFormProps
-  extends Omit<
-    ContactFormProps<PatientContactFormData>,
-    'schema' | 'fields' | 'formType'
-  > {
+export interface PatientContactFormProps extends Omit<
+  ContactFormProps<PatientContactFormData>,
+  'schema' | 'fields' | 'formType'
+> {
   /**
    * Masquer certains champs (optionnel)
    */

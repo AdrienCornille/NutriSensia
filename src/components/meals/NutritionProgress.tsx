@@ -54,8 +54,8 @@ export function NutritionProgress({
 
   if (compact) {
     return (
-      <div className="flex gap-4">
-        {nutrients.map((nutrient) => (
+      <div className='flex gap-4'>
+        {nutrients.map(nutrient => (
           <CompactNutrientDisplay
             key={nutrient.key}
             label={nutrient.label}
@@ -70,14 +70,14 @@ export function NutritionProgress({
   }
 
   return (
-    <div className="bg-emerald-50 rounded-xl p-6 border border-emerald-200">
+    <div className='bg-emerald-50 rounded-xl p-6 border border-emerald-200'>
       {mealLabel && (
-        <h3 className="font-semibold text-gray-800 mb-4">
+        <h3 className='font-semibold text-gray-800 mb-4'>
           Total vs Plan ({mealLabel})
         </h3>
       )}
-      <div className="grid grid-cols-4 gap-4">
-        {nutrients.map((nutrient) => (
+      <div className='grid grid-cols-4 gap-4'>
+        {nutrients.map(nutrient => (
           <NutrientProgressBar
             key={nutrient.key}
             label={nutrient.label}
@@ -121,7 +121,8 @@ function NutrientProgressBar({
   };
 
   const statusColor = getStatusColor();
-  const percentageColor = isOver && label === 'Calories' ? 'text-amber-600' : 'text-emerald-600';
+  const percentageColor =
+    isOver && label === 'Calories' ? 'text-amber-600' : 'text-emerald-600';
 
   const colorClasses: Record<string, string> = {
     emerald: 'bg-emerald-500',
@@ -132,11 +133,11 @@ function NutrientProgressBar({
 
   return (
     <div>
-      <div className="flex justify-between text-sm mb-1">
-        <span className="text-gray-600">{label}</span>
+      <div className='flex justify-between text-sm mb-1'>
+        <span className='text-gray-600'>{label}</span>
         <span className={percentageColor}>{percentage}%</span>
       </div>
-      <div className="h-2 bg-white rounded-full overflow-hidden">
+      <div className='h-2 bg-white rounded-full overflow-hidden'>
         <motion.div
           className={`h-full rounded-full ${colorClasses[statusColor] || colorClasses.emerald}`}
           initial={{ width: 0 }}
@@ -144,7 +145,7 @@ function NutrientProgressBar({
           transition={{ duration: 0.5, ease: 'easeOut' }}
         />
       </div>
-      <p className="text-sm mt-1 font-medium">
+      <p className='text-sm mt-1 font-medium'>
         {current}
         {unit} / {target}
         {unit}
@@ -180,14 +181,14 @@ function CompactNutrientDisplay({
   };
 
   return (
-    <div className="text-center">
+    <div className='text-center'>
       <p className={`text-sm font-medium ${colorClasses[color]}`}>
         {current}
         {unit}
       </p>
-      <p className="text-xs text-gray-500">{label}</p>
+      <p className='text-xs text-gray-500'>{label}</p>
       {isOver && label === 'Calories' && (
-        <span className="text-xs text-amber-500">+{percentage - 100}%</span>
+        <span className='text-xs text-amber-500'>+{percentage - 100}%</span>
       )}
     </div>
   );

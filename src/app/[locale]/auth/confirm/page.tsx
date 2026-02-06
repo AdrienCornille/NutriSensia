@@ -392,10 +392,7 @@ export default function ConfirmPage() {
         </div>
 
         {/* Info expiration */}
-        <p
-          className='mb-6 text-xs'
-          style={{ color: '#41556b' }}
-        >
+        <p className='mb-6 text-xs' style={{ color: '#41556b' }}>
           Le lien de confirmation expire dans 24 heures.
         </p>
 
@@ -479,7 +476,8 @@ export default function ConfirmPage() {
             }}
             onMouseEnter={e => {
               if (!isResending) {
-                e.currentTarget.style.backgroundColor = 'rgba(27, 153, 139, 0.08)';
+                e.currentTarget.style.backgroundColor =
+                  'rgba(27, 153, 139, 0.08)';
               }
             }}
             onMouseLeave={e => {

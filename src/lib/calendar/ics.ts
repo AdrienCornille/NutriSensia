@@ -25,7 +25,10 @@ export interface ICSEventData {
  * Formate une date en format iCalendar (YYYYMMDDTHHMMSSZ)
  */
 function formatDateToICS(date: Date): string {
-  return date.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  return date
+    .toISOString()
+    .replace(/[-:]/g, '')
+    .replace(/\.\d{3}/, '');
 }
 
 /**
@@ -82,13 +85,17 @@ export function generateICSContent(event: ICSEventData): string {
   // Organisateur (nutritionniste)
   if (event.organizerEmail) {
     const organizerName = event.organizerName || 'NutriSensia';
-    lines.push(`ORGANIZER;CN=${escapeICSText(organizerName)}:mailto:${event.organizerEmail}`);
+    lines.push(
+      `ORGANIZER;CN=${escapeICSText(organizerName)}:mailto:${event.organizerEmail}`
+    );
   }
 
   // Participant (patient)
   if (event.attendeeEmail) {
     const attendeeName = event.attendeeName || 'Patient';
-    lines.push(`ATTENDEE;CN=${escapeICSText(attendeeName)};RSVP=TRUE:mailto:${event.attendeeEmail}`);
+    lines.push(
+      `ATTENDEE;CN=${escapeICSText(attendeeName)};RSVP=TRUE:mailto:${event.attendeeEmail}`
+    );
   }
 
   // Rappel 1 heure avant
@@ -130,7 +137,10 @@ export function generateICSFilename(title: string, date: Date): string {
 /**
  * Types de consultation pour les titres
  */
-export const CONSULTATION_TYPE_NAMES: Record<string, { fr: string; en: string }> = {
+export const CONSULTATION_TYPE_NAMES: Record<
+  string,
+  { fr: string; en: string }
+> = {
   initial: { fr: 'Consultation initiale', en: 'Initial consultation' },
   follow_up: { fr: 'Consultation de suivi', en: 'Follow-up consultation' },
   in_depth: { fr: 'Consultation approfondie', en: 'In-depth consultation' },
@@ -140,26 +150,29 @@ export const CONSULTATION_TYPE_NAMES: Record<string, { fr: string; en: string }>
 /**
  * Génère les données ICS à partir d'un rendez-vous NutriSensia
  */
-export function createICSEventFromAppointment(appointment: {
-  id: string;
-  scheduled_at: string;
-  scheduled_end_at?: string;
-  duration?: number;
-  consultation_type_code?: string;
-  mode?: 'visio' | 'cabinet' | 'phone';
-  visio_link?: string | null;
-  patient_message?: string | null;
-  nutritionist?: {
-    first_name?: string;
-    last_name?: string;
-    email?: string;
-  } | null;
-  patient?: {
-    first_name?: string;
-    last_name?: string;
-    email?: string;
-  } | null;
-}, locale: string = 'fr'): ICSEventData {
+export function createICSEventFromAppointment(
+  appointment: {
+    id: string;
+    scheduled_at: string;
+    scheduled_end_at?: string;
+    duration?: number;
+    consultation_type_code?: string;
+    mode?: 'visio' | 'cabinet' | 'phone';
+    visio_link?: string | null;
+    patient_message?: string | null;
+    nutritionist?: {
+      first_name?: string;
+      last_name?: string;
+      email?: string;
+    } | null;
+    patient?: {
+      first_name?: string;
+      last_name?: string;
+      email?: string;
+    } | null;
+  },
+  locale: string = 'fr'
+): ICSEventData {
   const startDate = new Date(appointment.scheduled_at);
 
   // Calculer la date de fin
@@ -173,14 +186,16 @@ export function createICSEventFromAppointment(appointment: {
 
   // Titre basé sur le type de consultation
   const typeCode = appointment.consultation_type_code || 'follow_up';
-  const typeName = CONSULTATION_TYPE_NAMES[typeCode]?.[locale as 'fr' | 'en']
-    || CONSULTATION_TYPE_NAMES[typeCode]?.fr
-    || 'Consultation NutriSensia';
+  const typeName =
+    CONSULTATION_TYPE_NAMES[typeCode]?.[locale as 'fr' | 'en'] ||
+    CONSULTATION_TYPE_NAMES[typeCode]?.fr ||
+    'Consultation NutriSensia';
 
   // Description
   let description = `${typeName} avec NutriSensia`;
   if (appointment.nutritionist) {
-    const nutName = `${appointment.nutritionist.first_name || ''} ${appointment.nutritionist.last_name || ''}`.trim();
+    const nutName =
+      `${appointment.nutritionist.first_name || ''} ${appointment.nutritionist.last_name || ''}`.trim();
     if (nutName) {
       description += `\nNutritionniste: ${nutName}`;
     }
@@ -208,7 +223,8 @@ export function createICSEventFromAppointment(appointment: {
     startDate,
     endDate,
     organizerName: appointment.nutritionist
-      ? `${appointment.nutritionist.first_name || ''} ${appointment.nutritionist.last_name || ''}`.trim() || 'NutriSensia'
+      ? `${appointment.nutritionist.first_name || ''} ${appointment.nutritionist.last_name || ''}`.trim() ||
+        'NutriSensia'
       : 'NutriSensia',
     organizerEmail: appointment.nutritionist?.email || 'contact@nutrisensia.ch',
     attendeeName: appointment.patient

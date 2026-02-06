@@ -5,19 +5,21 @@
 | Métrique | Valeur |
 |----------|--------|
 | Nombre total d'épics | 14 |
-| Nombre total de user stories | 117 |
-| Must Have (Priorité haute) | 43 (37%) |
-| Should Have (Priorité moyenne) | 60 (51%) |
-| Could Have (Priorité basse) | 14 (12%) |
+| Nombre total de user stories | 123 |
+| Must Have (Priorité haute) | 47 (38%) |
+| Should Have (Priorité moyenne) | 61 (50%) |
+| Could Have (Priorité basse) | 15 (12%) |
 
 ---
 
-## 1. Authentification & Onboarding (7 stories)
+## 1. Authentification & Onboarding (13 stories)
 
-### AUTH-001 - Création de compte patient [Must Have] ⚠️
+### AUTH-001 - Création de compte patient [Must Have] ✅
 **En tant que** visiteur,
 **Je veux** créer un compte sur NutriSensia,
 **Afin de** je puisse accéder à l'application et commencer mon suivi nutritionnel.
+
+**Point d'entrée:** Bouton "Commencer" dans le header du site → mène directement à /auth/signup
 
 **Critères d'acceptation:**
 - Le formulaire demande : prénom, nom, email, mot de passe
@@ -25,17 +27,23 @@
 - Un email de confirmation est envoyé
 - Le compte est activé après clic sur le lien de confirmation
 - L'utilisateur est automatiquement rattaché au nutritionniste NutriSensia
+- Le compte est créé avec le rôle "patient" par défaut
 
-### AUTH-002 - Connexion au compte [Must Have] ⚠️
-**En tant que** patient enregistré,
-**Je veux** me connecter à mon compte,
-**Afin de** je puisse accéder à mon tableau de bord et mes données.
+### AUTH-002 - Connexion au compte (unifiée) [Must Have] ✅
+**En tant que** utilisateur enregistré (patient ou nutritionniste),
+**Je veux** me connecter à mon compte via une page de connexion unique,
+**Afin de** je puisse accéder à mon espace personnel.
+
+**Point d'entrée:** Bouton "Connexion" dans le header → mène à /auth/signin (page neutre sans distinction de rôle)
 
 **Critères d'acceptation:**
+
+- Page de connexion unique pour tous les rôles (patient, nutritionniste, admin)
 - Connexion par email + mot de passe
 - Option 'Se souvenir de moi' disponible
 - Message d'erreur clair si identifiants incorrects
-- Redirection vers le dashboard après connexion réussie
+- Détection automatique du rôle après authentification réussie
+- Redirection automatique vers le dashboard approprié (voir AUTH-012)
 - Blocage temporaire après 5 tentatives échouées
 
 ### AUTH-003 - Réinitialisation du mot de passe [Must Have] ✅
@@ -49,7 +57,7 @@
 - Le lien expire après 24 heures
 - Confirmation visuelle après changement réussi
 
-### AUTH-004 - Onboarding - Raison de consultation [Should Have] ⚠️
+### AUTH-004 - Onboarding - Raison de consultation [Should Have] ✅
 **En tant que** nouveau patient,
 **Je veux** indiquer ma raison de consultation,
 **Afin de** mon nutritionniste puisse préparer notre première rencontre.
@@ -93,11 +101,100 @@
 - QR code à scanner + code manuel de secours
 - Codes de récupération fournis
 
+### AUTH-008 - Inscription nutritionniste - Formulaire [Must Have] ⚠️
+**En tant que** nutritionniste,
+**Je veux** m'inscrire via un formulaire dédié,
+**Afin de** créer mon compte professionnel sur NutriSensia.
+
+**Point d'entrée:** Lien "Devenir Nutritionniste NutriSensia" dans le footer du site → mène à /inscription/nutritionniste
+
+**Critères d'acceptation:**
+
+- Formulaire multi-étapes (5 étapes)
+- Étape 1 : Informations personnelles (prénom, nom, email, téléphone, mot de passe)
+- Étape 2 : Informations professionnelles (numéro ASCA/RME, spécialisations, expérience, langues)
+- Étape 3 : Upload des documents (certificats, diplôme, photo)
+- Étape 4 : Acceptation des conditions
+- Étape 5 : Récapitulatif et soumission
+- Compte créé avec rôle "nutritionist" et status "pending" après soumission
+- Redirection vers /inscription/nutritionniste/en-attente après soumission
+- Email de confirmation envoyé
+
+### AUTH-009 - Inscription nutritionniste - Documents [Must Have] ✅
+**En tant que** nutritionniste,
+**Je veux** uploader mes certifications (ASCA/RME) lors de l'inscription,
+**Afin de** prouver ma qualification professionnelle.
+
+**Critères d'acceptation:**
+
+- Upload de certificat ASCA ou RME (PDF/image, max 5MB) - au moins un obligatoire
+- Upload de diplôme (PDF/image, max 5MB) - optionnel
+- Upload de photo professionnelle (image, max 2MB) - obligatoire
+- Prévisualisation des documents avant soumission
+- Validation du type MIME et de la taille
+- Stockage sécurisé dans Supabase Storage (bucket: nutritionist-documents)
+
+### AUTH-010 - Inscription nutritionniste - Validation admin [Must Have] ⚠️
+**En tant qu'** administrateur,
+**Je veux** valider ou rejeter les demandes d'inscription nutritionniste,
+**Afin de** garantir la qualité des professionnels sur la plateforme.
+
+**Critères d'acceptation:**
+- Liste des demandes en attente accessible depuis /admin/nutritionnistes
+- Filtres par statut (pending, active, rejected)
+- Consultation des documents uploadés
+- Action "Valider" → status = "active", email de confirmation envoyé
+- Action "Rejeter" → motif obligatoire, status = "rejected", email envoyé
+- Action "Demander plus d'infos" → status = "info_required", message envoyé
+- Historique des actions de validation
+
+### AUTH-011 - Notification validation inscription [Should Have] ❌
+**En tant que** nutritionniste,
+**Je veux** être notifié par email quand ma demande est validée ou rejetée,
+**Afin de** savoir si je peux accéder à mon dashboard.
+
+**Critères d'acceptation:**
+- Email envoyé lors de la validation (bienvenue + lien dashboard)
+- Email envoyé lors du rejet (motif + possibilité de recours)
+- Email envoyé lors de demande d'informations (message admin + lien pour répondre)
+- Templates d'emails personnalisés en français
+
+### AUTH-012 - Redirection par rôle [Must Have] ✅
+**En tant qu'** utilisateur connecté,
+**Je veux** être redirigé vers mon dashboard approprié,
+**Afin de** accéder directement à mon espace.
+
+**Comportement:** Après connexion réussie (AUTH-002), le système détecte automatiquement le rôle et le statut de l'utilisateur pour rediriger vers la bonne page.
+
+**Critères d'acceptation:**
+
+- Patient → /dashboard/patient
+- Nutritionniste actif (status = "active") → /dashboard/nutritionist
+- Nutritionniste en attente (status = "pending") → /inscription/nutritionniste/en-attente
+- Nutritionniste rejeté (status = "rejected") → /inscription/nutritionniste/rejete
+- Nutritionniste info requise (status = "info_required") → /inscription/nutritionniste/info-requise
+- Admin → /admin
+- Protection des routes par rôle (403 si accès non autorisé)
+- Le rôle est stocké dans user_metadata.role (patient, nutritionist, admin)
+- Le statut nutritionniste est stocké dans la table nutritionist_profiles
+
+### AUTH-013 - Changement de rôle patient → nutritionniste [Could Have] ❌
+**En tant que** patient,
+**Je veux** pouvoir demander à devenir nutritionniste,
+**Afin de** utiliser la plateforme en tant que professionnel.
+
+**Critères d'acceptation:**
+- Formulaire de demande accessible depuis les paramètres
+- Mêmes étapes que l'inscription nutritionniste (documents, conditions)
+- Validation admin requise
+- Conservation de l'historique patient (optionnel)
+- Email de confirmation du changement de rôle
+
 ---
 
 ## 2. Dashboard principal (7 stories)
 
-### DASH-001 - Vue d'ensemble quotidienne [Must Have] ✅
+### DASH-001 - Vue d'ensemble quotidienne [Must Have] ⚠️
 **En tant que** patient,
 **Je veux** voir un résumé de ma journée en un coup d'œil,
 **Afin de** je sache où j'en suis par rapport à mes objectifs.
@@ -108,7 +205,7 @@
 - Indicateur visuel clair (vert/orange/rouge)
 - Données mises à jour en temps réel
 
-### DASH-002 - Tracker d'hydratation [Must Have] ✅
+### DASH-002 - Tracker d'hydratation [Must Have] ⚠️
 **En tant que** patient,
 **Je veux** voir et mettre à jour mon hydratation du jour,
 **Afin de** je puisse atteindre mon objectif quotidien d'eau.
@@ -119,7 +216,7 @@
 - Objectif personnalisable
 - Historique des ajouts de la journée
 
-### DASH-003 - Boutons d'enregistrement rapide des repas [Must Have] ✅
+### DASH-003 - Boutons d'enregistrement rapide des repas [Must Have] ⚠️
 **En tant que** patient,
 **Je veux** accéder rapidement à l'enregistrement de mes repas,
 **Afin de** je puisse logger mes repas en quelques clics.
@@ -129,7 +226,7 @@
 - Indication visuelle si repas déjà enregistré
 - Clic ouvre directement le flow d'enregistrement
 
-### DASH-004 - Progression hebdomadaire [Should Have] ✅
+### DASH-004 - Progression hebdomadaire [Should Have] ⚠️
 **En tant que** patient,
 **Je veux** voir ma progression de la semaine,
 **Afin de** je puisse évaluer mes efforts sur la durée.
@@ -140,7 +237,7 @@
 - Pourcentage d'adhérence au plan
 - Comparaison avec la semaine précédente
 
-### DASH-005 - Prochain rendez-vous [Should Have] ✅
+### DASH-005 - Prochain rendez-vous [Should Have] ⚠️
 **En tant que** patient,
 **Je veux** voir mon prochain rendez-vous depuis le dashboard,
 **Afin de** je n'oublie pas mes consultations.
@@ -151,7 +248,7 @@
 - Lien vers l'agenda
 - Masqué si aucun RDV planifié
 
-### DASH-006 - Indicateur de messages non lus [Must Have] ✅
+### DASH-006 - Indicateur de messages non lus [Must Have] ⚠️
 **En tant que** patient,
 **Je veux** voir si j'ai des messages non lus,
 **Afin de** je puisse répondre rapidement à mon nutritionniste.
@@ -161,7 +258,7 @@
 - Clic redirige vers la messagerie
 - Mise à jour en temps réel
 
-### DASH-007 - Objectifs hebdomadaires [Should Have] ✅
+### DASH-007 - Objectifs hebdomadaires [Should Have] ⚠️
 **En tant que** patient,
 **Je veux** voir mes objectifs de la semaine avec leur progression,
 **Afin de** je reste focalisé sur mes priorités.

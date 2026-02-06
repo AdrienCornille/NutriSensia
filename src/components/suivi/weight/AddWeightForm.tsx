@@ -1,7 +1,13 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { Lightbulb, Loader2, TrendingDown, TrendingUp, Minus } from 'lucide-react';
+import {
+  Lightbulb,
+  Loader2,
+  TrendingDown,
+  TrendingUp,
+  Minus,
+} from 'lucide-react';
 
 interface AddWeightFormProps {
   defaultValue?: number;
@@ -94,41 +100,44 @@ export function AddWeightForm({
       // Re-validate on change if field was touched
       const weightValue = parseFloat(value);
       if (!value.trim()) {
-        setErrors((prev) => ({ ...prev, weight: 'Le poids est requis' }));
+        setErrors(prev => ({ ...prev, weight: 'Le poids est requis' }));
       } else if (isNaN(weightValue)) {
-        setErrors((prev) => ({ ...prev, weight: 'Veuillez entrer un nombre valide' }));
+        setErrors(prev => ({
+          ...prev,
+          weight: 'Veuillez entrer un nombre valide',
+        }));
       } else if (weightValue < MIN_WEIGHT || weightValue > MAX_WEIGHT) {
-        setErrors((prev) => ({
+        setErrors(prev => ({
           ...prev,
           weight: `Le poids doit être entre ${MIN_WEIGHT} et ${MAX_WEIGHT} kg`,
         }));
       } else {
-        setErrors((prev) => ({ ...prev, weight: undefined }));
+        setErrors(prev => ({ ...prev, weight: undefined }));
       }
     }
   };
 
   const handleWeightBlur = () => {
-    setTouched((prev) => ({ ...prev, weight: true }));
+    setTouched(prev => ({ ...prev, weight: true }));
     validate();
   };
 
   return (
-    <div className="bg-white rounded-xl p-6 border border-gray-200">
-      <h2 className="font-semibold text-gray-800 mb-4">Ajouter une pesée</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <div className='bg-white rounded-xl p-6 border border-gray-200'>
+      <h2 className='font-semibold text-gray-800 mb-4'>Ajouter une pesée</h2>
+      <form onSubmit={handleSubmit} className='space-y-4'>
         {/* Weight input */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className='block text-sm font-medium text-gray-700 mb-2'>
             Poids (kg)
           </label>
           <input
-            type="number"
-            step="0.1"
+            type='number'
+            step='0.1'
             min={MIN_WEIGHT}
             max={MAX_WEIGHT}
             value={weight}
-            onChange={(e) => handleWeightChange(e.target.value)}
+            onChange={e => handleWeightChange(e.target.value)}
             onBlur={handleWeightBlur}
             disabled={isLoading}
             className={`w-full px-4 py-3 border rounded-lg text-lg font-medium focus:outline-none focus:ring-2 transition-colors ${
@@ -136,10 +145,10 @@ export function AddWeightForm({
                 ? 'border-red-300 focus:ring-red-500 bg-red-50'
                 : 'border-gray-200 focus:ring-emerald-500'
             } ${isLoading ? 'bg-gray-100 cursor-not-allowed' : ''}`}
-            placeholder="Ex: 78.4"
+            placeholder='Ex: 78.4'
           />
           {errors.weight && touched.weight && (
-            <p className="text-sm text-red-600 mt-1">{errors.weight}</p>
+            <p className='text-sm text-red-600 mt-1'>{errors.weight}</p>
           )}
         </div>
 
@@ -150,14 +159,20 @@ export function AddWeightForm({
               variationPreview.direction === 'down'
                 ? 'bg-emerald-50 text-emerald-700'
                 : variationPreview.direction === 'up'
-                ? 'bg-amber-50 text-amber-700'
-                : 'bg-gray-50 text-gray-600'
+                  ? 'bg-amber-50 text-amber-700'
+                  : 'bg-gray-50 text-gray-600'
             }`}
           >
-            {variationPreview.direction === 'down' && <TrendingDown className="w-4 h-4" />}
-            {variationPreview.direction === 'up' && <TrendingUp className="w-4 h-4" />}
-            {variationPreview.direction === 'stable' && <Minus className="w-4 h-4" />}
-            <span className="text-sm font-medium">
+            {variationPreview.direction === 'down' && (
+              <TrendingDown className='w-4 h-4' />
+            )}
+            {variationPreview.direction === 'up' && (
+              <TrendingUp className='w-4 h-4' />
+            )}
+            {variationPreview.direction === 'stable' && (
+              <Minus className='w-4 h-4' />
+            )}
+            <span className='text-sm font-medium'>
               {variationPreview.formatted} vs dernière pesée ({lastWeight} kg)
             </span>
           </div>
@@ -165,13 +180,13 @@ export function AddWeightForm({
 
         {/* Date input */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className='block text-sm font-medium text-gray-700 mb-2'>
             Date
           </label>
           <input
-            type="date"
+            type='date'
             value={date}
-            onChange={(e) => setDate(e.target.value)}
+            onChange={e => setDate(e.target.value)}
             disabled={isLoading}
             max={new Date().toISOString().split('T')[0]}
             className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
@@ -181,13 +196,13 @@ export function AddWeightForm({
             } ${isLoading ? 'bg-gray-100 cursor-not-allowed' : ''}`}
           />
           {errors.date && touched.date && (
-            <p className="text-sm text-red-600 mt-1">{errors.date}</p>
+            <p className='text-sm text-red-600 mt-1'>{errors.date}</p>
           )}
         </div>
 
         {/* Submit button */}
         <button
-          type="submit"
+          type='submit'
           disabled={isLoading || (touched.weight && !!errors.weight)}
           className={`w-full py-3 font-medium rounded-lg transition-colors flex items-center justify-center gap-2 ${
             isLoading || (touched.weight && !!errors.weight)
@@ -197,7 +212,7 @@ export function AddWeightForm({
         >
           {isLoading ? (
             <>
-              <Loader2 className="w-5 h-5 animate-spin" />
+              <Loader2 className='w-5 h-5 animate-spin' />
               Enregistrement...
             </>
           ) : (
@@ -207,12 +222,14 @@ export function AddWeightForm({
       </form>
 
       {/* Connected device tip */}
-      <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-        <div className="flex items-start gap-3">
-          <Lightbulb className="w-5 h-5 text-blue-500 mt-0.5" />
+      <div className='mt-6 p-4 bg-blue-50 rounded-lg'>
+        <div className='flex items-start gap-3'>
+          <Lightbulb className='w-5 h-5 text-blue-500 mt-0.5' />
           <div>
-            <p className="text-sm font-medium text-blue-800">Balance connectée</p>
-            <p className="text-xs text-blue-600 mt-1">
+            <p className='text-sm font-medium text-blue-800'>
+              Balance connectée
+            </p>
+            <p className='text-xs text-blue-600 mt-1'>
               Synchronisez votre balance pour un suivi automatique.
             </p>
           </div>

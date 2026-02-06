@@ -21,6 +21,7 @@ import {
   ArrowLeft,
   ArrowRight,
   X,
+  MessageCircle,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/Button';
@@ -29,6 +30,7 @@ import { PatientOnboardingSchema } from '@/lib/onboarding-schemas';
 
 // Import des étapes individuelles
 import { WelcomeStep } from './steps/WelcomeStep';
+import { ConsultationReasonStep } from './steps/ConsultationReasonStep';
 import { PersonalInfoStep } from './steps/PersonalInfoStep';
 import { HealthProfileStep } from './steps/HealthProfileStep';
 import { HealthGoalsStep } from './steps/HealthGoalsStep';
@@ -55,6 +57,11 @@ interface PatientOnboardingWizardProps {
  */
 const STEPS = [
   { id: 'welcome', title: 'Bienvenue', icon: <Heart className='h-6 w-6' /> },
+  {
+    id: 'consultation-reason',
+    title: 'Raison de consultation',
+    icon: <MessageCircle className='h-6 w-6' />,
+  },
   {
     id: 'personal-info',
     title: 'Informations personnelles',
@@ -180,6 +187,8 @@ export const PatientOnboardingWizardSimple: React.FC<
     switch (currentStep.id) {
       case 'welcome':
         return <WelcomeStep {...stepProps} />;
+      case 'consultation-reason':
+        return <ConsultationReasonStep {...stepProps} />;
       case 'personal-info':
         return <PersonalInfoStep {...stepProps} />;
       case 'health-profile':

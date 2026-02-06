@@ -29,7 +29,7 @@ export const isSupabaseConfigured =
 export async function createClient() {
   const cookieStore = await cookies();
 
-  return createServerClient<Database>(
+  const client = createServerClient<Database>(
     supabaseUrl || 'https://placeholder.supabase.co',
     supabaseAnonKey || 'placeholder-key',
     {
@@ -49,8 +49,18 @@ export async function createClient() {
           }
         },
       },
+      cookieOptions: {
+        name: 'nutrisensia-auth',
+        domain:
+          process.env.NODE_ENV === 'production' ? '.nutrisensia.ch' : undefined,
+        path: '/',
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production',
+      },
     }
   );
+
+  return client;
 }
 
 // Export par défaut

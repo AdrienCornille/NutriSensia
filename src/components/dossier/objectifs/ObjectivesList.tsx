@@ -10,8 +10,8 @@ interface ObjectivesListProps {
 
 export function ObjectivesList({ objectives }: ObjectivesListProps) {
   return (
-    <div className="space-y-4">
-      {objectives.map((objective) => (
+    <div className='space-y-4'>
+      {objectives.map(objective => (
         <ObjectiveCard key={objective.id} objective={objective} />
       ))}
     </div>

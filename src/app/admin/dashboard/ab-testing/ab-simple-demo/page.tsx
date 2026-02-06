@@ -9,6 +9,9 @@
 import { Metadata } from 'next';
 import SimpleABDemoClient from './SimpleABDemoClient';
 
+// Force dynamic rendering - cette page utilise useAuth qui nécessite AuthProvider
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Démonstration A/B Testing Simple - NutriSensia Admin',
   description:

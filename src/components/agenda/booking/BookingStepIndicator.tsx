@@ -8,13 +8,16 @@ interface BookingStepIndicatorProps {
   isEditMode?: boolean; // AGENDA-007
 }
 
-export function BookingStepIndicator({ currentStep, isEditMode = false }: BookingStepIndicatorProps) {
+export function BookingStepIndicator({
+  currentStep,
+  isEditMode = false,
+}: BookingStepIndicatorProps) {
   // AGENDA-007: In edit mode, show only 2 steps (slot selection + confirmation)
   const steps = isEditMode ? [2, 3] : [1, 2, 3];
 
   return (
-    <div className="flex gap-2">
-      {steps.map((step) => (
+    <div className='flex gap-2'>
+      {steps.map(step => (
         <div
           key={step}
           className={`flex-1 h-1 rounded-full transition-colors ${

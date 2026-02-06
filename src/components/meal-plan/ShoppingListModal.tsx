@@ -1,7 +1,14 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { X, ChevronDown, Copy, Download, Check, ShoppingCart } from 'lucide-react';
+import {
+  X,
+  ChevronDown,
+  Copy,
+  Download,
+  Check,
+  ShoppingCart,
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { ShoppingList, ShoppingCategory } from '@/types/meal-plan';
 import { shoppingCategoryConfig } from '@/types/meal-plan';
@@ -28,19 +35,19 @@ function CategorySection({
 }) {
   const [isExpanded, setIsExpanded] = useState(true);
   const config = shoppingCategoryConfig[category];
-  const checkedCount = items.filter((item) => checkedItems.has(item.id)).length;
+  const checkedCount = items.filter(item => checkedItems.has(item.id)).length;
 
   return (
-    <div className="border border-gray-200 rounded-lg overflow-hidden">
+    <div className='border border-gray-200 rounded-lg overflow-hidden'>
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+        className='w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors'
       >
-        <div className="flex items-center gap-3">
-          <span className="text-xl">{config.icon}</span>
-          <div className="text-left">
-            <p className="font-medium text-gray-800">{config.label}</p>
-            <p className="text-sm text-gray-500">
+        <div className='flex items-center gap-3'>
+          <span className='text-xl'>{config.icon}</span>
+          <div className='text-left'>
+            <p className='font-medium text-gray-800'>{config.label}</p>
+            <p className='text-sm text-gray-500'>
               {checkedCount}/{items.length} article{items.length > 1 ? 's' : ''}
             </p>
           </div>
@@ -59,10 +66,10 @@ function CategorySection({
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="overflow-hidden"
+            className='overflow-hidden'
           >
-            <div className="border-t border-gray-100 divide-y divide-gray-50">
-              {items.map((item) => {
+            <div className='border-t border-gray-100 divide-y divide-gray-50'>
+              {items.map(item => {
                 const isChecked = checkedItems.has(item.id);
                 return (
                   <div
@@ -79,18 +86,20 @@ function CategorySection({
                           : 'border-gray-300 hover:border-[#1B998B]'
                       }`}
                     >
-                      {isChecked && <Check className="w-3 h-3 text-white" />}
+                      {isChecked && <Check className='w-3 h-3 text-white' />}
                     </button>
-                    <div className="flex-1">
+                    <div className='flex-1'>
                       <p
                         className={`font-medium ${
-                          isChecked ? 'text-gray-400 line-through' : 'text-gray-800'
+                          isChecked
+                            ? 'text-gray-400 line-through'
+                            : 'text-gray-800'
                         }`}
                       >
                         {item.name}
                       </p>
                     </div>
-                    <div className="text-right">
+                    <div className='text-right'>
                       <p
                         className={`font-medium ${
                           isChecked ? 'text-gray-400' : 'text-[#1B998B]'
@@ -98,7 +107,7 @@ function CategorySection({
                       >
                         {item.weeklyQuantity}
                       </p>
-                      <p className="text-xs text-gray-400">
+                      <p className='text-xs text-gray-400'>
                         {item.occurrences}x / semaine
                       </p>
                     </div>
@@ -122,7 +131,7 @@ export function ShoppingListModal({
   const [copySuccess, setCopySuccess] = useState(false);
 
   const handleToggleItem = (id: string) => {
-    setCheckedItems((prev) => {
+    setCheckedItems(prev => {
       const newSet = new Set(prev);
       if (newSet.has(id)) {
         newSet.delete(id);
@@ -136,7 +145,8 @@ export function ShoppingListModal({
   const totalChecked = useMemo(() => {
     if (!shoppingList) return 0;
     return shoppingList.categories.reduce(
-      (acc, cat) => acc + cat.items.filter((item) => checkedItems.has(item.id)).length,
+      (acc, cat) =>
+        acc + cat.items.filter(item => checkedItems.has(item.id)).length,
       0
     );
   }, [shoppingList, checkedItems]);
@@ -200,7 +210,7 @@ export function ShoppingListModal({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={handleClose}
-            className="fixed inset-0 bg-black/50 z-40"
+            className='fixed inset-0 bg-black/50 z-40'
           />
 
           {/* Modal */}
@@ -209,35 +219,34 @@ export function ShoppingListModal({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            className='fixed inset-0 z-50 flex items-center justify-center p-4'
           >
-            <div className="bg-white rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-hidden flex flex-col">
+            <div className='bg-white rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-hidden flex flex-col'>
               {/* Header */}
-              <div className="flex items-center justify-between p-6 border-b border-gray-100">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-[#1B998B]/10 rounded-lg flex items-center justify-center">
-                    <ShoppingCart className="w-5 h-5 text-[#1B998B]" />
+              <div className='flex items-center justify-between p-6 border-b border-gray-100'>
+                <div className='flex items-center gap-3'>
+                  <div className='w-10 h-10 bg-[#1B998B]/10 rounded-lg flex items-center justify-center'>
+                    <ShoppingCart className='w-5 h-5 text-[#1B998B]' />
                   </div>
                   <div>
-                    <h2 className="text-lg font-semibold text-gray-800">
+                    <h2 className='text-lg font-semibold text-gray-800'>
                       Liste de courses
                     </h2>
-                    <p className="text-sm text-gray-500">
-                      {shoppingList.totalItems} articles •{' '}
-                      {totalChecked} cochés
+                    <p className='text-sm text-gray-500'>
+                      {shoppingList.totalItems} articles • {totalChecked} cochés
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={handleClose}
-                  className="p-2 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-gray-600 transition-colors"
+                  className='p-2 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-gray-600 transition-colors'
                 >
-                  <X className="w-5 h-5" />
+                  <X className='w-5 h-5' />
                 </button>
               </div>
 
               {/* Content */}
-              <div className="flex-1 overflow-y-auto p-6 space-y-3">
+              <div className='flex-1 overflow-y-auto p-6 space-y-3'>
                 {shoppingList.categories.map(({ category, items }) => (
                   <CategorySection
                     key={category}
@@ -250,37 +259,37 @@ export function ShoppingListModal({
               </div>
 
               {/* Footer with actions */}
-              <div className="p-4 border-t border-gray-100 bg-gray-50">
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-sm text-gray-500">
+              <div className='p-4 border-t border-gray-100 bg-gray-50'>
+                <div className='flex items-center justify-between gap-3'>
+                  <p className='text-sm text-gray-500'>
                     Semaine du {shoppingList.weekStart.getDate()} au{' '}
                     {shoppingList.weekEnd.getDate()}{' '}
                     {shoppingList.weekStart.toLocaleDateString('fr-FR', {
                       month: 'long',
                     })}
                   </p>
-                  <div className="flex items-center gap-2">
+                  <div className='flex items-center gap-2'>
                     <button
                       onClick={handleCopyToClipboard}
-                      className="flex items-center gap-2 px-4 py-2 text-gray-600 font-medium hover:bg-gray-200 rounded-lg transition-colors"
+                      className='flex items-center gap-2 px-4 py-2 text-gray-600 font-medium hover:bg-gray-200 rounded-lg transition-colors'
                     >
                       {copySuccess ? (
                         <>
-                          <Check className="w-4 h-4 text-[#1B998B]" />
-                          <span className="text-[#1B998B]">Copié !</span>
+                          <Check className='w-4 h-4 text-[#1B998B]' />
+                          <span className='text-[#1B998B]'>Copié !</span>
                         </>
                       ) : (
                         <>
-                          <Copy className="w-4 h-4" />
+                          <Copy className='w-4 h-4' />
                           Copier
                         </>
                       )}
                     </button>
                     <button
                       onClick={handleDownload}
-                      className="flex items-center gap-2 px-4 py-2 bg-[#1B998B] text-white font-medium rounded-lg hover:bg-[#158578] transition-colors"
+                      className='flex items-center gap-2 px-4 py-2 bg-[#1B998B] text-white font-medium rounded-lg hover:bg-[#158578] transition-colors'
                     >
-                      <Download className="w-4 h-4" />
+                      <Download className='w-4 h-4' />
                       Télécharger
                     </button>
                   </div>

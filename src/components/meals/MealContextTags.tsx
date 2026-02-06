@@ -16,10 +16,10 @@ export function MealContextTags({
   contextConfigs,
 }: MealContextTagsProps) {
   return (
-    <div className="bg-white rounded-xl p-6 border border-gray-200">
-      <h2 className="font-semibold text-gray-800 mb-4">Contexte (optionnel)</h2>
-      <div className="grid grid-cols-3 gap-3">
-        {contextConfigs.map((context) => (
+    <div className='bg-white rounded-xl p-6 border border-gray-200'>
+      <h2 className='font-semibold text-gray-800 mb-4'>Contexte (optionnel)</h2>
+      <div className='grid grid-cols-3 gap-3'>
+        {contextConfigs.map(context => (
           <ContextTagButton
             key={context.id}
             context={context}
@@ -58,10 +58,10 @@ function ContextTagButton({
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
     >
-      <span className="text-xl" role="img" aria-hidden="true">
+      <span className='text-xl' role='img' aria-hidden='true'>
         {context.icon}
       </span>
-      <p className="text-sm text-gray-700 mt-1">{context.label}</p>
+      <p className='text-sm text-gray-700 mt-1'>{context.label}</p>
     </motion.button>
   );
 }

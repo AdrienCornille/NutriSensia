@@ -53,10 +53,7 @@ const signUpSchema = z
     phoneCountryCode: z.string().default('+41'),
     phoneNumber: z
       .string()
-      .regex(
-        /^[1-9]\d{7,9}$/,
-        'Numéro invalide (sans le 0, ex: 791234567)'
-      )
+      .regex(/^[1-9]\d{7,9}$/, 'Numéro invalide (sans le 0, ex: 791234567)')
       .optional()
       .or(z.literal('')),
     password: z
@@ -178,8 +175,9 @@ export const SignUpForm: React.FC = () => {
 
     try {
       // Combiner l'indicatif pays et le numéro de téléphone
-      const normalizedPhone =
-        data.phoneNumber ? `${data.phoneCountryCode}${data.phoneNumber}` : '';
+      const normalizedPhone = data.phoneNumber
+        ? `${data.phoneCountryCode}${data.phoneNumber}`
+        : '';
 
       // 1. Inscription avec Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.signUp({

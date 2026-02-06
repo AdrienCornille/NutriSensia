@@ -24,6 +24,7 @@ import {
   Play,
   FileText,
   RefreshCw,
+  UserCheck,
 } from 'lucide-react';
 
 export default function AdminDashboardClient() {
@@ -354,6 +355,21 @@ export default function AdminDashboardClient() {
             </div>
             <div className='p-6'>
               <div className='space-y-4'>
+                <a
+                  href='/admin/nutritionists'
+                  className='flex items-center p-4 bg-emerald-50 rounded-lg hover:bg-emerald-100 transition-colors border border-emerald-200'
+                >
+                  <UserCheck className='w-5 h-5 text-emerald-600 mr-3' />
+                  <div>
+                    <h3 className='font-medium text-gray-900'>
+                      Validation Nutritionnistes
+                    </h3>
+                    <p className='text-sm text-gray-500'>
+                      Valider les demandes d'inscription des nutritionnistes
+                    </p>
+                  </div>
+                </a>
+
                 <a
                   href='/admin/users'
                   className='flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors'
