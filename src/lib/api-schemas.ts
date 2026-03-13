@@ -1570,3 +1570,25 @@ export type ProfileStatusType = z.infer<typeof profileStatusEnum>;
 export type ActivityLevelType = z.infer<typeof activityLevelEnum>;
 export type CreateNutritionalProfileData = z.infer<typeof createNutritionalProfileSchema>;
 export type UpdateNutritionalProfileData = z.infer<typeof updateNutritionalProfileSchema>;
+
+// =====================================================
+// SCHÉMAS POUR LES RAPPELS (REMINDERS)
+// =====================================================
+
+export const updateReminderPreferencesSchema = z.object({
+  email_enabled: z.boolean().optional(),
+  email_hours_before: z.number().int().min(1).max(72).optional(),
+  push_enabled: z.boolean().optional(),
+  push_hours_before: z.number().int().min(1).max(48).optional(),
+  sms_enabled: z.boolean().optional(),
+  sms_hours_before: z.number().int().min(1).max(48).optional(),
+}).refine(data => Object.keys(data).length > 0, {
+  message: 'Au moins un champ doit être fourni',
+});
+
+export const updateAppointmentReminderSchema = z.object({
+  enabled: z.boolean(),
+});
+
+export type UpdateReminderPreferencesData = z.infer<typeof updateReminderPreferencesSchema>;
+export type UpdateAppointmentReminderData = z.infer<typeof updateAppointmentReminderSchema>;

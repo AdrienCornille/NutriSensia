@@ -339,7 +339,17 @@ export async function POST(req: NextRequest) {
       visioLink = `https://meet.jit.si/${visioRoomId}`;
     }
 
-    // 9. Insérer le rendez-vous
+    // 9. Vérifier si c'est la première consultation du patient
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { count: existingCount } = await (supabase as any)
+      .from('appointments')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', patientProfile.id)
+      .in('status', ['confirmed', 'completed']);
+
+    const isFirstConsultation = !existingCount || existingCount === 0;
+
+    // 10. Insérer le rendez-vous
     // Note: user_id référence patient_profiles.id (pas auth.users.id)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data: newAppointment, error: insertError } = await (supabase as any)
@@ -361,7 +371,7 @@ export async function POST(req: NextRequest) {
         price: consultationType.default_price,
         currency: 'CHF',
         booking_source: 'web',
-        is_first_consultation: false, // TODO: vérifier si premier RDV
+        is_first_consultation: isFirstConsultation,
         created_by: auth.user.id,
       })
       .select(

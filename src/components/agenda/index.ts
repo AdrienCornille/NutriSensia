@@ -5,6 +5,7 @@
 // Main components
 export { AgendaHeader } from './AgendaHeader';
 export { AgendaTabs } from './AgendaTabs';
+export { Pagination } from './Pagination';
 
 // Upcoming appointments components
 export { NextAppointmentCard } from './appointments/NextAppointmentCard';

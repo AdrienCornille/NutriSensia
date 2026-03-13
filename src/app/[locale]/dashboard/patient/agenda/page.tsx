@@ -22,6 +22,7 @@ import {
   BookingModal,
   BookingSuccessModal,
   CancellationConfirmModal,
+  Pagination,
 } from '@/components/agenda';
 import {
   agendaReducer,
@@ -33,7 +34,6 @@ import type {
   AgendaTab,
   Appointment,
   BookingFormData,
-  ReminderSettings as ReminderSettingsType,
 } from '@/types/agenda';
 // API Hooks
 import {
@@ -50,8 +50,6 @@ import {
   transformAppointmentToUI,
   modeUItoAPI,
 } from '@/lib/appointments-transformers';
-// Mock for reminder settings only (not yet implemented in backend)
-import { updateReminderSettings } from '@/data/mock-agenda';
 import { Toast, type ToastType } from '@/components/suivi/shared/Toast';
 
 export default function AgendaPage() {
@@ -61,6 +59,13 @@ export default function AgendaPage() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [createdAppointment, setCreatedAppointment] =
     useState<Appointment | null>(null);
+
+  // Pagination state
+  const ITEMS_PER_PAGE = 10;
+  const [upcomingPage, setUpcomingPage] = useState(1);
+  const [pastPage, setPastPage] = useState(1);
+  const [cancelledPage, setCancelledPage] = useState(1);
+  const [noShowPage, setNoShowPage] = useState(1);
 
   // Toast state
   const [toast, setToast] = useState<{
@@ -89,25 +94,25 @@ export default function AgendaPage() {
     data: upcomingData,
     isLoading: isLoadingUpcoming,
     error: upcomingError,
-  } = useUpcomingAppointments(1, 50);
+  } = useUpcomingAppointments(upcomingPage, ITEMS_PER_PAGE);
 
   const {
     data: pastData,
     isLoading: isLoadingPast,
     error: pastError,
-  } = usePastAppointments(1, 50);
+  } = usePastAppointments(pastPage, ITEMS_PER_PAGE);
 
   const {
     data: cancelledData,
     isLoading: isLoadingCancelled,
     error: cancelledError,
-  } = useCancelledAppointments(1, 50);
+  } = useCancelledAppointments(cancelledPage, ITEMS_PER_PAGE);
 
   const {
     data: noShowData,
     isLoading: isLoadingNoShow,
     error: noShowError,
-  } = useNoShowAppointments(1, 50);
+  } = useNoShowAppointments(noShowPage, ITEMS_PER_PAGE);
 
   // ============================================================================
   // API MUTATIONS
@@ -234,14 +239,6 @@ export default function AgendaPage() {
   const handleCloseCancellation = useCallback(() => {
     dispatch({ type: 'CLOSE_CANCELLATION_MODAL' });
   }, []);
-
-  const handleReminderSettingsChange = useCallback(
-    (settings: Partial<ReminderSettingsType>) => {
-      updateReminderSettings(settings);
-      dispatch({ type: 'UPDATE_REMINDER_SETTINGS', settings });
-    },
-    []
-  );
 
   // Close success modal
   const handleCloseSuccessModal = useCallback(() => {
@@ -404,7 +401,15 @@ export default function AgendaPage() {
               onBookAppointment={handleOpenBooking}
             />
 
-            {/* TODO: Reminder settings - hidden until backend implementation */}
+            <Pagination
+              currentPage={upcomingPage}
+              totalItems={upcomingData?.total || 0}
+              itemsPerPage={ITEMS_PER_PAGE}
+              onPageChange={setUpcomingPage}
+            />
+
+            {/* Reminder Settings */}
+            <ReminderSettings onShowToast={showToast} />
           </div>
         );
 
@@ -415,6 +420,13 @@ export default function AgendaPage() {
             <PastAppointmentsList
               appointments={pastAppointments}
               onAppointmentClick={handleAppointmentClick}
+            />
+
+            <Pagination
+              currentPage={pastPage}
+              totalItems={pastData?.total || 0}
+              itemsPerPage={ITEMS_PER_PAGE}
+              onPageChange={setPastPage}
             />
 
             {/* Stats */}
@@ -437,6 +449,13 @@ export default function AgendaPage() {
               emptyMessage='Aucun rendez-vous annulé'
               emptyDescription='Les rendez-vous annulés apparaîtront ici'
             />
+
+            <Pagination
+              currentPage={cancelledPage}
+              totalItems={cancelledData?.total || 0}
+              itemsPerPage={ITEMS_PER_PAGE}
+              onPageChange={setCancelledPage}
+            />
           </div>
         );
 
@@ -450,6 +469,13 @@ export default function AgendaPage() {
               title='Absences'
               emptyMessage='Aucune absence enregistrée'
               emptyDescription='Les rendez-vous marqués comme absence apparaîtront ici'
+            />
+
+            <Pagination
+              currentPage={noShowPage}
+              totalItems={noShowData?.total || 0}
+              itemsPerPage={ITEMS_PER_PAGE}
+              onPageChange={setNoShowPage}
             />
           </div>
         );
