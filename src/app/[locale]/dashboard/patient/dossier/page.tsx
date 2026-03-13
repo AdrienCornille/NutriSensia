@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useReducer, useEffect, useMemo } from 'react';
+import React, { useReducer, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import {
@@ -10,6 +10,8 @@ import {
   AnamneseReadOnlyAlert,
   AnamneseSectionList,
   SignalChangeCard,
+  SignalChangeModal,
+  PatientChangeReportsList,
   QuestionnairesList,
   QuestionnairesInfo,
   DocumentUploadZone,
@@ -19,6 +21,7 @@ import {
   PrivateNotesInfo,
   ObjectivesOverview,
   ObjectivesList,
+  NutritionalProfileSection,
 } from '@/components/dossier';
 import {
   dossierReducer,
@@ -35,12 +38,11 @@ import type {
   ObjectiveStatus,
 } from '@/types/dossier';
 import {
-  getAnamneseData,
   getQuestionnairesData,
   getDocumentsData,
-  getConsultationsData,
 } from '@/data/mock-dossier';
 import { useWeeklyObjectives } from '@/hooks/useObjectives';
+import { usePatientAnamnese } from '@/hooks/usePatientDossier';
 
 /**
  * Transforme les objectifs hebdomadaires API en format Dossier (Objective[])
@@ -70,6 +72,7 @@ function mapProgressToStatus(progress: number): ObjectiveStatus {
 export default function DossierPage() {
   const searchParams = useSearchParams();
   const [state, dispatch] = useReducer(dossierReducer, initialDossierState);
+  const [showSignalModal, setShowSignalModal] = useState(false);
 
   // Handle tab query parameter from URL (e.g., from Agenda link)
   useEffect(() => {
@@ -78,6 +81,7 @@ export default function DossierPage() {
       tabParam &&
       [
         'anamnese',
+        'profil',
         'questionnaires',
         'documents',
         'consultations',
@@ -88,11 +92,14 @@ export default function DossierPage() {
     }
   }, [searchParams]);
 
-  // Load mock data (anamnese, questionnaires, documents, consultations)
-  const anamneseData = getAnamneseData();
+  // Anamnese from real API
+  const { data: anamneseResponse, isLoading: anamneseLoading } =
+    usePatientAnamnese();
+  const anamneseData = anamneseResponse?.anamnese ?? null;
+
+  // Load mock data (questionnaires, documents)
   const questionnaires = getQuestionnairesData();
   const documents = getDocumentsData();
-  const consultations = getConsultationsData();
 
   // FILE-006: Objectifs depuis l'API
   const { data: weeklyObjectivesData, isLoading: objectivesLoading } =
@@ -151,8 +158,7 @@ export default function DossierPage() {
   };
 
   const handleSignalChange = () => {
-    // TODO: Implement signal change functionality
-    alert('Fonctionnalité de signalement en cours de développement');
+    setShowSignalModal(true);
   };
 
   const handleUpload = (files: FileList) => {
@@ -169,14 +175,46 @@ export default function DossierPage() {
       case 'anamnese':
         return (
           <div className='space-y-6'>
-            <AnamneseHeader data={anamneseData} />
-            <AnamneseReadOnlyAlert />
-            <AnamneseSectionList
-              sections={anamneseData.sections}
-              expandedSection={state.expandedSection}
-              onToggleSection={handleSectionToggle}
-            />
-            <SignalChangeCard onSignalChange={handleSignalChange} />
+            {anamneseLoading ? (
+              <div className='animate-pulse space-y-4'>
+                <div className='h-24 bg-gray-200 rounded-xl' />
+                <div className='h-32 bg-gray-100 rounded-xl' />
+                <div className='h-32 bg-gray-100 rounded-xl' />
+              </div>
+            ) : anamneseData ? (
+              <>
+                <AnamneseHeader data={anamneseData} />
+                <AnamneseReadOnlyAlert />
+                <AnamneseSectionList
+                  sections={anamneseData.sections}
+                  expandedSection={state.expandedSection}
+                  onToggleSection={handleSectionToggle}
+                />
+                <SignalChangeCard onSignalChange={handleSignalChange} />
+                <PatientChangeReportsList />
+                <SignalChangeModal
+                  isOpen={showSignalModal}
+                  onClose={() => setShowSignalModal(false)}
+                  sections={anamneseData?.sections ?? []}
+                />
+              </>
+            ) : (
+              <div className='text-center py-12'>
+                <p className='text-gray-500'>
+                  Aucune anamnèse disponible.
+                </p>
+                <p className='text-sm text-gray-400 mt-1'>
+                  Votre nutritionniste la remplira lors de votre première consultation.
+                </p>
+              </div>
+            )}
+          </div>
+        );
+
+      case 'profil':
+        return (
+          <div className='space-y-6'>
+            <NutritionalProfileSection />
           </div>
         );
 
@@ -202,7 +240,7 @@ export default function DossierPage() {
               isOpen={state.showDocumentModal}
               document={state.selectedDocument}
               onClose={handleCloseModal}
-              nutritionistName={anamneseData.nutritionist}
+              nutritionistName={anamneseData?.nutritionist ?? ''}
             />
           </div>
         );
@@ -211,7 +249,7 @@ export default function DossierPage() {
         return (
           <div className='space-y-6'>
             <PrivateNotesInfo />
-            <ConsultationsTimeline consultations={consultations} />
+            <ConsultationsTimeline />
           </div>
         );
 

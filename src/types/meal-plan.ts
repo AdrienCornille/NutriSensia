@@ -82,6 +82,7 @@ export interface PlanFood {
   protein: number;
   carbs: number;
   fat: number;
+  fiber?: number;
   category?: ShoppingCategory;
   alternatives?: FoodAlternative[];
 }
@@ -258,6 +259,7 @@ export function calculateMealTotal(foods: PlanFood[]): {
   protein: number;
   carbs: number;
   fat: number;
+  fiber: number;
 } {
   return foods.reduce(
     (acc, food) => ({
@@ -265,8 +267,9 @@ export function calculateMealTotal(foods: PlanFood[]): {
       protein: acc.protein + food.protein,
       carbs: acc.carbs + food.carbs,
       fat: acc.fat + food.fat,
+      fiber: acc.fiber + (food.fiber || 0),
     }),
-    { calories: 0, protein: 0, carbs: 0, fat: 0 }
+    { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 }
   );
 }
 
@@ -325,6 +328,7 @@ export interface DailyPlanTotals {
   protein: number;
   carbs: number;
   fat: number;
+  fiber: number;
 }
 
 /**
@@ -348,15 +352,17 @@ export function calculateDailyPlanTotal(
   return mealTypes.reduce(
     (acc, mealType) => {
       const meal = meals[mealType];
+      if (!meal) return acc;
       const mealTotal = calculateMealTotal(meal.foods);
       return {
         calories: acc.calories + mealTotal.calories,
         protein: acc.protein + mealTotal.protein,
         carbs: acc.carbs + mealTotal.carbs,
         fat: acc.fat + mealTotal.fat,
+        fiber: acc.fiber + mealTotal.fiber,
       };
     },
-    { calories: 0, protein: 0, carbs: 0, fat: 0 }
+    { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 }
   );
 }
 

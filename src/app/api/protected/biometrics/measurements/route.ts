@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
     const { data: existingEntry } = await supabase
       .from('measurements')
       .select('id')
-      .eq('user_id', auth.user.id)
+      .eq('patient_id', auth.user.id)
       .eq('measurement_type', validatedData.measurement_type)
       .eq('date', entryDate)
       .single();
@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
     const { data: newEntry, error: insertError } = await supabase
       .from('measurements')
       .insert({
-        user_id: auth.user.id,
+        patient_id: auth.user.id,
         measurement_type: validatedData.measurement_type,
         value_cm: validatedData.value_cm,
         date: entryDate,
@@ -137,7 +137,7 @@ export async function GET(req: NextRequest) {
     let query = supabase
       .from('measurements')
       .select('*')
-      .eq('user_id', auth.user.id)
+      .eq('patient_id', auth.user.id)
       .order('date', { ascending: false });
 
     // Appliquer filtre par type

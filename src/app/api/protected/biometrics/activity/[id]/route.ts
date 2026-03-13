@@ -45,7 +45,7 @@ export async function PATCH(
     // 4. Vérifier que l'activité existe et appartient à l'utilisateur
     const { data: existingActivity, error: fetchError } = await supabase
       .from('activities')
-      .select('user_id')
+      .select('patient_id')
       .eq('id', id)
       .single();
 
@@ -53,7 +53,7 @@ export async function PATCH(
       return apiResponse.error('Activité non trouvée', 404);
     }
 
-    if ((existingActivity as any).user_id !== auth.user.id) {
+    if ((existingActivity as any).patient_id !== auth.user.id) {
       return apiResponse.error('Accès non autorisé', 403);
     }
 
@@ -190,7 +190,7 @@ export async function DELETE(
     // 4. Vérifier que l'activité existe et appartient à l'utilisateur
     const { data: existingActivity, error: fetchError } = await supabase
       .from('activities')
-      .select('user_id')
+      .select('patient_id')
       .eq('id', id)
       .single();
 
@@ -198,7 +198,7 @@ export async function DELETE(
       return apiResponse.error('Activité non trouvée', 404);
     }
 
-    if ((existingActivity as any).user_id !== auth.user.id) {
+    if ((existingActivity as any).patient_id !== auth.user.id) {
       return apiResponse.error('Accès non autorisé', 403);
     }
 

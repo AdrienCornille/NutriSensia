@@ -21,7 +21,7 @@ import type { ConsultationTypeDB } from '@/types/agenda';
 // TYPES
 // ============================================================================
 
-export type AppointmentFilter = 'upcoming' | 'past' | 'cancelled' | 'all';
+export type AppointmentFilter = 'upcoming' | 'past' | 'cancelled' | 'no_show' | 'all';
 
 // Re-export AppointmentAPI for convenience
 export type { AppointmentAPI } from '@/lib/appointments-transformers';
@@ -211,10 +211,17 @@ export function usePastAppointments(page: number = 1, limit: number = 10) {
 }
 
 /**
- * Hook to fetch cancelled appointments only
+ * Hook to fetch cancelled appointments only (without no_show)
  */
 export function useCancelledAppointments(page: number = 1, limit: number = 10) {
   return useAppointments('cancelled', page, limit);
+}
+
+/**
+ * Hook to fetch no-show appointments only
+ */
+export function useNoShowAppointments(page: number = 1, limit: number = 10) {
+  return useAppointments('no_show', page, limit);
 }
 
 /**

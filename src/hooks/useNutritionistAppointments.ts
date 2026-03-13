@@ -14,13 +14,14 @@ import type {
   NutritionistAppointmentResponseData,
   NutritionistUpdateAppointmentData,
   PatientCounterProposalResponseData,
+  PostAppointmentStatusData,
 } from '@/lib/api-schemas';
 
 // ============================================================================
 // TYPES
 // ============================================================================
 
-export type NutritionistAppointmentFilter = 'pending' | 'upcoming' | 'past' | 'cancelled' | 'all';
+export type NutritionistAppointmentFilter = 'pending' | 'upcoming' | 'past' | 'cancelled' | 'no_show' | 'all';
 
 export interface NutritionistAppointment {
   id: string;
@@ -54,6 +55,7 @@ export interface NutritionistAppointment {
   patient: {
     first_name: string;
     last_name: string;
+    gender: string | null;
   };
 }
 
@@ -64,6 +66,8 @@ export interface NutritionistAppointmentsResponse {
   upcoming_count: number;
   past_count: number;
   cancelled_count: number;
+  no_show_count: number;
+  unmarked_count: number;
 }
 
 // ============================================================================
@@ -116,7 +120,8 @@ export function useNutritionistAppointments(
 
       return response.json();
     },
-    staleTime: 2 * 60 * 1000, // 2 minutes
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
   });
 }
 
@@ -260,9 +265,95 @@ export function useNutritionistCancelAppointment() {
 }
 
 /**
+ * Hook for nutritionist to mark post-appointment status
+ * Actions: completed, no_show (AGENDA-N-011)
+ */
+export function useMarkPostAppointmentStatus() {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    {
+      message: string;
+      appointment: NutritionistAppointment;
+      new_appointment?: NutritionistAppointment;
+      suggest_consultation_report?: boolean;
+    },
+    Error,
+    { id: string; data: PostAppointmentStatusData }
+  >({
+    mutationFn: async ({ id, data }) => {
+      const response = await fetch(
+        `/api/protected/nutritionist/appointments/${id}/status`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify(data),
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(
+          error.error || 'Erreur lors du marquage du statut'
+        );
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: nutritionistAppointmentKeys.all,
+      });
+      queryClient.invalidateQueries({
+        queryKey: appointmentKeys.all,
+      });
+    },
+  });
+}
+
+/**
  * Hook for patient to respond to a counter-proposal
  * Actions: accept, decline
  */
+/**
+ * Hook for nutritionist to send a re-booking invitation
+ * after a patient declines a counter-proposal
+ */
+export function useRelancerAppointment() {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    { success: boolean; message: string },
+    Error,
+    { id: string; message_content: string }
+  >({
+    mutationFn: async ({ id, message_content }) => {
+      const response = await fetch(
+        `/api/protected/nutritionist/appointments/${id}/relancer`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ message_content }),
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Erreur lors de l'envoi du message");
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: nutritionistAppointmentKeys.all,
+      });
+    },
+  });
+}
+
 export function usePatientRespondToCounterProposal() {
   const queryClient = useQueryClient();
 

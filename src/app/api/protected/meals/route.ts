@@ -113,7 +113,7 @@ export async function POST(req: NextRequest) {
     const { data: meal, error: mealError } = await supabase
       .from('meals')
       .insert({
-        user_id: auth.user.id,
+        patient_id: auth.user.id,
         name: `${validatedData.type} - ${mealDate}`, // Nom par défaut
         meal_type: validatedData.type,
         meal_date: mealDate,
@@ -195,7 +195,7 @@ export async function POST(req: NextRequest) {
     // 11. Formater la réponse
     const response = {
       id: completeMeal.id,
-      user_id: completeMeal.user_id,
+      patient_id: completeMeal.patient_id,
       type: completeMeal.meal_type,
       consumed_at: `${completeMeal.meal_date}T${completeMeal.meal_time}`,
       total_calories: completeMeal.total_calories,
@@ -293,7 +293,7 @@ export async function GET(req: NextRequest) {
       `,
         { count: 'exact' }
       )
-      .eq('user_id', auth.user.id)
+      .eq('patient_id', auth.user.id)
       .is('deleted_at', null);
 
     // Filtre par date

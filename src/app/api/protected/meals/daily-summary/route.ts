@@ -53,7 +53,7 @@ export async function GET(req: NextRequest) {
       .select(
         'id, meal_type, total_calories, total_protein, total_carbs, total_fat'
       )
-      .eq('user_id', auth.user.id)
+      .eq('patient_id', auth.user.id)
       .eq('meal_date', date)
       .is('deleted_at', null);
 

@@ -66,7 +66,7 @@ export async function GET() {
       supabase
         .from('meals')
         .select('id, type, total_calories, total_protein, total_carbs, total_fat')
-        .eq('user_id', userId)
+        .eq('patient_id', userId)
         .gte('consumed_at', `${today}T00:00:00Z`)
         .lte('consumed_at', `${today}T23:59:59Z`),
 
@@ -74,14 +74,14 @@ export async function GET() {
       supabase
         .from('hydration_logs')
         .select('amount_ml')
-        .eq('user_id', userId)
+        .eq('patient_id', userId)
         .eq('date', today),
 
       // Objectif hydratation
       supabase
         .from('hydration_goals')
         .select('daily_goal_ml')
-        .eq('user_id', userId)
+        .eq('patient_id', userId)
         .lte('valid_from', today)
         .or(`valid_until.is.null,valid_until.gte.${today}`)
         .order('created_at', { ascending: false })
@@ -92,7 +92,7 @@ export async function GET() {
       supabase
         .from('weight_entries')
         .select('weight_kg, measured_at')
-        .eq('user_id', userId)
+        .eq('patient_id', userId)
         .gte('measured_at', `${weekStart}T00:00:00Z`)
         .order('measured_at', { ascending: false })
         .limit(7),

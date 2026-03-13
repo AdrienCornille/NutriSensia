@@ -57,7 +57,7 @@ async function calculateObjectiveProgress(
         const { count } = await supabase
           .from('meals')
           .select('*', { count: 'exact', head: true })
-          .eq('user_id', userId)
+          .eq('patient_id', userId)
           .gte('consumed_at', `${weekStart}T00:00:00Z`)
           .lte('consumed_at', `${weekEnd}T23:59:59Z`);
         current = count || 0;
@@ -68,7 +68,7 @@ async function calculateObjectiveProgress(
         const { data: goalData } = await supabase
           .from('hydration_goals')
           .select('daily_goal_ml')
-          .eq('user_id', userId)
+          .eq('patient_id', userId)
           .lte('valid_from', weekEnd)
           .or(`valid_until.is.null,valid_until.gte.${weekStart}`)
           .order('created_at', { ascending: false })
@@ -80,7 +80,7 @@ async function calculateObjectiveProgress(
         const { data: logs } = await supabase
           .from('hydration_logs')
           .select('date, amount_ml')
-          .eq('user_id', userId)
+          .eq('patient_id', userId)
           .gte('date', weekStart)
           .lte('date', weekEnd);
 
@@ -101,7 +101,7 @@ async function calculateObjectiveProgress(
         const { count } = await supabase
           .from('activity_logs')
           .select('*', { count: 'exact', head: true })
-          .eq('user_id', userId)
+          .eq('patient_id', userId)
           .gte('performed_at', `${weekStart}T00:00:00Z`)
           .lte('performed_at', `${weekEnd}T23:59:59Z`);
         current = count || 0;

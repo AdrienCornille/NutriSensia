@@ -13,7 +13,7 @@ import type { WeightData, WeightEntry, WeightTrend } from '@/types/suivi';
 
 export interface WeightEntryAPI {
   id: string;
-  user_id: string;
+  patient_id: string;
   weight_kg: number;
   date: string; // 'YYYY-MM-DD'
   variation_kg: number; // Calculé par l'API
@@ -25,7 +25,7 @@ export interface WeightEntryAPI {
 
 export interface WeightGoalAPI {
   id: string;
-  user_id: string;
+  patient_id: string;
   initial_weight_kg: number;
   target_weight_kg: number;
   target_date?: string; // 'YYYY-MM-DD'

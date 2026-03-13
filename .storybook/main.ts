@@ -1,7 +1,12 @@
 import type { StorybookConfig } from '@storybook/nextjs-vite';
 
 const config: StorybookConfig = {
-  stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
+  stories: [
+    '../src/**/*.mdx',
+    '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)',
+    '../Wireframe Nutrisensia - Dashboard Nutritionniste/**/*.stories.@(js|jsx|mjs|ts|tsx)',
+    '../Wireframe Nutrisensia - Dashboard Patient/**/*.stories.@(js|jsx|mjs|ts|tsx)',
+  ],
   addons: [
     '@chromatic-com/storybook',
     '@storybook/addon-docs',

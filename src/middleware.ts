@@ -38,8 +38,44 @@ interface RoleCheckResult {
   nutritionistStatus: NutritionistStatus;
 }
 
+// Cache du rôle dans un cookie (TTL 10 minutes)
+const ROLE_CACHE_COOKIE = 'ns-role-cache';
+const ROLE_CACHE_TTL_MS = 10 * 60 * 1000;
+
+interface RoleCacheData {
+  role: UserRole;
+  nutritionistStatus: NutritionistStatus;
+  userId: string;
+  ts: number;
+}
+
+function getRoleCacheFromCookie(request: NextRequest): RoleCacheData | null {
+  const cookie = request.cookies.get(ROLE_CACHE_COOKIE);
+  if (!cookie?.value) return null;
+  try {
+    const data: RoleCacheData = JSON.parse(cookie.value);
+    if (Date.now() - data.ts > ROLE_CACHE_TTL_MS) return null;
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+function setRoleCacheCookie(
+  response: NextResponse,
+  data: RoleCacheData
+): void {
+  response.cookies.set(ROLE_CACHE_COOKIE, JSON.stringify(data), {
+    path: '/',
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: ROLE_CACHE_TTL_MS / 1000,
+  });
+}
+
 /**
- * Vérifie le rôle de l'utilisateur
+ * Vérifie le rôle de l'utilisateur (avec cache cookie pour éviter les requêtes DB)
  */
 async function checkUserRole(
   request: NextRequest,
@@ -88,36 +124,57 @@ async function checkUserRole(
     },
   });
 
-  // Récupérer l'utilisateur
+  // Vérifier la session (lecture locale cookies, pas de réseau)
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    data: { session },
+  } = await supabase.auth.getSession();
 
-  if (!user) {
+  if (!session?.user) {
+    // Pas de session → supprimer le cache
+    response.cookies.delete(ROLE_CACHE_COOKIE);
     return { response, roleData: defaultResult };
   }
 
-  // Récupérer le rôle depuis profiles
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single();
+  // Vérifier le cache cookie (évite 2 requêtes DB)
+  const cached = getRoleCacheFromCookie(request);
+  if (cached && cached.userId === session.user.id) {
+    return {
+      response,
+      roleData: {
+        isAuthenticated: true,
+        role: cached.role,
+        nutritionistStatus: cached.nutritionistStatus,
+      },
+    };
+  }
 
-  const role = (profile?.role as UserRole) || 'patient';
-  let nutritionistStatus: NutritionistStatus = null;
-
-  // Si nutritionniste, récupérer le statut
-  if (role === 'nutritionist') {
-    const { data: nutritionistProfile } = await supabase
+  // Cache miss → requêtes DB en parallèle
+  const [{ data: profile }, { data: nutritionistProfile }] = await Promise.all([
+    supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', session.user.id)
+      .single(),
+    supabase
       .from('nutritionist_profiles')
       .select('status')
-      .eq('user_id', user.id)
-      .single();
+      .eq('user_id', session.user.id)
+      .maybeSingle(),
+  ]);
 
-    nutritionistStatus =
-      (nutritionistProfile?.status as NutritionistStatus) || 'pending';
-  }
+  const role = (profile?.role as UserRole) || 'patient';
+  const nutritionistStatus: NutritionistStatus =
+    role === 'nutritionist'
+      ? (nutritionistProfile?.status as NutritionistStatus) || 'pending'
+      : null;
+
+  // Stocker dans le cookie cache
+  setRoleCacheCookie(response, {
+    role,
+    nutritionistStatus,
+    userId: session.user.id,
+    ts: Date.now(),
+  });
 
   return {
     response,

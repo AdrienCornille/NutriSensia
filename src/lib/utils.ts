@@ -202,6 +202,42 @@ export function formatCurrency(
  * isValidAVS('invalid') // false
  * ```
  */
+/**
+ * Decode HTML entities in a string (works server-side without DOM).
+ * Handles &apos; &quot; &amp; &lt; &gt; and numeric entities (&#NNN; &#xHH;).
+ */
+export function decodeHtmlEntities(str: string): string {
+  return str
+    .replace(/&apos;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(Number(dec)))
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
+    .replace(/&amp;/g, '&');
+}
+
+/**
+ * Formate une raison de consultation (clé DB) en label lisible.
+ * Utilise un mapping connu, avec fallback qui remplace les underscores par des espaces.
+ */
+const CONSULTATION_REASON_LABELS: Record<string, string> = {
+  menopause_perimenopause: 'Ménopause / Périménopause',
+  perte_poids_durable: 'Perte de poids durable',
+  troubles_digestifs: 'Troubles digestifs',
+  glycemie_diabete: 'Glycémie / Diabète',
+  sante_cardiovasculaire: 'Santé cardiovasculaire',
+  fatigue_energie: 'Fatigue / Énergie',
+  longevite_vieillissement: 'Longévité / Bien vieillir',
+  sante_hormonale: 'Santé hormonale',
+  alimentation_saine: 'Alimentation saine',
+  autre: 'Autre',
+};
+
+export function formatConsultationReason(reason: string): string {
+  return CONSULTATION_REASON_LABELS[reason] || reason.replace(/_/g, ' ').replace(/^\w/, c => c.toUpperCase());
+}
+
 export function isValidAVS(avsNumber: string): boolean {
   // Supprimer les points et espaces
   const cleaned = avsNumber.replace(/[\s.]/g, '');

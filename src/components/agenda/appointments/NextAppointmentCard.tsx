@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { Clock, CheckCircle } from 'lucide-react';
 import type { Appointment } from '@/types/agenda';
 import {
   appointmentModeConfig,
@@ -42,10 +43,21 @@ export function NextAppointmentCard({
             {appointment.typeName}
           </p>
         </div>
-        <div className='text-right'>
+        <div className='text-right space-y-2'>
           <span className='px-3 py-1 rounded-full text-sm font-medium bg-white/20 text-white'>
             {modeConfig.icon} {modeConfig.label}
           </span>
+          {appointment.status === 'pending' ? (
+            <span className='flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-amber-400/90 text-white'>
+              <Clock className='w-3.5 h-3.5' />
+              En attente de confirmation
+            </span>
+          ) : appointment.status === 'confirmed' && (
+            <span className='flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-white/25 text-white'>
+              <CheckCircle className='w-3.5 h-3.5' />
+              Confirmé
+            </span>
+          )}
         </div>
       </div>
 

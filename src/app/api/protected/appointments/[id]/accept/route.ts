@@ -2,7 +2,7 @@
  * API Route: /api/protected/appointments/[id]/accept
  * Réponse du patient à une contre-proposition de rendez-vous
  *
- * POST - Accepter ou refuser le nouvel horaire proposé par le nutritionniste
+ * POST - Accepter, refuser ou contre-proposer le nouvel horaire proposé par le nutritionniste
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -13,6 +13,7 @@ import { z } from 'zod';
 import {
   notifyAppointmentConfirmed,
   notifyAppointmentCancelled,
+  notifyAppointmentRescheduled,
   formatDateForNotification,
   formatTimeForNotification,
 } from '@/lib/notifications';
@@ -165,7 +166,7 @@ export async function POST(
         .from('appointments')
         .update({
           status: 'cancelled_by_patient',
-          status_reason: validatedData.reason || 'Nouvel horaire refusé',
+          status_reason: 'counter_proposal_declined:' + (validatedData.reason || 'Nouvel horaire refusé'),
           status_changed_at: now,
           cancelled_at: now,
           cancelled_by: auth.user.id,
@@ -199,6 +200,67 @@ export async function POST(
 
       return NextResponse.json(
         { message: 'Rendez-vous annulé', appointment: updated },
+        { status: 200 }
+      );
+    }
+
+    if (validatedData.action === 'counter_propose') {
+      // Patient propose un autre horaire
+      const proposedAt = new Date(validatedData.proposed_at);
+      if (isNaN(proposedAt.getTime())) {
+        return apiResponse.error('Date proposée invalide', 400);
+      }
+      if (proposedAt <= new Date()) {
+        return apiResponse.error('La date proposée doit être dans le futur', 400);
+      }
+
+      // Calculer scheduled_end_at basé sur la durée du RDV original
+      const originalStart = new Date(appointment.scheduled_at);
+      const originalEnd = new Date(appointment.scheduled_end_at || appointment.scheduled_at);
+      const durationMs = originalEnd.getTime() - originalStart.getTime();
+      const newEndAt = new Date(proposedAt.getTime() + durationMs);
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: updated, error: updateError } = await (supabase as any)
+        .from('appointments')
+        .update({
+          scheduled_at: proposedAt.toISOString(),
+          scheduled_end_at: newEndAt.toISOString(),
+          status: 'pending',
+          status_reason: 'patient_counter_proposal',
+          patient_message: validatedData.message || appointment.patient_message,
+          status_changed_at: now,
+          updated_at: now,
+        })
+        .eq('id', id)
+        .select('*')
+        .single();
+
+      if (updateError) {
+        console.error('Error patient counter-proposing:', updateError);
+        return apiResponse.serverError('Erreur lors de la contre-proposition');
+      }
+
+      // Notifier le nutritionniste
+      if (nutritionistAuthUserId) {
+        try {
+          const oldScheduledAt = new Date(appointment.scheduled_at);
+          await notifyAppointmentRescheduled(
+            supabase,
+            nutritionistAuthUserId,
+            {
+              old_date: formatDateForNotification(oldScheduledAt),
+              new_date: formatDateForNotification(proposedAt),
+              new_time: formatTimeForNotification(proposedAt),
+            }
+          );
+        } catch (notifError) {
+          console.error('Error sending counter-propose notification:', notifError);
+        }
+      }
+
+      return NextResponse.json(
+        { message: 'Nouvel horaire proposé', appointment: updated },
         { status: 200 }
       );
     }

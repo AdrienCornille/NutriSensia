@@ -1,0 +1,81 @@
+-- =============================================================================
+-- Seed Ciqual: Sous-catégories alimentaires (enfants des catégories existantes)
+-- Source: ANSES Ciqual 2025-11-03
+-- Généré le: 2026-02-07T16:55:53.601Z
+-- =============================================================================
+
+-- Les catégories parentes (fruits, vegetables, grains, proteins, dairy, etc.)
+-- sont déjà créées par la migration 04_foods_database.sql.
+-- Ce script ajoute les sous-catégories Ciqual comme enfants.
+
+INSERT INTO food_categories (slug, name_fr, name_en, parent_id, sort_order, is_active)
+VALUES
+  ('ciqual-0101', 'salades composées et crudités', 'mixed salads', (SELECT id FROM food_categories WHERE slug = 'prepared' LIMIT 1), 100, true),
+  ('ciqual-0102', 'soupes', 'soups', (SELECT id FROM food_categories WHERE slug = 'prepared' LIMIT 1), 101, true),
+  ('ciqual-0103', 'plats composés', 'dishes', (SELECT id FROM food_categories WHERE slug = 'prepared' LIMIT 1), 102, true),
+  ('ciqual-0104', 'pizzas, tartes et crêpes salées', 'pizzas, crepe and pies', (SELECT id FROM food_categories WHERE slug = 'prepared' LIMIT 1), 103, true),
+  ('ciqual-0105', 'sandwichs', 'sandwiches', (SELECT id FROM food_categories WHERE slug = 'prepared' LIMIT 1), 104, true),
+  ('ciqual-0106', 'feuilletées et autres entrées', 'savoury pastries and other starters', (SELECT id FROM food_categories WHERE slug = 'prepared' LIMIT 1), 105, true),
+  ('ciqual-0201', 'légumes', 'vegetables', (SELECT id FROM food_categories WHERE slug = 'vegetables' LIMIT 1), 106, true),
+  ('ciqual-0202', 'pommes de terre et autres tubercules', 'potatoes and other tubers', (SELECT id FROM food_categories WHERE slug = 'vegetables' LIMIT 1), 107, true),
+  ('ciqual-0203', 'légumineuses', 'legumes', (SELECT id FROM food_categories WHERE slug = 'vegetables' LIMIT 1), 108, true),
+  ('ciqual-0204', 'fruits', 'fruits', (SELECT id FROM food_categories WHERE slug = 'fruits' LIMIT 1), 109, true),
+  ('ciqual-0205', 'fruits à coque et graines oléagineuses', 'nuts and seeds', (SELECT id FROM food_categories WHERE slug = 'proteins' LIMIT 1), 110, true),
+  ('ciqual-0301', 'pâtes, riz et céréales', 'pasta, rice and grains', (SELECT id FROM food_categories WHERE slug = 'grains' LIMIT 1), 111, true),
+  ('ciqual-0302', 'pains et assimilés', 'breads and similar', (SELECT id FROM food_categories WHERE slug = 'grains' LIMIT 1), 112, true),
+  ('ciqual-0303', 'biscuits apéritifs', 'savoury biscuits', (SELECT id FROM food_categories WHERE slug = 'grains' LIMIT 1), 113, true),
+  ('ciqual-0304', 'farines', 'flours', (SELECT id FROM food_categories WHERE slug = 'grains' LIMIT 1), 114, true),
+  ('ciqual-0305', 'pâtes à tarte', 'pastry dough', (SELECT id FROM food_categories WHERE slug = 'grains' LIMIT 1), 115, true),
+  ('ciqual-0401', 'viandes cuites', 'cooked meat', (SELECT id FROM food_categories WHERE slug = 'proteins' LIMIT 1), 116, true),
+  ('ciqual-0402', 'viandes crues', 'raw meat', (SELECT id FROM food_categories WHERE slug = 'proteins' LIMIT 1), 117, true),
+  ('ciqual-0403', 'charcuteries et alternatives végétales', 'delicatessen meat and similar', (SELECT id FROM food_categories WHERE slug = 'proteins' LIMIT 1), 118, true),
+  ('ciqual-0404', 'autres produits à base de viande', 'other meat products', (SELECT id FROM food_categories WHERE slug = 'proteins' LIMIT 1), 119, true),
+  ('ciqual-0405', 'poissons cuits', 'fish, cooked', (SELECT id FROM food_categories WHERE slug = 'proteins' LIMIT 1), 120, true),
+  ('ciqual-0406', 'poissons crus', 'fish, raw', (SELECT id FROM food_categories WHERE slug = 'proteins' LIMIT 1), 121, true),
+  ('ciqual-0407', 'mollusques et crustacés cuits', 'seafood, cooked', (SELECT id FROM food_categories WHERE slug = 'proteins' LIMIT 1), 122, true),
+  ('ciqual-0408', 'mollusques et crustacés crus', 'seafood, raw', (SELECT id FROM food_categories WHERE slug = 'proteins' LIMIT 1), 123, true),
+  ('ciqual-0409', 'produits à base de poissons et produits de la mer', 'fish products', (SELECT id FROM food_categories WHERE slug = 'proteins' LIMIT 1), 124, true),
+  ('ciqual-0410', 'oeufs', 'eggs', (SELECT id FROM food_categories WHERE slug = 'proteins' LIMIT 1), 125, true),
+  ('ciqual-0411', 'alternatives végétales aux produits carnés', 'plant-based alternatives to meat products', (SELECT id FROM food_categories WHERE slug = 'proteins' LIMIT 1), 126, true),
+  ('ciqual-0501', 'laits', 'milk', (SELECT id FROM food_categories WHERE slug = 'dairy' LIMIT 1), 127, true),
+  ('ciqual-0502', 'produits laitiers frais et alternatives végétales', 'dairy products', (SELECT id FROM food_categories WHERE slug = 'dairy' LIMIT 1), 128, true),
+  ('ciqual-0503', 'fromages et alternatives végétales', 'cheese and similar', (SELECT id FROM food_categories WHERE slug = 'dairy' LIMIT 1), 129, true),
+  ('ciqual-0504', 'crèmes et spécialités à base de crème', 'cream and similar', (SELECT id FROM food_categories WHERE slug = 'dairy' LIMIT 1), 130, true),
+  ('ciqual-0601', 'eaux', 'water', (SELECT id FROM food_categories WHERE slug = 'beverages' LIMIT 1), 131, true),
+  ('ciqual-0602', 'boissons sans alcool', 'non-alcoholic beverages', (SELECT id FROM food_categories WHERE slug = 'beverages' LIMIT 1), 132, true),
+  ('ciqual-0603', 'boisson alcoolisées', 'alcoholic beverages', (SELECT id FROM food_categories WHERE slug = 'beverages' LIMIT 1), 133, true),
+  ('ciqual-0701', 'sucres, miels et assimilés', 'sugars and honey', (SELECT id FROM food_categories WHERE slug = 'sweets' LIMIT 1), 134, true),
+  ('ciqual-0702', 'chocolats et produits à base de chocolat', 'chocolate and chocolate products', (SELECT id FROM food_categories WHERE slug = 'sweets' LIMIT 1), 135, true),
+  ('ciqual-0703', 'confiseries non chocolatées', 'non-chocolate confectionery', (SELECT id FROM food_categories WHERE slug = 'sweets' LIMIT 1), 136, true),
+  ('ciqual-0704', 'confitures et assimilés', 'jam', (SELECT id FROM food_categories WHERE slug = 'sweets' LIMIT 1), 137, true),
+  ('ciqual-0705', 'viennoiseries', 'Viennese pastries', (SELECT id FROM food_categories WHERE slug = 'sweets' LIMIT 1), 138, true),
+  ('ciqual-0706', 'biscuits sucrés', 'sweet biscuits', (SELECT id FROM food_categories WHERE slug = 'sweets' LIMIT 1), 139, true),
+  ('ciqual-0707', 'céréales de petit-déjeuner', 'breakfast cereals', (SELECT id FROM food_categories WHERE slug = 'sweets' LIMIT 1), 140, true),
+  ('ciqual-0708', 'barres céréalières', 'cereal bars', (SELECT id FROM food_categories WHERE slug = 'sweets' LIMIT 1), 141, true),
+  ('ciqual-0709', 'gâteaux et pâtisseries', 'cakes and pastry', (SELECT id FROM food_categories WHERE slug = 'sweets' LIMIT 1), 142, true),
+  ('ciqual-0801', 'glaces', 'ice cream', (SELECT id FROM food_categories WHERE slug = 'sweets' LIMIT 1), 143, true),
+  ('ciqual-0802', 'sorbets', 'sorbet', (SELECT id FROM food_categories WHERE slug = 'sweets' LIMIT 1), 144, true),
+  ('ciqual-0803', 'desserts glacés', 'frozen desserts', (SELECT id FROM food_categories WHERE slug = 'sweets' LIMIT 1), 145, true),
+  ('ciqual-0901', 'beurres', 'butters', (SELECT id FROM food_categories WHERE slug = 'fats-oils' LIMIT 1), 146, true),
+  ('ciqual-0902', 'huiles et graisses végétales', 'vegetable oils', (SELECT id FROM food_categories WHERE slug = 'fats-oils' LIMIT 1), 147, true),
+  ('ciqual-0903', 'margarines', 'margarines', (SELECT id FROM food_categories WHERE slug = 'fats-oils' LIMIT 1), 148, true),
+  ('ciqual-0904', 'huiles de poissons', 'fish oils', (SELECT id FROM food_categories WHERE slug = 'fats-oils' LIMIT 1), 149, true),
+  ('ciqual-0905', 'autres matières grasses', 'other fats', (SELECT id FROM food_categories WHERE slug = 'fats-oils' LIMIT 1), 150, true),
+  ('ciqual-1001', 'sauces', 'sauces', (SELECT id FROM food_categories WHERE slug = 'condiments' LIMIT 1), 151, true),
+  ('ciqual-1002', 'condiments', 'condiments', (SELECT id FROM food_categories WHERE slug = 'condiments' LIMIT 1), 152, true),
+  ('ciqual-1003', 'aides culinaires', 'cooking aids', (SELECT id FROM food_categories WHERE slug = 'condiments' LIMIT 1), 153, true),
+  ('ciqual-1004', 'sels', 'salts', (SELECT id FROM food_categories WHERE slug = 'condiments' LIMIT 1), 154, true),
+  ('ciqual-1005', 'épices', 'spices', (SELECT id FROM food_categories WHERE slug = 'condiments' LIMIT 1), 155, true),
+  ('ciqual-1006', 'herbes', 'herbs', (SELECT id FROM food_categories WHERE slug = 'condiments' LIMIT 1), 156, true),
+  ('ciqual-1007', 'algues', 'seaweed', (SELECT id FROM food_categories WHERE slug = 'condiments' LIMIT 1), 157, true),
+  ('ciqual-1008', 'denrées destinées à une alimentation particulière', 'foods for particular nutritional uses', (SELECT id FROM food_categories WHERE slug = 'condiments' LIMIT 1), 158, true),
+  ('ciqual-1009', 'ingrédients pour végétariens', 'ingredients for vegetarian', (SELECT id FROM food_categories WHERE slug = 'condiments' LIMIT 1), 159, true),
+  ('ciqual-1010', 'tartinables végétariens', 'plant-based spreads', (SELECT id FROM food_categories WHERE slug = 'condiments' LIMIT 1), 160, true),
+  ('ciqual-1101', 'laits et boissons infantiles', 'baby milk and beverages', (SELECT id FROM food_categories WHERE slug = 'prepared' LIMIT 1), 161, true),
+  ('ciqual-1102', 'petits pots salés et plats infantiles', 'baby dishes', (SELECT id FROM food_categories WHERE slug = 'prepared' LIMIT 1), 162, true),
+  ('ciqual-1103', 'desserts infantiles', 'baby deserts', (SELECT id FROM food_categories WHERE slug = 'prepared' LIMIT 1), 163, true),
+  ('ciqual-1104', 'céréales et biscuits infantiles', 'baby biscuits and cereals', (SELECT id FROM food_categories WHERE slug = 'prepared' LIMIT 1), 164, true)
+ON CONFLICT (slug) DO UPDATE SET
+  name_fr = EXCLUDED.name_fr,
+  name_en = EXCLUDED.name_en,
+  parent_id = EXCLUDED.parent_id;

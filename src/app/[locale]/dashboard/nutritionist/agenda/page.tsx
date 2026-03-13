@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Calendar,
   Clock,
@@ -14,22 +15,33 @@ import {
   Ban,
   Edit3,
   AlertTriangle,
+  UserX,
+  FileText,
+  Send,
 } from 'lucide-react';
+import { Toast, type ToastType } from '@/components/suivi/shared/Toast';
 import {
   useNutritionistAppointments,
   useRespondToAppointment,
   useNutritionistUpdateAppointment,
   useNutritionistCancelAppointment,
+  useMarkPostAppointmentStatus,
+  useRelancerAppointment,
   type NutritionistAppointment,
   type NutritionistAppointmentFilter,
 } from '@/hooks/useNutritionistAppointments';
 import { PendingRequestCard } from '@/components/nutritionist/agenda/PendingRequestCard';
 import { DeclineReasonModal } from '@/components/nutritionist/agenda/DeclineReasonModal';
 import { ProposeNewTimeModal } from '@/components/nutritionist/agenda/ProposeNewTimeModal';
+import { CounterProposalWarningModal } from '@/components/nutritionist/agenda/CounterProposalWarningModal';
+import { PostAppointmentStatusModal } from '@/components/nutritionist/agenda/PostAppointmentStatusModal';
+import { RelancerModal } from '@/components/nutritionist/agenda/RelancerModal';
+import type { PostAppointmentStatusData } from '@/lib/api-schemas';
+import { useAuth } from '@/contexts/AuthContext';
 
 // ==================== TYPES ====================
 
-type Tab = 'pending' | 'upcoming' | 'past' | 'cancelled';
+type Tab = 'pending' | 'upcoming' | 'past' | 'cancelled' | 'no_show';
 
 // ==================== HELPERS ====================
 
@@ -87,6 +99,11 @@ const statusConfigMap: Record<
     bgColor: 'bg-red-100',
     textColor: 'text-red-700',
   },
+  no_show: {
+    label: 'Absent(e)',
+    bgColor: 'bg-red-100',
+    textColor: 'text-red-700',
+  },
 };
 
 function isDeclinedByNutritionist(appointment: NutritionistAppointment): boolean {
@@ -96,29 +113,60 @@ function isDeclinedByNutritionist(appointment: NutritionistAppointment): boolean
   );
 }
 
+function isDeclinedCounterProposal(appointment: NutritionistAppointment): boolean {
+  return (
+    appointment.status === 'cancelled_by_patient' &&
+    !!appointment.status_reason?.startsWith('counter_proposal_declined:')
+  );
+}
+
+function getDeclinedReason(appointment: NutritionistAppointment): string {
+  if (!appointment.status_reason) return '';
+  const prefix = 'counter_proposal_declined:';
+  if (appointment.status_reason.startsWith(prefix)) {
+    return appointment.status_reason.slice(prefix.length);
+  }
+  return appointment.status_reason;
+}
+
 function getCancelledStatusReason(appointment: NutritionistAppointment): string | null {
   if (!appointment.status_reason) return null;
   if (appointment.status_reason === 'counter_proposal') return null;
   if (appointment.status_reason.startsWith('declined:')) {
     return appointment.status_reason.slice(9);
   }
+  if (appointment.status_reason.startsWith('counter_proposal_declined:')) {
+    return appointment.status_reason.slice('counter_proposal_declined:'.length);
+  }
   return appointment.status_reason;
+}
+
+function isUnmarkedPastAppointment(appointment: NutritionistAppointment): boolean {
+  if (appointment.status !== 'confirmed') return false;
+  const endAt = new Date(appointment.scheduled_end_at || appointment.scheduled_at);
+  return endAt < new Date();
 }
 
 function getAppointmentStatusLabel(appointment: NutritionistAppointment): string {
   if (appointment.status === 'pending' && appointment.status_reason === 'counter_proposal') {
     return "Proposition d'un nouvel horaire";
   }
+  if (appointment.status === 'pending' && appointment.status_reason === 'patient_counter_proposal') {
+    return 'Contre-proposition du patient';
+  }
   if (appointment.status === 'cancelled_by_nutritionist') {
     return isDeclinedByNutritionist(appointment)
       ? 'Refusé par vous'
       : 'Annulé par vous';
   }
+  if (appointment.status === 'no_show') {
+    return appointment.patient.gender === 'female' ? 'Absente' : 'Absent';
+  }
   return statusConfigMap[appointment.status]?.label || 'En attente';
 }
 
 function getAppointmentStatusColors(appointment: NutritionistAppointment) {
-  if (appointment.status === 'pending' && appointment.status_reason === 'counter_proposal') {
+  if (appointment.status === 'pending' && (appointment.status_reason === 'counter_proposal' || appointment.status_reason === 'patient_counter_proposal')) {
     return { bgColor: 'bg-blue-100', textColor: 'text-blue-700' };
   }
   return statusConfigMap[appointment.status] || statusConfigMap.pending;
@@ -129,9 +177,11 @@ function getAppointmentStatusColors(appointment: NutritionistAppointment) {
 function NutritionistAppointmentItem({
   appointment,
   onClick,
+  onMarkStatus,
 }: {
   appointment: NutritionistAppointment;
   onClick: (appointment: NutritionistAppointment) => void;
+  onMarkStatus?: (appointment: NutritionistAppointment) => void;
 }) {
   const scheduledAt = new Date(appointment.scheduled_at);
   const month = scheduledAt
@@ -149,16 +199,25 @@ function NutritionistAppointmentItem({
 
   const statusLabel = getAppointmentStatusLabel(appointment);
   const statusColors = getAppointmentStatusColors(appointment);
+  const needsMarking = isUnmarkedPastAppointment(appointment);
 
   return (
     <div
       onClick={() => onClick(appointment)}
-      className='bg-white rounded-xl border border-gray-200 p-4 hover:shadow-sm transition-shadow cursor-pointer'
+      className={`rounded-xl border p-4 hover:shadow-sm transition-shadow cursor-pointer ${
+        needsMarking
+          ? 'bg-amber-50 border-amber-200'
+          : 'bg-white border-gray-200'
+      }`}
     >
       <div className='flex items-center gap-4'>
         {/* Date block */}
-        <div className='w-14 h-14 bg-emerald-100 rounded-xl flex flex-col items-center justify-center flex-shrink-0'>
-          <span className='text-xs text-emerald-600 font-medium capitalize'>
+        <div className={`w-14 h-14 rounded-xl flex flex-col items-center justify-center flex-shrink-0 ${
+          needsMarking ? 'bg-amber-100' : 'bg-emerald-100'
+        }`}>
+          <span className={`text-xs font-medium capitalize ${
+            needsMarking ? 'text-amber-600' : 'text-emerald-600'
+          }`}>
             {month}
           </span>
           <span className='text-xl font-bold text-gray-800'>{day}</span>
@@ -168,11 +227,17 @@ function NutritionistAppointmentItem({
         <div className='flex-1 min-w-0'>
           <div className='flex items-center gap-2'>
             <p className='font-medium text-gray-800 truncate'>{patientName}</p>
-            <span
-              className={`px-2 py-0.5 rounded-full text-xs font-medium ${statusColors.bgColor} ${statusColors.textColor}`}
-            >
-              {statusLabel}
-            </span>
+            {needsMarking ? (
+              <span className='px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700'>
+                À marquer
+              </span>
+            ) : (
+              <span
+                className={`px-2 py-0.5 rounded-full text-xs font-medium ${statusColors.bgColor} ${statusColors.textColor}`}
+              >
+                {statusLabel}
+              </span>
+            )}
           </div>
           <p className='text-sm text-gray-500 mt-0.5'>
             {typeName} • {time} • {duration} min
@@ -192,7 +257,19 @@ function NutritionistAppointmentItem({
           </div>
         </div>
 
-        <span className='text-gray-400'>→</span>
+        {needsMarking && onMarkStatus ? (
+          <button
+            onClick={e => {
+              e.stopPropagation();
+              onMarkStatus(appointment);
+            }}
+            className='px-3 py-1.5 bg-amber-500 text-white text-sm font-medium rounded-lg hover:bg-amber-600 transition-colors flex-shrink-0'
+          >
+            Marquer
+          </button>
+        ) : (
+          <span className='text-gray-400'>→</span>
+        )}
       </div>
     </div>
   );
@@ -203,9 +280,11 @@ function NutritionistAppointmentItem({
 function NutritionistCancelledItem({
   appointment,
   onClick,
+  onRelancer,
 }: {
   appointment: NutritionistAppointment;
   onClick: (appointment: NutritionistAppointment) => void;
+  onRelancer?: (appointment: NutritionistAppointment) => void;
 }) {
   const scheduledAt = new Date(appointment.scheduled_at);
   const month = scheduledAt
@@ -222,14 +301,22 @@ function NutritionistCancelledItem({
     appointment.consultation_type?.default_duration || appointment.duration;
 
   // Déterminer qui a annulé/refusé
-  const cancelledByLabel =
-    appointment.status === 'cancelled_by_patient'
+  const isNoShow = appointment.status === 'no_show';
+  const cancelledByLabel = isNoShow
+    ? (appointment.patient.gender === 'female' ? 'Absente' : 'Absent')
+    : appointment.status === 'cancelled_by_patient'
       ? 'Annulé par le patient'
       : appointment.status === 'cancelled_by_nutritionist'
         ? isDeclinedByNutritionist(appointment)
           ? 'Refusé par vous'
           : 'Annulé par vous'
         : 'Annulé';
+
+  const dateBoxBg = isNoShow ? 'bg-orange-50' : 'bg-red-50';
+  const dateBoxTextLight = isNoShow ? 'text-orange-400' : 'text-red-400';
+  const dateBoxTextBold = isNoShow ? 'text-orange-500' : 'text-red-500';
+  const badgeBg = isNoShow ? 'bg-orange-100' : 'bg-red-100';
+  const badgeText = isNoShow ? 'text-orange-700' : 'text-red-700';
 
   return (
     <div
@@ -238,11 +325,11 @@ function NutritionistCancelledItem({
     >
       <div className='flex items-start justify-between'>
         <div className='flex items-center gap-4'>
-          <div className='w-14 h-14 bg-red-50 rounded-xl flex flex-col items-center justify-center flex-shrink-0'>
-            <span className='text-xs text-red-400 font-medium capitalize'>
+          <div className={`w-14 h-14 ${dateBoxBg} rounded-xl flex flex-col items-center justify-center flex-shrink-0`}>
+            <span className={`text-xs ${dateBoxTextLight} font-medium capitalize`}>
               {month}
             </span>
-            <span className='text-xl font-bold text-red-500'>{day}</span>
+            <span className={`text-xl font-bold ${dateBoxTextBold}`}>{day}</span>
           </div>
           <div>
             <p className='font-medium text-gray-800'>{patientName}</p>
@@ -267,9 +354,21 @@ function NutritionistCancelledItem({
               Cabinet
             </span>
           )}
-          <span className='px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700'>
+          <span className={`px-2 py-1 rounded-full text-xs font-medium ${badgeBg} ${badgeText}`}>
             {cancelledByLabel}
           </span>
+          {isDeclinedCounterProposal(appointment) && onRelancer && (
+            <button
+              onClick={e => {
+                e.stopPropagation();
+                onRelancer(appointment);
+              }}
+              className='px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-1'
+            >
+              <Send className='w-3 h-3' />
+              Relancer
+            </button>
+          )}
           <span className='text-gray-400'>&rarr;</span>
         </div>
       </div>
@@ -285,12 +384,14 @@ function AppointmentDetailModalNutritionist({
   onClose,
   onModify,
   onCancel,
+  onMarkStatus,
 }: {
   isOpen: boolean;
   appointment: NutritionistAppointment | null;
   onClose: () => void;
   onModify: (appointment: NutritionistAppointment) => void;
   onCancel: (appointment: NutritionistAppointment) => void;
+  onMarkStatus?: (appointment: NutritionistAppointment) => void;
 }) {
   if (!isOpen || !appointment) return null;
 
@@ -317,6 +418,8 @@ function AppointmentDetailModalNutritionist({
 
   const isCounterProposal =
     appointment.status === 'pending' && appointment.status_reason === 'counter_proposal';
+  const isPatientCounterProposal =
+    appointment.status === 'pending' && appointment.status_reason === 'patient_counter_proposal';
 
   return (
     <div className='fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4'>
@@ -418,6 +521,30 @@ function AppointmentDetailModalNutritionist({
           </div>
         )}
 
+        {/* Patient counter-proposal info */}
+        {isPatientCounterProposal && (
+          <div className='mb-6'>
+            <div className='p-4 bg-blue-50 rounded-lg border border-blue-200'>
+              <div className='flex items-start gap-3'>
+                <CalendarClock className='w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5' />
+                <div>
+                  <p className='text-sm font-medium text-blue-800'>
+                    Le patient a proposé un nouvel horaire
+                  </p>
+                  <p className='text-sm text-blue-600 mt-1'>
+                    Vous pouvez accepter, refuser ou proposer un autre créneau
+                  </p>
+                  {appointment.patient_message && (
+                    <p className='text-sm text-blue-600 mt-2 italic'>
+                      &laquo; {appointment.patient_message} &raquo;
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Cancellation reason */}
         {appointment.status === 'cancelled_by_nutritionist' && getCancelledStatusReason(appointment) && (
           <div className='mb-6'>
@@ -439,7 +566,25 @@ function AppointmentDetailModalNutritionist({
           </div>
         )}
 
-        {appointment.status === 'cancelled_by_patient' && appointment.status_reason && (
+        {appointment.status === 'cancelled_by_patient' && isDeclinedCounterProposal(appointment) && (
+          <div className='mb-6'>
+            <div className='p-4 bg-blue-50 rounded-lg border border-blue-200'>
+              <div className='flex items-start gap-3'>
+                <CalendarClock className='w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5' />
+                <div>
+                  <p className='text-sm font-medium text-blue-800'>
+                    Contre-proposition refusée par le patient
+                  </p>
+                  <p className='text-sm text-blue-600 mt-1'>
+                    &laquo; {getDeclinedReason(appointment)} &raquo;
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {appointment.status === 'cancelled_by_patient' && appointment.status_reason && !isDeclinedCounterProposal(appointment) && (
           <div className='mb-6'>
             <div className='p-4 bg-red-50 rounded-lg border border-red-200'>
               <div className='flex items-start gap-3'>
@@ -454,6 +599,43 @@ function AppointmentDetailModalNutritionist({
                 </div>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* No-show banner */}
+        {appointment.status === 'no_show' && (
+          <div className='mb-6'>
+            <div className='p-4 bg-orange-50 rounded-lg border border-orange-200'>
+              <div className='flex items-start gap-3'>
+                <UserX className='w-5 h-5 text-orange-500 flex-shrink-0 mt-0.5' />
+                <div>
+                  <p className='text-sm font-medium text-orange-800'>
+                    Absence du patient
+                  </p>
+                  {appointment.status_reason && (
+                    <p className='text-sm text-orange-600 mt-1'>
+                      &laquo; {appointment.status_reason} &raquo;
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Mark status button for unmarked past appointments */}
+        {isUnmarkedPastAppointment(appointment) && onMarkStatus && (
+          <div className='mb-4 p-4 bg-amber-50 rounded-lg border border-amber-200'>
+            <p className='text-sm text-amber-800 font-medium mb-3'>
+              Ce rendez-vous est terminé et n&apos;a pas encore été marqué.
+            </p>
+            <button
+              onClick={() => onMarkStatus(appointment)}
+              className='w-full py-3 bg-amber-500 text-white font-medium rounded-xl hover:bg-amber-600 transition-colors flex items-center justify-center gap-2'
+            >
+              <Check className='w-4 h-4' />
+              Marquer le statut
+            </button>
           </div>
         )}
 
@@ -487,7 +669,7 @@ function AppointmentDetailModalNutritionist({
               rendez-vous
             </p>
           )}
-          {!canModify && !canCancel && (
+          {!canModify && !canCancel && !isUnmarkedPastAppointment(appointment) && (
             <button
               onClick={onClose}
               className='w-full py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-colors'
@@ -561,6 +743,24 @@ function CancelConfirmModal({
           </div>
         </div>
 
+        {/* Late cancellation warning (< 24h) */}
+        {(() => {
+          const hoursUntil = (new Date(appointment.scheduled_at).getTime() - Date.now()) / (1000 * 60 * 60);
+          return hoursUntil > 0 && hoursUntil < 24 ? (
+            <div className='flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-lg mb-5'>
+              <AlertTriangle className='w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5' />
+              <div>
+                <p className='text-sm font-medium text-amber-800'>
+                  Annulation tardive (moins de 24h)
+                </p>
+                <p className='text-sm text-amber-600 mt-1'>
+                  Le patient pourrait être déjà en route ou avoir organisé sa journée en conséquence.
+                </p>
+              </div>
+            </div>
+          ) : null;
+        })()}
+
         {/* Summary */}
         <div className='p-4 bg-gray-50 rounded-lg mb-5 space-y-1.5'>
           <div className='flex justify-between text-sm'>
@@ -624,6 +824,17 @@ function CancelConfirmModal({
 // ==================== MAIN PAGE ====================
 
 export default function NutritionistAgendaPage() {
+  const router = useRouter();
+  const { user } = useAuth();
+  const nutritionistName = [
+    user?.user_metadata?.first_name,
+    user?.user_metadata?.last_name,
+  ].filter(Boolean).join(' ') || '';
+
+  // State for consultation redirect prompt after marking "Effectué"
+  const [completedAppointment, setCompletedAppointment] =
+    useState<NutritionistAppointment | null>(null);
+
   const [activeTab, setActiveTab] = useState<Tab>('pending');
   const [decliningAppointment, setDecliningAppointment] =
     useState<NutritionistAppointment | null>(null);
@@ -635,7 +846,20 @@ export default function NutritionistAgendaPage() {
     useState<NutritionistAppointment | null>(null);
   const [modifyingAppointment, setModifyingAppointment] =
     useState<NutritionistAppointment | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [pendingModification, setPendingModification] = useState<{
+    proposedAt: string;
+    message?: string;
+  } | null>(null);
+  const [markingAppointment, setMarkingAppointment] =
+    useState<NutritionistAppointment | null>(null);
+  const [relancerAppointment, setRelancerAppointment] =
+    useState<NutritionistAppointment | null>(null);
+  const [toast, setToast] = useState<{
+    visible: boolean;
+    type: ToastType;
+    title: string;
+    message?: string;
+  }>({ visible: false, type: 'success', title: '' });
 
   // Map tab to API filter
   const filterMap: Record<Tab, NutritionistAppointmentFilter> = {
@@ -643,6 +867,7 @@ export default function NutritionistAgendaPage() {
     upcoming: 'upcoming',
     past: 'past',
     cancelled: 'cancelled',
+    no_show: 'no_show',
   };
 
   const { data, isLoading, error } = useNutritionistAppointments(
@@ -651,26 +876,38 @@ export default function NutritionistAgendaPage() {
   const respondMutation = useRespondToAppointment();
   const updateMutation = useNutritionistUpdateAppointment();
   const cancelMutation = useNutritionistCancelAppointment();
+  const markStatusMutation = useMarkPostAppointmentStatus();
+  const relancerMutation = useRelancerAppointment();
 
   const appointments = data?.appointments || [];
   const pendingCount = data?.pending_count || 0;
   const upcomingCount = data?.upcoming_count || 0;
   const pastCount = data?.past_count || 0;
   const cancelledCount = data?.cancelled_count || 0;
+  const noShowCount = data?.no_show_count || 0;
+  const unmarkedCount = data?.unmarked_count || 0;
 
-  const tabs: { id: Tab; label: string; count: number }[] = [
+  const tabs: { id: Tab; label: string; count: number; alertCount?: number }[] = [
     { id: 'pending', label: 'En attente', count: pendingCount },
     { id: 'upcoming', label: 'À venir', count: upcomingCount },
-    { id: 'past', label: 'Passés', count: pastCount },
-    { id: 'cancelled', label: 'Annulés/Refusés', count: cancelledCount },
+    { id: 'past', label: 'Passés', count: pastCount, alertCount: unmarkedCount },
+    { id: 'cancelled', label: 'Annulés', count: cancelledCount },
+    { id: 'no_show', label: 'Absences', count: noShowCount },
   ];
 
   // ==================== HANDLERS ====================
 
-  const showSuccess = (message: string) => {
-    setSuccessMessage(message);
-    setTimeout(() => setSuccessMessage(null), 3000);
-  };
+  const hideToast = useCallback(
+    () => setToast(t => ({ ...t, visible: false })),
+    []
+  );
+
+  const showToast = useCallback(
+    (type: ToastType, title: string, message?: string) => {
+      setToast({ visible: true, type, title, message });
+    },
+    []
+  );
 
   const handleAccept = async (appointment: NutritionistAppointment) => {
     try {
@@ -678,9 +915,9 @@ export default function NutritionistAgendaPage() {
         id: appointment.id,
         data: { action: 'accept' },
       });
-      showSuccess('Rendez-vous confirmé avec succès');
-    } catch {
-      // Error handled by mutation
+      showToast('success', 'Rendez-vous confirmé');
+    } catch (err) {
+      showToast('error', 'Erreur', err instanceof Error ? err.message : 'Une erreur est survenue');
     }
   };
 
@@ -692,9 +929,9 @@ export default function NutritionistAgendaPage() {
         data: { action: 'decline', reason },
       });
       setDecliningAppointment(null);
-      showSuccess('Demande refusée');
-    } catch {
-      // Error handled by mutation
+      showToast('success', 'Demande refusée');
+    } catch (err) {
+      showToast('error', 'Erreur', err instanceof Error ? err.message : 'Une erreur est survenue');
     }
   };
 
@@ -709,27 +946,35 @@ export default function NutritionistAgendaPage() {
         data: { action: 'propose_new_time', proposed_at: proposedAt, message },
       });
       setProposingAppointment(null);
-      showSuccess('Nouvel horaire proposé au patient');
-    } catch {
-      // Error handled by mutation
+      showToast('success', 'Nouvel horaire proposé au patient');
+    } catch (err) {
+      showToast('error', 'Erreur', err instanceof Error ? err.message : 'Une erreur est survenue');
     }
   };
 
-  const handleModifyConfirm = async (
+  const handleModifyConfirm = (
     proposedAt: string,
     message?: string
   ) => {
     if (!modifyingAppointment) return;
+    // Stocker les données et afficher le warning de contre-proposition
+    setPendingModification({ proposedAt, message });
+  };
+
+  const handleModifyFinalConfirm = async () => {
+    if (!modifyingAppointment || !pendingModification) return;
     try {
       await updateMutation.mutateAsync({
         id: modifyingAppointment.id,
-        data: { scheduled_at: proposedAt, message },
+        data: { scheduled_at: pendingModification.proposedAt, message: pendingModification.message },
       });
+      setPendingModification(null);
       setModifyingAppointment(null);
       setSelectedAppointment(null);
-      showSuccess('Rendez-vous modifié - en attente de validation du patient');
-    } catch {
-      // Error handled by mutation
+      showToast('success', 'Rendez-vous modifié', 'En attente de validation du patient');
+    } catch (err) {
+      setPendingModification(null);
+      showToast('error', 'Erreur', err instanceof Error ? err.message : 'Une erreur est survenue');
     }
   };
 
@@ -742,9 +987,9 @@ export default function NutritionistAgendaPage() {
       });
       setCancellingAppointment(null);
       setSelectedAppointment(null);
-      showSuccess('Rendez-vous annulé');
-    } catch {
-      // Error handled by mutation
+      showToast('success', 'Rendez-vous annulé');
+    } catch (err) {
+      showToast('error', 'Erreur', err instanceof Error ? err.message : 'Une erreur est survenue');
     }
   };
 
@@ -762,11 +1007,62 @@ export default function NutritionistAgendaPage() {
     setCancellingAppointment(appointment);
   };
 
-  // Mutation error to display
-  const mutationError =
-    respondMutation.error || updateMutation.error || cancelMutation.error;
+  const handleMarkStatusFromDetail = (appointment: NutritionistAppointment) => {
+    setSelectedAppointment(null);
+    setMarkingAppointment(appointment);
+  };
+
+  const handleMarkStatusConfirm = async (statusData: PostAppointmentStatusData) => {
+    if (!markingAppointment) return;
+    try {
+      await markStatusMutation.mutateAsync({
+        id: markingAppointment.id,
+        data: statusData,
+      });
+      const markedAppointment = markingAppointment;
+      setMarkingAppointment(null);
+
+      if (statusData.action === 'completed') {
+        // Show redirect prompt for consultation creation
+        setCompletedAppointment(markedAppointment);
+      } else {
+        showToast('success', 'Absence du patient enregistrée');
+      }
+    } catch (err) {
+      showToast('error', 'Erreur', err instanceof Error ? err.message : 'Une erreur est survenue');
+    }
+  };
+
+  const handleGoToConsultation = () => {
+    if (!completedAppointment) return;
+    const patientId = completedAppointment.user_id;
+    router.push(
+      `/dashboard/nutritionist/patients/${patientId}?tab=consultations&fromAppointment=${completedAppointment.id}`
+    );
+    setCompletedAppointment(null);
+  };
+
+  const handleSkipConsultation = () => {
+    setCompletedAppointment(null);
+    showToast('success', 'Rendez-vous marqué comme effectué');
+  };
+
+  const handleRelancerConfirm = async (messageContent: string) => {
+    if (!relancerAppointment) return;
+    try {
+      await relancerMutation.mutateAsync({
+        id: relancerAppointment.id,
+        message_content: messageContent,
+      });
+      setRelancerAppointment(null);
+      showToast('success', 'Message envoyé', 'Le patient a été invité à reprendre rendez-vous');
+    } catch (err) {
+      showToast('error', 'Erreur', err instanceof Error ? err.message : 'Une erreur est survenue');
+    }
+  };
+
   const isMutationLoading =
-    respondMutation.isPending || updateMutation.isPending || cancelMutation.isPending;
+    respondMutation.isPending || updateMutation.isPending || cancelMutation.isPending || markStatusMutation.isPending || relancerMutation.isPending;
 
   // ==================== RENDER ====================
 
@@ -792,27 +1088,26 @@ export default function NutritionistAgendaPage() {
         </div>
       </header>
 
-      {/* Success toast */}
-      {successMessage && (
-        <div className='mx-8 mt-4'>
-          <div className='flex items-center gap-2 p-4 bg-emerald-50 border border-emerald-200 rounded-lg'>
-            <Check className='w-5 h-5 text-emerald-600' />
-            <span className='text-sm font-medium text-emerald-700'>
-              {successMessage}
-            </span>
+      {/* Unmarked past appointments banner */}
+      {unmarkedCount > 0 && activeTab !== 'past' && (
+        <div className='mx-8 mt-4 p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-center justify-between'>
+          <div className='flex items-center gap-3'>
+            <AlertTriangle className='w-5 h-5 text-amber-600 flex-shrink-0' />
+            <div>
+              <p className='text-sm font-medium text-amber-800'>
+                {unmarkedCount} rendez-vous passé{unmarkedCount > 1 ? 's' : ''} à marquer
+              </p>
+              <p className='text-xs text-amber-600'>
+                Marquez le statut (effectué ou absence) de vos rendez-vous passés
+              </p>
+            </div>
           </div>
-        </div>
-      )}
-
-      {/* Error */}
-      {mutationError && (
-        <div className='mx-8 mt-4'>
-          <div className='flex items-center gap-2 p-4 bg-red-50 border border-red-200 rounded-lg'>
-            <AlertCircle className='w-5 h-5 text-red-500' />
-            <span className='text-sm text-red-700'>
-              {mutationError.message}
-            </span>
-          </div>
+          <button
+            onClick={() => setActiveTab('past')}
+            className='px-4 py-2 bg-amber-500 text-white text-sm font-medium rounded-lg hover:bg-amber-600 transition-colors flex-shrink-0'
+          >
+            Voir
+          </button>
         </div>
       )}
 
@@ -830,7 +1125,11 @@ export default function NutritionistAgendaPage() {
               }`}
             >
               {tab.label}
-              {tab.count > 0 && (
+              {tab.alertCount && tab.alertCount > 0 ? (
+                <span className='px-1.5 py-0.5 rounded-full text-xs bg-amber-100 text-amber-700'>
+                  {tab.alertCount}
+                </span>
+              ) : tab.count > 0 ? (
                 <span
                   className={`px-1.5 py-0.5 rounded-full text-xs ${
                     activeTab === tab.id && tab.id === 'pending'
@@ -842,7 +1141,7 @@ export default function NutritionistAgendaPage() {
                 >
                   {tab.count}
                 </span>
-              )}
+              ) : null}
             </button>
           ))}
         </div>
@@ -896,6 +1195,18 @@ export default function NutritionistAgendaPage() {
                   Les rendez-vous annulés ou refusés apparaîtront ici
                 </p>
               </>
+            ) : activeTab === 'no_show' ? (
+              <>
+                <div className='w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4'>
+                  <Check className='w-8 h-8 text-gray-400' />
+                </div>
+                <p className='text-gray-500 font-medium'>
+                  Aucune absence enregistrée
+                </p>
+                <p className='text-sm text-gray-400 mt-2'>
+                  Les absences de patients apparaîtront ici
+                </p>
+              </>
             ) : (
               <>
                 <Calendar className='w-12 h-12 text-gray-300 mx-auto mb-4' />
@@ -931,6 +1242,24 @@ export default function NutritionistAgendaPage() {
                   key={apt.id}
                   appointment={apt}
                   onClick={handleAppointmentClick}
+                  onRelancer={setRelancerAppointment}
+                />
+              ))}
+            </div>
+          </div>
+        ) : activeTab === 'no_show' ? (
+          <div className='bg-white rounded-xl border border-gray-200'>
+            <div className='p-4 border-b border-gray-100'>
+              <h2 className='font-semibold text-gray-800'>
+                Absences de patients
+              </h2>
+            </div>
+            <div className='divide-y divide-gray-100'>
+              {appointments.map(apt => (
+                <NutritionistCancelledItem
+                  key={apt.id}
+                  appointment={apt}
+                  onClick={handleAppointmentClick}
                 />
               ))}
             </div>
@@ -942,6 +1271,7 @@ export default function NutritionistAgendaPage() {
                 key={apt.id}
                 appointment={apt}
                 onClick={handleAppointmentClick}
+                onMarkStatus={activeTab === 'past' ? setMarkingAppointment : undefined}
               />
             ))}
           </div>
@@ -955,6 +1285,7 @@ export default function NutritionistAgendaPage() {
         onClose={() => setSelectedAppointment(null)}
         onModify={handleModifyFromDetail}
         onCancel={handleCancelFromDetail}
+        onMarkStatus={handleMarkStatusFromDetail}
       />
 
       {/* Decline Modal (for pending requests) */}
@@ -986,6 +1317,19 @@ export default function NutritionistAgendaPage() {
         confirmLabel='Confirmer la modification'
       />
 
+      {/* Counter-proposal warning modal (shown after modify date selection) */}
+      <CounterProposalWarningModal
+        isOpen={!!pendingModification}
+        patientName={
+          modifyingAppointment
+            ? `${modifyingAppointment.patient.first_name} ${modifyingAppointment.patient.last_name}`.trim()
+            : ''
+        }
+        onClose={() => setPendingModification(null)}
+        onConfirm={handleModifyFinalConfirm}
+        isLoading={updateMutation.isPending}
+      />
+
       {/* Cancel Confirmation Modal */}
       <CancelConfirmModal
         isOpen={!!cancellingAppointment}
@@ -993,6 +1337,73 @@ export default function NutritionistAgendaPage() {
         onClose={() => setCancellingAppointment(null)}
         onConfirm={handleCancelConfirm}
         isLoading={cancelMutation.isPending}
+      />
+
+      {/* Post-Appointment Status Modal (AGENDA-N-011) */}
+      <PostAppointmentStatusModal
+        isOpen={!!markingAppointment}
+        appointment={markingAppointment}
+        onClose={() => setMarkingAppointment(null)}
+        onConfirm={handleMarkStatusConfirm}
+        isLoading={markStatusMutation.isPending}
+        nutritionistName={nutritionistName}
+      />
+
+      {/* Relancer Modal (declined counter-proposals) */}
+      <RelancerModal
+        isOpen={!!relancerAppointment}
+        appointment={relancerAppointment}
+        onClose={() => setRelancerAppointment(null)}
+        onConfirm={handleRelancerConfirm}
+        isLoading={relancerMutation.isPending}
+        nutritionistName={nutritionistName}
+      />
+
+      {/* Consultation Redirect Prompt */}
+      {completedAppointment && (
+        <div className='fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4'>
+          <div className='bg-white rounded-2xl max-w-md w-full p-6'>
+            <div className='text-center mb-6'>
+              <div className='w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4'>
+                <Check className='w-7 h-7 text-emerald-600' />
+              </div>
+              <h3 className='text-lg font-semibold text-gray-800 mb-2'>
+                Rendez-vous marqué comme effectué
+              </h3>
+              <p className='text-sm text-gray-500'>
+                Souhaitez-vous rédiger le compte-rendu de consultation pour{' '}
+                <span className='font-medium text-gray-700'>
+                  {completedAppointment.patient.first_name} {completedAppointment.patient.last_name}
+                </span>{' '}
+                ?
+              </p>
+            </div>
+            <div className='flex gap-3'>
+              <button
+                onClick={handleSkipConsultation}
+                className='flex-1 py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-colors'
+              >
+                Plus tard
+              </button>
+              <button
+                onClick={handleGoToConsultation}
+                className='flex-1 py-3 bg-[#1B998B] text-white font-medium rounded-xl hover:bg-[#147569] transition-colors flex items-center justify-center gap-2'
+              >
+                <FileText className='w-4 h-4' />
+                Rédiger
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast */}
+      <Toast
+        isVisible={toast.visible}
+        type={toast.type}
+        title={toast.title}
+        message={toast.message}
+        onClose={hideToast}
       />
     </div>
   );

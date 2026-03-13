@@ -70,7 +70,7 @@ export async function PATCH(
     // 5. Vérifier que la pesée existe et appartient à l'utilisateur
     const { data: entry, error: fetchError } = await supabase
       .from('weight_entries')
-      .select('user_id, weight_kg, date')
+      .select('patient_id, weight_kg, date')
       .eq('id', id)
       .single();
 
@@ -80,7 +80,7 @@ export async function PATCH(
     }
 
     // 6. Vérifier ownership
-    if (entry.user_id !== auth.user.id) {
+    if (entry.patient_id !== auth.user.id) {
       return apiResponse.error('Accès non autorisé à cette pesée', 403);
     }
 
@@ -124,7 +124,7 @@ export async function PATCH(
     const { data: previousEntry } = await supabase
       .from('weight_entries')
       .select('weight_kg, date')
-      .eq('user_id', auth.user.id)
+      .eq('patient_id', auth.user.id)
       .lt('date', updatedEntry.date)
       .order('date', { ascending: false })
       .limit(1)
@@ -184,7 +184,7 @@ export async function DELETE(
     // 4. Vérifier que la pesée existe et appartient à l'utilisateur
     const { data: entry, error: fetchError } = await supabase
       .from('weight_entries')
-      .select('user_id')
+      .select('patient_id')
       .eq('id', id)
       .single();
 
@@ -194,7 +194,7 @@ export async function DELETE(
     }
 
     // 5. Vérifier ownership
-    if (entry.user_id !== auth.user.id) {
+    if (entry.patient_id !== auth.user.id) {
       return apiResponse.error('Accès non autorisé à cette pesée', 403);
     }
 

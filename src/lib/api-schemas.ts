@@ -11,7 +11,7 @@ export const mealTypeEnum = z.enum(['breakfast', 'lunch', 'dinner', 'snack']);
 export const mealLocationEnum = z.enum(['home', 'work', 'restaurant', 'other']);
 
 // Unité de mesure pour les aliments
-export const foodUnitEnum = z.enum(['g', 'ml', 'portion']);
+export const foodUnitEnum = z.enum(['g', 'ml', 'c_a_s', 'c_a_c', 'tasse', 'portion', 'piece']);
 
 // Schéma pour un aliment dans un repas
 export const mealFoodSchema = z.object({
@@ -608,16 +608,56 @@ export type NutritionistAppointmentResponseData = z.infer<
 >;
 
 // Réponse patient à une contre-proposition du nutritionniste
-export const patientCounterProposalResponseSchema = z.object({
-  action: z.enum(['accept', 'decline']),
-  reason: z
-    .string()
-    .max(500, 'Raison trop longue (max 500 caractères)')
-    .optional(),
-});
+export const patientCounterProposalResponseSchema = z.discriminatedUnion('action', [
+  z.object({
+    action: z.literal('accept'),
+  }),
+  z.object({
+    action: z.literal('decline'),
+    reason: z
+      .string()
+      .max(500, 'Raison trop longue (max 500 caractères)')
+      .optional(),
+  }),
+  z.object({
+    action: z.literal('counter_propose'),
+    proposed_at: z.string().min(1, 'Date proposée requise'),
+    message: z
+      .string()
+      .max(500, 'Message trop long (max 500 caractères)')
+      .optional(),
+  }),
+]);
 
 export type PatientCounterProposalResponseData = z.infer<
   typeof patientCounterProposalResponseSchema
+>;
+
+// Marquage du statut post-RDV (AGENDA-N-011) — 2 actions: Effectué / Absence
+export const postAppointmentStatusSchema = z.discriminatedUnion('action', [
+  z.object({
+    action: z.literal('completed'),
+    notes: z
+      .string()
+      .max(500, 'Notes trop longues (max 500 caractères)')
+      .optional(),
+  }),
+  z.object({
+    action: z.literal('no_show'),
+    notes: z
+      .string()
+      .max(500, 'Notes trop longues (max 500 caractères)')
+      .optional(),
+    send_message: z.boolean().optional().default(false),
+    message_content: z
+      .string()
+      .max(1000, 'Message trop long (max 1000 caractères)')
+      .optional(),
+  }),
+]);
+
+export type PostAppointmentStatusData = z.infer<
+  typeof postAppointmentStatusSchema
 >;
 
 // =====================================================
@@ -657,6 +697,219 @@ export const conversationsQuerySchema = z.object({
     .transform(Number)
     .pipe(z.number().int().min(0))
     .default('0'),
+});
+
+// =====================================================
+// SCHÉMAS POUR LES CONSULTATIONS (EPIC 4)
+// =====================================================
+
+// Création d'un compte-rendu de consultation
+export const createConsultationSchema = z.object({
+  appointment_id: z.string().uuid('ID rendez-vous invalide').nullable().optional(),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Format de date invalide (YYYY-MM-DD)'),
+  start_time: z.string().regex(/^\d{2}:\d{2}$/, 'Format d\'heure invalide (HH:MM)').optional(),
+  duration_minutes: z.number().int().min(5, 'Durée minimum 5 min').max(480, 'Durée maximum 8h').optional(),
+  consultation_type: z.string().max(50, 'Type trop long').optional(),
+  mode: consultationModeEnum,
+  summary: z.string().min(10, 'Le résumé doit faire au moins 10 caractères').max(5000, 'Résumé trop long (max 5000 caractères)'),
+  key_points: z.array(z.string().max(500, 'Point clé trop long')).max(20, 'Maximum 20 points clés').optional(),
+  next_steps: z.string().max(2000, 'Prochaines étapes trop longues').optional(),
+  private_notes: z.string().max(2000, 'Notes privées trop longues').optional(),
+  attached_document_ids: z.array(z.string().uuid('ID document invalide')).max(10, 'Maximum 10 documents').optional(),
+  status: z.enum(['draft', 'final']).default('final'),
+});
+
+export type CreateConsultationData = z.infer<typeof createConsultationSchema>;
+
+// Modification d'un compte-rendu
+export const updateConsultationSchema = z.object({
+  summary: z.string().min(10, 'Le résumé doit faire au moins 10 caractères').max(5000, 'Résumé trop long').optional(),
+  key_points: z.array(z.string().max(500)).max(20).optional(),
+  next_steps: z.string().max(2000).optional(),
+  private_notes: z.string().max(2000).optional(),
+  attached_document_ids: z.array(z.string().uuid()).max(10).optional(),
+  consultation_type: z.string().max(50).optional(),
+  duration_minutes: z.number().int().min(5).max(480).optional(),
+  mode: consultationModeEnum.optional(),
+  status: z.enum(['draft', 'final']).optional(),
+});
+
+export type UpdateConsultationData = z.infer<typeof updateConsultationSchema>;
+
+// =====================================================
+// SCHEMAS POUR LES PLANS ALIMENTAIRES NUTRITIONNISTE (PLAN-N-001)
+// =====================================================
+
+export const mealPlanStatusEnum = z.enum([
+  'draft',
+  'active',
+  'paused',
+  'completed',
+  'archived',
+]);
+
+export const nutritionalTargetsSchema = z.object({
+  calories: z.number().int().min(500, 'Minimum 500 kcal').max(10000, 'Maximum 10000 kcal'),
+  protein: z.number().min(0).max(500, 'Maximum 500g'),
+  carbs: z.number().min(0).max(1000, 'Maximum 1000g'),
+  fat: z.number().min(0).max(500, 'Maximum 500g'),
+  fiber: z.number().min(0).max(100, 'Maximum 100g').nullable().optional(),
+  sodium: z.number().min(0).max(10000, 'Maximum 10000mg').nullable().optional(),
+});
+
+export const planMealTypeEnum = z.enum(['breakfast', 'morning_snack', 'lunch', 'afternoon_snack', 'dinner', 'evening_snack']);
+
+export const createMealPlanNutriSchema = z.object({
+  name: z.string().min(3, 'Nom requis (min 3 caractères)').max(200, 'Nom trop long (max 200)'),
+  objective: z.string().max(200, 'Objectif trop long (max 200)').optional(),
+  description: z.string().max(2000, 'Description trop longue').optional(),
+  start_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Format de date invalide (YYYY-MM-DD)'),
+  end_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Format de date invalide (YYYY-MM-DD)'),
+  nutritional_targets: nutritionalTargetsSchema.optional(),
+  notes: z.string().max(2000, 'Notes trop longues').optional(),
+  meal_types: z.array(planMealTypeEnum).min(1, 'Sélectionnez au moins un type de repas').optional(),
+}).refine(
+  data => new Date(data.end_date) > new Date(data.start_date),
+  { message: 'La date de fin doit être après la date de début', path: ['end_date'] }
+);
+
+export const updateMealPlanNutriSchema = z.object({
+  name: z.string().min(3).max(200).optional(),
+  objective: z.string().max(200).optional().nullable(),
+  description: z.string().max(2000).optional().nullable(),
+  start_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  end_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  status: mealPlanStatusEnum.optional(),
+  is_template: z.boolean().optional(),
+  nutritional_targets: nutritionalTargetsSchema.optional().nullable(),
+  notes: z.string().max(2000).optional().nullable(),
+  meal_types: z.array(planMealTypeEnum).min(1).optional().nullable(),
+}).refine(data => Object.keys(data).length > 0, {
+  message: 'Au moins un champ doit être fourni pour la mise à jour',
+});
+
+export type CreateMealPlanNutriData = z.infer<typeof createMealPlanNutriSchema>;
+export type UpdateMealPlanNutriData = z.infer<typeof updateMealPlanNutriSchema>;
+export type MealPlanStatus = z.infer<typeof mealPlanStatusEnum>;
+export type NutritionalTargetsData = z.infer<typeof nutritionalTargetsSchema>;
+
+// =====================================================
+// SCHEMA POUR PLAN-N-005: Templates / Duplication
+// =====================================================
+
+export const duplicateFromTemplateSchema = z.object({
+  template_plan_id: z.string().uuid('ID du template invalide'),
+  name: z.string().min(3, 'Nom requis (min 3 caractères)').max(200, 'Nom trop long'),
+  start_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Format de date invalide (YYYY-MM-DD)'),
+  end_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Format de date invalide (YYYY-MM-DD)'),
+}).refine(
+  data => new Date(data.end_date) > new Date(data.start_date),
+  { message: 'La date de fin doit être après la date de début', path: ['end_date'] }
+);
+
+export type DuplicateFromTemplateData = z.infer<typeof duplicateFromTemplateSchema>;
+
+// =====================================================
+// SCHEMAS POUR LES JOURS & REPAS DU PLAN (PLAN-N-002)
+// =====================================================
+
+export const createPlanMealSchema = z.object({
+  day_id: z.string().uuid('ID du jour invalide'),
+  meal_type: planMealTypeEnum,
+  title: z.string().max(200, 'Titre trop long').optional(),
+  suggested_time: z.string().regex(/^\d{2}:\d{2}$/, 'Format HH:mm').optional(),
+  notes: z.string().max(2000).optional(),
+});
+
+export const updatePlanMealSchema = z.object({
+  title: z.string().max(200).optional().nullable(),
+  suggested_time: z.string().regex(/^\d{2}:\d{2}$/).optional().nullable(),
+  notes: z.string().max(2000).optional().nullable(),
+  display_order: z.number().int().min(0).optional(),
+});
+
+export const updatePlanDaySchema = z.object({
+  notes: z.string().max(2000).optional().nullable(),
+});
+
+export type CreatePlanMealData = z.infer<typeof createPlanMealSchema>;
+export type UpdatePlanMealData = z.infer<typeof updatePlanMealSchema>;
+export type UpdatePlanDayData = z.infer<typeof updatePlanDaySchema>;
+
+// =====================================================
+// SCHEMAS POUR LES ALIMENTS DU PLAN (PLAN-N-003)
+// =====================================================
+
+export const addPlanFoodSchema = z.object({
+  food_id: z.string().uuid('ID aliment invalide').optional(),
+  custom_name: z.string().max(200, 'Nom trop long').optional(),
+  quantity: z.number().positive('La quantité doit être positive').max(10000, 'Maximum 10000'),
+  unit: foodUnitEnum.default('g'),
+}).refine(data => data.food_id || data.custom_name, {
+  message: 'Un aliment ou un nom personnalisé est requis',
+});
+
+export const updatePlanFoodSchema = z.object({
+  quantity: z.number().positive().max(10000).optional(),
+  unit: foodUnitEnum.optional(),
+  display_order: z.number().int().min(0).optional(),
+});
+
+export const reorderPlanFoodsSchema = z.object({
+  items: z.array(z.object({
+    id: z.string().uuid(),
+    display_order: z.number().int().min(0),
+  })).min(1).max(100),
+});
+
+export type AddPlanFoodData = z.infer<typeof addPlanFoodSchema>;
+export type UpdatePlanFoodData = z.infer<typeof updatePlanFoodSchema>;
+export type ReorderPlanFoodsData = z.infer<typeof reorderPlanFoodsSchema>;
+
+// =====================================================
+// SCHEMAS POUR LES DEMANDES DE MODIFICATION (PLAN-N-007)
+// =====================================================
+
+export const respondModificationRequestSchema = z.object({
+  status: z.enum(['approved', 'rejected']),
+  response: z.string().max(2000, 'Réponse trop longue').optional(),
+});
+
+export type RespondModificationRequestData = z.infer<typeof respondModificationRequestSchema>;
+
+// =====================================================
+// SCHEMA POUR L'ENVOI DE LISTE DE COURSES (PLAN-N-009)
+// =====================================================
+
+export const sendShoppingListSchema = z.object({
+  message: z
+    .string()
+    .min(1, 'Le message ne peut pas être vide')
+    .max(5000, 'Message trop long (max 5000 caractères)'),
+});
+
+export type SendShoppingListData = z.infer<typeof sendShoppingListSchema>;
+
+// =====================================================
+// SCHEMA POUR LA COPIE DE JOUR (Multi-semaines UX)
+// =====================================================
+
+export const copyDayMealsSchema = z.object({
+  source_day_id: z.string().uuid('ID du jour source invalide'),
+  target_day_ids: z.array(z.string().uuid('ID du jour cible invalide')).min(1, 'Au moins un jour cible requis').max(27, 'Maximum 27 jours cibles'),
+});
+
+export type CopyDayMealsData = z.infer<typeof copyDayMealsSchema>;
+
+// =====================================================
+// SCHEMAS POUR LES STATISTIQUES DE CONSULTATIONS (CONSULT-007)
+// =====================================================
+
+export const consultationStatsQuerySchema = z.object({
+  month: z
+    .string()
+    .regex(/^\d{4}-\d{2}$/, 'Format invalide (YYYY-MM)')
+    .optional(),
 });
 
 // =====================================================
@@ -951,3 +1204,369 @@ export type CreateConsultationTypeData = z.infer<
 export type UpdateConsultationTypeData = z.infer<
   typeof updateConsultationTypeSchema
 >;
+
+// =====================================================
+// SCHÉMAS POUR LA GESTION DES PATIENTS (NUTRITIONNISTE)
+// =====================================================
+
+export const patientStatusFilterEnum = z.enum([
+  'all',
+  'active',
+  'pending',
+  'inactive',
+]);
+
+export const patientSortEnum = z.enum([
+  'name_asc',
+  'name_desc',
+  'date_asc',
+  'date_desc',
+]);
+
+export const nutritionistPatientsQuerySchema = z.object({
+  search: z.string().max(100, 'Recherche trop longue').optional(),
+  status: patientStatusFilterEnum.default('all'),
+  sort: patientSortEnum.default('name_asc'),
+  limit: z
+    .string()
+    .regex(/^\d+$/, 'Limite invalide')
+    .transform(Number)
+    .pipe(z.number().int().min(1).max(100))
+    .default('50'),
+  offset: z
+    .string()
+    .regex(/^\d+$/, 'Offset invalide')
+    .transform(Number)
+    .pipe(z.number().int().min(0))
+    .default('0'),
+});
+
+// Types pour la gestion des patients
+export type PatientStatusFilter = z.infer<typeof patientStatusFilterEnum>;
+export type PatientSort = z.infer<typeof patientSortEnum>;
+export type NutritionistPatientsQueryParams = z.infer<
+  typeof nutritionistPatientsQuerySchema
+>;
+
+// Schema pour la mise à jour des notes internes d'un patient (legacy - champ unique)
+export const patientNotesUpdateSchema = z.object({
+  notes_internal: z.string().max(5000, 'Notes trop longues (max 5000 caractères)').optional(),
+});
+
+// Schema pour la mise à jour du statut d'un patient
+export const updatePatientStatusSchema = z.object({
+  status: z.enum(['active', 'inactive', 'pending']),
+  status_reason: z.string().max(500, 'Raison trop longue (max 500 caractères)').optional(),
+});
+
+export type UpdatePatientStatusData = z.infer<typeof updatePatientStatusSchema>;
+
+// Schemas pour les notes internes individuelles (PAT-006)
+export const createPatientNoteSchema = z.object({
+  content: z.string().min(1, 'La note ne peut pas être vide').max(5000, 'Note trop longue (max 5000 caractères)'),
+});
+
+export type CreatePatientNoteData = z.infer<typeof createPatientNoteSchema>;
+
+export const updatePatientNoteSchema = z.object({
+  content: z.string().min(1, 'La note ne peut pas être vide').max(5000, 'Note trop longue (max 5000 caractères)'),
+});
+
+export type UpdatePatientNoteData = z.infer<typeof updatePatientNoteSchema>;
+
+// ==================== DOSSIER SCHEMAS (Epic 3) ====================
+
+// -- Anamnese --
+
+export const anamneseSectionIdEnum = z.enum([
+  'identite',
+  'morphologie',
+  'historique',
+  'sante',
+  'sante_bilan',
+  'habitudes',
+  'consommation',
+  'lifestyle',
+  'motivation',
+  'psycho_comportemental',
+]);
+
+export const anamneseFieldSchema = z.object({
+  label: z.string().min(1, 'Label requis'),
+  value: z.string(),
+});
+
+export const upsertAnamneseSectionSchema = z.object({
+  section_id: anamneseSectionIdEnum,
+  section_label: z.string().min(1, 'Label de section requis'),
+  section_icon: z.string().default(''),
+  field_data: z
+    .record(z.string(), z.string())
+    .refine(data => Object.keys(data).length > 0, 'Au moins un champ requis'),
+  display_order: z.number().int().min(0).default(0),
+});
+
+export const updateAnamneseStatusSchema = z.object({
+  status: z.enum(['draft', 'pending', 'completed', 'archived']),
+});
+
+export const createAnamneseSchema = z.object({
+  prefill_from_version: z.number().int().min(1).optional(),
+});
+
+// -- Change Reports --
+
+export const changeReportsQuerySchema = z.object({
+  status: z.enum(['pending', 'reviewed', 'integrated', 'all']).default('all'),
+  limit: z
+    .string()
+    .regex(/^\d+$/)
+    .transform(Number)
+    .pipe(z.number().int().min(1).max(50))
+    .default('20'),
+});
+
+export const reviewChangeReportSchema = z.object({
+  status: z.enum(['reviewed', 'integrated']),
+  reviewer_notes: z.string().max(1000).optional(),
+});
+
+export const createChangeReportSchema = z.object({
+  change_type: z.enum(['health', 'medication', 'allergy', 'lifestyle', 'other']),
+  title: z.string().min(3, 'Le titre doit contenir au moins 3 caractères').max(200),
+  description: z.string().min(5, 'La description doit contenir au moins 5 caractères').max(2000),
+  anamnesis_section_id: z.string().max(50).default('general'),
+  old_value: z.string().max(500).optional(),
+  new_value: z.string().max(500).optional(),
+});
+
+// -- Questionnaires --
+
+export const questionnaireQuestionSchema = z.object({
+  question: z.string().min(1, 'Question requise'),
+  type: z.enum(['text', 'scale', 'choice', 'boolean', 'number']),
+  options: z.array(z.string()).optional(),
+  required: z.boolean().default(true),
+});
+
+export const createQuestionnaireSchema = z.object({
+  title: z.string().min(1, 'Titre requis').max(200),
+  questionnaire_type: z.string().min(1, 'Type requis'),
+  due_date: z.string().datetime().optional(),
+  questions: z.array(questionnaireQuestionSchema).min(1, 'Au moins une question requise'),
+  consultation_id: z.string().uuid().optional(),
+});
+
+// -- Documents --
+
+export const documentCategoryEnum = z.enum(['Analyses', 'Plans', 'Ressources', 'Autre']);
+
+export const createDocumentMetadataSchema = z.object({
+  name: z.string().min(1, 'Nom requis').max(200),
+  category: documentCategoryEnum,
+  description: z.string().max(500).optional(),
+  consultation_id: z.string().uuid().optional(),
+});
+
+export const updateDocumentSchema = z.object({
+  name: z.string().min(1).max(200).optional(),
+  category: documentCategoryEnum.optional(),
+  description: z.string().max(500).optional(),
+});
+
+// -- Objectives --
+
+export const createObjectiveSchema = z.object({
+  title: z.string().min(1, 'Titre requis').max(200),
+  description: z.string().max(1000).optional(),
+  category: z.string().min(1, 'Catégorie requise'),
+  target_value: z.string().optional(),
+  target_unit: z.string().optional(),
+  start_value: z.string().optional(),
+  start_date: z.string().datetime().optional(),
+  deadline: z.string().datetime().optional(),
+  priority: z.number().int().min(1).max(5).default(3),
+});
+
+export const updateObjectiveStatusSchema = z.object({
+  title: z.string().min(1).max(200).optional(),
+  description: z.string().max(1000).optional(),
+  status: z.enum(['active', 'paused', 'completed', 'cancelled']).optional(),
+  target_value: z.string().optional(),
+  deadline: z.string().datetime().optional(),
+  priority: z.number().int().min(1).max(5).optional(),
+  notes: z.string().max(1000).optional(),
+});
+
+export const objectiveProgressLogSchema = z.object({
+  progress: z.number().min(0).max(100),
+  value: z.string().optional(),
+  notes: z.string().max(500).optional(),
+});
+
+// -- Patient Modification Requests (Plan Alimentaire) --
+
+export const createPatientModificationRequestSchema = z.object({
+  request_type: z.enum(['substitution', 'quantity', 'meal_time', 'allergy', 'preference', 'other']),
+  title: z.string().min(3, 'Le titre doit contenir au moins 3 caractères').max(200, 'Titre trop long (max 200 caractères)'),
+  description: z.string().min(5, 'La description doit contenir au moins 5 caractères').max(2000, 'Description trop longue (max 2000 caractères)'),
+  suggested_alternative: z.string().max(500, 'Suggestion trop longue (max 500 caractères)').optional(),
+});
+
+export type CreatePatientModificationRequestData = z.infer<typeof createPatientModificationRequestSchema>;
+
+// -- Export --
+
+export const exportDossierQuerySchema = z.object({
+  sections: z
+    .string()
+    .transform(s => s.split(','))
+    .pipe(z.array(z.string()))
+    .optional(),
+});
+
+// =====================================================
+// SCHEMAS POUR LE SUIVI PATIENT - NUTRITIONNISTE (EPIC 8)
+// =====================================================
+
+// SUIVI-007: Type de feedback sur un repas
+export const mealFeedbackTypeEnum = z.enum([
+  'general',
+  'positive',
+  'warning',
+  'suggestion',
+]);
+
+// SUIVI-007: Création de feedback sur un repas
+export const createMealFeedbackSchema = z.object({
+  comment: z
+    .string()
+    .min(1, 'Le commentaire est requis')
+    .max(2000, 'Commentaire trop long (max 2000 caractères)'),
+  feedback_type: mealFeedbackTypeEnum.default('general'),
+});
+
+export type MealFeedbackType = z.infer<typeof mealFeedbackTypeEnum>;
+export type CreateMealFeedbackData = z.infer<typeof createMealFeedbackSchema>;
+
+// =====================================================
+// SCHEMAS POUR LES PROFILS NUTRITIONNELS (Phase 2.5)
+// =====================================================
+
+export const bmrFormulaEnum = z.enum([
+  'mifflin_st_jeor',
+  'harris_benedict_revised',
+  'harris_benedict_original',
+  'katch_mcardle',
+]);
+
+export const profileGoalEnum = z.enum(['lose', 'maintain', 'gain']);
+
+export const specialCaseEnum = z.enum([
+  'none',
+  'pregnancy_t1',
+  'pregnancy_t2',
+  'pregnancy_t3',
+  'breastfeeding',
+  'athlete',
+  'senior',
+  'adolescent',
+]);
+
+export const profileStatusEnum = z.enum(['draft', 'active', 'archived']);
+
+export const activityLevelEnum = z.enum([
+  'sedentary',
+  'lightlyActive',
+  'moderatelyActive',
+  'veryActive',
+  'athlete',
+]);
+
+// Micro-nutriment targets (optionnel, mode basique ou avancé)
+export const microTargetsSchema = z.object({
+  fiber_g: z.number().min(0).max(100).optional(),
+  sodium_mg: z.number().min(0).max(10000).optional(),
+  calcium_mg: z.number().min(0).max(5000).optional(),
+  iron_mg: z.number().min(0).max(100).optional(),
+  magnesium_mg: z.number().min(0).max(2000).optional(),
+  phosphorus_mg: z.number().min(0).max(5000).optional(),
+  potassium_mg: z.number().min(0).max(10000).optional(),
+  zinc_mg: z.number().min(0).max(100).optional(),
+  vitamin_a_ug: z.number().min(0).max(10000).optional(),
+  vitamin_b1_mg: z.number().min(0).max(100).optional(),
+  vitamin_b2_mg: z.number().min(0).max(100).optional(),
+  vitamin_b3_mg: z.number().min(0).max(500).optional(),
+  vitamin_b6_mg: z.number().min(0).max(100).optional(),
+  vitamin_b9_ug: z.number().min(0).max(2000).optional(),
+  vitamin_b12_ug: z.number().min(0).max(100).optional(),
+  vitamin_c_mg: z.number().min(0).max(5000).optional(),
+  vitamin_d_ug: z.number().min(0).max(200).optional(),
+  vitamin_e_mg: z.number().min(0).max(1000).optional(),
+  vitamin_k_ug: z.number().min(0).max(500).optional(),
+  cholesterol_mg: z.number().min(0).max(1000).optional(),
+}).optional().nullable();
+
+// Création d'un profil nutritionnel
+export const createNutritionalProfileSchema = z.object({
+  name: z.string().min(3, 'Nom requis (min 3 caractères)').max(200, 'Nom trop long (max 200)'),
+  status: profileStatusEnum.optional().default('draft'),
+  weight_kg: z.number().min(30, 'Poids minimum : 30 kg').max(300, 'Poids maximum : 300 kg'),
+  height_cm: z.number().min(100, 'Taille minimum : 100 cm').max(250, 'Taille maximum : 250 cm'),
+  age: z.number().int().min(13, 'Âge minimum : 13 ans').max(120, 'Âge maximum : 120 ans'),
+  gender: z.enum(['male', 'female']),
+  body_fat_pct: z.number().min(1).max(60).optional().nullable(),
+  bmr_formula: bmrFormulaEnum.default('mifflin_st_jeor'),
+  activity_level: activityLevelEnum.default('moderatelyActive'),
+  goal: profileGoalEnum.default('maintain'),
+  goal_adjustment_kcal: z.number().int().min(-1000).max(1000).optional().default(0),
+  special_case: specialCaseEnum.optional().default('none'),
+  special_case_adjustment_kcal: z.number().int().min(-1000).max(1000).optional().nullable(),
+  macro_template: z.string().max(50).optional().nullable(),
+  protein_pct: z.number().min(5, 'Protéines : minimum 5%').max(60, 'Protéines : maximum 60%'),
+  carbs_pct: z.number().min(0, 'Glucides : minimum 0%').max(80, 'Glucides : maximum 80%'),
+  fat_pct: z.number().min(10, 'Lipides : minimum 10%').max(80, 'Lipides : maximum 80%'),
+  micro_targets: microTargetsSchema,
+  notes: z.string().max(2000, 'Notes trop longues').optional().nullable(),
+  private_notes: z.string().max(2000, 'Notes privées trop longues').optional().nullable(),
+}).refine(
+  data => data.bmr_formula !== 'katch_mcardle' || (data.body_fat_pct != null && data.body_fat_pct > 0),
+  { message: 'Le taux de masse grasse est requis pour la formule Katch-McArdle', path: ['body_fat_pct'] }
+).refine(
+  data => Math.abs(data.protein_pct + data.carbs_pct + data.fat_pct - 100) <= 1,
+  { message: 'La somme des macronutriments doit être égale à 100%', path: ['protein_pct'] }
+);
+
+// Mise à jour d'un profil nutritionnel (partiel)
+export const updateNutritionalProfileSchema = z.object({
+  name: z.string().min(3).max(200).optional(),
+  status: profileStatusEnum.optional(),
+  weight_kg: z.number().min(30).max(300).optional(),
+  height_cm: z.number().min(100).max(250).optional(),
+  age: z.number().int().min(13).max(120).optional(),
+  gender: z.enum(['male', 'female']).optional(),
+  body_fat_pct: z.number().min(1).max(60).optional().nullable(),
+  bmr_formula: bmrFormulaEnum.optional(),
+  activity_level: activityLevelEnum.optional(),
+  goal: profileGoalEnum.optional(),
+  goal_adjustment_kcal: z.number().int().min(-1000).max(1000).optional(),
+  special_case: specialCaseEnum.optional(),
+  special_case_adjustment_kcal: z.number().int().min(-1000).max(1000).optional().nullable(),
+  macro_template: z.string().max(50).optional().nullable(),
+  protein_pct: z.number().min(5).max(60).optional(),
+  carbs_pct: z.number().min(0).max(80).optional(),
+  fat_pct: z.number().min(10).max(80).optional(),
+  micro_targets: microTargetsSchema,
+  notes: z.string().max(2000).optional().nullable(),
+  private_notes: z.string().max(2000).optional().nullable(),
+}).refine(data => Object.keys(data).length > 0, {
+  message: 'Au moins un champ doit être fourni pour la mise à jour',
+});
+
+export type BmrFormulaType = z.infer<typeof bmrFormulaEnum>;
+export type ProfileGoalType = z.infer<typeof profileGoalEnum>;
+export type SpecialCaseType = z.infer<typeof specialCaseEnum>;
+export type ProfileStatusType = z.infer<typeof profileStatusEnum>;
+export type ActivityLevelType = z.infer<typeof activityLevelEnum>;
+export type CreateNutritionalProfileData = z.infer<typeof createNutritionalProfileSchema>;
+export type UpdateNutritionalProfileData = z.infer<typeof updateNutritionalProfileSchema>;

@@ -44,7 +44,7 @@ export async function GET(req: NextRequest) {
     const { data: meals, error: mealsError } = await supabase
       .from('meals')
       .select('meal_type')
-      .eq('user_id', auth.user.id)
+      .eq('patient_id', auth.user.id)
       .eq('meal_date', date)
       .is('deleted_at', null);
 

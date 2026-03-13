@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
     const { data: newActivity, error: insertError } = await (supabase as any)
       .from('activities')
       .insert({
-        user_id: auth.user.id,
+        patient_id: auth.user.id,
         activity_type_id: activityTypeId,
         date: activityDate,
         duration_minutes: validatedData.duration_minutes,
@@ -162,7 +162,7 @@ export async function GET(req: NextRequest) {
         )
       `
       )
-      .eq('user_id', auth.user.id);
+      .eq('patient_id', auth.user.id);
 
     // Filtres de date
     if (startDate && endDate) {

@@ -14,6 +14,7 @@
 
 export type DossierTab =
   | 'anamnese'
+  | 'profil'
   | 'questionnaires'
   | 'documents'
   | 'consultations'
@@ -24,9 +25,12 @@ export type AnamneseSectionId =
   | 'morphologie'
   | 'historique'
   | 'sante'
+  | 'sante_bilan'
   | 'habitudes'
+  | 'consommation'
   | 'lifestyle'
-  | 'motivation';
+  | 'motivation'
+  | 'psycho_comportemental';
 
 export type QuestionnaireStatus = 'completed' | 'pending';
 
@@ -49,6 +53,12 @@ export type ObjectiveCategory = 'Poids' | 'Habitude' | 'Comportement';
 export interface AnamneseField {
   label: string;
   value: string;
+  /** Value before the last patient change report was integrated */
+  previous_value?: string;
+  /** ISO date – set when a patient change report is integrated */
+  updated_at?: string;
+  /** Origin of the last modification */
+  updated_by?: 'patient_report' | 'nutritionist';
 }
 
 export interface AnamneseSection {
@@ -173,6 +183,21 @@ export function dossierReducer(
       return state;
   }
 }
+
+// ==================== SECTION LABELS ====================
+
+export const ANAMNESE_SECTION_LABELS: Record<AnamneseSectionId, string> = {
+  identite: 'Identité & Coordonnées',
+  morphologie: 'Données morphologiques',
+  historique: 'Historique pondéral',
+  sante: 'Antécédents & Traitements',
+  sante_bilan: 'Bilan digestif & biologique',
+  habitudes: 'Habitudes alimentaires',
+  consommation: 'Consommation & Boissons',
+  lifestyle: 'Mode de vie',
+  motivation: 'Motivation & Objectifs',
+  psycho_comportemental: 'Psycho-comportemental',
+};
 
 // ==================== CONFIGURATIONS ====================
 

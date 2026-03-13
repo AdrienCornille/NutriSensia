@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
     const { data: goal, error: fetchError } = await supabase
       .from('hydration_goals')
       .select('*')
-      .eq('user_id', auth.user.id)
+      .eq('patient_id', auth.user.id)
       .lte('valid_from', today)
       .or(`valid_until.is.null,valid_until.gte.${today}`)
       .order('created_at', { ascending: false })
@@ -55,7 +55,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json(
         {
           id: null,
-          user_id: auth.user.id,
+          patient_id: auth.user.id,
           daily_goal_ml: 2000, // Default 2L
           valid_from: today,
           valid_until: null,
@@ -132,7 +132,7 @@ export async function PATCH(req: NextRequest) {
     const { error: closeError } = await supabase
       .from('hydration_goals')
       .update({ valid_until: yesterdayStr })
-      .eq('user_id', auth.user.id)
+      .eq('patient_id', auth.user.id)
       .or(`valid_until.is.null,valid_until.gte.${today}`);
 
     if (closeError) {
@@ -146,7 +146,7 @@ export async function PATCH(req: NextRequest) {
     const { data: newGoal, error: createError } = await supabase
       .from('hydration_goals')
       .insert({
-        user_id: auth.user.id,
+        patient_id: auth.user.id,
         daily_goal_ml: validatedData.daily_goal_ml,
         valid_from: today,
         valid_until: null, // Ouvert (valide indéfiniment)

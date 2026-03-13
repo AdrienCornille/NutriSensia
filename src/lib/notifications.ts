@@ -16,6 +16,7 @@ export type NotificationTypeCode =
   | 'appointment_confirmed'
   | 'appointment_cancelled'
   | 'appointment_rescheduled'
+  | 'appointment_no_show'
   // Messages
   | 'new_message'
   | 'unread_messages'
@@ -23,6 +24,9 @@ export type NotificationTypeCode =
   | 'new_meal_plan'
   | 'plan_modification_approved'
   | 'plan_modification_rejected'
+  // Profil nutritionnel
+  | 'nutritional_profile_activated'
+  | 'nutritional_profile_updated'
   // Biométrique
   | 'weight_goal_reached'
   | 'weight_reminder'
@@ -138,6 +142,23 @@ export async function notifyAppointmentRescheduled(
       new_time: appointmentData.new_time,
     }
   );
+}
+
+/**
+ * Crée une notification de no-show pour le patient
+ */
+export async function notifyAppointmentNoShow(
+  supabase: SupabaseClientAny,
+  patientUserId: string,
+  appointmentData: {
+    date: string;
+    nutritionist: string;
+  }
+): Promise<void> {
+  await createNotification(supabase, patientUserId, 'appointment_no_show', {
+    date: appointmentData.date,
+    nutritionist: appointmentData.nutritionist,
+  });
 }
 
 /**

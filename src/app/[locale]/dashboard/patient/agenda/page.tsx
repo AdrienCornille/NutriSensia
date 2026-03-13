@@ -17,6 +17,7 @@ import {
   PastAppointmentsList,
   AgendaStats,
   CancelledAppointmentsList,
+  CancelledAppointmentItem,
   AppointmentDetailModal,
   BookingModal,
   BookingSuccessModal,
@@ -39,6 +40,7 @@ import {
   useUpcomingAppointments,
   usePastAppointments,
   useCancelledAppointments,
+  useNoShowAppointments,
   useCreateAppointment,
   useUpdateAppointment,
   useCancelAppointment,
@@ -50,6 +52,7 @@ import {
 } from '@/lib/appointments-transformers';
 // Mock for reminder settings only (not yet implemented in backend)
 import { updateReminderSettings } from '@/data/mock-agenda';
+import { Toast, type ToastType } from '@/components/suivi/shared/Toast';
 
 export default function AgendaPage() {
   const [state, dispatch] = useReducer(agendaReducer, initialAgendaState);
@@ -58,6 +61,26 @@ export default function AgendaPage() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [createdAppointment, setCreatedAppointment] =
     useState<Appointment | null>(null);
+
+  // Toast state
+  const [toast, setToast] = useState<{
+    visible: boolean;
+    type: ToastType;
+    title: string;
+    message?: string;
+  }>({ visible: false, type: 'success', title: '' });
+
+  const hideToast = useCallback(
+    () => setToast(t => ({ ...t, visible: false })),
+    []
+  );
+
+  const showToast = useCallback(
+    (type: ToastType, title: string, message?: string) => {
+      setToast({ visible: true, type, title, message });
+    },
+    []
+  );
 
   // ============================================================================
   // API QUERIES
@@ -79,6 +102,12 @@ export default function AgendaPage() {
     isLoading: isLoadingCancelled,
     error: cancelledError,
   } = useCancelledAppointments(1, 50);
+
+  const {
+    data: noShowData,
+    isLoading: isLoadingNoShow,
+    error: noShowError,
+  } = useNoShowAppointments(1, 50);
 
   // ============================================================================
   // API MUTATIONS
@@ -104,6 +133,15 @@ export default function AgendaPage() {
     if (!cancelledData?.appointments) return [];
     return cancelledData.appointments.map(transformAppointmentToUI);
   }, [cancelledData]);
+
+  const noShowAppointments = useMemo(() => {
+    if (!noShowData?.appointments) return [];
+    return noShowData.appointments.map(transformAppointmentToUI);
+  }, [noShowData]);
+
+  // Patient gender from API response (for gendered labels)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const patientGender: string | null = (cancelledData as any)?.patient_gender || (upcomingData as any)?.patient_gender || null;
 
   // Load appointments into reducer state for UI management (modals, selection)
   useEffect(() => {
@@ -131,8 +169,8 @@ export default function AgendaPage() {
   );
 
   // Loading state
-  const isLoading = isLoadingUpcoming || isLoadingPast || isLoadingCancelled;
-  const hasError = upcomingError || pastError || cancelledError;
+  const isLoading = isLoadingUpcoming || isLoadingPast || isLoadingCancelled || isLoadingNoShow;
+  const hasError = upcomingError || pastError || cancelledError || noShowError;
 
   // Handlers
   const handleTabChange = useCallback((tab: AgendaTab) => {
@@ -171,25 +209,25 @@ export default function AgendaPage() {
 
   // AGENDA-008: Confirm cancellation
   const handleConfirmCancellation = useCallback(
-    async (appointment: Appointment) => {
+    async (appointment: Appointment, reason?: string) => {
       try {
         await cancelAppointmentMutation.mutateAsync({
           id: appointment.id,
-          reason: 'Annulation par le patient',
+          reason: reason || 'Annulation par le patient',
         });
         // Update local state immediately
         dispatch({ type: 'CANCEL_APPOINTMENT', appointmentId: appointment.id });
         dispatch({ type: 'CLOSE_CANCELLATION_MODAL' });
-        alert('Rendez-vous annulé avec succès.');
+        showToast('success', 'Rendez-vous annulé');
       } catch (error: unknown) {
         const errorMessage =
           error instanceof Error
             ? error.message
             : "Erreur lors de l'annulation";
-        alert(errorMessage);
+        showToast('error', 'Erreur', errorMessage);
       }
     },
-    [cancelAppointmentMutation]
+    [cancelAppointmentMutation, showToast]
   );
 
   // AGENDA-008: Close cancellation modal
@@ -257,9 +295,7 @@ export default function AgendaPage() {
           });
 
           dispatch({ type: 'CLOSE_BOOKING_MODAL' });
-          alert(
-            'Rendez-vous modifié ! Votre nutritionniste sera notifié du changement.'
-          );
+          showToast('success', 'Rendez-vous modifié', 'Votre nutritionniste sera notifié du changement');
         } else {
           // New booking via API
           // Build scheduled_at from date and time
@@ -290,6 +326,7 @@ export default function AgendaPage() {
           // Show success modal with calendar option
           setCreatedAppointment(transformedAppointment);
           setShowSuccessModal(true);
+          showToast('success', 'Rendez-vous réservé', 'Votre demande a été envoyée au nutritionniste');
         }
       } catch (error: unknown) {
         const errorMessage =
@@ -299,12 +336,14 @@ export default function AgendaPage() {
           error: errorMessage,
         });
         dispatch({ type: 'SET_BOOKING_SUBMITTING', isSubmitting: false });
+        showToast('error', 'Erreur de réservation', errorMessage);
       }
     },
     [
       state.editingAppointment,
       createAppointmentMutation,
       updateAppointmentMutation,
+      showToast,
     ]
   );
 
@@ -332,7 +371,8 @@ export default function AgendaPage() {
           <p className='text-red-500 text-sm mt-2'>
             {upcomingError?.message ||
               pastError?.message ||
-              cancelledError?.message}
+              cancelledError?.message ||
+              noShowError?.message}
           </p>
           <button
             onClick={() => window.location.reload()}
@@ -364,11 +404,7 @@ export default function AgendaPage() {
               onBookAppointment={handleOpenBooking}
             />
 
-            {/* Reminder settings */}
-            <ReminderSettings
-              settings={state.reminderSettings}
-              onSettingChange={handleReminderSettingsChange}
-            />
+            {/* TODO: Reminder settings - hidden until backend implementation */}
           </div>
         );
 
@@ -393,10 +429,27 @@ export default function AgendaPage() {
       case 'cancelled':
         return (
           <div className='space-y-6'>
-            {/* Cancelled appointments list */}
             <CancelledAppointmentsList
               appointments={cancelledAppointments}
               onAppointmentClick={handleAppointmentClick}
+              patientGender={patientGender}
+              title='Rendez-vous annulés'
+              emptyMessage='Aucun rendez-vous annulé'
+              emptyDescription='Les rendez-vous annulés apparaîtront ici'
+            />
+          </div>
+        );
+
+      case 'no_show':
+        return (
+          <div className='space-y-6'>
+            <CancelledAppointmentsList
+              appointments={noShowAppointments}
+              onAppointmentClick={handleAppointmentClick}
+              patientGender={patientGender}
+              title='Absences'
+              emptyMessage='Aucune absence enregistrée'
+              emptyDescription='Les rendez-vous marqués comme absence apparaîtront ici'
             />
           </div>
         );
@@ -439,6 +492,9 @@ export default function AgendaPage() {
         onJoinVisio={handleJoinVisio}
         onModify={handleModifyAppointment}
         onCancel={handleCancelAppointment}
+        onRebook={handleOpenBooking}
+        patientGender={patientGender}
+        onShowToast={showToast}
       />
 
       {/* AGENDA-008: Cancellation Confirm Modal */}
@@ -447,6 +503,7 @@ export default function AgendaPage() {
         appointment={state.selectedAppointment}
         onClose={handleCloseCancellation}
         onConfirm={handleConfirmCancellation}
+        isLoading={cancelAppointmentMutation.isPending}
       />
 
       {/* Booking Success Modal with calendar option */}
@@ -454,6 +511,16 @@ export default function AgendaPage() {
         isOpen={showSuccessModal}
         appointment={createdAppointment}
         onClose={handleCloseSuccessModal}
+        onShowToast={showToast}
+      />
+
+      {/* Toast */}
+      <Toast
+        isVisible={toast.visible}
+        type={toast.type}
+        title={toast.title}
+        message={toast.message}
+        onClose={hideToast}
       />
     </div>
   );

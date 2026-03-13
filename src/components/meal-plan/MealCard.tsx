@@ -10,6 +10,7 @@ import type {
   FoodAlternative,
 } from '@/types/meal-plan';
 import { calculateMealTotal, formatCalorieDifference } from '@/types/meal-plan';
+import { MacroBadgesGrid, MacroInline } from '@/components/ui/MacroBadgesGrid';
 
 interface MealCardProps {
   meal: PlanMeal;
@@ -28,17 +29,18 @@ function FoodItem({ food }: { food: PlanFood }) {
     <div className='bg-white rounded-lg overflow-hidden'>
       {/* Aliment principal */}
       <div className='flex items-center justify-between p-3'>
-        <div className='flex-1'>
+        <div className='flex-1 min-w-0'>
           <p className='font-medium text-gray-800'>{food.name}</p>
-          <p className='text-sm text-gray-500'>{food.quantity}</p>
+          <p className='text-sm text-gray-500 mb-1'>{food.quantity}</p>
+          <MacroInline
+            protein={food.protein}
+            carbs={food.carbs}
+            fat={food.fat}
+            fiber={food.fiber}
+          />
         </div>
-        <div className='flex items-center gap-3'>
-          <div className='text-right'>
-            <p className='font-medium text-gray-700'>{food.calories} kcal</p>
-            <p className='text-xs text-gray-400'>
-              P: {food.protein}g • G: {food.carbs}g • L: {food.fat}g
-            </p>
-          </div>
+        <div className='flex items-center gap-3 shrink-0'>
+          <p className='font-semibold text-gray-700 text-sm'>{food.calories} kcal</p>
           {hasAlternatives && (
             <button
               onClick={() => setShowAlternatives(!showAlternatives)}
@@ -81,31 +83,31 @@ function FoodItem({ food }: { food: PlanFood }) {
                         <p className='text-sm font-medium text-gray-700'>
                           {alt.name}
                         </p>
-                        <p className='text-xs text-gray-500'>{alt.quantity}</p>
+                        <p className='text-xs text-gray-500 mb-1'>{alt.quantity}</p>
+                        <MacroInline
+                          protein={alt.protein}
+                          carbs={alt.carbs}
+                          fat={alt.fat}
+                        />
                       </div>
-                      <div className='text-right'>
-                        <div className='flex items-center gap-2'>
-                          <span className='text-sm font-medium text-gray-700'>
-                            {alt.calories} kcal
-                          </span>
-                          <span
-                            className={`text-xs px-1.5 py-0.5 rounded-full ${
-                              Math.abs(alt.calories - food.calories) <= 10
-                                ? 'bg-[#1B998B]/10 text-[#1B998B]'
-                                : alt.calories < food.calories
-                                  ? 'bg-blue-100 text-blue-700'
-                                  : 'bg-amber-100 text-amber-700'
-                            }`}
-                          >
-                            {formatCalorieDifference(
-                              food.calories,
-                              alt.calories
-                            )}
-                          </span>
-                        </div>
-                        <p className='text-xs text-gray-400'>
-                          P: {alt.protein}g • G: {alt.carbs}g • L: {alt.fat}g
-                        </p>
+                      <div className='flex items-center gap-2 shrink-0'>
+                        <span className='text-sm font-medium text-gray-700'>
+                          {alt.calories} kcal
+                        </span>
+                        <span
+                          className={`text-xs px-1.5 py-0.5 rounded-full ${
+                            Math.abs(alt.calories - food.calories) <= 10
+                              ? 'bg-[#1B998B]/10 text-[#1B998B]'
+                              : alt.calories < food.calories
+                                ? 'bg-blue-100 text-blue-700'
+                                : 'bg-amber-100 text-amber-700'
+                          }`}
+                        >
+                          {formatCalorieDifference(
+                            food.calories,
+                            alt.calories
+                          )}
+                        </span>
                       </div>
                     </div>
                   ))}
@@ -139,15 +141,7 @@ export function MealCard({ meal, isExpanded, onToggleExpand }: MealCardProps) {
           </div>
         </div>
         <div className='flex items-center gap-4'>
-          <div className='text-right'>
-            <p className='font-semibold text-gray-800'>
-              {mealTotal.calories} kcal
-            </p>
-            <p className='text-xs text-gray-500'>
-              P: {mealTotal.protein.toFixed(0)}g • G:{' '}
-              {mealTotal.carbs.toFixed(0)}g • L: {mealTotal.fat.toFixed(0)}g
-            </p>
-          </div>
+          <p className='font-semibold text-gray-800'>{mealTotal.calories} kcal</p>
           <ChevronDown
             className={`w-5 h-5 text-gray-400 transition-transform ${
               isExpanded ? 'rotate-180' : ''
@@ -172,6 +166,21 @@ export function MealCard({ meal, isExpanded, onToggleExpand }: MealCardProps) {
                   <FoodItem key={food.id} food={food} />
                 ))}
               </div>
+
+              {/* Macro totals */}
+              {meal.foods.length > 0 && (
+                <div className='mt-4'>
+                  <MacroBadgesGrid
+                    values={{
+                      calories: mealTotal.calories,
+                      protein: mealTotal.protein,
+                      carbs: mealTotal.carbs,
+                      fat: mealTotal.fat,
+                      fiber: mealTotal.fiber,
+                    }}
+                  />
+                </div>
+              )}
 
               {/* Alternatives suggestion */}
               {meal.alternatives && (

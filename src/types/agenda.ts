@@ -15,13 +15,15 @@
 
 // ==================== ENUMS ====================
 
-export type AgendaTab = 'upcoming' | 'past' | 'cancelled';
+export type AgendaTab = 'upcoming' | 'past' | 'cancelled' | 'no_show';
 
 export type AppointmentStatus =
   | 'confirmed'
   | 'pending'
   | 'cancelled'
-  | 'completed';
+  | 'completed'
+  | 'no_show'
+  | 'postponed';
 
 // Statuts détaillés pour l'annulation (utilisé côté DB et reporting)
 export type CancellationSource = 'patient' | 'nutritionist';
@@ -79,6 +81,8 @@ export interface Appointment {
   price: number;
   isCounterProposal?: boolean; // Nutritionniste a proposé un nouvel horaire
   counterProposalMessage?: string; // Message du nutritionniste pour la contre-proposition
+  statusNotes?: string; // Notes du nutritionniste lors du marquage completed/no_show
+  postponedReason?: string; // Raison du report (extraite de status_reason postponed:xxx)
 }
 
 export interface ConsultationTypeConfig {
@@ -388,7 +392,8 @@ export function agendaReducer(
 export const agendaTabsConfig: { id: AgendaTab; label: string }[] = [
   { id: 'upcoming', label: 'À venir' },
   { id: 'past', label: 'Passés' },
-  { id: 'cancelled', label: 'Annulés/Refusés' },
+  { id: 'cancelled', label: 'Annulés' },
+  { id: 'no_show', label: 'Absences' },
 ];
 
 export const appointmentStatusConfig: Record<
@@ -415,6 +420,16 @@ export const appointmentStatusConfig: Record<
     bgColor: 'bg-gray-100',
     textColor: 'text-gray-600',
   },
+  no_show: {
+    label: 'Absent(e)',
+    bgColor: 'bg-red-100',
+    textColor: 'text-red-700',
+  },
+  postponed: {
+    label: 'Reporté',
+    bgColor: 'bg-blue-100',
+    textColor: 'text-blue-700',
+  },
 };
 
 /**
@@ -425,9 +440,16 @@ export function getStatusLabel(
   cancelledBy?: CancellationSource,
   isCounterProposal?: boolean,
   isDeclinedByNutritionist?: boolean,
+  gender?: string | null,
 ): string {
   if (status === 'pending' && isCounterProposal) {
     return "Proposition d'un nouvel horaire";
+  }
+  if (status === 'no_show') {
+    return gender === 'female' ? 'Absente' : 'Absent';
+  }
+  if (status === 'postponed') {
+    return 'Reporté';
   }
   if (status === 'cancelled' && cancelledBy === 'nutritionist') {
     return isDeclinedByNutritionist
@@ -599,7 +621,7 @@ export function getNextAppointment(
       const [hours, minutes] = apt.time.split(':').map(Number);
       const aptDate = new Date(apt.date);
       aptDate.setHours(hours, minutes, 0, 0);
-      return aptDate > now && apt.status !== 'cancelled';
+      return aptDate > now && (apt.status === 'confirmed' || apt.status === 'pending');
     })
     .sort((a, b) => {
       const dateA = new Date(a.date);

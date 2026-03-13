@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
       supabase as any
     )
       .from('patient_profiles')
-      .select('id')
+      .select('id, gender')
       .eq('user_id', auth.user.id)
       .single();
 
@@ -117,17 +117,22 @@ export async function GET(req: NextRequest) {
         .not(
           'status',
           'in',
-          '("cancelled","cancelled_by_patient","cancelled_by_nutritionist")'
+          '("cancelled","cancelled_by_patient","cancelled_by_nutritionist","no_show")'
         )
         .order('scheduled_at', { ascending: false });
     } else if (filter === 'cancelled') {
-      // RDV annulés uniquement
+      // RDV annulés uniquement (sans no_show)
       query = query
         .in('status', [
           'cancelled',
           'cancelled_by_patient',
           'cancelled_by_nutritionist',
         ])
+        .order('scheduled_at', { ascending: false });
+    } else if (filter === 'no_show') {
+      // Absences uniquement
+      query = query
+        .eq('status', 'no_show')
         .order('scheduled_at', { ascending: false });
     } else {
       // 'all' - tous les RDV triés par date décroissante
@@ -178,7 +183,7 @@ export async function GET(req: NextRequest) {
       .not(
         'status',
         'in',
-        '("cancelled","cancelled_by_patient","cancelled_by_nutritionist")'
+        '("cancelled","cancelled_by_patient","cancelled_by_nutritionist","no_show")'
       );
 
     const { count: cancelledCount } = await (supabase as any)
@@ -191,6 +196,12 @@ export async function GET(req: NextRequest) {
         'cancelled_by_nutritionist',
       ]);
 
+    const { count: noShowCount } = await (supabase as any)
+      .from('appointments')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', patientProfileId)
+      .eq('status', 'no_show');
+
     return NextResponse.json(
       {
         appointments: appointments || [],
@@ -198,6 +209,8 @@ export async function GET(req: NextRequest) {
         upcoming_count: upcomingCount || 0,
         past_count: pastCount || 0,
         cancelled_count: cancelledCount || 0,
+        no_show_count: noShowCount || 0,
+        patient_gender: patientProfile.gender || null,
       },
       { status: 200 }
     );

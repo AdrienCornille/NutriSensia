@@ -7,6 +7,7 @@ import {
   FolderOpen,
   Calendar,
   Target,
+  Calculator,
 } from 'lucide-react';
 import type { DossierTab } from '@/types/dossier';
 
@@ -20,6 +21,11 @@ const tabs: { id: DossierTab; label: string; icon: React.ReactNode }[] = [
     id: 'anamnese',
     label: 'Anamnèse',
     icon: <ClipboardList className='w-4 h-4' />,
+  },
+  {
+    id: 'profil',
+    label: 'Profil nutritionnel',
+    icon: <Calculator className='w-4 h-4' />,
   },
   {
     id: 'questionnaires',

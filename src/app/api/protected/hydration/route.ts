@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
     const { data: log, error: insertError } = await supabase
       .from('hydration_logs')
       .insert({
-        user_id: auth.user.id,
+        patient_id: auth.user.id,
         date: new Date().toISOString().split('T')[0], // CURRENT_DATE
         amount_ml: validatedData.amount_ml,
         beverage_type: validatedData.beverage_type || 'water',
@@ -135,7 +135,7 @@ export async function GET(req: NextRequest) {
     let query = supabase
       .from('hydration_logs')
       .select('*')
-      .eq('user_id', auth.user.id);
+      .eq('patient_id', auth.user.id);
 
     // Filtrer par date
     if (validatedQuery.date) {
@@ -195,7 +195,7 @@ export async function GET(req: NextRequest) {
     const { data: goal } = await supabase
       .from('hydration_goals')
       .select('daily_goal_ml')
-      .eq('user_id', auth.user.id)
+      .eq('patient_id', auth.user.id)
       .lte('valid_from', today)
       .or(`valid_until.is.null,valid_until.gte.${today}`)
       .order('created_at', { ascending: false })

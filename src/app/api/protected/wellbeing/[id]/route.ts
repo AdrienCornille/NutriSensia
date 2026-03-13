@@ -56,7 +56,7 @@ export async function PATCH(
     // 5. Vérifier ownership (que le log appartient à l'utilisateur)
     const { data: log, error: fetchError } = await supabase
       .from('wellbeing_logs')
-      .select('user_id')
+      .select('patient_id')
       .eq('id', id)
       .single();
 
@@ -65,7 +65,7 @@ export async function PATCH(
       return apiResponse.error('Log introuvable', 404);
     }
 
-    if ((log as any).user_id !== auth.user.id) {
+    if ((log as any).patient_id !== auth.user.id) {
       return apiResponse.error('Accès non autorisé à ce log', 403);
     }
 
@@ -127,7 +127,7 @@ export async function DELETE(
     // 4. Vérifier ownership (que le log appartient à l'utilisateur)
     const { data: log, error: fetchError } = await supabase
       .from('wellbeing_logs')
-      .select('user_id')
+      .select('patient_id')
       .eq('id', id)
       .single();
 
@@ -136,7 +136,7 @@ export async function DELETE(
       return apiResponse.error('Log introuvable', 404);
     }
 
-    if ((log as any).user_id !== auth.user.id) {
+    if ((log as any).patient_id !== auth.user.id) {
       return apiResponse.error('Accès non autorisé à ce log', 403);
     }
 

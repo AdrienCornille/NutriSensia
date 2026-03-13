@@ -37,7 +37,7 @@ export async function verifyAuth(
   const supabase = await createServerSupabaseClient();
 
   try {
-    // Récupérer la session
+    // Récupérer la session (lecture locale, pas de réseau)
     const {
       data: { session },
       error: sessionError,
@@ -54,33 +54,26 @@ export async function verifyAuth(
       return { user: null, session: null };
     }
 
-    // Récupérer l'utilisateur
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser();
+    // Utiliser session.user (JWT signé, pas d'appel réseau)
+    // Le middleware a déjà validé l'auth, pas besoin de re-vérifier avec getUser()
+    const user = session.user;
+    let userRole: string = user.user_metadata?.role || 'patient';
 
-    if (userError || !user) {
-      return { user: null, session: null, error: 'Utilisateur invalide' };
-    }
-
-    // Récupérer le profil si des vérifications de rôle sont nécessaires
-    let userRole = user.user_metadata?.role || 'patient';
-
-    if (
+    const needsRoleCheck =
       permissions.requiredRole ||
       permissions.requiredRoles ||
-      permissions.require2FA
-    ) {
-      // Récupérer le rôle depuis la table profiles (source de vérité)
+      permissions.require2FA;
+
+    if (needsRoleCheck) {
+      // Requête DB uniquement pour le rôle (pas de getUser() réseau)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data: profile } = await (supabase as any)
+      const { data: profileData } = await (supabase as any)
         .from('profiles')
         .select('role')
         .eq('id', user.id)
         .single();
 
-      userRole = profile?.role || user.user_metadata?.role || 'patient';
+      userRole = profileData?.role || user.user_metadata?.role || 'patient';
     }
 
     // Vérifier les rôles requis
@@ -95,7 +88,7 @@ export async function verifyAuth(
 
       if (
         permissions.requiredRoles &&
-        !permissions.requiredRoles.includes(userRole)
+        !permissions.requiredRoles.includes(userRole as 'nutritionist' | 'patient' | 'admin')
       ) {
         return {
           user: null,

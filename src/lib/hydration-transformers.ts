@@ -13,7 +13,7 @@ import type { HydrationData, HydrationDayEntry } from '@/types/suivi';
 
 export interface HydrationLog {
   id: string;
-  user_id: string;
+  patient_id: string;
   date: string; // 'YYYY-MM-DD'
   amount_ml: number;
   beverage_type: 'water' | 'tea' | 'coffee' | 'juice' | 'other';
@@ -24,7 +24,7 @@ export interface HydrationLog {
 
 export interface HydrationGoal {
   id: string | null;
-  user_id: string;
+  patient_id: string;
   daily_goal_ml: number;
   valid_from: string; // 'YYYY-MM-DD'
   valid_until?: string | null;

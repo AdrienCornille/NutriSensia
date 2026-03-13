@@ -31,6 +31,9 @@ export function DaySelector({
           >
             <p className='text-xs font-medium'>{day.short}</p>
             <p className='text-lg font-bold'>{day.date}</p>
+            <p className='text-[10px] font-medium opacity-70'>
+              {day.dateObj.toLocaleDateString('fr-FR', { month: 'short' }).replace('.', '')}
+            </p>
           </button>
         ))}
       </div>

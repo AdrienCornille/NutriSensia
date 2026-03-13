@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { Link, usePathname } from '@/i18n/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import {
@@ -23,6 +23,7 @@ interface NavItem {
   label: string;
   icon: React.ReactNode;
   badge?: number;
+  badgeType?: 'count' | 'dot';
   href?: string;
 }
 
@@ -90,7 +91,7 @@ interface NutritionistSidebarProps {
   pendingAppointmentsCount?: number;
 }
 
-export function NutritionistSidebar({
+export const NutritionistSidebar = React.memo(function NutritionistSidebar({
   unreadMessagesCount = 0,
   pendingAppointmentsCount = 0,
 }: NutritionistSidebarProps) {
@@ -102,7 +103,7 @@ export function NutritionistSidebar({
   const navItems: NavItem[] = useMemo(() => {
     return baseNavItems.map(item => {
       if (item.id === 'messagerie' && unreadMessagesCount > 0) {
-        return { ...item, badge: unreadMessagesCount };
+        return { ...item, badge: unreadMessagesCount, badgeType: 'dot' as const };
       }
       if (item.id === 'agenda' && pendingAppointmentsCount > 0) {
         return { ...item, badge: pendingAppointmentsCount };
@@ -143,17 +144,17 @@ export function NutritionistSidebar({
     firstName.charAt(0).toUpperCase() +
     (user?.user_metadata?.last_name?.charAt(0)?.toUpperCase() || 'N');
 
-  const handleSignOut = async () => {
+  const handleSignOut = useCallback(async () => {
     await signOut();
     window.location.href = '/';
-  };
+  }, [signOut]);
 
   const isActive = (itemId: string) => currentActiveNav === itemId;
 
   return (
     <aside className='w-64 bg-white border-r border-gray-200 flex flex-col fixed h-full z-20'>
       {/* Logo */}
-      <div className='p-6 border-b border-gray-200'>
+      <div className='px-6 h-[93px] flex items-center border-b border-gray-200'>
         <Link href='/' className='flex items-center gap-3'>
           <div className='w-10 h-10 bg-[#1B998B] rounded-lg flex items-center justify-center'>
             <img
@@ -196,11 +197,13 @@ export function NutritionistSidebar({
                 >
                   {item.icon}
                   <span className='text-sm'>{item.label}</span>
-                  {item.badge && (
+                  {item.badge && item.badgeType === 'dot' ? (
+                    <span className='ml-auto w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse' />
+                  ) : item.badge ? (
                     <span className='ml-auto bg-red-500 text-white text-xs px-2 py-0.5 rounded-full'>
                       {item.badge}
                     </span>
-                  )}
+                  ) : null}
                 </Link>
               ) : (
                 <button
@@ -213,11 +216,13 @@ export function NutritionistSidebar({
                 >
                   {item.icon}
                   <span className='text-sm'>{item.label}</span>
-                  {item.badge && (
+                  {item.badge && item.badgeType === 'dot' ? (
+                    <span className='ml-auto w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse' />
+                  ) : item.badge ? (
                     <span className='ml-auto bg-red-500 text-white text-xs px-2 py-0.5 rounded-full'>
                       {item.badge}
                     </span>
-                  )}
+                  ) : null}
                 </button>
               )}
             </li>
@@ -286,6 +291,6 @@ export function NutritionistSidebar({
       </div>
     </aside>
   );
-}
+});
 
 export default NutritionistSidebar;

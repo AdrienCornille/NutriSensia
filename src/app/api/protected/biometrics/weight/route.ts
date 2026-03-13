@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
     const { data: existingEntry } = await supabase
       .from('weight_entries')
       .select('id, weight_kg')
-      .eq('user_id', auth.user.id)
+      .eq('patient_id', auth.user.id)
       .eq('date', entryDate)
       .single();
 
@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
     const { data: newEntry, error: insertError } = await supabase
       .from('weight_entries')
       .insert({
-        user_id: auth.user.id,
+        patient_id: auth.user.id,
         weight_kg: validatedData.weight_kg,
         date: entryDate,
         notes: validatedData.notes,
@@ -98,7 +98,7 @@ export async function POST(req: NextRequest) {
     const { data: previousWeight } = await supabase
       .from('weight_entries')
       .select('weight_kg, date')
-      .eq('user_id', auth.user.id)
+      .eq('patient_id', auth.user.id)
       .lt('date', entryDate)
       .order('date', { ascending: false })
       .limit(1)
@@ -155,7 +155,7 @@ export async function GET(req: NextRequest) {
     let query = supabase
       .from('weight_entries')
       .select('*')
-      .eq('user_id', auth.user.id)
+      .eq('patient_id', auth.user.id)
       .order('date', { ascending: false });
 
     // Appliquer filtres de date
@@ -201,7 +201,7 @@ export async function GET(req: NextRequest) {
     const { data: goal } = await supabase
       .from('weight_goals')
       .select('*')
-      .eq('user_id', auth.user.id)
+      .eq('patient_id', auth.user.id)
       .eq('is_achieved', false)
       .order('created_at', { ascending: false })
       .limit(1)

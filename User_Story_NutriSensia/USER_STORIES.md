@@ -1,14 +1,22 @@
 # NutriSensia - User Stories Patient Dashboard
 
+> **Version 2.0** | Février 2026 | Mise à jour : Ajout des stories Profil Nutritionnel (FILE-008 à FILE-014)
+
 ## Statistiques
 
 | Métrique | Valeur |
 |----------|--------|
 | Nombre total d'épics | 14 |
-| Nombre total de user stories | 123 |
-| Must Have (Priorité haute) | 47 (38%) |
-| Should Have (Priorité moyenne) | 61 (50%) |
-| Could Have (Priorité basse) | 15 (12%) |
+| Nombre total de user stories | 130 |
+| Must Have (Priorité haute) | 49 (38%) |
+| Should Have (Priorité moyenne) | 65 (50%) |
+| Could Have (Priorité basse) | 16 (12%) |
+
+### Changements v2.0
+
+- **+7 stories** dans l'épic "Mon dossier" (FILE-008 à FILE-014)
+- Nouvelles fonctionnalités : Profil nutritionnel patient (consultation, historique, suggestions, comparaison, export)
+- Miroir des stories nutritionniste CALC-001 à CALC-016
 
 ---
 
@@ -511,7 +519,9 @@
 
 ---
 
-## 6. Mon dossier (7 stories)
+## 6. Mon dossier (14 stories) 🆕
+
+> **Mise à jour v2.0** : +7 stories pour le profil nutritionnel (FILE-008 à FILE-014)
 
 ### FILE-001 - Consultation de l'anamnèse [Must Have] ✅
 **En tant que** patient,
@@ -588,6 +598,265 @@
 - Sélection des données à inclure
 - Format téléchargeable
 - Délai maximum 24h
+
+---
+
+### FILE-008 - Consultation du profil nutritionnel [Must Have] ❌ 🆕
+
+**En tant que** patient,
+**Je veux** voir le détail de mon profil nutritionnel actif,
+**Afin de** comprendre mes objectifs caloriques et nutritionnels personnalisés.
+
+**Point d'entrée** : Onglet "Mon dossier" → Section "Mon profil nutritionnel"
+
+**Critères d'acceptation** :
+- ✓ Affichage du profil actif avec toutes les informations :
+  - **Mes données de base** : poids, taille, âge, IMC (avec interprétation colorée)
+  - **Mes calculs** : 
+    - Métabolisme de base (BMR) avec nom de la formule utilisée
+    - Niveau d'activité avec description
+    - Dépense énergétique totale (TDEE)
+  - **Mon objectif** : type (perte/maintien/prise), ajustement calorique, cible finale
+  - **Mes macronutriments** : objectifs en % et grammes (protéines, glucides, lipides, fibres)
+  - **Mes micronutriments** : objectifs principaux (mode basique) ou complets (mode avancé)
+- ✓ Notes du nutritionniste visibles (champ `notes`)
+- ✓ Notes privées du nutritionniste NON visibles (champ `private_notes`)
+- ✓ Date de création et dernière modification du profil
+- ✓ Nom du profil si renseigné (ex: "Profil perte de poids - Phase 1")
+- ✓ Cas spécial affiché si applicable (grossesse, allaitement, sportif, etc.)
+- ✓ Message "Aucun profil nutritionnel" si pas encore créé, avec explication
+- ✓ Design pédagogique avec infobulles explicatives sur chaque section
+- ✓ Bouton "Suggérer une modification" (voir FILE-011)
+- ✓ Bouton "Voir l'historique" si plusieurs profils existent (voir FILE-010)
+
+**↔ Miroir nutritionniste** : CALC-010
+
+**💡 Notes Claude Code** :
+- Créer un composant `NutritionalProfilePatientView` en lecture seule
+- Réutiliser les composants d'affichage du nutritionniste mais sans les actions d'édition
+- Exclure `private_notes` de l'API patient (filtrage côté serveur obligatoire)
+- Utiliser des tooltips (Radix UI) pour les explications pédagogiques
+
+---
+
+### FILE-009 - Comprendre mes calculs nutritionnels [Should Have] ❌ 🆕
+
+**En tant que** patient,
+**Je veux** comprendre comment mes besoins nutritionnels ont été calculés,
+**Afin de** mieux adhérer à mon plan et comprendre la démarche de mon nutritionniste.
+
+**Point d'entrée** : Bouton "ℹ️ Comment ça marche ?" dans FILE-008
+
+**Critères d'acceptation** :
+- ✓ Modale ou page dédiée "Comprendre mes calculs"
+- ✓ Explication du **métabolisme de base (BMR)** :
+  - Définition simple : "L'énergie que votre corps dépense au repos"
+  - Formule utilisée avec nom et pourquoi elle a été choisie
+  - Facteurs qui l'influencent (âge, sexe, poids, taille)
+- ✓ Explication du **niveau d'activité (PAL)** :
+  - Description de chaque niveau avec exemples concrets
+  - Pourquoi le nutritionniste a choisi ce niveau pour vous
+- ✓ Explication du **TDEE** :
+  - Calcul simple : BMR × PAL = TDEE
+  - Ce que cela représente concrètement
+- ✓ Explication de l'**objectif calorique** :
+  - Pourquoi un déficit/surplus a été appliqué
+  - Lien entre déficit et perte de poids estimée
+- ✓ Explication des **macronutriments** :
+  - Rôle de chaque macro (protéines, glucides, lipides)
+  - Pourquoi cette répartition spécifique pour vous
+- ✓ Si cas spécial (grossesse, sportif, etc.) : explication des ajustements
+- ✓ Illustrations ou schémas simples pour visualiser
+- ✓ Ton pédagogique et accessible (pas de jargon technique)
+- ✓ Bouton "J'ai une question" → ouvre la messagerie avec le nutritionniste
+
+**↔ Miroir nutritionniste** : CALC-003, CALC-016
+
+**💡 Notes Claude Code** :
+- Créer un composant `NutritionalExplanationModal` ou une page `/dashboard/patient/dossier/comprendre-mes-calculs`
+- Le contenu doit être dynamique selon les données du profil
+- Utiliser des animations ou illustrations SVG pour rendre l'explication visuelle
+
+---
+
+### FILE-010 - Historique de mes profils nutritionnels [Should Have] ❌ 🆕
+
+**En tant que** patient,
+**Je veux** voir l'historique de mes profils nutritionnels,
+**Afin de** suivre l'évolution de mes besoins dans le temps.
+
+**Point d'entrée** : Bouton "Voir l'historique" dans FILE-008
+
+**Critères d'acceptation** :
+- ✓ Liste chronologique des profils (du plus récent au plus ancien)
+- ✓ Pour chaque profil :
+  - Nom (si renseigné)
+  - Date de création
+  - Statut (actif / archivé)
+  - Cible calorique
+  - Objectif (perte / maintien / prise)
+  - Indicateur visuel du profil actif (badge vert)
+- ✓ Clic sur un profil → voir le détail complet (même vue que FILE-008)
+- ✓ Indication du nombre de profils dans l'historique
+- ✓ Message "Vous n'avez qu'un seul profil pour le moment" si un seul
+- ✓ Graphique optionnel : évolution de la cible calorique dans le temps
+
+**↔ Miroir nutritionniste** : CALC-014
+
+**💡 Notes Claude Code** :
+- Créer un composant `NutritionalProfileHistory`
+- Filtrer côté API : ne retourner que les profils du patient connecté
+- Réutiliser `NutritionalProfilePatientView` pour le détail
+
+---
+
+### FILE-011 - Suggérer une modification de profil [Should Have] ❌ 🆕
+
+**En tant que** patient,
+**Je veux** suggérer une modification de mon profil nutritionnel à mon nutritionniste,
+**Afin que** mes besoins évoluent avec ma situation.
+
+**Point d'entrée** : Bouton "Suggérer une modification" dans FILE-008
+
+**Critères d'acceptation** :
+- ✓ Modale de suggestion avec formulaire :
+  - **Type de suggestion** (dropdown) :
+    - Niveau d'activité ("Mon activité a changé")
+    - Objectif ("Je souhaite changer d'objectif")
+    - Répartition des macros ("J'aimerais ajuster mes macros")
+    - Autre
+  - **Valeur actuelle** : affichée automatiquement selon le type choisi
+  - **Valeur souhaitée** : 
+    - Pour activité : dropdown des niveaux
+    - Pour objectif : dropdown (perte/maintien/prise)
+    - Pour macros : sliders ou inputs %
+    - Pour autre : texte libre
+  - **Raison de la demande** : champ texte obligatoire (min 20 caractères)
+- ✓ Prévisualisation de l'impact si possible (ex: nouvelle cible calorique)
+- ✓ Bouton "Envoyer la suggestion"
+- ✓ Confirmation d'envoi avec message "Votre suggestion a été envoyée à votre nutritionniste"
+- ✓ Notification envoyée au nutritionniste
+- ✓ **Suivi des suggestions** :
+  - Liste des suggestions envoyées avec statut :
+    - 🟡 En attente
+    - ✅ Approuvée (avec date)
+    - ❌ Refusée (avec réponse du nutritionniste)
+    - 💬 À discuter en consultation
+  - Accessible via un onglet ou section "Mes suggestions"
+- ✓ Notification patient quand le nutritionniste répond
+
+**↔ Miroir nutritionniste** : CALC-011, CALC-012
+
+**Tables DB** : `nutritional_profile_suggestions`
+
+**💡 Notes Claude Code** :
+- Créer un composant `ProfileSuggestionModal`
+- Calculer et afficher l'impact en temps réel si possible
+- Utiliser l'API POST `/api/protected/patient/profile-suggestions`
+- Créer une notification via `create_notification()` pour le nutritionniste
+
+---
+
+### FILE-012 - Notifications de mise à jour du profil [Must Have] ❌ 🆕
+
+**En tant que** patient,
+**Je veux** être notifié quand mon profil nutritionnel est modifié,
+**Afin de** rester informé des changements de mes objectifs.
+
+**Critères d'acceptation** :
+- ✓ Notification in-app quand :
+  - Un nouveau profil est créé
+  - Le profil actif est modifié
+  - Un profil est archivé (et un nouveau activé)
+  - Une suggestion est approuvée/refusée
+- ✓ Contenu de la notification :
+  - Titre clair (ex: "Votre profil nutritionnel a été mis à jour")
+  - Résumé du changement principal (ex: "Nouvelle cible : 2,200 kcal/jour")
+  - Lien direct vers le profil
+- ✓ Badge de notification sur l'onglet "Mon dossier" si non lu
+- ✓ Email optionnel selon les préférences du patient
+- ✓ Historique des notifications consultable
+
+**Types de notifications** :
+
+| Type | Titre | Corps |
+|------|-------|-------|
+| `nutritional_profile_created` | Nouveau profil nutritionnel | Votre nutritionniste a créé un profil : [nom]. Cible : X kcal/jour |
+| `nutritional_profile_updated` | Profil nutritionnel modifié | Votre profil a été mis à jour. Nouvelle cible : X kcal/jour |
+| `profile_suggestion_approved` | Suggestion approuvée ✅ | Votre suggestion concernant [type] a été approuvée |
+| `profile_suggestion_rejected` | Suggestion refusée | Votre suggestion concernant [type] n'a pas été retenue. [message] |
+| `profile_suggestion_discuss` | À discuter en consultation | Votre nutritionniste souhaite discuter de votre suggestion |
+
+**↔ Miroir nutritionniste** : Système de notifications transversal
+
+**💡 Notes Claude Code** :
+- Utiliser le système de notifications existant (`notifications` table)
+- Ajouter les nouveaux types dans l'enum de notifications
+- S'assurer que le hook `useNotifications` côté patient capte ces types
+
+---
+
+### FILE-013 - Comparer mes profils nutritionnels [Should Have] ❌ 🆕
+
+**En tant que** patient,
+**Je veux** comparer deux de mes profils nutritionnels,
+**Afin de** visualiser l'évolution de mes besoins.
+
+**Point d'entrée** : Bouton "Comparer deux profils" dans FILE-010 (historique)
+
+**Critères d'acceptation** :
+- ✓ Sélection de deux profils à comparer (dropdowns ou sélection dans la liste)
+- ✓ Affichage côte à côte (side-by-side) :
+  - Dates de création
+  - Données patient (poids, taille, IMC) avec variation
+  - BMR et TDEE avec variation
+  - Cible calorique avec variation (en kcal et en %)
+  - Objectif (perte/maintien/prise)
+  - Macros en % et grammes avec variation
+- ✓ Code couleur pour les variations :
+  - 🟢 Amélioration / augmentation souhaitée
+  - 🔴 Dégradation / diminution
+  - ⚪ Pas de changement
+- ✓ Interprétation textuelle simple des changements principaux
+- ✓ Graphique optionnel montrant l'évolution
+
+**↔ Miroir nutritionniste** : CALC-014
+
+**💡 Notes Claude Code** :
+- Créer un composant `ProfileComparisonView`
+- Les calculs de variation doivent être faits côté client pour réactivité
+- Générer le résumé textuel automatiquement basé sur les variations principales
+
+---
+
+### FILE-014 - Exporter mon profil nutritionnel en PDF [Could Have] ❌ 🆕
+
+**En tant que** patient,
+**Je veux** exporter mon profil nutritionnel en PDF,
+**Afin de** le conserver, l'imprimer ou le partager avec un autre professionnel.
+
+**Point d'entrée** : Bouton "Exporter en PDF" dans FILE-008
+
+**Critères d'acceptation** :
+- ✓ Génération d'un PDF contenant :
+  - En-tête avec logo NutriSensia et date d'export
+  - Informations du patient (nom, prénom)
+  - Informations du nutritionniste (nom, cabinet)
+  - Toutes les données du profil (comme dans FILE-008)
+  - Explications simplifiées des calculs
+  - Notes du nutritionniste (sauf notes privées)
+  - Pied de page avec mention "Document généré par NutriSensia"
+- ✓ Design professionnel et lisible
+- ✓ Téléchargement immédiat ou envoi par email
+- ✓ Nom du fichier : `profil-nutritionnel-[date].pdf`
+- ✓ Option d'inclure ou non l'historique des profils
+
+**↔ Miroir nutritionniste** : CALC-010 (export côté nutritionniste)
+
+**💡 Notes Claude Code** :
+- Utiliser une librairie de génération PDF côté serveur (ex: `@react-pdf/renderer`, `puppeteer`, ou `pdfkit`)
+- Créer un template HTML puis le convertir en PDF
+- Route API : POST `/api/protected/patient/nutritional-profile/[id]/export-pdf`
 
 ---
 
@@ -1293,10 +1562,50 @@
 
 ---
 
+## Correspondances Patient ↔ Nutritionniste
+
+Features bidirectionnelles nécessitant une cohérence frontend + backend.
+
+| Feature | Côté Patient | Côté Nutritionniste | Statut |
+|---------|--------------|---------------------|--------|
+| Anamnèse | FILE-001 (lecture) | DOSSIER-001/002 (lecture/écriture) | ✅ Fait |
+| Signalements | FILE-002 (envoie) | DOSSIER-004 (traite) | ✅ Fait |
+| Questionnaires | FILE-003 (remplit) | DOSSIER-005/006 (crée/lit) | ✅ Fait |
+| Documents | FILE-004 (uploade) | DOSSIER-007 (gère) | ✅ Fait |
+| Consultations | FILE-005 (lecture) | CONSULT-001/002 (écriture) | ❌ Phase 3 |
+| Objectifs | FILE-006 (progression) | DOSSIER-008/009 (définition) | ✅ Fait |
+| Export dossier | FILE-007 (exporte) | DOSSIER-010 (exporte) | ✅ Fait |
+| **Profil nutritionnel** | **FILE-008 à FILE-014** | **CALC-001 à CALC-016** | **❌ Phase 2.5** 🆕 |
+| Plan alimentaire | PLAN-001 à 007 (consulte) | PLAN-N-001 à 009 (crée) | ✅ Fait |
+| Agenda | AGENDA-001 à 010 (réserve) | AGENDA-N-001 à 011 (gère) | ⚠️ Partiel |
+| Messagerie | MSG-001 à 010 (échange) | MSG-N-001 à 006 (échange) | ✅ Fait |
+| Contenu | CONTENT-001 à 008 (consulte) | CONTENT-N-001 à 007 (publie) | ❌ Phase 5 |
+| Recettes | REC-001 à 008 (consulte) | RECIPE-N-001/002 (gère) | ❌ Phase 5 |
+| Suivi bio | BIO-001 à 009 (saisit) | SUIVI-001 à 006 (consulte) | ❌ Phase 4 |
+| Repas | MEAL-001 à 016 (enregistre) | SUIVI-007 (consulte) | ❌ Phase 4 |
+
+---
+
 ## Légende des statuts
 
-- ✅ Implémenté
-- ⚠️ Partiellement implémenté (frontend prêt, backend requis)
-- ⏳ À faire
-- ❌ Non implémenté
-- (pas de symbole) = Non commencé
+| Symbole | Signification |
+|---------|---------------|
+| ✅ | Implémenté (frontend + backend fonctionnels) |
+| ⚠️ | Partiellement implémenté (frontend prêt, backend requis) |
+| ⏳ | À faire |
+| ❌ | Non implémenté |
+| 🆕 | Nouveau dans cette version |
+
+---
+
+## Composants à créer pour FILE-008 à FILE-014
+
+| Composant | Description | Stories |
+|-----------|-------------|---------|
+| `NutritionalProfilePatientView` | Affichage lecture seule du profil | FILE-008 |
+| `NutritionalExplanationModal` | Explications pédagogiques | FILE-009 |
+| `NutritionalProfileHistory` | Liste historique des profils | FILE-010 |
+| `ProfileSuggestionModal` | Formulaire de suggestion | FILE-011 |
+| `ProfileSuggestionsList` | Liste des suggestions envoyées | FILE-011 |
+| `ProfileComparisonView` | Comparaison side-by-side | FILE-013 |
+| `ProfilePdfExport` | Génération PDF | FILE-014 |

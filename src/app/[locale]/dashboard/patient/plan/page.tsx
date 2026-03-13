@@ -6,7 +6,7 @@ import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import {
   MealPlanHeader,
   DaySelector,
-  DailyObjectives,
+  DailyObjectivesDropdown,
   MealCard,
   WeeklyOverview,
   WeeklyMealGrid,
@@ -14,6 +14,7 @@ import {
   ShoppingListCTA,
   ModificationRequest,
   ShoppingListModal,
+  PatientAdherenceCard,
 } from '@/components/meal-plan';
 import {
   mealPlanReducer,
@@ -24,68 +25,105 @@ import {
 } from '@/types/meal-plan';
 import type {
   PlanMealType,
-  ModificationRequestData,
   ModificationRequestFormData,
-  ShoppingList,
 } from '@/types/meal-plan';
 import {
-  getDailyPlanData,
-  getWeeklyPlanData,
-  getPlanInfo,
-  getCurrentWeekDays,
-  formatWeekRange,
-  getModificationRequests,
-  addModificationRequest,
-  generateShoppingList,
-} from '@/data/mock-meal-plan';
+  usePatientActivePlan,
+  usePatientPlanDays,
+  usePatientModificationRequests,
+  useCreateModificationRequest,
+  usePatientShoppingList,
+} from '@/hooks/usePatientMealPlan';
+import {
+  buildWeekDaysFromPlan,
+  mapDayToDaily,
+  mapDaysToWeekly,
+  mapPlanToInfo,
+  mapModRequestToUI,
+  mapShoppingListToUI,
+  formatWeekRangeFromPlan,
+} from '@/lib/meal-plan-adapters';
 
 /**
  * Page Plan Alimentaire
  *
  * PLAN-001: Vue d'ensemble du plan alimentaire
- * - Affichage des objectifs journaliers (macros + micros)
- * - Vue jour avec détails des repas
+ * - Affichage des objectifs journaliers (macros + micros) en dropdown compact
+ * - Vue jour avec détails des repas (3/4) + adhérence (1/4)
  * - Vue semaine avec grille récapitulative
  */
 
 export default function MealPlanPage() {
   const [state, dispatch] = useReducer(mealPlanReducer, initialMealPlanState);
 
-  // State pour les demandes de modification
-  const [modificationRequests, setModificationRequests] = useState<
-    ModificationRequestData[]
-  >(() => getModificationRequests());
+  // Fetch real data
+  const { data: planData, isLoading: planLoading } = usePatientActivePlan();
+  const plan = planData?.plan ?? null;
 
-  // State pour la liste de courses
+  const { data: daysData, isLoading: daysLoading } = usePatientPlanDays(!!plan);
+  const { data: modRequestsData } = usePatientModificationRequests(!!plan);
+  const createRequest = useCreateModificationRequest();
+
+  // Shopping list (on-demand)
   const [isShoppingListOpen, setIsShoppingListOpen] = useState(false);
-  const [shoppingList, setShoppingList] = useState<ShoppingList | null>(null);
+  const [fetchShoppingList, setFetchShoppingList] = useState(false);
+  const { data: shoppingListData } = usePatientShoppingList(fetchShoppingList);
 
-  // Récupérer les données
-  const weekDays = useMemo(() => getCurrentWeekDays(), []);
-  const planInfo = useMemo(() => getPlanInfo(), []);
-  const weekRange = useMemo(
-    () => formatWeekRange(planInfo.weekStart, planInfo.weekEnd),
-    [planInfo]
-  );
+  const isLoading = planLoading || (!!plan && daysLoading);
+
+  // Derive UI data from API responses
+  const weekDays = useMemo(() => {
+    if (!plan) return [];
+    return buildWeekDaysFromPlan(plan.start_date, plan.days_count || 7);
+  }, [plan]);
+
+  const planInfo = useMemo(() => {
+    if (!plan) return null;
+    return mapPlanToInfo(plan);
+  }, [plan]);
+
+  const weekRange = useMemo(() => {
+    if (!plan) return '';
+    return formatWeekRangeFromPlan(plan.start_date, plan.end_date);
+  }, [plan]);
 
   // Données du jour sélectionné
   const selectedDay = weekDays[state.selectedDayIndex];
-  const dailyData = useMemo(
-    () => getDailyPlanData(selectedDay?.dateObj || new Date()),
-    [selectedDay]
-  );
+  const dailyData = useMemo(() => {
+    if (!daysData || !plan || !selectedDay) return null;
+    const dayIndex = state.selectedDayIndex;
+    const dbDay = daysData[dayIndex];
+    if (!dbDay) return null;
+    return mapDayToDaily(dbDay, plan.nutritional_targets);
+  }, [daysData, plan, state.selectedDayIndex, selectedDay]);
 
   // Calcul des totaux du plan pour le jour sélectionné
   const dailyTotals = useMemo(
-    () => calculateDailyPlanTotal(dailyData.meals),
-    [dailyData.meals]
+    () => (dailyData ? calculateDailyPlanTotal(dailyData.meals) : null),
+    [dailyData]
   );
 
   // Données de la semaine
-  const weeklyData = useMemo(
-    () => getWeeklyPlanData(planInfo.weekStart),
-    [planInfo.weekStart]
+  const weeklyData = useMemo(() => {
+    if (!daysData || !plan || weekDays.length === 0) return null;
+    return mapDaysToWeekly(daysData, weekDays, plan.nutritional_targets);
+  }, [daysData, plan, weekDays]);
+
+  // Modification requests
+  const modificationRequests = useMemo(
+    () => (modRequestsData || []).map(mapModRequestToUI),
+    [modRequestsData]
   );
+
+  // Shopping list mapped to UI
+  const shoppingList = useMemo(() => {
+    if (!shoppingListData || !planInfo) return null;
+    return mapShoppingListToUI(
+      shoppingListData.items,
+      planInfo.weekStart,
+      planInfo.weekEnd
+    );
+  }, [shoppingListData, planInfo]);
 
   // Trouver l'index d'aujourd'hui
   const todayIndex = useMemo(() => findTodayIndex(weekDays), [weekDays]);
@@ -119,26 +157,76 @@ export default function MealPlanPage() {
   };
 
   const handleGenerateShoppingList = useCallback(() => {
-    const list = generateShoppingList(planInfo.weekStart, planInfo.weekEnd);
-    setShoppingList(list);
+    setFetchShoppingList(true);
     setIsShoppingListOpen(true);
-  }, [planInfo.weekStart, planInfo.weekEnd]);
+  }, []);
 
   const handleSubmitModificationRequest = useCallback(
     (data: ModificationRequestFormData) => {
-      const newRequest = addModificationRequest({
-        ...data,
-        mealLabel: data.meal ? mealTypeConfig[data.meal].label : undefined,
+      createRequest.mutate({
+        request_type: data.meal ? 'substitution' : 'other',
+        title: data.meal ? mealTypeConfig[data.meal].label : 'Demande de modification',
+        description: data.reason,
+        suggested_alternative: data.food || undefined,
       });
-      setModificationRequests(prev => [newRequest, ...prev]);
-      // TODO: Envoyer notification au nutritionniste (API call)
-      console.log('Nouvelle demande de modification:', newRequest);
     },
-    []
+    [createRequest]
   );
 
-  // Liste des repas pour la vue jour
-  const mealsList = Object.values(dailyData.meals);
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className='min-h-screen bg-gray-100'>
+        <DashboardHeader />
+        <div className='px-8 py-12'>
+          <div className='max-w-2xl mx-auto text-center'>
+            <div className='animate-pulse space-y-4'>
+              <div className='h-8 bg-gray-200 rounded w-64 mx-auto' />
+              <div className='h-4 bg-gray-200 rounded w-48 mx-auto' />
+              <div className='grid grid-cols-7 gap-2 mt-8'>
+                {Array.from({ length: 7 }).map((_, i) => (
+                  <div key={i} className='h-16 bg-gray-200 rounded' />
+                ))}
+              </div>
+              <div className='space-y-3 mt-8'>
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className='h-24 bg-gray-200 rounded' />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Empty state: no active plan
+  if (!plan) {
+    return (
+      <div className='min-h-screen bg-gray-100'>
+        <DashboardHeader />
+        <div className='px-8 py-16'>
+          <div className='max-w-md mx-auto text-center'>
+            <div className='w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-6'>
+              <svg className='w-10 h-10 text-gray-400' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+                <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={1.5} d='M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2' />
+              </svg>
+            </div>
+            <h2 className='text-xl font-semibold text-gray-800 mb-2'>
+              Aucun plan alimentaire actif
+            </h2>
+            <p className='text-gray-500'>
+              Votre nutritionniste n&apos;a pas encore publié de plan alimentaire.
+              Contactez-le pour en savoir plus.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // List of meals for day view
+  const mealsList = dailyData ? Object.values(dailyData.meals) : [];
 
   return (
     <div className='min-h-screen bg-gray-100'>
@@ -153,7 +241,7 @@ export default function MealPlanPage() {
       />
 
       {/* Sélecteur de jours (vue jour uniquement) */}
-      {state.viewMode === 'day' && (
+      {state.viewMode === 'day' && weekDays.length > 0 && (
         <DaySelector
           weekDays={weekDays}
           selectedDayIndex={state.selectedDayIndex}
@@ -165,7 +253,7 @@ export default function MealPlanPage() {
       <main className='px-8 py-6'>
         <AnimatePresence mode='wait'>
           {/* Vue Jour */}
-          {state.viewMode === 'day' && (
+          {state.viewMode === 'day' && dailyData && dailyTotals && selectedDay && (
             <motion.div
               key='day-view'
               initial={{ opacity: 0, y: 10 }}
@@ -174,29 +262,37 @@ export default function MealPlanPage() {
               transition={{ duration: 0.2 }}
               className='space-y-6'
             >
-              {/* Objectifs du jour */}
-              <DailyObjectives
+              {/* Objectifs du jour — dropdown compact */}
+              <DailyObjectivesDropdown
                 day={selectedDay}
                 targets={dailyData.targets}
                 totals={dailyTotals}
                 micronutrients={dailyData.micronutrients}
-                showMicronutrients={state.showNutrientDetail}
-                onToggleMicronutrients={handleToggleNutrients}
               />
 
-              {/* Liste des repas */}
-              <div className='space-y-4'>
-                {mealsList.map(meal => (
-                  <MealCard
-                    key={meal.id}
-                    meal={meal}
-                    isExpanded={state.expandedMealId === meal.type}
-                    onToggleExpand={handleToggleMeal}
-                  />
-                ))}
+              {/* Layout 3/4 + 1/4 : Repas + Adhérence */}
+              <div className='grid grid-cols-4 gap-6'>
+                {/* Colonne principale — repas */}
+                <div className='col-span-3 space-y-4'>
+                  {mealsList.map(meal => (
+                    <MealCard
+                      key={meal.id}
+                      meal={meal}
+                      isExpanded={state.expandedMealId === meal.type}
+                      onToggleExpand={handleToggleMeal}
+                    />
+                  ))}
+                </div>
+
+                {/* Sidebar — adhérence */}
+                <div className='col-span-1'>
+                  <div className='sticky top-6'>
+                    <PatientAdherenceCard enabled={!!plan} />
+                  </div>
+                </div>
               </div>
 
-              {/* Demande de modification */}
+              {/* Demande de modification — full width */}
               <ModificationRequest
                 requests={modificationRequests}
                 onSubmitRequest={handleSubmitModificationRequest}
@@ -205,7 +301,7 @@ export default function MealPlanPage() {
           )}
 
           {/* Vue Semaine */}
-          {state.viewMode === 'week' && (
+          {state.viewMode === 'week' && weeklyData && (
             <motion.div
               key='week-view'
               initial={{ opacity: 0, y: 10 }}
@@ -235,9 +331,11 @@ export default function MealPlanPage() {
         </AnimatePresence>
 
         {/* Informations sur le plan */}
-        <div className='mt-6'>
-          <PlanInfoCard planInfo={planInfo} />
-        </div>
+        {planInfo && (
+          <div className='mt-6'>
+            <PlanInfoCard planInfo={planInfo} />
+          </div>
+        )}
       </main>
 
       {/* Modal Liste de courses */}

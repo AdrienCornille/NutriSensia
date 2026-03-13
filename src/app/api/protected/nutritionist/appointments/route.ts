@@ -75,10 +75,10 @@ export async function GET(req: NextRequest) {
     const now = new Date().toISOString();
 
     if (filter === 'pending') {
-      // Demandes en attente initiales (pas les contre-propositions)
+      // Demandes en attente initiales + contre-propositions du patient
       query = query
         .eq('status', 'pending')
-        .is('status_reason', null)
+        .or('status_reason.is.null,status_reason.eq.patient_counter_proposal')
         .order('scheduled_at', { ascending: true });
     } else if (filter === 'upcoming') {
       query = query
@@ -95,8 +95,12 @@ export async function GET(req: NextRequest) {
         .not(
           'status',
           'in',
-          '("cancelled","cancelled_by_patient","cancelled_by_nutritionist")'
+          '("cancelled","cancelled_by_patient","cancelled_by_nutritionist","no_show")'
         )
+        .order('scheduled_at', { ascending: false });
+    } else if (filter === 'no_show') {
+      query = query
+        .eq('status', 'no_show')
         .order('scheduled_at', { ascending: false });
     } else if (filter === 'cancelled') {
       query = query
@@ -124,7 +128,7 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // 9. Récupérer les noms des patients via patient_profiles → profiles
+    // 9. Récupérer les noms des patients + compter les badges EN PARALLÈLE
     const patientIds = [
       ...new Set(
         (appointments || []).map(
@@ -133,99 +137,97 @@ export async function GET(req: NextRequest) {
       ),
     ];
 
-    let patientNames: Record<string, { first_name: string; last_name: string }> = {};
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const s = supabase as any;
 
-    if (patientIds.length > 0) {
-      // user_id dans appointments = patient_profiles.id
-      // On doit aller chercher patient_profiles.user_id → profiles.first_name/last_name
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data: patientProfiles } = await (supabase as any)
-        .from('patient_profiles')
-        .select('id, user_id')
-        .in('id', patientIds);
+    // Lancer patient lookup + 4 count queries en parallèle
+    const [
+      patientProfilesResult,
+      { count: pendingCount },
+      { count: upcomingCount },
+      { count: pastCount },
+      { count: cancelledCount },
+      { count: noShowCount },
+      { count: unmarkedCount },
+    ] = await Promise.all([
+      // Patient profiles lookup
+      patientIds.length > 0
+        ? s.from('patient_profiles').select('id, user_id, gender').in('id', patientIds)
+        : Promise.resolve({ data: [] }),
+      // Count queries en parallèle — pending = initial requests + patient counter-proposals
+      s.from('appointments')
+        .select('id', { count: 'exact', head: true })
+        .eq('nutritionist_id', nutritionistId)
+        .eq('status', 'pending')
+        .or('status_reason.is.null,status_reason.eq.patient_counter_proposal'),
+      s.from('appointments')
+        .select('id', { count: 'exact', head: true })
+        .eq('nutritionist_id', nutritionistId)
+        .gte('scheduled_at', now)
+        .not('status', 'in', '("cancelled","cancelled_by_patient","cancelled_by_nutritionist","no_show")'),
+      s.from('appointments')
+        .select('id', { count: 'exact', head: true })
+        .eq('nutritionist_id', nutritionistId)
+        .lt('scheduled_at', now)
+        .not('status', 'in', '("cancelled","cancelled_by_patient","cancelled_by_nutritionist","no_show")'),
+      s.from('appointments')
+        .select('id', { count: 'exact', head: true })
+        .eq('nutritionist_id', nutritionistId)
+        .in('status', ['cancelled', 'cancelled_by_patient', 'cancelled_by_nutritionist']),
+      // No-show count
+      s.from('appointments')
+        .select('id', { count: 'exact', head: true })
+        .eq('nutritionist_id', nutritionistId)
+        .eq('status', 'no_show'),
+      // RDV passés non marqués (AGENDA-N-011) — only confirmed + scheduled_end_at passed
+      s.from('appointments')
+        .select('id', { count: 'exact', head: true })
+        .eq('nutritionist_id', nutritionistId)
+        .lt('scheduled_end_at', now)
+        .eq('status', 'confirmed'),
+    ]);
 
-      if (patientProfiles && patientProfiles.length > 0) {
-        const authUserIds = patientProfiles.map(
-          (p: { user_id: string }) => p.user_id
-        );
+    // Résoudre les noms patients + genre
+    let patientData: Record<string, { first_name: string; last_name: string; gender: string | null }> = {};
+    const patientProfiles = patientProfilesResult?.data || patientProfilesResult || [];
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const { data: profiles } = await (supabase as any)
-          .from('profiles')
-          .select('id, first_name, last_name')
-          .in('id', authUserIds);
+    // Build gender lookup from patient_profiles
+    const genderByPatientId: Record<string, string | null> = {};
+    for (const pp of patientProfiles) {
+      genderByPatientId[pp.id] = pp.gender || null;
+    }
 
-        if (profiles) {
-          // Build map: patient_profiles.id → { first_name, last_name }
-          const authToProfile: Record<string, { first_name: string; last_name: string }> = {};
-          for (const p of profiles) {
-            authToProfile[p.id] = {
-              first_name: p.first_name || '',
-              last_name: p.last_name || '',
-            };
-          }
+    if (patientProfiles.length > 0) {
+      const authUserIds = patientProfiles.map((p: { user_id: string }) => p.user_id);
+      const { data: profiles } = await s
+        .from('profiles')
+        .select('id, first_name, last_name')
+        .in('id', authUserIds);
 
-          for (const pp of patientProfiles) {
-            const profile = authToProfile[pp.user_id];
-            if (profile) {
-              patientNames[pp.id] = profile;
-            }
-          }
+      if (profiles) {
+        const authToProfile: Record<string, { first_name: string; last_name: string }> = {};
+        for (const p of profiles) {
+          authToProfile[p.id] = { first_name: p.first_name || '', last_name: p.last_name || '' };
+        }
+        for (const pp of patientProfiles) {
+          const profile = authToProfile[pp.user_id];
+          if (profile) patientData[pp.id] = { ...profile, gender: genderByPatientId[pp.id] };
         }
       }
     }
 
-    // 10. Enrichir les appointments avec les noms patients
+    // 10. Enrichir les appointments avec les noms patients + genre
     const enrichedAppointments = (appointments || []).map(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (apt: any) => ({
         ...apt,
-        patient: patientNames[apt.user_id] || {
+        patient: patientData[apt.user_id] || {
           first_name: 'Patient',
           last_name: '',
+          gender: null,
         },
       })
     );
-
-    // 11. Compter les RDV par statut pour les badges
-    const { count: pendingCount } = await (supabase as any)
-      .from('appointments')
-      .select('id', { count: 'exact', head: true })
-      .eq('nutritionist_id', nutritionistId)
-      .eq('status', 'pending')
-      .is('status_reason', null);
-
-    const { count: upcomingCount } = await (supabase as any)
-      .from('appointments')
-      .select('id', { count: 'exact', head: true })
-      .eq('nutritionist_id', nutritionistId)
-      .gte('scheduled_at', now)
-      .not(
-        'status',
-        'in',
-        '("cancelled","cancelled_by_patient","cancelled_by_nutritionist","no_show")'
-      );
-
-    const { count: pastCount } = await (supabase as any)
-      .from('appointments')
-      .select('id', { count: 'exact', head: true })
-      .eq('nutritionist_id', nutritionistId)
-      .lt('scheduled_at', now)
-      .not(
-        'status',
-        'in',
-        '("cancelled","cancelled_by_patient","cancelled_by_nutritionist")'
-      );
-
-    const { count: cancelledCount } = await (supabase as any)
-      .from('appointments')
-      .select('id', { count: 'exact', head: true })
-      .eq('nutritionist_id', nutritionistId)
-      .in('status', [
-        'cancelled',
-        'cancelled_by_patient',
-        'cancelled_by_nutritionist',
-      ]);
 
     return NextResponse.json(
       {
@@ -235,6 +237,8 @@ export async function GET(req: NextRequest) {
         upcoming_count: upcomingCount || 0,
         past_count: pastCount || 0,
         cancelled_count: cancelledCount || 0,
+        no_show_count: noShowCount || 0,
+        unmarked_count: unmarkedCount || 0,
       },
       { status: 200 }
     );

@@ -244,7 +244,7 @@ export function DailyObjectives({
       </div>
 
       {/* Macro progress bars */}
-      <div className='grid grid-cols-4 gap-4 mb-4'>
+      <div className='grid grid-cols-5 gap-4 mb-4'>
         <MacroProgressBar
           label='Calories'
           current={totals.calories}
@@ -276,6 +276,14 @@ export function DailyObjectives({
           unit='g'
           colorClass='text-rose-600'
           bgColorClass='bg-rose-50'
+        />
+        <MacroProgressBar
+          label='Fibres'
+          current={totals.fiber}
+          target={targets.fiber}
+          unit='g'
+          colorClass='text-green-700'
+          bgColorClass='bg-green-50'
         />
       </div>
 

@@ -3,77 +3,32 @@
 import React from 'react';
 import { Link } from '@/i18n/navigation';
 import {
-  Users,
-  Calendar,
   Clock,
-  MessageSquare,
+  Calendar,
   ArrowRight,
 } from 'lucide-react';
+import { ConsultationStatsSection } from '@/components/nutritionist/dashboard/ConsultationStatsSection';
 
 export default function NutritionistDashboardPage() {
   return (
-    <div className='min-h-screen bg-gray-50'>
+    <div className='min-h-screen bg-gray-100'>
       {/* Header */}
-      <header className='bg-white border-b border-gray-200 px-8 py-6'>
-        <h1 className='text-2xl font-semibold text-gray-800'>
-          Dashboard Nutritionniste
-        </h1>
-        <p className='text-gray-500 mt-1'>
-          Bienvenue sur votre espace professionnel
-        </p>
+      <header className='bg-white border-b border-gray-200 px-8 h-[93px] flex items-center sticky top-0 z-10'>
+        <div>
+          <h1 className='text-2xl font-semibold text-gray-800'>
+            Dashboard Nutritionniste
+          </h1>
+          <p className='text-sm text-gray-500 mt-0.5'>
+            Bienvenue sur votre espace professionnel
+          </p>
+        </div>
       </header>
 
       {/* Main content */}
       <main className='px-8 py-6'>
-        {/* Quick stats */}
-        <div className='grid grid-cols-1 md:grid-cols-4 gap-6 mb-8'>
-          <div className='bg-white rounded-xl p-6 border border-gray-200'>
-            <div className='flex items-center justify-between'>
-              <div>
-                <p className='text-sm text-gray-500'>Patients actifs</p>
-                <p className='text-2xl font-semibold text-gray-800 mt-1'>--</p>
-              </div>
-              <div className='w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center'>
-                <Users className='w-6 h-6 text-blue-600' />
-              </div>
-            </div>
-          </div>
-
-          <div className='bg-white rounded-xl p-6 border border-gray-200'>
-            <div className='flex items-center justify-between'>
-              <div>
-                <p className='text-sm text-gray-500'>RDV cette semaine</p>
-                <p className='text-2xl font-semibold text-gray-800 mt-1'>--</p>
-              </div>
-              <div className='w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center'>
-                <Calendar className='w-6 h-6 text-green-600' />
-              </div>
-            </div>
-          </div>
-
-          <div className='bg-white rounded-xl p-6 border border-gray-200'>
-            <div className='flex items-center justify-between'>
-              <div>
-                <p className='text-sm text-gray-500'>Messages non lus</p>
-                <p className='text-2xl font-semibold text-gray-800 mt-1'>--</p>
-              </div>
-              <div className='w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center'>
-                <MessageSquare className='w-6 h-6 text-purple-600' />
-              </div>
-            </div>
-          </div>
-
-          <div className='bg-white rounded-xl p-6 border border-gray-200'>
-            <div className='flex items-center justify-between'>
-              <div>
-                <p className='text-sm text-gray-500'>Prochaine dispo</p>
-                <p className='text-2xl font-semibold text-gray-800 mt-1'>--</p>
-              </div>
-              <div className='w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center'>
-                <Clock className='w-6 h-6 text-amber-600' />
-              </div>
-            </div>
-          </div>
+        {/* Consultation Statistics (CONSULT-007) */}
+        <div className='mb-8'>
+          <ConsultationStatsSection />
         </div>
 
         {/* Quick actions */}

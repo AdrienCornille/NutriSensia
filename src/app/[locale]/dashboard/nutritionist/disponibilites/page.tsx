@@ -1381,7 +1381,7 @@ export default function DisponibilitesPage() {
 
   if (isLoading) {
     return (
-      <div className='min-h-screen bg-gray-50 flex items-center justify-center'>
+      <div className='min-h-screen bg-gray-100 flex items-center justify-center'>
         <div className='text-center'>
           <Loader2 className='w-8 h-8 animate-spin text-[#1B998B] mx-auto mb-4' />
           <p className='text-gray-500'>Chargement des disponibilités...</p>
@@ -1392,7 +1392,7 @@ export default function DisponibilitesPage() {
 
   if (error) {
     return (
-      <div className='min-h-screen bg-gray-50 flex items-center justify-center p-4'>
+      <div className='min-h-screen bg-gray-100 flex items-center justify-center p-4'>
         <div className='bg-red-50 border border-red-200 rounded-xl p-6 text-center max-w-md'>
           <AlertCircle className='w-12 h-12 text-red-500 mx-auto mb-4' />
           <h2 className='text-lg font-semibold text-red-800'>Erreur</h2>
@@ -1409,15 +1409,15 @@ export default function DisponibilitesPage() {
   }
 
   return (
-    <div className='min-h-screen bg-gray-50'>
+    <div className='min-h-screen bg-gray-100'>
       {/* Header */}
-      <header className='bg-white border-b border-gray-200 px-8 py-6'>
-        <div className='flex items-center justify-between'>
+      <header className='bg-white border-b border-gray-200 px-8 h-[93px] flex items-center sticky top-0 z-10'>
+        <div className='flex items-center justify-between w-full'>
           <div>
             <h1 className='text-2xl font-semibold text-gray-800'>
               Mes disponibilités
             </h1>
-            <p className='text-gray-500 mt-1'>
+            <p className='text-sm text-gray-500 mt-0.5'>
               Gérez vos plages horaires de travail
             </p>
           </div>

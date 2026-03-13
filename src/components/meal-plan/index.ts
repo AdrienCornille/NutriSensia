@@ -5,7 +5,9 @@
 export { MealPlanHeader } from './MealPlanHeader';
 export { DaySelector } from './DaySelector';
 export { DailyObjectives } from './DailyObjectives';
+export { DailyObjectivesDropdown } from './DailyObjectivesDropdown';
 export { MealCard } from './MealCard';
+export { PatientAdherenceCard } from './PatientAdherenceCard';
 export { WeeklyOverview } from './WeeklyOverview';
 export { WeeklyMealGrid } from './WeeklyMealGrid';
 export { PlanInfoCard } from './PlanInfoCard';

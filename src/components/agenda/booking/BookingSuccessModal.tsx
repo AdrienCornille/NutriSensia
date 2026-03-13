@@ -18,6 +18,7 @@ interface BookingSuccessModalProps {
   isOpen: boolean;
   appointment: Appointment | null;
   onClose: () => void;
+  onShowToast?: (type: 'success' | 'error', title: string, message?: string) => void;
 }
 
 const modeIcons: Record<string, React.ReactNode> = {
@@ -36,6 +37,7 @@ export function BookingSuccessModal({
   isOpen,
   appointment,
   onClose,
+  onShowToast,
 }: BookingSuccessModalProps) {
   const [isDownloading, setIsDownloading] = useState(false);
 
@@ -68,9 +70,10 @@ export function BookingSuccessModal({
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
+      onShowToast?.('success', 'Calendrier téléchargé', 'Le fichier .ics a été ajouté à vos téléchargements');
     } catch (error) {
       console.error("Erreur lors de l'ajout au calendrier:", error);
-      alert('Erreur lors du téléchargement du fichier calendrier');
+      onShowToast?.('error', 'Erreur', 'Impossible de télécharger le fichier calendrier');
     } finally {
       setIsDownloading(false);
     }

@@ -250,7 +250,7 @@ export default function NutritionistMessagingPage() {
 
   if (loadingConversations) {
     return (
-      <div className='h-[calc(100vh-64px)] flex items-center justify-center bg-gray-50'>
+      <div className='h-[calc(100vh-64px)] flex items-center justify-center bg-gray-100'>
         <div className='text-center'>
           <div className='w-8 h-8 border-2 border-[#1B998B] border-t-transparent rounded-full animate-spin mx-auto mb-4' />
           <p className='text-gray-500'>Chargement des conversations...</p>
@@ -261,7 +261,7 @@ export default function NutritionistMessagingPage() {
 
   if (conversationsError) {
     return (
-      <div className='h-[calc(100vh-64px)] flex items-center justify-center bg-gray-50'>
+      <div className='h-[calc(100vh-64px)] flex items-center justify-center bg-gray-100'>
         <div className='text-center max-w-md'>
           <div className='w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4'>
             <span className='text-2xl'>!</span>
@@ -282,7 +282,7 @@ export default function NutritionistMessagingPage() {
   // ==================== RENDER ====================
 
   return (
-    <div className='h-[calc(100vh-64px)] flex bg-gray-50'>
+    <div className='h-[calc(100vh-64px)] flex bg-gray-100'>
       {/* Left sidebar: Conversation list */}
       <div
         className={`w-full md:w-80 lg:w-96 bg-white border-r border-gray-200 flex flex-col ${

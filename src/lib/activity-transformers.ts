@@ -43,7 +43,7 @@ export interface ActivityTypeRecord {
 
 export interface ActivityLogAPI {
   id: string;
-  user_id: string;
+  patient_id: string;
   activity_type_id: string; // UUID référence vers activity_types
   activity_type?: ActivityTypeRecord; // Jointure optionnelle
   date: string; // YYYY-MM-DD

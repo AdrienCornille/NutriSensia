@@ -268,6 +268,7 @@ Use `@/*` for imports: `import { Button } from '@/components/ui/Button'`
 2. **Forms**: Use React Hook Form + Zod, include accessibility labels
 3. **Animations**: Use Framer Motion for page transitions and micro-interactions
 4. **Accessibility**: Test with Storybook's a11y addon
+5. **State-based view navigation**: When a component uses local state to switch between views (e.g. list → editor → create), always use the `useViewHistory` hook from `@/hooks/useViewHistory` to sync with browser history (back **and** forward). Pattern: pass `onBack` (reset to root) and `onForward` (restore child view). Use `useRef` to keep associated data (selected item, etc.) so browser forward can restore the full state. In-app back buttons should call `goBack()` instead of setting state directly. See `MealPlanTab.tsx` and `ConsultationsTab.tsx` for reference implementations.
 
 ### API Routes
 

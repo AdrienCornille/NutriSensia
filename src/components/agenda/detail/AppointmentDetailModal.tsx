@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, FolderOpen, CalendarPlus, CalendarClock, Check, AlertCircle, Ban } from 'lucide-react';
+import { X, FolderOpen, CalendarPlus, CalendarClock, Check, Ban, UserX, CalendarSearch, RotateCcw } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
 import type { Appointment } from '@/types/agenda';
 import {
@@ -13,6 +13,7 @@ import {
   isVisioLinkActive,
 } from '@/types/agenda';
 import { usePatientRespondToCounterProposal } from '@/hooks/useNutritionistAppointments';
+import { PatientCounterProposeModal } from '@/components/agenda/detail/PatientCounterProposeModal';
 
 interface AppointmentDetailModalProps {
   isOpen: boolean;
@@ -21,6 +22,9 @@ interface AppointmentDetailModalProps {
   onJoinVisio: (visioLink: string) => void;
   onModify: (appointment: Appointment) => void;
   onCancel: (appointment: Appointment) => void;
+  onRebook?: () => void;
+  patientGender?: string | null;
+  onShowToast?: (type: 'success' | 'error', title: string, message?: string) => void;
 }
 
 export function AppointmentDetailModal({
@@ -30,9 +34,12 @@ export function AppointmentDetailModal({
   onJoinVisio,
   onModify,
   onCancel,
+  onRebook,
+  patientGender,
+  onShowToast,
 }: AppointmentDetailModalProps) {
   const counterProposalMutation = usePatientRespondToCounterProposal();
-  const [counterProposalSuccess, setCounterProposalSuccess] = useState<string | null>(null);
+  const [showCounterProposeModal, setShowCounterProposeModal] = useState(false);
 
   const handleAcceptCounterProposal = async () => {
     if (!appointment) return;
@@ -41,13 +48,10 @@ export function AppointmentDetailModal({
         id: appointment.id,
         data: { action: 'accept' },
       });
-      setCounterProposalSuccess('Nouvel horaire accepté');
-      setTimeout(() => {
-        setCounterProposalSuccess(null);
-        onClose();
-      }, 1500);
-    } catch {
-      // Error handled by mutation
+      onClose();
+      onShowToast?.('success', 'Nouvel horaire accepté', 'Le rendez-vous a été confirmé');
+    } catch (err) {
+      onShowToast?.('error', 'Erreur', err instanceof Error ? err.message : 'Une erreur est survenue');
     }
   };
 
@@ -58,13 +62,25 @@ export function AppointmentDetailModal({
         id: appointment.id,
         data: { action: 'decline' },
       });
-      setCounterProposalSuccess('Rendez-vous annulé');
-      setTimeout(() => {
-        setCounterProposalSuccess(null);
-        onClose();
-      }, 1500);
-    } catch {
-      // Error handled by mutation
+      onClose();
+      onShowToast?.('success', 'Proposition refusée', 'Le rendez-vous a été annulé');
+    } catch (err) {
+      onShowToast?.('error', 'Erreur', err instanceof Error ? err.message : 'Une erreur est survenue');
+    }
+  };
+
+  const handleCounterPropose = async (proposedAt: string, message?: string) => {
+    if (!appointment) return;
+    try {
+      await counterProposalMutation.mutateAsync({
+        id: appointment.id,
+        data: { action: 'counter_propose', proposed_at: proposedAt, message },
+      });
+      setShowCounterProposeModal(false);
+      onClose();
+      onShowToast?.('success', 'Nouvel horaire proposé', 'En attente de validation du nutritionniste');
+    } catch (err) {
+      onShowToast?.('error', 'Erreur', err instanceof Error ? err.message : 'Une erreur est survenue');
     }
   };
 
@@ -97,8 +113,10 @@ export function AppointmentDetailModal({
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
+      onShowToast?.('success', 'Calendrier téléchargé', 'Le fichier .ics a été ajouté à vos téléchargements');
     } catch (error) {
       console.error("Erreur lors de l'ajout au calendrier:", error);
+      onShowToast?.('error', 'Erreur', "Impossible de télécharger le fichier calendrier");
     }
   };
 
@@ -156,7 +174,7 @@ export function AppointmentDetailModal({
             <span
               className={`px-2 py-1 rounded-full text-xs font-medium ${statusConfig.bgColor} ${statusConfig.textColor}`}
             >
-              {getStatusLabel(appointment.status, appointment.cancelledBy, appointment.isCounterProposal, appointment.isDeclinedByNutritionist)}
+              {getStatusLabel(appointment.status, appointment.cancelledBy, appointment.isCounterProposal, appointment.isDeclinedByNutritionist, patientGender)}
             </span>
           </div>
           <div className='flex justify-between p-3 bg-gray-50 rounded-lg'>
@@ -221,6 +239,72 @@ export function AppointmentDetailModal({
           </div>
         )}
 
+        {/* Completed appointment info banner */}
+        {appointment.status === 'completed' && (
+          <div className='mb-6'>
+            <div className='p-4 bg-emerald-50 rounded-lg border border-emerald-200'>
+              <div className='flex items-start gap-3'>
+                <Check className='w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5' />
+                <div>
+                  <p className='text-sm font-medium text-emerald-800'>
+                    Votre nutritionniste a marqué ce rendez-vous comme effectué
+                  </p>
+                  {appointment.statusNotes && (
+                    <p className='text-sm text-emerald-600 mt-1'>
+                      &laquo; {appointment.statusNotes} &raquo;
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* No-show banner */}
+        {appointment.status === 'no_show' && (
+          <div className='mb-6'>
+            <div className='p-4 bg-red-50 rounded-lg border border-red-200'>
+              <div className='flex items-start gap-3'>
+                <UserX className='w-5 h-5 text-red-500 flex-shrink-0 mt-0.5' />
+                <div>
+                  <p className='text-sm font-medium text-red-800'>
+                    Vous avez été marqué{patientGender === 'female' ? 'e absente' : ' absent'} à ce rendez-vous
+                  </p>
+                  {appointment.statusNotes && (
+                    <p className='text-sm text-red-600 mt-1'>
+                      &laquo; {appointment.statusNotes} &raquo;
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Postponed banner */}
+        {appointment.status === 'postponed' && (
+          <div className='mb-6'>
+            <div className='p-4 bg-blue-50 rounded-lg border border-blue-200'>
+              <div className='flex items-start gap-3'>
+                <CalendarClock className='w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5' />
+                <div>
+                  <p className='text-sm font-medium text-blue-800'>
+                    Ce rendez-vous a été reporté par votre nutritionniste
+                  </p>
+                  {appointment.postponedReason && (
+                    <p className='text-sm text-blue-600 mt-1'>
+                      Raison : &laquo; {appointment.postponedReason} &raquo;
+                    </p>
+                  )}
+                  <p className='text-sm text-blue-600 mt-2'>
+                    Un nouveau créneau vous a été proposé. Consultez vos rendez-vous à venir pour le retrouver.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Counter-proposal banner */}
         {appointment.isCounterProposal && (
           <div className='mb-6 space-y-3'>
@@ -240,47 +324,38 @@ export function AppointmentDetailModal({
               </div>
             </div>
 
-            {counterProposalSuccess ? (
-              <div className='flex items-center gap-2 p-3 bg-emerald-50 border border-emerald-200 rounded-lg'>
-                <Check className='w-4 h-4 text-emerald-600' />
-                <span className='text-sm font-medium text-emerald-700'>
-                  {counterProposalSuccess}
-                </span>
+            <div className='space-y-2'>
+              <div className='flex gap-3'>
+                <button
+                  onClick={handleAcceptCounterProposal}
+                  disabled={counterProposalMutation.isPending}
+                  className='flex-1 py-3 bg-[#1B998B] text-white font-medium rounded-xl hover:bg-[#158578] transition-colors disabled:opacity-50'
+                >
+                  Accepter
+                </button>
+                <button
+                  onClick={handleDeclineCounterProposal}
+                  disabled={counterProposalMutation.isPending}
+                  className='flex-1 py-3 bg-red-50 text-red-600 font-medium rounded-xl hover:bg-red-100 transition-colors disabled:opacity-50'
+                >
+                  Refuser
+                </button>
               </div>
-            ) : (
-              <>
-                {counterProposalMutation.error && (
-                  <div className='flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg'>
-                    <AlertCircle className='w-4 h-4 text-red-500' />
-                    <span className='text-sm text-red-700'>
-                      {counterProposalMutation.error.message}
-                    </span>
-                  </div>
-                )}
-                <div className='flex gap-3'>
-                  <button
-                    onClick={handleAcceptCounterProposal}
-                    disabled={counterProposalMutation.isPending}
-                    className='flex-1 py-3 bg-[#1B998B] text-white font-medium rounded-xl hover:bg-[#158578] transition-colors disabled:opacity-50'
-                  >
-                    Accepter
-                  </button>
-                  <button
-                    onClick={handleDeclineCounterProposal}
-                    disabled={counterProposalMutation.isPending}
-                    className='flex-1 py-3 bg-red-50 text-red-600 font-medium rounded-xl hover:bg-red-100 transition-colors disabled:opacity-50'
-                  >
-                    Refuser
-                  </button>
-                </div>
-              </>
-            )}
+              <button
+                onClick={() => setShowCounterProposeModal(true)}
+                disabled={counterProposalMutation.isPending}
+                className='w-full py-3 bg-blue-50 text-blue-700 font-medium rounded-xl hover:bg-blue-100 transition-colors disabled:opacity-50 flex items-center justify-center gap-2'
+              >
+                <CalendarSearch className='w-4 h-4' />
+                Proposer un autre horaire
+              </button>
+            </div>
           </div>
         )}
 
         {/* Actions */}
         <div className='space-y-3'>
-          {canJoinVisio && (
+          {canJoinVisio ? (
             <button
               onClick={() => onJoinVisio(appointment.visioLink!)}
               className='w-full py-3 bg-[#1B998B] text-white font-medium rounded-xl hover:bg-[#158578] transition-colors flex items-center justify-center gap-2'
@@ -288,6 +363,10 @@ export function AppointmentDetailModal({
               <span>📹</span>
               Rejoindre la visio
             </button>
+          ) : appointment.mode === 'visio' && appointment.visioLink && appointment.status === 'confirmed' && (
+            <p className='text-xs text-center text-gray-500'>
+              Le lien visio sera disponible 15 minutes avant le rendez-vous
+            </p>
           )}
           {/* Bouton Ajouter au calendrier - toujours visible pour les RDV confirmés ou pending */}
           {(appointment.status === 'confirmed' ||
@@ -327,6 +406,15 @@ export function AppointmentDetailModal({
               rendez-vous
             </p>
           )}
+          {/* RDV pending (demande en attente, pas une contre-proposition) */}
+          {appointment.status === 'pending' && !appointment.isCounterProposal && (
+            <button
+              onClick={() => onCancel(appointment)}
+              className='w-full py-3 font-medium rounded-xl transition-colors bg-red-50 text-red-600 hover:bg-red-100'
+            >
+              Annuler la demande
+            </button>
+          )}
           {appointment.status === 'completed' && (
             <div className='space-y-3'>
               <Link
@@ -347,8 +435,55 @@ export function AppointmentDetailModal({
               </button>
             </div>
           )}
+          {(appointment.status === 'no_show' || appointment.status === 'postponed') && (
+            <div className='space-y-3'>
+              {onRebook && (
+                <button
+                  onClick={() => { onClose(); onRebook(); }}
+                  className='w-full py-3 bg-[#1B998B] text-white font-medium rounded-xl hover:bg-[#158578] transition-colors flex items-center justify-center gap-2'
+                >
+                  <RotateCcw className='w-4 h-4' />
+                  Reprendre rendez-vous
+                </button>
+              )}
+              <button
+                onClick={onClose}
+                className='w-full py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-colors'
+              >
+                Fermer
+              </button>
+            </div>
+          )}
+          {appointment.status === 'cancelled' && (
+            <div className='space-y-3'>
+              {onRebook && (
+                <button
+                  onClick={() => { onClose(); onRebook(); }}
+                  className='w-full py-3 bg-[#1B998B] text-white font-medium rounded-xl hover:bg-[#158578] transition-colors flex items-center justify-center gap-2'
+                >
+                  <RotateCcw className='w-4 h-4' />
+                  Reprendre rendez-vous
+                </button>
+              )}
+              <button
+                onClick={onClose}
+                className='w-full py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-colors'
+              >
+                Fermer
+              </button>
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Patient Counter-Propose Modal */}
+      <PatientCounterProposeModal
+        isOpen={showCounterProposeModal}
+        appointment={appointment}
+        onClose={() => setShowCounterProposeModal(false)}
+        onConfirm={handleCounterPropose}
+        isLoading={counterProposalMutation.isPending}
+      />
     </div>
   );
 }

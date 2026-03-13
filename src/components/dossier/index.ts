@@ -8,6 +8,8 @@ export { AnamneseReadOnlyAlert } from './anamnese/AnamneseReadOnlyAlert';
 export { AnamneseSection } from './anamnese/AnamneseSection';
 export { AnamneseSectionList } from './anamnese/AnamneseSectionList';
 export { SignalChangeCard } from './anamnese/SignalChangeCard';
+export { SignalChangeModal } from './anamnese/SignalChangeModal';
+export { PatientChangeReportsList } from './anamnese/PatientChangeReportsList';
 
 // Questionnaires components
 export { QuestionnaireItem } from './questionnaires/QuestionnaireItem';
@@ -29,3 +31,10 @@ export { PrivateNotesInfo } from './consultations/PrivateNotesInfo';
 export { ObjectivesOverview } from './objectifs/ObjectivesOverview';
 export { ObjectiveCard } from './objectifs/ObjectiveCard';
 export { ObjectivesList } from './objectifs/ObjectivesList';
+
+// Nutritional Profile components
+export { NutritionalProfileSection } from './nutritional-profile/NutritionalProfileSection';
+export { CalculationExplanationModal } from './nutritional-profile/CalculationExplanationModal';
+export { ProfileHistoryList } from './nutritional-profile/ProfileHistoryList';
+export { ProfileCompareView } from './nutritional-profile/ProfileCompareView';
+export { ProfilePDFExport } from './nutritional-profile/ProfilePDFExport';

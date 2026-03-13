@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
     const { data: goal, error: fetchError } = await supabase
       .from('weight_goals')
       .select('*')
-      .eq('user_id', auth.user.id)
+      .eq('patient_id', auth.user.id)
       .eq('is_achieved', false)
       .order('created_at', { ascending: false })
       .limit(1)
@@ -98,7 +98,7 @@ export async function PATCH(req: NextRequest) {
     const { data: currentWeightEntry } = await supabase
       .from('weight_entries')
       .select('weight_kg')
-      .eq('user_id', auth.user.id)
+      .eq('patient_id', auth.user.id)
       .order('date', { ascending: false })
       .limit(1)
       .single();
@@ -113,14 +113,14 @@ export async function PATCH(req: NextRequest) {
         is_achieved: true,
         achieved_at: new Date().toISOString(),
       })
-      .eq('user_id', auth.user.id)
+      .eq('patient_id', auth.user.id)
       .eq('is_achieved', false);
 
     // 6. Créer le nouvel objectif
     const { data: newGoal, error: insertError } = await supabase
       .from('weight_goals')
       .insert({
-        user_id: auth.user.id,
+        patient_id: auth.user.id,
         initial_weight_kg: initialWeight,
         target_weight_kg: validatedData.goal_weight_kg,
         target_date: validatedData.target_date,

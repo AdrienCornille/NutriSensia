@@ -26,6 +26,7 @@ interface NavItem {
   label: string;
   icon: React.ReactNode;
   badge?: number;
+  badgeType?: 'count' | 'dot';
   href?: string;
 }
 
@@ -121,7 +122,7 @@ export function PatientSidebar({
   const navItems: NavItem[] = useMemo(() => {
     return baseNavItems.map(item => {
       if (item.id === 'messagerie' && unreadMessagesCount > 0) {
-        return { ...item, badge: unreadMessagesCount };
+        return { ...item, badge: unreadMessagesCount, badgeType: 'dot' as const };
       }
       return item as NavItem;
     });
@@ -206,11 +207,13 @@ export function PatientSidebar({
                 >
                   {item.icon}
                   <span className='text-sm'>{item.label}</span>
-                  {item.badge && (
+                  {item.badge && item.badgeType === 'dot' ? (
+                    <span className='ml-auto w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse' />
+                  ) : item.badge ? (
                     <span className='ml-auto bg-red-500 text-white text-xs px-2 py-0.5 rounded-full'>
                       {item.badge}
                     </span>
-                  )}
+                  ) : null}
                 </Link>
               ) : (
                 <button
@@ -223,11 +226,13 @@ export function PatientSidebar({
                 >
                   {item.icon}
                   <span className='text-sm'>{item.label}</span>
-                  {item.badge && (
+                  {item.badge && item.badgeType === 'dot' ? (
+                    <span className='ml-auto w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse' />
+                  ) : item.badge ? (
                     <span className='ml-auto bg-red-500 text-white text-xs px-2 py-0.5 rounded-full'>
                       {item.badge}
                     </span>
-                  )}
+                  ) : null}
                 </button>
               )}
             </li>

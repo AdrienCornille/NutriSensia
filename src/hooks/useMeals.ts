@@ -22,7 +22,7 @@ export interface CreateMealData {
 
 export interface Meal {
   id: string;
-  user_id: string;
+  patient_id: string;
   type: 'breakfast' | 'lunch' | 'dinner' | 'snack';
   consumed_at: string;
   total_calories: number;

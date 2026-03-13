@@ -20,7 +20,7 @@ export type DigestionQualityAPI = 'poor' | 'average' | 'good' | 'excellent';
 
 export interface WellbeingLogAPI {
   id: string;
-  user_id: string;
+  patient_id: string;
   date: string; // 'YYYY-MM-DD'
   energy_level: number; // 1-10
   sleep_quality: number | null; // 1-10 (peut être null si non renseigné)

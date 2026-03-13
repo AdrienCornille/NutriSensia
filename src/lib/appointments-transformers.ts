@@ -198,7 +198,7 @@ export const statusAPItoUI: Record<AppointmentStatusAPI, AppointmentStatus> = {
   cancelled_by_patient: 'cancelled',
   cancelled_by_nutritionist: 'cancelled',
   completed: 'completed',
-  no_show: 'cancelled', // No-show traité comme annulé côté UI
+  no_show: 'no_show',
 };
 
 /**
@@ -334,6 +334,21 @@ export function transformAppointmentToUI(apt: AppointmentAPI): Appointment {
   const typeName =
     apt.consultation_type?.name_fr || getConsultationTypeLabel(typeCode);
 
+  // Détection du report (postponed) : legacy prefix "postponed:" dans status_reason
+  const isPostponed =
+    apt.status === 'cancelled_by_nutritionist' &&
+    apt.status_reason?.startsWith('postponed:');
+  const uiStatus = isPostponed ? 'postponed' : statusAPItoUI[apt.status];
+
+  const statusNotes =
+    (apt.status === 'completed' || apt.status === 'no_show') && apt.status_reason
+      ? apt.status_reason
+      : undefined;
+
+  const postponedReason = isPostponed
+    ? apt.status_reason!.slice('postponed:'.length)
+    : undefined;
+
   return {
     id: apt.id,
     date: scheduledAt,
@@ -344,12 +359,15 @@ export function transformAppointmentToUI(apt: AppointmentAPI): Appointment {
     typeName,
     consultationTypeId: apt.consultation_type_id,
     mode: modeAPItoUI(apt.mode),
-    status: statusAPItoUI[apt.status],
+    status: uiStatus,
     cancelledBy: getCancellationSource(apt.status) as
       | CancellationSource
       | undefined,
     cancellationReason:
-      (apt.status === 'cancelled_by_nutritionist' || apt.status === 'cancelled_by_patient') && apt.status_reason && apt.status_reason !== 'counter_proposal'
+      (apt.status === 'cancelled_by_nutritionist' || apt.status === 'cancelled_by_patient') &&
+      apt.status_reason &&
+      apt.status_reason !== 'counter_proposal' &&
+      !apt.status_reason.startsWith('postponed:')
         ? (apt.status_reason.startsWith('declined:') ? apt.status_reason.slice(9) : apt.status_reason)
         : undefined,
     isDeclinedByNutritionist:
@@ -365,6 +383,8 @@ export function transformAppointmentToUI(apt: AppointmentAPI): Appointment {
       apt.status_reason === 'counter_proposal'
         ? apt.nutritionist_notes_internal || undefined
         : undefined,
+    statusNotes,
+    postponedReason,
   };
 }
 

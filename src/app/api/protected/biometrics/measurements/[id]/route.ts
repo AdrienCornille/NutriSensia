@@ -55,7 +55,7 @@ export async function PATCH(
     // 5. Vérifier que la mesure existe et appartient à l'utilisateur
     const { data: measurement, error: fetchError } = await supabase
       .from('measurements')
-      .select('user_id')
+      .select('patient_id')
       .eq('id', id)
       .single();
 
@@ -65,7 +65,7 @@ export async function PATCH(
     }
 
     // 6. Vérifier ownership
-    if ((measurement as any).user_id !== auth.user.id) {
+    if ((measurement as any).patient_id !== auth.user.id) {
       return apiResponse.error('Accès non autorisé à cette mesure', 403);
     }
 
@@ -144,7 +144,7 @@ export async function DELETE(
     // 4. Vérifier que la mesure existe et appartient à l'utilisateur
     const { data: measurement, error: fetchError } = await supabase
       .from('measurements')
-      .select('user_id')
+      .select('patient_id')
       .eq('id', id)
       .single();
 
@@ -154,7 +154,7 @@ export async function DELETE(
     }
 
     // 5. Vérifier ownership
-    if ((measurement as any).user_id !== auth.user.id) {
+    if ((measurement as any).patient_id !== auth.user.id) {
       return apiResponse.error('Accès non autorisé à cette mesure', 403);
     }
 

@@ -35,7 +35,7 @@ export async function GET(
       .select(
         `
         id,
-        user_id,
+        patient_id,
         name,
         meal_type,
         meal_date,
@@ -61,7 +61,7 @@ export async function GET(
     }
 
     // Vérifier que l'utilisateur a accès à ce repas
-    if (meal.user_id !== auth.user.id) {
+    if (meal.patient_id !== auth.user.id) {
       return apiResponse.error('Accès non autorisé', 403);
     }
 
@@ -106,7 +106,7 @@ export async function GET(
     // Formater la réponse
     const response = {
       id: meal.id,
-      user_id: meal.user_id,
+      patient_id: meal.patient_id,
       type: meal.meal_type,
       consumed_at,
       total_calories: meal.total_calories,
@@ -181,7 +181,7 @@ export async function PATCH(
     // Vérifier que le repas existe et appartient à l'utilisateur
     const { data: existingMeal, error: checkError } = await supabase
       .from('meals')
-      .select('id, user_id, meal_date')
+      .select('id, patient_id, meal_date')
       .eq('id', mealId)
       .is('deleted_at', null)
       .single();
@@ -191,7 +191,7 @@ export async function PATCH(
     }
 
     // Vérifier les permissions
-    if (existingMeal.user_id !== auth.user.id) {
+    if (existingMeal.patient_id !== auth.user.id) {
       return apiResponse.error('Accès non autorisé', 403);
     }
 
@@ -347,7 +347,7 @@ export async function DELETE(
     // Vérifier que le repas existe et appartient à l'utilisateur
     const { data: existingMeal, error: checkError } = await supabase
       .from('meals')
-      .select('id, user_id')
+      .select('id, patient_id')
       .eq('id', mealId)
       .is('deleted_at', null)
       .single();
@@ -357,7 +357,7 @@ export async function DELETE(
     }
 
     // Vérifier les permissions
-    if (existingMeal.user_id !== auth.user.id) {
+    if (existingMeal.patient_id !== auth.user.id) {
       return apiResponse.error('Accès non autorisé', 403);
     }
 

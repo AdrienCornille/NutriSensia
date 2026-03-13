@@ -4,6 +4,7 @@ import {
   verifyAuth,
   apiResponse,
 } from '@/lib/api-auth';
+import { decodeHtmlEntities } from '@/lib/utils';
 
 // ============================================================================
 // GET /api/protected/foods/search - Rechercher des aliments
@@ -67,13 +68,14 @@ export async function GET(req: NextRequest) {
     const response = {
       foods: filteredFoods.map((food: any) => ({
         id: food.id,
-        name: food.name_fr,
+        name: decodeHtmlEntities(food.name_fr || ''),
         brand: food.brand,
         category: food.category_name,
         calories_per_100g: food.calories,
         protein_per_100g: food.proteins,
         carbs_per_100g: food.carbohydrates,
         fat_per_100g: food.fat,
+        fiber_per_100g: food.fiber ?? null,
         is_favorite: food.is_favorite,
       })),
       total: filteredFoods.length,

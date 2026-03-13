@@ -52,9 +52,12 @@ export function PendingRequestCard({
   const typeIcon = appointment.consultation_type?.icon;
   const duration = appointment.consultation_type?.default_duration || appointment.duration;
   const price = appointment.consultation_type?.default_price || appointment.price;
+  const isPatientCounterProposal = appointment.status_reason === 'patient_counter_proposal';
 
   return (
-    <div className='bg-white rounded-xl border-l-4 border-l-amber-400 border border-gray-200 p-5 hover:shadow-md transition-shadow'>
+    <div className={`bg-white rounded-xl border-l-4 ${
+      isPatientCounterProposal ? 'border-l-blue-400' : 'border-l-amber-400'
+    } border border-gray-200 p-5 hover:shadow-md transition-shadow`}>
       {/* Header: Patient info + Date */}
       <div className='flex items-start justify-between mb-4'>
         <div className='flex items-center gap-3'>
@@ -63,11 +66,17 @@ export function PendingRequestCard({
           </div>
           <div>
             <p className='font-medium text-gray-800'>{patientName}</p>
-            <p className='text-xs text-gray-500'>Nouvelle demande</p>
+            <p className='text-xs text-gray-500'>
+              {isPatientCounterProposal ? 'Contre-proposition du patient' : 'Nouvelle demande'}
+            </p>
           </div>
         </div>
-        <span className='px-2.5 py-1 bg-amber-100 text-amber-700 text-xs font-medium rounded-full'>
-          En attente
+        <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${
+          isPatientCounterProposal
+            ? 'bg-blue-100 text-blue-700'
+            : 'bg-amber-100 text-amber-700'
+        }`}>
+          {isPatientCounterProposal ? 'Contre-proposition' : 'En attente'}
         </span>
       </div>
 

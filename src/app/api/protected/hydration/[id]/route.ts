@@ -55,7 +55,7 @@ export async function PATCH(
     // 5. Vérifier que le log existe et appartient à l'utilisateur
     const { data: log, error: fetchError } = await supabase
       .from('hydration_logs')
-      .select('user_id')
+      .select('patient_id')
       .eq('id', id)
       .single();
 
@@ -65,7 +65,7 @@ export async function PATCH(
     }
 
     // 6. Vérifier ownership
-    if (log.user_id !== auth.user.id) {
+    if (log.patient_id !== auth.user.id) {
       return apiResponse.error('Accès non autorisé à ce log', 403);
     }
 
@@ -129,7 +129,7 @@ export async function DELETE(
     // 4. Vérifier que le log existe et appartient à l'utilisateur
     const { data: log, error: fetchError } = await supabase
       .from('hydration_logs')
-      .select('user_id')
+      .select('patient_id')
       .eq('id', id)
       .single();
 
@@ -139,7 +139,7 @@ export async function DELETE(
     }
 
     // 5. Vérifier ownership
-    if (log.user_id !== auth.user.id) {
+    if (log.patient_id !== auth.user.id) {
       return apiResponse.error('Accès non autorisé à ce log', 403);
     }
 

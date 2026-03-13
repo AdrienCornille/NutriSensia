@@ -32,9 +32,10 @@
 | Métrique | Valeur |
 |----------|--------|
 | **Phases** | 10 (4 complétées + 6 nouvelles) |
-| **Modules backend** | 22 |
-| **Endpoints API à créer** | ~95 |
-| **Tables Supabase existantes** | 45+ |
+| **Modules backend** | 23 |
+| **Endpoints API à créer** | ~95 (+ 2 enrichis avec Open Food Facts) |
+| **Tables Supabase existantes** | 45+ (+ 1 cache OFF à créer) |
+| **API externe** | Open Food Facts v2 (recherche hybride, Phase 9) |
 | **Stories frontend déjà implémentées** | ~60 |
 | **Pages patient utilisant encore des mocks** | 8 (sur 12) |
 
@@ -50,7 +51,7 @@
 | Phase 6 | Profil Patient (PROF) | 🔲 À faire | Page profil, sécurité, préférences, badges |
 | Phase 7 | Notifications (NOTIF) | 🔲 À faire | Centre de notifications, préférences, triggers |
 | Phase 8 | Plan Alimentaire (PLAN) | 🔲 À faire | Plan hebdo, liste de courses, demandes de modification |
-| Phase 9 | Recettes & Base d'Aliments (REC/FOOD) | 🔲 À faire | Catalogue recettes, base d'aliments, favoris, scanner |
+| Phase 9 | Recettes & Base d'Aliments (REC/FOOD) | 🔲 À faire | Catalogue recettes, base d'aliments hybride (interne + Open Food Facts), favoris, scanner |
 | Phase 10 | Contenu Éducatif (CONTENT) | 🔲 À faire | Articles, vidéos, guides, parcours d'apprentissage |
 
 ### Impact sur le Dashboard (Epic 2) - ✅ COMPLÉTÉ
@@ -3871,19 +3872,27 @@ export function useShoppingList(planId: string) { /* POST .../shopping-list */ }
 
 Cette phase implémente :
 - **Recettes :** Catalogue de recettes avec filtres, favoris, détails
-- **Base d'aliments :** Catalogue complet avec recherche, catégories, favoris, scanner code-barres
+- **Base d'aliments hybride :** Approche à deux sources complémentaires :
+  - **Base interne `food_items`** : Aliments bruts/naturels (fruits, légumes, viandes, etc.) avec données nutritionnelles fiables et validées par les nutritionnistes
+  - **Open Food Facts (OFF)** : Produits transformés/emballés du commerce suisse (Migros, Coop, Aldi, etc.) avec code-barres, Nutri-Score, NOVA Group via l'API externe gratuite
+- **Scanner code-barres :** Scan → recherche OFF par barcode → données nutritionnelles instantanées
+
+**API externe :** [Open Food Facts API v2](https://openfoodfacts.github.io/openfoodfacts-server/api/) - Base de données ouverte (3M+ produits, Open Database License, gratuit)
 
 **Frontend déjà implémenté :**
 - Page `/dashboard/patient/recettes` (REC-001 à REC-005) ✅
 - Page `/dashboard/patient/aliments` (FOOD-001 à FOOD-005) ✅
 
 **Tables Supabase existantes** (migrations `04_foods_database.sql`, `05_recipes.sql`, `12_shopping_lists.sql`) :
-- `food_items` + `food_portions` (base d'aliments)
+- `food_items` + `food_portions` (base d'aliments interne)
 - `favorite_foods` (favoris utilisateur)
 - `recipes` + `recipe_ingredients` + `recipe_steps` (recettes)
 - `recipe_categories` + `recipe_tags` + `recipe_tag_assignments`
 - `recipe_favorites` + `recipe_ratings` + `recipe_history`
 - `shopping_lists` + `shopping_list_categories` + `shopping_list_items`
+
+**Table Supabase à créer :**
+- `off_products_cache` (cache local des produits Open Food Facts consultés)
 
 ---
 
@@ -4046,7 +4055,200 @@ Cette phase implémente :
 
 ---
 
-### Module 9.3 : Intégration Frontend
+### Module 9.3 : Intégration Open Food Facts (OFF)
+
+> **Approche hybride :** La base interne `food_items` contient les aliments bruts/naturels (validés par les nutritionnistes). L'API Open Food Facts complète avec les produits transformés/emballés du commerce. Les résultats de recherche fusionnent les deux sources de manière transparente pour le patient.
+
+#### Architecture du proxy API
+
+```
+Patient (frontend)
+  │
+  ├─ Recherche texte ──> GET /api/protected/foods/search
+  │                        ├─ 1. Chercher dans food_items (base interne)
+  │                        ├─ 2. Chercher dans off_products_cache (cache OFF)
+  │                        ├─ 3. Si < seuil résultats → appeler OFF API
+  │                        └─ 4. Fusionner, dédupliquer, retourner
+  │
+  └─ Scan code-barres ──> GET /api/protected/foods/barcode/:barcode
+                            ├─ 1. Chercher dans food_items
+                            ├─ 2. Chercher dans off_products_cache
+                            ├─ 3. Si introuvable → appeler OFF API
+                            └─ 4. Cacher le résultat + retourner
+```
+
+#### Endpoint 9.3.1 : Recherche hybride (enrichir l'existant)
+
+**Route :** `GET /api/protected/foods/search?query=nutella&source=all`
+
+**Query params enrichis :**
+- `source` (nouveau) : `all` | `internal` | `openfoodfacts` (default: `all`)
+- `query`, `category`, `sort`, `limit`, `offset` : existants
+
+**Response enrichie :**
+```typescript
+{
+  foods: [
+    // Résultat interne (food_items)
+    {
+      id: 'uuid',
+      name: 'Banane',
+      source: 'internal',
+      // ... champs existants
+    },
+    // Résultat Open Food Facts
+    {
+      id: 'off_3017624010701',
+      name: 'Nutella',
+      source: 'openfoodfacts',
+      barcode: '3017624010701',
+      brand: 'Ferrero',
+      calories: 539,
+      protein: 6.3,
+      carbs: 57.5,
+      fat: 30.9,
+      fiber: 3.4,
+      per: '100g',
+      image: 'https://images.openfoodfacts.org/...',
+      nutriscore: 'e',
+      novaGroup: 4,
+      allergens: ['Lait', 'Noisettes', 'Soja'],
+      isFavorite: false
+    }
+  ],
+  total: 25,
+  sources: { internal: 3, openfoodfacts: 22 }
+}
+```
+
+**Logique métier :**
+1. Rechercher dans `food_items` (base interne, prioritaire)
+2. Rechercher dans `off_products_cache` (cache local OFF)
+3. Si `source != 'internal'` et résultats insuffisants → appeler `https://world.openfoodfacts.net/api/v2/search`
+4. Transformer les résultats OFF au format `food_items` unifié
+5. Cacher les nouveaux produits OFF dans `off_products_cache`
+6. Fusionner les résultats (internes en premier) et dédupliquer
+7. LEFT JOIN `favorite_foods` pour `isFavorite`
+
+**Fichier :** Enrichir `/src/app/api/protected/foods/search/route.ts`
+
+#### Endpoint 9.3.2 : Lookup par code-barres (enrichir l'existant)
+
+**Route :** `GET /api/protected/foods/barcode/[barcode]`
+
+**Logique métier enrichie :**
+1. Chercher dans `food_items` WHERE `barcode = :barcode`
+2. Si trouvé → retourner (source interne prioritaire)
+3. Sinon chercher dans `off_products_cache` WHERE `barcode = :barcode`
+4. Si trouvé et `cached_at` < 30 jours → retourner depuis le cache
+5. Sinon appeler `https://world.openfoodfacts.net/api/v2/product/{barcode}`
+6. Si trouvé → transformer, cacher dans `off_products_cache`, retourner
+7. Si introuvable → retourner 404
+
+**Fichier :** Enrichir `/src/app/api/protected/foods/barcode/[barcode]/route.ts`
+
+#### Table de cache : `off_products_cache`
+
+```sql
+CREATE TABLE off_products_cache (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  barcode VARCHAR(20) UNIQUE NOT NULL,
+  product_name VARCHAR(500) NOT NULL,
+  brand VARCHAR(200),
+  categories TEXT,
+  image_url TEXT,
+  -- Données nutritionnelles (pour 100g)
+  calories DECIMAL(8,2),
+  protein DECIMAL(8,2),
+  carbs DECIMAL(8,2),
+  fat DECIMAL(8,2),
+  fiber DECIMAL(8,2),
+  sodium DECIMAL(8,2),
+  sugars DECIMAL(8,2),
+  saturated_fat DECIMAL(8,2),
+  -- Scores & classifications
+  nutriscore_grade CHAR(1),
+  nova_group SMALLINT,
+  ecoscore_grade CHAR(1),
+  -- Allergènes & labels
+  allergens TEXT[],
+  labels TEXT[],
+  -- Métadonnées
+  countries_tags TEXT[],
+  off_last_modified TIMESTAMPTZ,
+  cached_at TIMESTAMPTZ DEFAULT NOW(),
+  search_keywords TSVECTOR,
+  CONSTRAINT valid_nova CHECK (nova_group BETWEEN 1 AND 4),
+  CONSTRAINT valid_nutriscore CHECK (nutriscore_grade IN ('a','b','c','d','e'))
+);
+
+-- Index pour la recherche full-text
+CREATE INDEX idx_off_cache_search ON off_products_cache USING GIN (search_keywords);
+CREATE INDEX idx_off_cache_barcode ON off_products_cache (barcode);
+CREATE INDEX idx_off_cache_cached_at ON off_products_cache (cached_at);
+
+-- RLS : lecture pour tous les authentifiés (cache partagé)
+ALTER TABLE off_products_cache ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Authenticated users can read OFF cache"
+  ON off_products_cache FOR SELECT
+  TO authenticated USING (true);
+```
+
+**Fichier migration :** `database/19_off_products_cache.sql`
+
+#### Fonction de transformation OFF → format interne
+
+```typescript
+// lib/openfoodfacts-transformers.ts
+
+interface OFFProduct {
+  code: string;
+  product_name: string;
+  brands?: string;
+  nutriments?: Record<string, number>;
+  nutriscore_grade?: string;
+  nova_group?: number;
+  image_front_url?: string;
+  allergens_tags?: string[];
+  categories_tags?: string[];
+  countries_tags?: string[];
+}
+
+function transformOFFProduct(off: OFFProduct): FoodItem {
+  return {
+    id: `off_${off.code}`,
+    name: off.product_name,
+    source: 'openfoodfacts',
+    barcode: off.code,
+    brand: off.brands || null,
+    calories: off.nutriments?.['energy-kcal_100g'] ?? null,
+    protein: off.nutriments?.['proteins_100g'] ?? null,
+    carbs: off.nutriments?.['carbohydrates_100g'] ?? null,
+    fat: off.nutriments?.['fat_100g'] ?? null,
+    fiber: off.nutriments?.['fiber_100g'] ?? null,
+    sodium: off.nutriments?.['sodium_100g'] ?? null,
+    per: '100g',
+    image: off.image_front_url || null,
+    nutriscore: off.nutriscore_grade || null,
+    novaGroup: off.nova_group || null,
+    allergens: (off.allergens_tags || []).map(a => a.replace('en:', '')),
+  };
+}
+```
+
+#### Contraintes techniques
+
+| Contrainte | Valeur | Mitigation |
+|---|---|---|
+| Rate limit produits | 100 req/min | Cache `off_products_cache` (TTL 30 jours) |
+| Rate limit recherche | 10 req/min | Debounce 500ms + cache résultats + recherche interne d'abord |
+| User-Agent requis | Obligatoire | Header `NutriSensia/1.0 (contact@nutrisensia.ch)` |
+| Qualité données | Variable | Validation des champs nutritionnels avant cache |
+| Disponibilité API | Pas de SLA | Fallback sur base interne si OFF indisponible |
+
+---
+
+### Module 9.4 : Intégration Frontend
 
 **Hooks à créer :**
 ```typescript
@@ -4058,12 +4260,19 @@ export function useToggleRecipeFavorite() { /* POST /api/protected/recipes/:id/f
 // hooks/useFoodsDatabase.ts (enrichir useFoods.ts existant)
 export function useFoodsCatalog(category?: string, sort?: string) { /* GET /api/protected/foods */ }
 export function useRecentSearches() { /* GET /api/protected/foods/recent-searches */ }
+export function useFoodSearch(query: string, source?: 'all' | 'internal' | 'openfoodfacts') {
+  /* GET /api/protected/foods/search?query=...&source=... */
+  /* Debounce 500ms pour respecter les rate limits OFF */
+}
 ```
 
 **Changements :**
 1. Supprimer imports de `mock-recipes.ts` et `mock-foods-database.ts`
 2. Remplacer les états locaux par les hooks React Query
 3. Les favoris localStorage → API `recipe_favorites` et `favorite_foods`
+4. Afficher un badge `source` sur chaque aliment (interne vs Open Food Facts)
+5. Afficher Nutri-Score et NOVA Group pour les produits OFF
+6. Scanner code-barres → appel endpoint enrichi avec fallback OFF
 
 ---
 
@@ -4076,17 +4285,27 @@ export function useRecentSearches() { /* GET /api/protected/foods/recent-searche
 - [ ] Catalogue aliments avec catégories et tri
 - [ ] Recherche full-text aliments
 - [ ] Recherches récentes
+- [ ] Proxy Open Food Facts fonctionnel (recherche + barcode)
+- [ ] Cache OFF (`off_products_cache`) avec TTL 30 jours
+- [ ] Transformation OFF → format interne correcte
+- [ ] Fallback si API OFF indisponible
+- [ ] Rate limits respectés (debounce + cache)
 
 **Frontend :**
 - [ ] Page Recettes connectée à l'API
 - [ ] Page Aliments connectée à l'API
 - [ ] Mocks `mock-recipes.ts` et `mock-foods-database.ts` plus importés
+- [ ] Résultats hybrides affichés (interne + OFF) avec badge source
+- [ ] Nutri-Score et NOVA Group affichés pour les produits OFF
+- [ ] Scanner code-barres connecté au proxy OFF
 
-**Endpoints :** ~6 au total (+ existants Phase 1)
+**Endpoints :** ~6 au total (+ existants Phase 1 enrichis)
 - `GET /api/protected/recipes`
 - `GET /api/protected/recipes/[id]`
 - `POST /api/protected/recipes/[id]/favorite`
 - `GET /api/protected/foods` (catalogue enrichi)
+- `GET /api/protected/foods/search` (enrichi : recherche hybride interne + OFF)
+- `GET /api/protected/foods/barcode/[barcode]` (enrichi : fallback OFF)
 - `GET /api/protected/foods/recent-searches`
 
 ---
@@ -4353,10 +4572,11 @@ Phase 8 (Plan Alimentaire)
   └─> Module 8.3 (Liste de courses) ────────> Modal shopping list
   └─> Module 8.4 (Intégration Frontend) ────> Page Plan 100%
 
-Phase 9 (Recettes & Aliments)
+Phase 9 (Recettes & Aliments + Open Food Facts)
   └─> Module 9.1 (Catalogue recettes) ──────> Dépend de Phase 1 (food_items)
   └─> Module 9.2 (Base aliments page) ──────> Enrichit Phase 1 (foods API)
-  └─> Module 9.3 (Intégration Frontend) ────> Pages Recettes + Aliments 100%
+  └─> Module 9.3 (Open Food Facts) ─────────> Proxy API + cache + recherche hybride
+  └─> Module 9.4 (Intégration Frontend) ────> Pages Recettes + Aliments 100%
 
 Phase 10 (Contenu Éducatif)
   └─> Module 10.1 (Catalogue contenus) ─────> Page Contenu
@@ -4381,7 +4601,7 @@ Phase 10 (Contenu Éducatif)
 | Phase 6 (Profil) | Phase 4 (API gamification pour badges) |
 | Phase 7 (Notifications) | Phase 3 + 4 (triggers sur messages, RDV, badges) |
 | Phase 8 (Plan) | Phase 1 (food_items pour détails nutritionnels) |
-| Phase 9 (Recettes) | Phase 1 (food_items, favorite_foods) |
+| Phase 9 (Recettes + OFF) | Phase 1 (food_items, favorite_foods) + API externe Open Food Facts |
 | Phase 10 (Contenu) | Indépendant (tables propres) |
 
 ---
@@ -4682,7 +4902,7 @@ DELETE FROM meals WHERE user_id = 'autre-user-uuid'; -- Doit échouer
 | **Semaine 6** | Phase 6 | Profil Patient (PROF) | • Profil enrichi + avatar<br>• Sécurité (password, sessions)<br>• Préférences + notifications<br>• RGPD (export, suppression) |
 | **Semaine 7** | Phase 7 | Notifications (NOTIF) | • CRUD notifications<br>• Compteur sidebar<br>• Triggers automatiques<br>• Page Notifications 100% API |
 | **Semaine 8** | Phase 8 | Plan Alimentaire (PLAN) | • Vues quotidienne/hebdomadaire<br>• Demandes de modification<br>• Liste de courses<br>• Page Plan 100% API |
-| **Semaine 9** | Phase 9 | Recettes & Aliments (REC/FOOD) | • Catalogue recettes avec filtres<br>• Détails + favoris<br>• Base aliments enrichie<br>• Pages Recettes + Aliments 100% API |
+| **Semaine 9** | Phase 9 | Recettes & Aliments (REC/FOOD) | • Catalogue recettes avec filtres<br>• Détails + favoris<br>• Intégration Open Food Facts (proxy + cache)<br>• Recherche hybride (interne + OFF)<br>• Scanner code-barres → OFF<br>• Pages Recettes + Aliments 100% API |
 | **Semaine 10** | Phase 10 | Contenu Éducatif (CONTENT) | • Catalogue contenus<br>• Parcours d'apprentissage<br>• Sauvegarde + vues<br>• Page Contenu 100% API<br>• **Suppression de tous les mocks** |
 
 ---

@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { X, AlertTriangle } from 'lucide-react';
 import type { Appointment } from '@/types/agenda';
 import { formatDateParts, consultationTypeConfig } from '@/types/agenda';
@@ -20,7 +20,8 @@ interface CancellationConfirmModalProps {
   isOpen: boolean;
   appointment: Appointment | null;
   onClose: () => void;
-  onConfirm: (appointment: Appointment) => void;
+  onConfirm: (appointment: Appointment, reason?: string) => void;
+  isLoading?: boolean;
 }
 
 export function CancellationConfirmModal({
@@ -28,14 +29,23 @@ export function CancellationConfirmModal({
   appointment,
   onClose,
   onConfirm,
+  isLoading = false,
 }: CancellationConfirmModalProps) {
+  const [reason, setReason] = useState('');
+
   if (!isOpen || !appointment) return null;
 
   const dateParts = formatDateParts(appointment.date);
   const typeConfig = consultationTypeConfig[appointment.type];
 
   const handleConfirm = () => {
-    onConfirm(appointment);
+    onConfirm(appointment, reason.trim() || undefined);
+    setReason('');
+  };
+
+  const handleClose = () => {
+    setReason('');
+    onClose();
   };
 
   return (
@@ -103,19 +113,36 @@ export function CancellationConfirmModal({
           </p>
         </div>
 
+        {/* Reason */}
+        <div className='mb-6'>
+          <label className='block text-sm font-medium text-gray-700 mb-2'>
+            Raison de l&apos;annulation (optionnel)
+          </label>
+          <textarea
+            value={reason}
+            onChange={e => setReason(e.target.value)}
+            placeholder="Ex: Empêchement professionnel, maladie..."
+            rows={2}
+            maxLength={500}
+            className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-300 focus:border-transparent resize-none text-sm'
+          />
+        </div>
+
         {/* Actions */}
         <div className='flex gap-3'>
           <button
-            onClick={onClose}
-            className='flex-1 py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-colors'
+            onClick={handleClose}
+            disabled={isLoading}
+            className='flex-1 py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-colors disabled:opacity-50'
           >
             Garder le RDV
           </button>
           <button
             onClick={handleConfirm}
-            className='flex-1 py-3 bg-red-600 text-white font-medium rounded-xl hover:bg-red-700 transition-colors'
+            disabled={isLoading}
+            className='flex-1 py-3 bg-red-600 text-white font-medium rounded-xl hover:bg-red-700 transition-colors disabled:opacity-50'
           >
-            Confirmer l'annulation
+            {isLoading ? 'Annulation...' : "Confirmer l'annulation"}
           </button>
         </div>
       </div>

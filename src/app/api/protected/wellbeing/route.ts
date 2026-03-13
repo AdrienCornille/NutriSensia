@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
     const { data: existingLog } = await supabase
       .from('wellbeing_logs')
       .select('id')
-      .eq('user_id', auth.user.id)
+      .eq('patient_id', auth.user.id)
       .eq('date', logDate)
       .single();
 
@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
     const { data: newLog, error: insertError } = await supabase
       .from('wellbeing_logs')
       .insert({
-        user_id: auth.user.id,
+        patient_id: auth.user.id,
         date: logDate,
         energy_level: validatedData.energy_level,
         sleep_hours: validatedData.sleep_hours,
@@ -124,7 +124,7 @@ export async function GET(req: NextRequest) {
     let query = supabase
       .from('wellbeing_logs')
       .select('*')
-      .eq('user_id', auth.user.id);
+      .eq('patient_id', auth.user.id);
 
     // Filtres de date
     if (startDate && endDate) {

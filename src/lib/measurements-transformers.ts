@@ -17,7 +17,7 @@ import { measurementTypeConfig } from '@/types/suivi';
 
 export interface MeasurementEntryAPI {
   id: string;
-  user_id: string;
+  patient_id: string;
   measurement_type: MeasurementType;
   value_cm: number;
   date: string; // 'YYYY-MM-DD'
