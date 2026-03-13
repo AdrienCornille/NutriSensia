@@ -340,12 +340,17 @@ export async function POST(req: NextRequest) {
     }
 
     // 9. Vérifier si c'est la première consultation du patient
+    // On compte les RDV non-annulés (pending, confirmed, completed = RDV réels)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { count: existingCount } = await (supabase as any)
       .from('appointments')
       .select('id', { count: 'exact', head: true })
       .eq('user_id', patientProfile.id)
-      .in('status', ['confirmed', 'completed']);
+      .not(
+        'status',
+        'in',
+        '("cancelled","cancelled_by_patient","cancelled_by_nutritionist","no_show")'
+      );
 
     const isFirstConsultation = !existingCount || existingCount === 0;
 

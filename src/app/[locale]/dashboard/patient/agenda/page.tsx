@@ -180,6 +180,11 @@ export default function AgendaPage() {
   // Handlers
   const handleTabChange = useCallback((tab: AgendaTab) => {
     dispatch({ type: 'SET_TAB', tab });
+    // Reset pagination to page 1 when switching tabs
+    setUpcomingPage(1);
+    setPastPage(1);
+    setCancelledPage(1);
+    setNoShowPage(1);
   }, []);
 
   const handleOpenBooking = useCallback(() => {

@@ -56,7 +56,12 @@ export async function PATCH(req: NextRequest) {
       return apiResponse.unauthorized(auth.error);
     }
 
-    const body = await req.json();
+    let body;
+    try {
+      body = await req.json();
+    } catch {
+      return apiResponse.error('JSON invalide', 400);
+    }
     const parsed = updateReminderPreferencesSchema.safeParse(body);
     if (!parsed.success) {
       return apiResponse.error(parsed.error.errors[0].message);

@@ -65,7 +65,7 @@ function Toggle({
 
 export function ReminderSettings({ onShowToast }: ReminderSettingsProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { data: preferences, isLoading } = useReminderPreferences();
+  const { data: preferences, isLoading, error: loadError } = useReminderPreferences();
   const updateMutation = useUpdateReminderPreferences();
 
   const handleToggle = async (
@@ -111,6 +111,16 @@ export function ReminderSettings({ onShowToast }: ReminderSettingsProps) {
           <Loader2 className='w-4 h-4 animate-spin' />
           <span className='text-sm'>Chargement des préférences...</span>
         </div>
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className='bg-white rounded-xl p-4 border border-gray-200'>
+        <p className='text-sm text-red-500'>
+          Erreur lors du chargement des préférences de rappel
+        </p>
       </div>
     );
   }

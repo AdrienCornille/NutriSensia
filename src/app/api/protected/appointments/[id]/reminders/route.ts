@@ -33,6 +33,7 @@ export async function GET(
     }
 
     // Check ownership via patient_profiles
+    // appointments.user_id = patient_profiles.id
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data: patientProfile } = await (supabase as any)
       .from('patient_profiles')
@@ -79,7 +80,13 @@ export async function PATCH(
     }
 
     const appointmentId = params.id;
-    const body = await req.json();
+
+    let body;
+    try {
+      body = await req.json();
+    } catch {
+      return apiResponse.error('JSON invalide', 400);
+    }
 
     if (!body.reminders || !Array.isArray(body.reminders)) {
       return apiResponse.error('Format invalide: { reminders: [{ id, enabled }] }');
@@ -112,8 +119,12 @@ export async function PATCH(
 
     // Update each reminder
     const results = [];
+    const errors = [];
     for (const reminder of body.reminders) {
-      if (!reminder.id || typeof reminder.enabled !== 'boolean') continue;
+      if (!reminder.id || typeof reminder.enabled !== 'boolean') {
+        errors.push({ id: reminder.id, error: 'Champs id et enabled requis' });
+        continue;
+      }
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data, error } = await (supabase as any)
@@ -124,12 +135,14 @@ export async function PATCH(
         .select()
         .single();
 
-      if (!error && data) {
+      if (error) {
+        errors.push({ id: reminder.id, error: error.message });
+      } else if (data) {
         results.push(data);
       }
     }
 
-    return apiResponse.success(results);
+    return apiResponse.success({ updated: results, errors });
   } catch (error) {
     console.error('Error in PATCH /api/protected/appointments/[id]/reminders:', error);
     return apiResponse.error('Erreur serveur', 500);
