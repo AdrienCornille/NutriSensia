@@ -5,9 +5,9 @@ import { X } from 'lucide-react';
 import type {
   RecipeFilters as RecipeFiltersType,
   RecipeCategory,
-  RecipeDifficulty,
-  RecipeTime,
-  RecipeDiet,
+  LegacyRecipeDifficulty,
+  LegacyRecipeTime,
+  LegacyRecipeDiet,
 } from '@/types/recipes';
 import {
   categoryConfig,
@@ -101,7 +101,7 @@ export function RecipeFilters({
       <div className='mb-4'>
         <p className='text-sm font-medium text-gray-700 mb-2'>Difficulté</p>
         <div className='flex flex-wrap gap-2'>
-          {difficultyOptions.map((difficulty: RecipeDifficulty) => {
+          {difficultyOptions.map((difficulty: LegacyRecipeDifficulty) => {
             const isSelected = filters.difficulty.includes(difficulty);
             return (
               <button
@@ -126,7 +126,7 @@ export function RecipeFilters({
           Temps de préparation
         </p>
         <div className='flex flex-wrap gap-2'>
-          {timeOptions.map((time: RecipeTime) => {
+          {timeOptions.map((time: LegacyRecipeTime) => {
             const isSelected = filters.time.includes(time);
             return (
               <button
@@ -151,7 +151,7 @@ export function RecipeFilters({
           Régime alimentaire
         </p>
         <div className='flex flex-wrap gap-2'>
-          {dietOptions.map((diet: RecipeDiet) => {
+          {dietOptions.map((diet: LegacyRecipeDiet) => {
             const isSelected = filters.diet.includes(diet);
             return (
               <button

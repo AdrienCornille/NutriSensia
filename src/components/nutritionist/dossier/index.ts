@@ -1,15 +1,6 @@
-// Dossier orchestrator
-export { PatientDossierTab } from './PatientDossierTab';
-
 // Anamnese
 export { NutritionistAnamneseView } from './anamnese/NutritionistAnamneseView';
-export { AnamneseCreateForm } from './anamnese/AnamneseCreateForm';
-export { AnamneseSectionForm } from './anamnese/AnamneseSectionForm';
-export { TypedAnamneseField } from './anamnese/TypedAnamneseField';
 export { ANAMNESE_SECTION_FIELDS } from './anamnese/anamnese-fields-config';
-
-// Change Reports
-export { ChangeReportsList } from './change-reports/ChangeReportsList';
 
 // Questionnaires
 export { NutritionistQuestionnairesView } from './questionnaires/NutritionistQuestionnairesView';

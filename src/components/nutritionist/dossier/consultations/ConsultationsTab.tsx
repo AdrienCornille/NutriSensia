@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { ChevronLeft, Sparkles, ClipboardEdit } from 'lucide-react';
 import { ConsultationsList } from './ConsultationsList';
 import { ConsultationForm } from './ConsultationForm';
 import { ConsultationPreparation } from './ConsultationPreparation';
@@ -58,7 +59,8 @@ export function ConsultationsTab({
   const autoTriggeredRef = useRef(false);
 
   useEffect(() => {
-    if (!fromAppointmentId || autoTriggeredRef.current || !consultationsData) return;
+    if (!fromAppointmentId || autoTriggeredRef.current || !consultationsData)
+      return;
 
     // Find the appointment in past_without_report
     const appointment = consultationsData.past_without_report?.find(
@@ -73,7 +75,7 @@ export function ConsultationsTab({
       autoTriggeredRef.current = true;
       setView('create');
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fromAppointmentId, consultationsData]);
 
   function handleEdit(consultation: ConsultationDetail) {
@@ -101,33 +103,31 @@ export function ConsultationsTab({
     <div className='space-y-4'>
       {/* Sub-navigation for create flow (Preparation / Compte-rendu toggle) */}
       {showSubNav && (
-        <div className='flex items-center justify-between'>
+        <div className='fp-cons-mode'>
           <button
+            type='button'
+            className='fp-cons-mode-back'
             onClick={handleBackToList}
-            className='px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm'
           >
-            ← Retour à l&apos;historique
+            <ChevronLeft className='w-3 h-3' />
+            Retour à l&apos;historique
           </button>
-          <div className='flex gap-1 bg-gray-100 p-1 rounded-xl'>
+          <div className='fp-toggle-pill'>
             <button
+              type='button'
               onClick={() => setView('preparation')}
-              className={`px-5 py-2 rounded-lg text-sm font-medium transition-colors ${
-                view === 'preparation'
-                  ? 'bg-white text-gray-800 shadow-sm'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
+              className={view === 'preparation' ? 'is-active' : ''}
             >
-              📊 Préparation
+              <Sparkles className='w-3 h-3' />
+              Préparation
             </button>
             <button
+              type='button'
               onClick={() => setView('create')}
-              className={`px-5 py-2 rounded-lg text-sm font-medium transition-colors ${
-                view === 'create'
-                  ? 'bg-white text-gray-800 shadow-sm'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
+              className={view === 'create' ? 'is-active' : ''}
             >
-              📝 Compte-rendu
+              <ClipboardEdit className='w-3 h-3' />
+              Compte-rendu
             </button>
           </div>
         </div>
@@ -135,12 +135,14 @@ export function ConsultationsTab({
 
       {/* Edit mode has its own back button */}
       {view === 'edit' && (
-        <div>
+        <div className='fp-cons-mode'>
           <button
+            type='button'
+            className='fp-cons-mode-back'
             onClick={handleBackToList}
-            className='px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm'
           >
-            ← Retour à l&apos;historique
+            <ChevronLeft className='w-3 h-3' />
+            Retour à l&apos;historique
           </button>
         </div>
       )}

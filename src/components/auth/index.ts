@@ -16,7 +16,8 @@ export { SignupForm } from './SignupForm';
 export { ForgotPasswordForm } from './ForgotPasswordForm';
 
 // Layout d'authentification split screen
-export { AuthSplitLayout } from './AuthSplitLayout';
+export { AuthSplitLayout, AuthWordmark } from './AuthSplitLayout';
+export { AuthEditorialPane } from './AuthEditorialPane';
 
 // Composants OAuth
 export {

@@ -12,8 +12,10 @@ export { PatientSyntheseTab } from './patients/PatientSyntheseTab';
 export { PatientNotesSection } from './patients/PatientNotesSection';
 
 // Dossier
-export { PatientDossierTab } from './dossier/PatientDossierTab';
 export { NutritionistAnamneseView } from './dossier/anamnese/NutritionistAnamneseView';
+export { NutritionistQuestionnairesView } from './dossier/questionnaires/NutritionistQuestionnairesView';
+export { NutritionistDocumentsView } from './dossier/documents/NutritionistDocumentsView';
+export { NutritionistObjectivesView } from './dossier/objectives/NutritionistObjectivesView';
 
 // Consultations
 export { ConsultationsTab } from './dossier/consultations';

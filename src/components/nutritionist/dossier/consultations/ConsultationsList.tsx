@@ -7,14 +7,15 @@ import {
   Video,
   Building2,
   Phone,
-  Clock,
-  CalendarClock,
-  FileText,
   PenLine,
+  AlertTriangle,
 } from 'lucide-react';
 import { usePatientConsultations } from '@/hooks/useNutritionistConsultations';
 import type { AppointmentSummary } from '@/hooks/useNutritionistConsultations';
 import type { ConsultationDetail } from '@/types/nutritionist-dossier';
+import { AppointmentCard } from './AppointmentCard';
+import { PrivateNotesBlock } from './PrivateNotesBlock';
+import { EditWindowIndicator } from './EditWindowIndicator';
 
 interface ConsultationsListProps {
   patientId: string;
@@ -26,44 +27,24 @@ interface ConsultationsListProps {
 // HELPERS
 // ============================================================================
 
-function formatTimeFR(isoStr: string) {
-  const d = new Date(isoStr);
-  return d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-}
-
-function formatDateBox(isoStr: string) {
-  const d = new Date(isoStr);
-  const day = d.getDate();
-  const month = d
-    .toLocaleDateString('fr-FR', { month: 'short' })
-    .replace('.', '');
-  return { day: String(day), month: month.toUpperCase() };
-}
-
-function ModeIcon({ mode }: { mode: string }) {
-  switch (mode) {
-    case 'visio':
-      return <Video className='w-3.5 h-3.5' />;
-    case 'cabinet':
-      return <Building2 className='w-3.5 h-3.5' />;
-    case 'phone':
-      return <Phone className='w-3.5 h-3.5' />;
-    default:
-      return null;
-  }
-}
-
-const modeLabels: Record<string, string> = {
+const MODE_LABELS: Record<string, string> = {
   visio: 'Visio',
   cabinet: 'Cabinet',
   phone: 'Téléphone',
 };
 
-const modeBadgeConfig: Record<string, { bgColor: string; textColor: string }> = {
-  cabinet: { bgColor: 'bg-blue-100', textColor: 'text-blue-700' },
-  visio: { bgColor: 'bg-purple-100', textColor: 'text-purple-700' },
-  phone: { bgColor: 'bg-green-100', textColor: 'text-green-700' },
+const MODE_CLASS: Record<string, string> = {
+  visio: 'is-visio',
+  cabinet: 'is-cabinet',
+  phone: 'is-phone',
 };
+
+function ModeIcon({ mode }: { mode: string }) {
+  if (mode === 'visio') return <Video className='w-3 h-3' />;
+  if (mode === 'cabinet') return <Building2 className='w-3 h-3' />;
+  if (mode === 'phone') return <Phone className='w-3 h-3' />;
+  return null;
+}
 
 function formatDateFR(dateStr: string) {
   const d = new Date(dateStr + 'T00:00:00');
@@ -83,281 +64,97 @@ function formatDuration(minutes: number | null) {
 }
 
 // ============================================================================
-// APPOINTMENT CARD (upcoming or past without report)
+// CONSULTATION TIMELINE CARD (existing report)
 // ============================================================================
 
-function AppointmentCard({
-  appointment,
-  variant,
-  onCreateReport,
-}: {
-  appointment: AppointmentSummary;
-  variant: 'upcoming' | 'past';
-  onCreateReport?: () => void;
-}) {
-  const { day, month } = formatDateBox(appointment.scheduled_at);
-  const typeName = appointment.consultation_type?.name_fr || 'Consultation';
-
-  return (
-    <div
-      className={`bg-white rounded-xl border p-5 ${
-        variant === 'upcoming'
-          ? 'border-[#1B998B]/30 bg-[#1B998B]/[0.02]'
-          : 'border-amber-200 bg-amber-50/30'
-      }`}
-    >
-      <div className='flex items-start justify-between'>
-        <div className='flex items-center gap-4'>
-          {/* Date box */}
-          <div
-            className={`w-14 h-14 rounded-xl flex flex-col items-center justify-center shrink-0 ${
-              variant === 'upcoming' ? 'bg-[#1B998B]/10' : 'bg-amber-100'
-            }`}
-          >
-            <span
-              className={`text-xs font-medium leading-none ${
-                variant === 'upcoming' ? 'text-[#1B998B]' : 'text-amber-600'
-              }`}
-            >
-              {month}
-            </span>
-            <span className='text-xl font-bold text-gray-800 leading-tight'>
-              {day}
-            </span>
-          </div>
-          <div>
-            <p className='font-medium text-gray-800'>{typeName}</p>
-            <div className='flex items-center gap-2 text-sm text-gray-500'>
-              <Clock className='w-3.5 h-3.5' />
-              <span>{formatTimeFR(appointment.scheduled_at)}</span>
-              {appointment.duration && (
-                <>
-                  <span>·</span>
-                  <span>{appointment.duration} min</span>
-                </>
-              )}
-              <span>·</span>
-              <span className='flex items-center gap-1'>
-                <ModeIcon mode={appointment.mode} />
-                {modeLabels[appointment.mode] || appointment.mode}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {variant === 'upcoming' && (
-          <span className='px-2.5 py-1 rounded-full text-xs font-medium bg-[#1B998B]/10 text-[#1B998B]'>
-            À venir
-          </span>
-        )}
-
-        {variant === 'past' && onCreateReport && (
-          <button
-            onClick={onCreateReport}
-            className='flex items-center gap-1.5 px-3 py-1.5 bg-amber-100 text-amber-700 rounded-lg text-sm font-medium hover:bg-amber-200 transition-colors'
-          >
-            <FileText className='w-3.5 h-3.5' />
-            Créer le compte-rendu
-          </button>
-        )}
-      </div>
-
-      {appointment.patient_message && (
-        <p className='text-sm text-gray-500 mt-3 pl-[72px] italic'>
-          « {appointment.patient_message} »
-        </p>
-      )}
-    </div>
-  );
-}
-
-// ============================================================================
-// CONSULTATION CARD (existing report)
-// ============================================================================
-
-function ConsultationCard({
+function ConsultationTimelineCard({
   consultation,
   index,
-  isLast,
   onEdit,
 }: {
   consultation: ConsultationDetail;
   index: number;
-  isLast: boolean;
   onEdit: () => void;
 }) {
   const isDraft = consultation.status === 'draft';
-  const canEdit =
-    isDraft ||
-    new Date().getTime() - new Date(consultation.created_at).getTime() <
-      48 * 60 * 60 * 1000;
-  const mode = modeBadgeConfig[consultation.mode] || modeBadgeConfig.cabinet;
+  const within48h =
+    Date.now() - new Date(consultation.created_at).getTime() <
+    48 * 60 * 60 * 1000;
+  const canEdit = isDraft || within48h;
+  const modeClass = MODE_CLASS[consultation.mode] ?? '';
+  const modeLabel = MODE_LABELS[consultation.mode] ?? consultation.mode;
 
   return (
-    <div className='relative'>
-      {/* Timeline connector */}
-      {!isLast && (
-        <div className='absolute left-6 top-14 bottom-0 w-0.5 bg-gray-200' />
-      )}
+    <div className={`fp-cons-item ${isDraft ? 'is-draft' : ''}`}>
+      <span className='fp-cons-item-num'>{index + 1}</span>
 
-      <div className='flex gap-4'>
-        {/* Timeline dot */}
-        <div className='relative z-10'>
-          <div
-            className={`w-12 h-12 rounded-full flex items-center justify-center ${
-              isDraft ? 'bg-orange-100' : 'bg-[#1B998B]/10'
-            }`}
-          >
-            <span
-              className={`font-bold ${
-                isDraft ? 'text-orange-500' : 'text-[#1B998B]'
-              }`}
-            >
-              {index + 1}
-            </span>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div
-          className={`flex-1 rounded-xl p-5 ${
-            isDraft
-              ? 'bg-orange-50/50 border border-dashed border-orange-300'
-              : 'bg-gray-50'
-          }`}
-        >
-          {/* Header */}
-          <div className='flex items-start justify-between mb-4'>
-            <div>
-              <div className='flex items-center gap-2'>
-                <h3 className='font-semibold text-gray-800'>
-                  {consultation.consultation_type || 'Consultation'}
-                </h3>
-                {isDraft && (
-                  <span className='inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-700 border border-orange-200'>
-                    <PenLine className='w-3 h-3' />
-                    Brouillon
+      <article className={`fp-cons-card ${isDraft ? 'is-draft' : ''}`}>
+        <div className='fp-cons-card-head'>
+          <div>
+            <h3 className='fp-cons-card-title'>
+              {consultation.consultation_type || 'Consultation'}
+              {isDraft && <span className='fp-vchip is-draft'>Brouillon</span>}
+            </h3>
+            <div className='fp-cons-card-meta'>
+              <span>
+                <b>{formatDateFR(consultation.date)}</b>
+              </span>
+              {consultation.duration_minutes && (
+                <>
+                  <span className='dot' />
+                  <span>{formatDuration(consultation.duration_minutes)}</span>
+                </>
+              )}
+              {consultation.mode && (
+                <>
+                  <span className='dot' />
+                  <span className={`fp-mode-icon ${modeClass}`}>
+                    <ModeIcon mode={consultation.mode} />
+                    {modeLabel}
                   </span>
-                )}
-              </div>
-              <div className='flex items-center gap-2 mt-1'>
-                <span className='text-sm text-gray-500'>
-                  {formatDateFR(consultation.date)}
-                </span>
-                {consultation.duration_minutes && (
-                  <>
-                    <span className='text-gray-300'>·</span>
-                    <span className='text-sm text-gray-500'>
-                      {formatDuration(consultation.duration_minutes)}
-                    </span>
-                  </>
-                )}
-                {consultation.mode && (
-                  <>
-                    <span className='text-gray-300'>·</span>
-                    <span
-                      className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full ${mode.bgColor} ${mode.textColor}`}
-                    >
-                      <ModeIcon mode={consultation.mode} />
-                      {modeLabels[consultation.mode] || consultation.mode}
-                    </span>
-                  </>
-                )}
-              </div>
+                </>
+              )}
             </div>
-            {canEdit && (
-              <button
-                onClick={onEdit}
-                className={`text-sm font-medium transition-colors shrink-0 ${
-                  isDraft
-                    ? 'px-3 py-1.5 bg-orange-100 text-orange-700 rounded-lg hover:bg-orange-200'
-                    : 'text-[#1B998B] hover:text-[#147569]'
-                }`}
-              >
-                {isDraft ? 'Finaliser' : 'Modifier'}
-              </button>
-            )}
           </div>
-
-          {/* Summary */}
-          {consultation.summary && (
-            <p className='text-sm text-gray-600 mb-4'>
-              {consultation.summary}
-            </p>
-          )}
-
-          {/* Key points */}
-          {consultation.key_points && consultation.key_points.length > 0 && (
-            <div className='mb-4'>
-              <p className='text-sm font-medium text-gray-700 mb-2'>
-                Points clés
-              </p>
-              <ul className='space-y-1'>
-                {consultation.key_points.map((point, i) => (
-                  <li
-                    key={i}
-                    className='flex items-start gap-2 text-sm text-gray-600'
-                  >
-                    <span className='text-[#1B998B] mt-0.5'>✓</span>
-                    {point}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {/* Next steps */}
-          {consultation.next_steps && (
-            <div className='p-3 bg-white rounded-lg border border-gray-200 mb-4'>
-              <p className='text-sm font-medium text-gray-700'>
-                Prochaines étapes
-              </p>
-              <p className='text-sm text-gray-600 mt-1 whitespace-pre-line'>
-                {consultation.next_steps}
-              </p>
-            </div>
-          )}
-
-          {/* Private notes (nutritionist only) */}
-          {consultation.private_notes && (
-            <div className='bg-red-50 rounded-lg p-3 border border-red-100'>
-              <p className='text-xs font-semibold text-red-400 uppercase mb-1'>
-                🔒 Notes privées (non visibles par le patient)
-              </p>
-              <p className='text-sm text-red-800 italic'>
-                {consultation.private_notes}
-              </p>
-            </div>
+          {canEdit && (
+            <button
+              type='button'
+              className={`fp-btn ${isDraft ? 'fp-btn-dark' : ''}`}
+              onClick={onEdit}
+            >
+              {isDraft ? 'Finaliser' : 'Modifier'}
+            </button>
           )}
         </div>
-      </div>
-    </div>
-  );
-}
 
-// ============================================================================
-// SECTION HEADER
-// ============================================================================
+        {consultation.summary && (
+          <p className='fp-cons-summary'>{consultation.summary}</p>
+        )}
 
-function SectionHeader({
-  icon: Icon,
-  title,
-  count,
-  className,
-}: {
-  icon: React.ElementType;
-  title: string;
-  count: number;
-  className?: string;
-}) {
-  if (count === 0) return null;
-  return (
-    <div className={`flex items-center gap-2 ${className || ''}`}>
-      <Icon className='w-4 h-4' />
-      <span className='text-sm font-semibold text-gray-700'>
-        {title}
-      </span>
-      <span className='text-xs text-gray-400'>({count})</span>
+        {consultation.key_points && consultation.key_points.length > 0 && (
+          <ul className='fp-cons-points'>
+            {consultation.key_points.map((point, i) => (
+              <li key={i}>{point}</li>
+            ))}
+          </ul>
+        )}
+
+        {consultation.next_steps && (
+          <div className='fp-cons-next'>
+            <b>Prochaines étapes</b>
+            <p>{consultation.next_steps}</p>
+          </div>
+        )}
+
+        {consultation.private_notes && (
+          <PrivateNotesBlock>{consultation.private_notes}</PrivateNotesBlock>
+        )}
+
+        <EditWindowIndicator
+          createdAt={consultation.created_at}
+          isDraft={isDraft}
+        />
+      </article>
     </div>
   );
 }
@@ -379,17 +176,27 @@ export function ConsultationsList({
   if (isLoading) {
     return (
       <div className='flex items-center justify-center py-16'>
-        <Loader2 className='w-6 h-6 animate-spin text-[#1B998B]' />
-        <span className='ml-2 text-sm text-gray-500'>Chargement...</span>
+        <Loader2
+          className='w-6 h-6 animate-spin'
+          style={{ color: 'var(--ns-peps-deep)' }}
+        />
+        <span className='ml-2 text-sm' style={{ color: 'var(--ns-ink-3)' }}>
+          Chargement…
+        </span>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className='flex items-center justify-center py-16 text-red-500'>
-        <AlertCircle className='w-5 h-5 mr-2' />
-        <span className='text-sm'>Erreur lors du chargement</span>
+      <div className='flex items-center justify-center py-16'>
+        <AlertCircle
+          className='w-5 h-5 mr-2'
+          style={{ color: 'var(--ns-coral)' }}
+        />
+        <span className='text-sm' style={{ color: 'var(--ns-coral)' }}>
+          Erreur lors du chargement
+        </span>
       </div>
     );
   }
@@ -399,8 +206,8 @@ export function ConsultationsList({
   const pastWithoutReport = data?.past_without_report || [];
 
   const draftCount = allConsultations.filter(c => c.status === 'draft').length;
+  const finalCount = allConsultations.length - draftCount;
 
-  // Apply filter
   const consultations =
     statusFilter === 'all'
       ? allConsultations
@@ -411,161 +218,207 @@ export function ConsultationsList({
     upcomingAppointments.length > 0 ||
     pastWithoutReport.length > 0;
 
-  return (
-    <div className='space-y-6'>
-      {/* Header */}
-      <div className='flex items-center justify-between'>
-        <h2 className='text-lg font-semibold text-gray-800'>
-          Consultations & Rendez-vous
-        </h2>
-      </div>
+  // Format next RDV display for the pane intro
+  const nextRdv = upcomingAppointments[0];
+  const nextRdvLabel = nextRdv
+    ? new Date(nextRdv.scheduled_at).toLocaleDateString('fr-FR', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'short',
+        hour: '2-digit',
+        minute: '2-digit',
+      })
+    : null;
 
-      {/* Draft alert */}
+  return (
+    <div className='space-y-4'>
+      {/* ─── Pane intro ─── */}
+      <section className='fp-pane-intro'>
+        <div>
+          <h2 className='fp-pane-intro-title'>
+            Consultations <em>&amp; comptes-rendus</em>
+          </h2>
+          <div className='fp-pane-intro-meta'>
+            <span>
+              <b>{allConsultations.length}</b> consultation
+              {allConsultations.length > 1 ? 's' : ''}
+            </span>
+            {draftCount > 0 && (
+              <>
+                <span className='dot' />
+                <span style={{ color: 'var(--ns-honey)' }}>
+                  <b style={{ color: 'var(--ns-honey)' }}>
+                    {draftCount} brouillon{draftCount > 1 ? 's' : ''}
+                  </b>{' '}
+                  en attente
+                </span>
+              </>
+            )}
+            {nextRdvLabel && (
+              <>
+                <span className='dot' />
+                <span>
+                  Prochain RDV · <b>{nextRdvLabel}</b>
+                </span>
+              </>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Drafts alert ─── */}
       {draftCount > 0 && (
-        <div className='flex items-center gap-3 bg-orange-50 border border-orange-200 rounded-xl px-4 py-3'>
-          <PenLine className='w-5 h-5 text-orange-500 shrink-0' />
-          <div className='flex-1'>
-            <p className='text-sm font-medium text-orange-800'>
+        <div className='fp-cons-drafts-alert'>
+          <PenLine
+            className='w-5 h-5 shrink-0'
+            style={{ color: 'var(--ns-ink)' }}
+          />
+          <span>
+            <b>
               {draftCount} brouillon{draftCount > 1 ? 's' : ''} en attente de
               finalisation
-            </p>
-            <p className='text-xs text-orange-600'>
-              Les brouillons ne sont pas visibles par le patient. Pensez
-              à les finaliser.
-            </p>
-          </div>
+            </b>{' '}
+            — les brouillons ne sont pas visibles par le patient.
+          </span>
           <button
+            type='button'
+            className='fp-btn fp-btn-dark'
             onClick={() => setStatusFilter('draft')}
-            className='px-3 py-1.5 bg-orange-100 text-orange-700 rounded-lg text-xs font-medium hover:bg-orange-200 transition-colors shrink-0'
           >
             Voir les brouillons
           </button>
         </div>
       )}
 
-      {/* Empty state */}
+      {/* ─── Empty state ─── */}
       {!hasAnything && (
-        <div className='bg-white rounded-xl border border-gray-200 p-12 text-center'>
-          <div className='w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4'>
-            <span className='text-3xl'>📋</span>
-          </div>
-          <p className='text-gray-800 font-medium mb-1'>
+        <div className='fp-card text-center' style={{ padding: '48px 32px' }}>
+          <p
+            className='font-serif text-xl mb-1'
+            style={{ color: 'var(--ns-ink)' }}
+          >
             Aucune consultation ni rendez-vous
           </p>
-          <p className='text-gray-500 text-sm'>
+          <p className='text-sm' style={{ color: 'var(--ns-ink-3)' }}>
             Les comptes-rendus sont créés à partir des rendez-vous passés.
             Planifiez un rendez-vous depuis l&apos;agenda pour commencer.
           </p>
         </div>
       )}
 
-      {/* Upcoming appointments */}
+      {/* ─── Upcoming appointments ─── */}
       {upcomingAppointments.length > 0 && (
-        <div className='space-y-3'>
-          <SectionHeader
-            icon={CalendarClock}
-            title='Rendez-vous à venir'
-            count={upcomingAppointments.length}
-          />
-          {upcomingAppointments.map(apt => (
-            <AppointmentCard
-              key={apt.id}
-              appointment={apt}
-              variant='upcoming'
-            />
-          ))}
-        </div>
+        <>
+          <div className='fp-cons-section-head'>
+            <span>Rendez-vous à venir</span>
+            <span className='cnt'>{upcomingAppointments.length}</span>
+          </div>
+          <div className='space-y-2'>
+            {upcomingAppointments.map(apt => (
+              <AppointmentCard
+                key={apt.id}
+                appointment={apt}
+                variant='upcoming'
+              />
+            ))}
+          </div>
+        </>
       )}
 
-      {/* Past appointments without report */}
+      {/* ─── Past appointments without report ─── */}
       {pastWithoutReport.length > 0 && (
-        <div className='space-y-3'>
-          <SectionHeader
-            icon={AlertCircle}
-            title='Rendez-vous passés sans compte-rendu'
-            count={pastWithoutReport.length}
-            className='text-amber-600'
-          />
-          {pastWithoutReport.map(apt => (
-            <AppointmentCard
-              key={apt.id}
-              appointment={apt}
-              variant='past'
-              onCreateReport={() => onCreateFromAppointment(apt)}
+        <>
+          <div className='fp-cons-section-head is-warn'>
+            <AlertTriangle
+              className='w-3 h-3'
+              style={{ color: 'var(--ns-coral)' }}
             />
-          ))}
-        </div>
+            <span style={{ color: 'var(--ns-coral)' }}>
+              Rendez-vous passés sans compte-rendu
+            </span>
+            <span
+              className='cnt'
+              style={{
+                background: 'var(--ns-coral-soft)',
+                color: 'var(--ns-coral)',
+              }}
+            >
+              {pastWithoutReport.length}
+            </span>
+            <span className='spacer' />
+            <span
+              style={{
+                fontFamily: 'var(--ns-font-serif)',
+                fontStyle: 'italic',
+                fontSize: 12,
+                color: 'var(--ns-ink-3)',
+                textTransform: 'none',
+                letterSpacing: 0,
+                fontWeight: 400,
+              }}
+            >
+              Notification envoyée 24h après le RDV.
+            </span>
+          </div>
+          <div className='space-y-2'>
+            {pastWithoutReport.map(apt => (
+              <AppointmentCard
+                key={apt.id}
+                appointment={apt}
+                variant='past-without-cr'
+                onCreateReport={() => onCreateFromAppointment(apt)}
+              />
+            ))}
+          </div>
+        </>
       )}
 
-      {/* Existing consultation reports */}
+      {/* ─── Existing consultation reports ─── */}
       {allConsultations.length > 0 && (
-        <div className='space-y-3'>
-          {/* Section header with filter */}
-          <div className='flex items-center justify-between'>
-            <div className='flex items-center gap-2'>
-              <FileText className='w-4 h-4' />
-              <span className='text-sm font-semibold text-gray-700'>
-                Comptes-rendus
-              </span>
-              <span className='text-xs text-gray-400'>
-                ({consultations.length}
-                {statusFilter !== 'all'
-                  ? ` / ${allConsultations.length}`
-                  : ''}
-                )
-              </span>
-            </div>
-            <div className='flex gap-1 bg-gray-100 p-0.5 rounded-lg'>
+        <>
+          <div className='fp-cons-section-head'>
+            <span>Comptes-rendus</span>
+            <span className='cnt'>{allConsultations.length}</span>
+            <span className='spacer' />
+            <div className='fp-list-toolbar-filters'>
               {(
                 [
-                  { key: 'all', label: 'Tous' },
-                  { key: 'draft', label: 'Brouillons' },
-                  { key: 'final', label: 'Finalisés' },
+                  { key: 'all', label: 'Tous', count: allConsultations.length },
+                  { key: 'draft', label: 'Brouillons', count: draftCount },
+                  { key: 'final', label: 'Finalisés', count: finalCount },
                 ] as const
-              ).map(({ key, label }) => (
+              ).map(({ key, label, count }) => (
                 <button
                   key={key}
+                  type='button'
                   onClick={() => setStatusFilter(key)}
-                  className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${
-                    statusFilter === key
-                      ? 'bg-white text-gray-800 shadow-sm'
-                      : 'text-gray-500 hover:text-gray-700'
-                  }`}
+                  className={statusFilter === key ? 'is-active' : ''}
                 >
-                  {label}
-                  {key === 'draft' && draftCount > 0 && (
-                    <span className='ml-1 inline-flex items-center justify-center w-4 h-4 rounded-full bg-orange-100 text-orange-600 text-[10px] font-bold'>
-                      {draftCount}
-                    </span>
-                  )}
+                  {label} · {count}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Filtered results */}
           {consultations.length === 0 ? (
-            <div className='bg-white rounded-xl border border-gray-200 p-8 text-center'>
-              <p className='text-sm text-gray-500'>
-                {statusFilter === 'draft'
-                  ? 'Aucun brouillon en cours.'
-                  : 'Aucun compte-rendu finalisé.'}
-              </p>
+            <div className='fp-cr-empty'>
+              {statusFilter === 'draft'
+                ? 'Aucun brouillon en cours.'
+                : 'Aucun compte-rendu finalisé.'}
             </div>
           ) : (
-            <div className='space-y-6'>
+            <div className='fp-cons-timeline'>
               {consultations.map((consultation, index) => (
-                <ConsultationCard
+                <ConsultationTimelineCard
                   key={consultation.id}
                   consultation={consultation}
                   index={index}
-                  isLast={index === consultations.length - 1}
                   onEdit={() => onEdit(consultation)}
                 />
               ))}
             </div>
           )}
-        </div>
+        </>
       )}
     </div>
   );

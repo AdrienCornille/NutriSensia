@@ -1,16 +1,37 @@
 'use client';
 
 import React from 'react';
-import { Sparkles, Clock, User } from 'lucide-react';
-import type { FeaturedContent } from '@/types/content';
-import { getTypeLabel } from '@/types/content';
+import { Sparkles, Clock, Eye } from 'lucide-react';
+import {
+  EducationalContent,
+  CONTENT_TYPE_LABELS,
+} from '@/types/educational-content';
+
+const TYPE_EMOJIS: Record<string, string> = {
+  article: '📝',
+  video: '🎬',
+  guide: '📖',
+  podcast: '🎙',
+  course: '🎓',
+};
 
 interface ContentFeaturedProps {
-  content: FeaturedContent;
+  content: EducationalContent;
   onClick: () => void;
 }
 
 export function ContentFeatured({ content, onClick }: ContentFeaturedProps) {
+  const isNew =
+    content.publishedAt &&
+    Date.now() - new Date(content.publishedAt).getTime() <
+      7 * 24 * 60 * 60 * 1000;
+
+  const readingLabel = content.durationSeconds
+    ? `${Math.round(content.durationSeconds / 60)} min`
+    : content.readingTimeMinutes
+      ? `${content.readingTimeMinutes} min`
+      : null;
+
   return (
     <div className='px-8 py-6'>
       <div
@@ -29,38 +50,45 @@ export function ContentFeatured({ content, onClick }: ContentFeaturedProps) {
               <span className='px-3 py-1 bg-white/20 rounded-full text-sm flex items-center gap-1'>
                 <Sparkles className='w-4 h-4' />À la une
               </span>
-              {content.isNew && (
+              {isNew && (
                 <span className='px-3 py-1 bg-amber-400 text-amber-900 rounded-full text-sm font-medium'>
                   Nouveau
                 </span>
               )}
             </div>
             <h2 className='text-2xl font-bold mb-3'>{content.title}</h2>
-            <p className='text-emerald-100 mb-4 line-clamp-2'>
-              {content.description}
-            </p>
+            {content.summary && (
+              <p className='text-emerald-100 mb-4 line-clamp-2'>
+                {content.summary}
+              </p>
+            )}
             <div className='flex items-center gap-4 text-sm text-emerald-100'>
-              <span className='flex items-center gap-1'>
-                <Clock className='w-4 h-4' />
-                {content.readTime || content.duration}
-              </span>
-              <span>•</span>
-              <span>{getTypeLabel(content.type)}</span>
-              <span>•</span>
-              <span className='flex items-center gap-1'>
-                <User className='w-4 h-4' />
-                {content.author}
-              </span>
+              {readingLabel && (
+                <>
+                  <span className='flex items-center gap-1'>
+                    <Clock className='w-4 h-4' />
+                    {readingLabel}
+                  </span>
+                  <span>•</span>
+                </>
+              )}
+              <span>{CONTENT_TYPE_LABELS[content.type] || content.type}</span>
+              {content.viewCount > 0 && (
+                <>
+                  <span>•</span>
+                  <span className='flex items-center gap-1'>
+                    <Eye className='w-4 h-4' />
+                    {content.viewCount.toLocaleString()} vues
+                  </span>
+                </>
+              )}
             </div>
           </div>
 
           {/* Decorative icon */}
           <div className='hidden md:flex items-center justify-center w-32 h-32 bg-white/10 rounded-2xl'>
             <span className='text-6xl'>
-              {content.type === 'article' && '📝'}
-              {content.type === 'video' && '🎬'}
-              {content.type === 'guide' && '📖'}
-              {content.type === 'podcast' && '🎙'}
+              {TYPE_EMOJIS[content.type] || '📄'}
             </span>
           </div>
         </div>

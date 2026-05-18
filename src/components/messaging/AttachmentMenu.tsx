@@ -35,7 +35,7 @@ const attachmentOptions: {
     type: 'document',
     icon: <FileText className='w-6 h-6' />,
     label: 'Document',
-    accept: '.pdf,.doc,.docx,.txt,.xls,.xlsx',
+    accept: '.pdf,.doc,.docx,.txt,.csv,.xls,.xlsx',
     fileType: 'document',
   },
 ];

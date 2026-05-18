@@ -1,18 +1,18 @@
 'use client';
 
 import React from 'react';
-import {
-  Calendar,
-  MessageSquare,
-  AlertTriangle,
-  UtensilsCrossed,
-  ArrowRight,
-  Clock,
-  TrendingDown,
-  FileEdit,
-} from 'lucide-react';
 import type { PatientListItem } from '@/hooks/useNutritionistPatients';
 import { formatConsultationReason } from '@/lib/utils';
+import {
+  deriveChip,
+  deriveTrend,
+  deriveSparklineHeights,
+  deriveAlert,
+  formatPatientDate,
+  formatAppointmentLabel,
+  getInitials,
+  type DerivedChipKind,
+} from './patient-display';
 
 interface PatientCardProps {
   patient: PatientListItem;
@@ -20,223 +20,168 @@ interface PatientCardProps {
   onSendMessage: (patient: PatientListItem) => void;
 }
 
-const statusConfig: Record<
-  string,
-  { label: string; bgColor: string; textColor: string }
-> = {
-  active: {
-    label: 'Actif',
-    bgColor: 'bg-[#1B998B]/10',
-    textColor: 'text-[#1B998B]',
-  },
-  pending: {
-    label: 'Nouveau',
-    bgColor: 'bg-amber-100',
-    textColor: 'text-amber-700',
-  },
-  inactive: {
-    label: 'En pause',
-    bgColor: 'bg-gray-100',
-    textColor: 'text-gray-600',
-  },
+const chipVariant: Record<DerivedChipKind, string> = {
+  nouveau: 'is-new',
+  actif: 'is-active',
+  paused: 'is-paused',
+  relance: 'is-warn',
+  plateau: 'is-warn',
+  done: 'is-done',
 };
 
-function formatDate(dateStr: string | null): string {
-  if (!dateStr) return '—';
-  return new Date(dateStr).toLocaleDateString('fr-FR', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  });
-}
+const statusDotVariant: Record<DerivedChipKind, string> = {
+  nouveau: 'is-new',
+  actif: 'is-active',
+  paused: 'is-paused',
+  relance: 'is-warn',
+  plateau: 'is-warn',
+  done: 'is-active',
+};
 
-function getInitials(firstName: string, lastName: string): string {
-  return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
-}
+const alertToneClass: Record<'warn' | 'good' | 'info', string> = {
+  warn: '',
+  good: 'is-good',
+  info: 'is-info',
+};
+
+const trendArrow: Record<'up' | 'down' | 'flat', string> = {
+  up: '▲',
+  down: '▼',
+  flat: '—',
+};
 
 export function PatientCard({
   patient,
   onNavigate,
   onSendMessage,
 }: PatientCardProps) {
-  const status = statusConfig[patient.status] || statusConfig.active;
+  const chip = deriveChip(patient);
+  const trend = deriveTrend(patient);
+  const heights = deriveSparklineHeights(patient);
+  const alert = deriveAlert(patient, chip);
+  const hasWeight =
+    patient.initial_weight != null && patient.current_weight != null;
+  const objective = patient.consultation_reason
+    ? formatConsultationReason(patient.consultation_reason)
+    : patient.health_goals?.[0] || 'Suivi général';
   const initials = getInitials(patient.first_name, patient.last_name);
 
+  const lastLabel = patient.last_appointment_at
+    ? formatPatientDate(patient.last_appointment_at)
+    : null;
+  const nextLabel = formatAppointmentLabel(patient.next_appointment_at);
+
   return (
-    <div
+    <article
+      className='pt-card'
       onClick={() => onNavigate(patient.id)}
-      className='w-full bg-white rounded-xl p-6 border border-gray-200 hover:shadow-md transition-shadow cursor-pointer'
+      role='button'
+      tabIndex={0}
+      onKeyDown={e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onNavigate(patient.id);
+        }
+      }}
+      style={{ cursor: 'pointer' }}
     >
-      {/* Header: Avatar + Nom + Statut */}
-      <div className='flex items-start justify-between mb-4'>
-        <div className='flex items-center gap-3'>
-          {patient.avatar_url ? (
-            <img
-              src={patient.avatar_url}
-              alt={`${patient.first_name} ${patient.last_name}`}
-              className='w-10 h-10 rounded-full object-cover'
-            />
-          ) : (
-            <div className='w-10 h-10 bg-[#1B998B] rounded-full flex items-center justify-center text-white font-medium text-sm'>
-              {initials}
-            </div>
-          )}
-          <div>
-            <p className='font-medium text-gray-800'>
-              {patient.first_name} {patient.last_name}
-            </p>
-            <p className='text-xs text-gray-500'>{patient.email}</p>
-          </div>
-        </div>
+      <div className='pt-card-head'>
         <span
-          className={`px-2 py-0.5 rounded-full text-xs font-medium ${status.bgColor} ${status.textColor}`}
+          className='pt-avatar'
+          style={
+            patient.avatar_url
+              ? { backgroundImage: `url(${patient.avatar_url})` }
+              : undefined
+          }
         >
-          {status.label}
+          {!patient.avatar_url && initials}
+          <span
+            className={`pt-avatar-status ${statusDotVariant[chip.kind]}`}
+            aria-hidden
+          />
+        </span>
+        <div className='pt-card-id'>
+          <div className='pt-card-name'>
+            {patient.first_name} {patient.last_name}
+          </div>
+          <div className='pt-card-objective'>{objective}</div>
+        </div>
+        <span className={`pt-chip ${chipVariant[chip.kind]}`}>
+          {chip.label}
         </span>
       </div>
 
-      {/* Alert Badges */}
-      {patient.alerts &&
-        (patient.alerts.unread_messages > 0 ||
-          patient.alerts.pending_changes > 0 ||
-          patient.alerts.pending_modification_requests > 0 ||
-          (patient.alerts.adherence_percent !== null &&
-            patient.alerts.adherence_percent < 50) ||
-          (patient.alerts.days_without_meal !== null &&
-            patient.alerts.days_without_meal >= 3)) && (
-          <div className='flex flex-wrap gap-1.5 mb-3'>
-            {patient.alerts.pending_changes > 0 && (
-              <span className='inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700'>
-                <AlertTriangle className='w-3 h-3' />
-                {patient.alerts.pending_changes} signalement
-                {patient.alerts.pending_changes > 1 ? 's' : ''}
-              </span>
+      <div className='pt-card-trend'>
+        <div className='pt-trend-info'>
+          <span className='pt-trend-label'>
+            {hasWeight ? 'Poids · suivi' : 'Suivi'}
+          </span>
+          <span className='pt-trend-value'>
+            {trend.value}
+            {trend.delta && (
+              <em className={`is-${trend.direction}`}>
+                {trendArrow[trend.direction]} {trend.delta}
+              </em>
             )}
-            {patient.alerts.unread_messages > 0 && (
-              <span className='inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700'>
-                <MessageSquare className='w-3 h-3' />
-                {patient.alerts.unread_messages} message
-                {patient.alerts.unread_messages > 1 ? 's' : ''}
-              </span>
-            )}
-            {patient.alerts.days_without_meal !== null &&
-              patient.alerts.days_without_meal >= 3 && (
-                <span className='inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700'>
-                  <UtensilsCrossed className='w-3 h-3' />
-                  Inactif {patient.alerts.days_without_meal} j
-                </span>
-              )}
-            {patient.alerts.adherence_percent !== null &&
-              patient.alerts.adherence_percent < 50 && (
-                <span className='inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-700'>
-                  <TrendingDown className='w-3 h-3' />
-                  Adhérence {patient.alerts.adherence_percent}%
-                </span>
-              )}
-            {patient.alerts.pending_modification_requests > 0 && (
-              <span className='inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-700'>
-                <FileEdit className='w-3 h-3' />
-                {patient.alerts.pending_modification_requests} modif
-                {patient.alerts.pending_modification_requests > 1 ? 's' : ''}
-              </span>
-            )}
-          </div>
-        )}
-
-      {/* Objectif */}
-      {patient.consultation_reason && (
-        <p className='text-sm text-gray-600 mb-3 line-clamp-1'>
-          {formatConsultationReason(patient.consultation_reason)}
-        </p>
-      )}
-
-      {/* Health Goals */}
-      {patient.health_goals && patient.health_goals.length > 0 && (
-        <div className='flex flex-wrap gap-1.5 mb-3'>
-          {patient.health_goals.map((goal, i) => (
+          </span>
+        </div>
+        <div
+          className={`pt-sparkline ${hasWeight ? '' : 'is-empty'}`}
+          aria-hidden
+        >
+          {heights.map((h, i) => (
             <span
               key={i}
-              className='px-2 py-0.5 bg-[#1B998B]/5 text-[#1B998B] rounded-full text-xs'
-            >
-              {goal}
-            </span>
+              className={hasWeight && i === heights.length - 1 ? 'is-now' : ''}
+              style={{ height: `${h}%` }}
+            />
           ))}
+        </div>
+      </div>
+
+      <div className='pt-card-meta'>
+        <div>
+          <span className='pt-meta-k'>Dernière</span>
+          <span className={`pt-meta-v ${!lastLabel ? 'is-muted' : ''}`}>
+            {lastLabel || 'jamais'}
+          </span>
+        </div>
+        <div>
+          <span className='pt-meta-k'>Prochain RDV</span>
+          <span className={`pt-meta-v ${!nextLabel ? 'is-muted' : ''}`}>
+            {nextLabel || 'à programmer'}
+          </span>
+        </div>
+      </div>
+
+      {alert && (
+        <div className={`pt-card-alert ${alertToneClass[alert.tone]}`}>
+          {alert.text}
         </div>
       )}
 
-      {/* Stats */}
-      <div className='grid grid-cols-4 gap-3 mb-4'>
-        <div className='bg-gray-50 rounded-lg p-2 text-center'>
-          <p className='text-xs text-gray-500'>Poids initial</p>
-          <p className='text-sm font-semibold text-gray-800'>
-            {patient.initial_weight ? `${patient.initial_weight} kg` : '—'}
-          </p>
-        </div>
-        <div className='bg-gray-50 rounded-lg p-2 text-center'>
-          <p className='text-xs text-gray-500'>Poids actuel</p>
-          <p className='text-sm font-semibold text-gray-800'>
-            {patient.current_weight ? `${patient.current_weight} kg` : '—'}
-          </p>
-        </div>
-        <div className='bg-gray-50 rounded-lg p-2 text-center'>
-          <p className='text-xs text-gray-500'>Consultations</p>
-          <p className='text-sm font-semibold text-gray-800'>
-            {patient.appointments_count}
-          </p>
-        </div>
-        <div className='bg-gray-50 rounded-lg p-2 text-center'>
-          <p className='text-xs text-gray-500'>Suivi depuis</p>
-          <p className='text-sm font-semibold text-gray-800'>
-            {patient.assigned_at
-              ? new Date(patient.assigned_at).toLocaleDateString('fr-FR', {
-                  month: 'short',
-                  year: 'numeric',
-                })
-              : '—'}
-          </p>
-        </div>
+      <div className='pt-card-actions'>
+        <button
+          type='button'
+          className='pt-btn-ghost'
+          onClick={e => {
+            e.stopPropagation();
+            onSendMessage(patient);
+          }}
+        >
+          Message
+        </button>
+        <button
+          type='button'
+          className='pt-btn-dark'
+          onClick={e => {
+            e.stopPropagation();
+            onNavigate(patient.id);
+          }}
+        >
+          Ouvrir le dossier →
+        </button>
       </div>
-
-      {/* Footer: RDV + Actions */}
-      <div className='flex items-center justify-between pt-3 border-t border-gray-100'>
-        <div className='flex items-center gap-1.5 text-xs text-gray-500'>
-          <Calendar className='w-3.5 h-3.5' />
-          <span>
-            {patient.next_appointment_at
-              ? `Prochain : ${formatDate(patient.next_appointment_at)}`
-              : 'Aucun RDV prévu'}
-          </span>
-          {patient.assigned_at && (
-            <>
-              <span className='mx-1'>·</span>
-              <Clock className='w-3.5 h-3.5' />
-              <span>Depuis {formatDate(patient.assigned_at)}</span>
-            </>
-          )}
-        </div>
-        <div className='flex items-center gap-2'>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onSendMessage(patient);
-            }}
-            className='flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors'
-          >
-            <MessageSquare className='w-3.5 h-3.5' />
-            Message
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onNavigate(patient.id);
-            }}
-            className='flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-white bg-[#1B998B] rounded-lg hover:bg-[#147569] transition-colors'
-          >
-            Dossier
-            <ArrowRight className='w-3.5 h-3.5' />
-          </button>
-        </div>
-      </div>
-    </div>
+    </article>
   );
 }

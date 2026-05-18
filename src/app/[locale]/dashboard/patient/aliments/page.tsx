@@ -1,217 +1,300 @@
 'use client';
 
-import React, { useReducer, useEffect, useState } from 'react';
-import {
-  foodsReducer,
-  foodsInitialState,
-  filterFoods,
-  sortFoods,
-  type FoodCategory,
-  type ViewMode,
-  type SortOption,
-  type Food,
-} from '@/types/foods';
-import {
-  mockFoodsDatabase,
-  defaultRecentSearches,
-  defaultFavorites,
-  getFavoriteFoods,
-} from '@/data/mock-foods-database';
+import React, {
+  useState,
+  useMemo,
+  useCallback,
+  useRef,
+  useEffect,
+} from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Loader2 } from 'lucide-react';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import {
   FoodsHeader,
   FoodsTabs,
-  FoodsCategoryFilter,
-  FoodsGrid,
   FoodsList,
-  FoodModal,
   ScannerModal,
   type FoodsTab,
 } from '@/components/foods';
+import { FoodFilterSidebar } from '@/components/foods/FoodFilterSidebar';
+import { AddFoodToMealModal } from '@/components/foods/AddFoodToMealModal';
+import { Toast, type ToastType } from '@/components/suivi/shared/Toast';
+import type { Food, SortOption } from '@/types/foods';
+import {
+  useInfinitePatientFoods,
+  useToggleFoodFavorite,
+  type PatientFood,
+} from '@/hooks/usePatientFoods';
 
-const STORAGE_KEY = 'nutrisensia-foods-favorites';
-const VIEW_MODE_KEY = 'nutrisensia-foods-view-mode';
+// Map API food to component Food type
+function toFood(f: PatientFood): Food {
+  return {
+    id: f.id,
+    name: f.name,
+    category: (f.category || 'all') as Food['category'],
+    image: f.image || '',
+    calories: f.calories,
+    protein: f.protein,
+    carbs: f.carbs,
+    fat: f.fat,
+    fiber: f.fiber,
+    per: f.per || '100g',
+    brand: f.brand,
+    portions: [
+      { label: '100g', grams: 100 },
+      { label: '1 portion (150g)', grams: 150 },
+    ],
+  };
+}
 
 export default function AlimentsPage() {
-  const [state, dispatch] = useReducer(foodsReducer, {
-    ...foodsInitialState,
-    recentSearches: defaultRecentSearches,
-    favorites: defaultFavorites,
-  });
-
+  // UI state
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeCategory, setActiveCategory] = useState('all');
+  const [sortOption, setSortOption] = useState<SortOption>('name-asc');
   const [activeTab, setActiveTab] = useState<FoodsTab>('all');
+  const [showFilters, setShowFilters] = useState(true);
+  const [showScanner, setShowScanner] = useState(false);
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const [addToMealFood, setAddToMealFood] = useState<Food | null>(null);
+  const [isAddingMeal, setIsAddingMeal] = useState(false);
 
-  // Load favorites and view mode from localStorage
-  useEffect(() => {
-    const savedFavorites = localStorage.getItem(STORAGE_KEY);
-    if (savedFavorites) {
-      const favorites = JSON.parse(savedFavorites);
-      favorites.forEach((id: string) => {
-        if (!state.favorites.includes(id)) {
-          dispatch({ type: 'TOGGLE_FAVORITE', payload: id });
-        }
-      });
-    }
-
-    const savedViewMode = localStorage.getItem(
-      VIEW_MODE_KEY
-    ) as ViewMode | null;
-    if (
-      savedViewMode &&
-      (savedViewMode === 'grid' || savedViewMode === 'list')
-    ) {
-      dispatch({ type: 'SET_VIEW_MODE', payload: savedViewMode });
-    }
-  }, []);
-
-  // Save favorites to localStorage
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state.favorites));
-  }, [state.favorites]);
-
-  // Save view mode to localStorage
-  useEffect(() => {
-    localStorage.setItem(VIEW_MODE_KEY, state.viewMode);
-  }, [state.viewMode]);
-
-  // Filter and sort foods
-  const filteredFoods = filterFoods(
-    mockFoodsDatabase,
-    state.activeCategory,
-    state.searchQuery
+  // Toast
+  const [toast, setToast] = useState<{
+    visible: boolean;
+    type: ToastType;
+    title: string;
+    message?: string;
+  }>({
+    visible: false,
+    type: 'success',
+    title: '',
+  });
+  const showToast = useCallback(
+    (type: ToastType, title: string, message?: string) => {
+      setToast({ visible: true, type, title, message });
+    },
+    []
+  );
+  const hideToast = useCallback(
+    () => setToast(t => ({ ...t, visible: false })),
+    []
   );
 
-  // Apply tab filter (all vs favorites)
-  const tabFilteredFoods =
-    activeTab === 'favorites'
-      ? filteredFoods.filter(food => state.favorites.includes(food.id))
-      : filteredFoods;
+  // API — infinite scroll
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfinitePatientFoods({
+      search: searchQuery || undefined,
+      category: activeCategory !== 'all' ? activeCategory : undefined,
+      sort: sortOption,
+      limit: 50,
+    });
+  const toggleFavorite = useToggleFoodFavorite();
 
-  const sortedFoods = sortFoods(tabFilteredFoods, state.sortOption);
+  // Flatten pages
+  const allApiFoods = useMemo(
+    () => (data?.pages || []).flatMap(page => page.foods),
+    [data?.pages]
+  );
+  const foods = useMemo(() => allApiFoods.map(toFood), [allApiFoods]);
+  const totalFoods = data?.pages?.[0]?.pagination?.total || 0;
+  const categories = data?.pages?.[0]?.categories || [];
+  const favoriteIds = useMemo(
+    () => allApiFoods.filter(f => f.isFavorite).map(f => f.id),
+    [allApiFoods]
+  );
 
-  // Get favorite foods for count
-  const favoriteFoods = getFavoriteFoods(state.favorites);
+  // Tab filter
+  const displayedFoods = useMemo(() => {
+    if (activeTab === 'favorites') {
+      return foods.filter(f => favoriteIds.includes(f.id));
+    }
+    return foods;
+  }, [foods, favoriteIds, activeTab]);
+
+  // Infinite scroll observer
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = loadMoreRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { threshold: 0.1 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   // Handlers
-  const handleSearchChange = (query: string) => {
-    dispatch({ type: 'SET_SEARCH_QUERY', payload: query });
-  };
+  const handleSearchChange = useCallback((query: string) => {
+    setSearchQuery(query);
+  }, []);
 
-  const handleCategoryChange = (category: FoodCategory) => {
-    dispatch({ type: 'SET_ACTIVE_CATEGORY', payload: category });
-    dispatch({ type: 'CLEAR_SEARCH' });
-  };
+  const handleCategoryChange = useCallback((category: string) => {
+    setActiveCategory(category);
+    setSearchQuery('');
+  }, []);
 
-  const handleViewModeChange = (mode: ViewMode) => {
-    dispatch({ type: 'SET_VIEW_MODE', payload: mode });
-  };
+  const handleSortChange = useCallback((option: SortOption) => {
+    setSortOption(option);
+  }, []);
 
-  const handleSortChange = (option: SortOption) => {
-    dispatch({ type: 'SET_SORT_OPTION', payload: option });
-  };
+  const handleFoodClick = useCallback((_food: Food) => {
+    // No-op for now
+  }, []);
 
-  const handleOpenScanner = () => {
-    dispatch({ type: 'OPEN_SCANNER_MODAL' });
-  };
+  const handleAddToMeal = useCallback(
+    async (
+      foodId: string,
+      mealType: string,
+      quantity: number,
+      unit: string
+    ) => {
+      setIsAddingMeal(true);
+      try {
+        const res = await fetch('/api/protected/meals', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            type: mealType,
+            consumed_at: new Date().toISOString(),
+            foods: [{ food_id: foodId, quantity, unit }],
+          }),
+        });
+        if (!res.ok) {
+          const json = await res.json().catch(() => ({}));
+          throw new Error(json.error || 'Erreur');
+        }
+        setAddToMealFood(null);
+        showToast('success', 'Aliment ajouté au repas');
+      } catch (err) {
+        const message =
+          err instanceof Error ? err.message : "Erreur lors de l'ajout";
+        showToast('error', 'Erreur', message);
+      } finally {
+        setIsAddingMeal(false);
+      }
+    },
+    [showToast]
+  );
 
-  const handleCloseScanner = () => {
-    dispatch({ type: 'CLOSE_SCANNER_MODAL' });
-  };
-
-  const handleRecentSearchClick = (term: string) => {
-    dispatch({ type: 'SET_SEARCH_QUERY', payload: term });
-  };
-
-  const handleFoodClick = (food: Food) => {
-    dispatch({ type: 'OPEN_FOOD_MODAL', payload: food });
-    if (state.searchQuery) {
-      dispatch({ type: 'ADD_RECENT_SEARCH', payload: state.searchQuery });
-    }
-  };
-
-  const handleCloseFoodModal = () => {
-    dispatch({ type: 'CLOSE_FOOD_MODAL' });
-  };
-
-  const handleToggleFavorite = (foodId: string) => {
-    dispatch({ type: 'TOGGLE_FAVORITE', payload: foodId });
-  };
-
-  const handleTabChange = (tab: FoodsTab) => {
-    setActiveTab(tab);
-  };
-
-  const isFoodFavorite = state.selectedFood
-    ? state.favorites.includes(state.selectedFood.id)
-    : false;
+  const handleToggleFavorite = useCallback(
+    (foodId: string) => {
+      toggleFavorite.mutate(foodId);
+    },
+    [toggleFavorite]
+  );
 
   return (
-    <div className='min-h-screen'>
+    <div className='h-screen flex flex-col'>
       <DashboardHeader />
 
       <FoodsHeader
-        searchQuery={state.searchQuery}
-        viewMode={state.viewMode}
-        sortOption={state.sortOption}
-        recentSearches={state.recentSearches}
-        totalFoods={mockFoodsDatabase.length}
+        searchQuery={searchQuery}
+        recentSearches={recentSearches}
+        totalFoods={totalFoods}
         onSearchChange={handleSearchChange}
-        onViewModeChange={handleViewModeChange}
-        onSortChange={handleSortChange}
-        onOpenScanner={handleOpenScanner}
-        onRecentSearchClick={handleRecentSearchClick}
+        onOpenScanner={() => setShowScanner(true)}
+        onRecentSearchClick={handleSearchChange}
+        showFilters={showFilters}
+        onToggleFilters={() => setShowFilters(!showFilters)}
       />
 
       <FoodsTabs
         activeTab={activeTab}
-        onTabChange={handleTabChange}
-        favoritesCount={favoriteFoods.length}
+        onTabChange={setActiveTab}
+        favoritesCount={favoriteIds.length}
       />
 
-      <FoodsCategoryFilter
-        activeCategory={state.activeCategory}
-        onCategoryChange={handleCategoryChange}
-      />
+      {/* Content: Sidebar + List */}
+      <div className='flex flex-1 overflow-hidden'>
+        {/* Sidebar */}
+        <AnimatePresence>
+          {showFilters && (
+            <motion.aside
+              initial={{ width: 0, opacity: 0 }}
+              animate={{ width: 260, opacity: 1 }}
+              exit={{ width: 0, opacity: 0 }}
+              transition={{ duration: 0.25, ease: 'easeInOut' }}
+              className='flex-shrink-0 bg-white border-r border-gray-200 overflow-hidden'
+            >
+              <div className='w-[260px] py-5 px-4 overflow-y-auto h-full'>
+                <FoodFilterSidebar
+                  activeCategory={activeCategory}
+                  categories={categories}
+                  onCategoryChange={handleCategoryChange}
+                />
+              </div>
+            </motion.aside>
+          )}
+        </AnimatePresence>
 
-      {state.viewMode === 'grid' ? (
-        <FoodsGrid
-          foods={sortedFoods}
-          favorites={state.favorites}
-          emptyMessage={
-            activeTab === 'favorites'
-              ? 'Aucun aliment favori'
-              : 'Aucun aliment trouvé'
-          }
-          emptyIcon={activeTab === 'favorites' ? '❤️' : '🔍'}
-          onToggleFavorite={handleToggleFavorite}
-          onFoodClick={handleFoodClick}
-        />
-      ) : (
-        <FoodsList
-          foods={sortedFoods}
-          favorites={state.favorites}
-          emptyMessage={
-            activeTab === 'favorites'
-              ? 'Aucun aliment favori'
-              : 'Aucun aliment trouvé'
-          }
-          emptyIcon={activeTab === 'favorites' ? '❤️' : '🔍'}
-          onToggleFavorite={handleToggleFavorite}
-          onFoodClick={handleFoodClick}
-        />
-      )}
+        {/* Main content */}
+        <div className='flex-1 overflow-y-auto'>
+          {isLoading ? (
+            <div className='flex items-center justify-center py-16'>
+              <div className='w-8 h-8 border-2 border-[#1B998B] border-t-transparent rounded-full animate-spin' />
+            </div>
+          ) : (
+            <div className='p-4'>
+              <FoodsList
+                foods={displayedFoods}
+                favorites={favoriteIds}
+                sortOption={sortOption}
+                onSortChange={handleSortChange}
+                emptyMessage={
+                  activeTab === 'favorites'
+                    ? 'Aucun aliment favori'
+                    : 'Aucun aliment trouvé'
+                }
+                emptyIcon={activeTab === 'favorites' ? '❤️' : '🔍'}
+                onToggleFavorite={handleToggleFavorite}
+                onFoodClick={handleFoodClick}
+                onAddToMeal={food => setAddToMealFood(food)}
+              />
 
-      <FoodModal
-        isOpen={state.showFoodModal}
-        food={state.selectedFood}
-        isFavorite={isFoodFavorite}
-        onClose={handleCloseFoodModal}
-        onToggleFavorite={handleToggleFavorite}
-      />
+              {/* Infinite scroll sentinel */}
+              <div ref={loadMoreRef} className='h-10' />
+              {isFetchingNextPage && (
+                <div className='flex items-center justify-center py-4'>
+                  <Loader2 className='w-5 h-5 animate-spin text-[#1B998B]' />
+                </div>
+              )}
+              {!hasNextPage && displayedFoods.length > 0 && (
+                <p className='text-center text-xs text-gray-400 py-4'>
+                  Tous les aliments ont été chargés
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
 
       <ScannerModal
-        isOpen={state.showScannerModal}
-        onClose={handleCloseScanner}
+        isOpen={showScanner}
+        onClose={() => setShowScanner(false)}
+      />
+
+      <AddFoodToMealModal
+        isOpen={!!addToMealFood}
+        food={addToMealFood}
+        onClose={() => setAddToMealFood(null)}
+        onConfirm={handleAddToMeal}
+        isSubmitting={isAddingMeal}
+      />
+
+      <Toast
+        isVisible={toast.visible}
+        type={toast.type}
+        title={toast.title}
+        message={toast.message}
+        onClose={hideToast}
       />
     </div>
   );

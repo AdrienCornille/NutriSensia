@@ -157,3 +157,6 @@ public/complementaires-*.html
 *\ 2.*
 *\ 2
 *.bak
+
+# Design brief (screenshots et assets lourds, hors repo de code)
+design-brief/

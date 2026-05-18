@@ -11,10 +11,14 @@ export function Providers({ children }: { children: React.ReactNode }) {
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 60 * 1000,
-            gcTime: 10 * 60 * 1000,
+            // Why: la plupart des données dashboard (patients, RDV, stats) ne changent pas
+            // d'une nav à l'autre. 5 min évite de refetcher 20+ requêtes à chaque retour
+            // au dashboard. Les mutations invalident explicitement les queries concernées.
+            staleTime: 5 * 60 * 1000,
+            gcTime: 30 * 60 * 1000,
             retry: 1,
             refetchOnWindowFocus: false,
+            refetchOnMount: false,
           },
           mutations: {
             retry: 1,

@@ -2,6 +2,7 @@
 
 import { MarketingHeader } from '@/components/landing/MarketingHeader';
 import { MarketingFooter } from '@/components/landing/MarketingFooter';
+import { SmoothScrollProvider } from '@/components/ui/SmoothScrollProvider';
 import {
   AboutHeroSection,
   PersonalJourneySection,
@@ -9,41 +10,26 @@ import {
   ExpertiseSection,
   ValuesSection,
   ExpertiseDomainsSection,
-  WhyChooseSection,
 } from '@/components/landing/about';
 
 export default function AboutPage() {
   return (
-    <div className='min-h-screen' style={{ backgroundColor: '#FBF9F7' }}>
-      {/* Header Marketing */}
-      <MarketingHeader />
-
-      {/* Contenu principal */}
-      <main>
-        {/* Section Hero personnelle */}
-        <AboutHeroSection />
-
-        {/* Section Parcours Personnel */}
-        <PersonalJourneySection />
-
-        {/* CTA Banner séparateur */}
-        <AboutCTABannerSection />
-
-        {/* Section Expertise */}
-        <ExpertiseSection />
-
-        {/* Section Valeurs */}
-        <ValuesSection />
-
-        {/* Section Domaines d'Expertise */}
-        <ExpertiseDomainsSection />
-
-        {/* Section Pourquoi Choisir NutriSensia */}
-        <WhyChooseSection />
-      </main>
-
-      {/* Footer Marketing */}
-      <MarketingFooter />
-    </div>
+    <SmoothScrollProvider>
+      <div
+        className='ns2 relative min-h-screen'
+        style={{ backgroundColor: 'var(--ns-cream-100)' }}
+      >
+        <MarketingHeader />
+        <main>
+          <AboutHeroSection />
+          <PersonalJourneySection />
+          <AboutCTABannerSection />
+          <ExpertiseSection />
+          <ValuesSection />
+          <ExpertiseDomainsSection />
+        </main>
+        <MarketingFooter />
+      </div>
+    </SmoothScrollProvider>
   );
 }

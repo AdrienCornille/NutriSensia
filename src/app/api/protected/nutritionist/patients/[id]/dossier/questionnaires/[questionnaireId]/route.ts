@@ -1,7 +1,15 @@
 import { NextRequest } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { verifyAuth, apiResponse } from '@/lib/api-auth';
+import {
+  ASSIGNMENT_SELECT,
+  assignmentToQuestionnaireDetail,
+} from '@/lib/questionnaire-mapper';
 
+// =============================================================================
+// GET /api/protected/nutritionist/patients/[id]/dossier/questionnaires/[id]
+// Returns one assignment flattened to the legacy QuestionnaireDetail shape.
+// =============================================================================
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string; questionnaireId: string }> }
@@ -44,24 +52,30 @@ export async function GET(
       return apiResponse.notFound('Patient introuvable');
     }
 
-    const { data: questionnaire, error: qError } = await (supabase as any)
-      .from('follow_up_questionnaires')
-      .select('*')
+    const { data: assignment, error: qError } = await (supabase as any)
+      .from('questionnaire_assignments')
+      .select(ASSIGNMENT_SELECT)
       .eq('id', questionnaireId)
       .eq('patient_id', patient.user_id)
       .single();
 
-    if (qError || !questionnaire) {
+    if (qError || !assignment) {
       return apiResponse.notFound('Questionnaire introuvable');
     }
 
-    return apiResponse.success(questionnaire);
+    return apiResponse.success(assignmentToQuestionnaireDetail(assignment));
   } catch (error) {
     console.error('Unexpected error in questionnaire GET:', error);
     return apiResponse.serverError('Erreur serveur');
   }
 }
 
+// =============================================================================
+// DELETE /api/protected/nutritionist/patients/[id]/dossier/questionnaires/[id]
+// Deletes an assignment. Cascades to its response/answers via FK rules.
+// The associated draft template is intentionally left in place — cleanup
+// of orphan drafts is a separate concern (future maintenance task).
+// =============================================================================
 export async function DELETE(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string; questionnaireId: string }> }
@@ -104,19 +118,20 @@ export async function DELETE(
       return apiResponse.notFound('Patient introuvable');
     }
 
-    const { data: q } = await (supabase as any)
-      .from('follow_up_questionnaires')
+    const { data: assignment } = await (supabase as any)
+      .from('questionnaire_assignments')
       .select('id, status')
       .eq('id', questionnaireId)
       .eq('patient_id', patient.user_id)
       .single();
 
-    if (!q) {
+    if (!assignment) {
       return apiResponse.notFound('Questionnaire introuvable');
     }
 
-    // Only allow deletion of pending questionnaires
-    if (q.status === 'completed') {
+    // Same rule as before: completed questionnaires are an archived record
+    // and cannot be deleted (medical-dossier preservation).
+    if (assignment.status === 'completed') {
       return apiResponse.error(
         'Impossible de supprimer un questionnaire complété',
         400
@@ -124,12 +139,12 @@ export async function DELETE(
     }
 
     const { error: deleteError } = await (supabase as any)
-      .from('follow_up_questionnaires')
+      .from('questionnaire_assignments')
       .delete()
       .eq('id', questionnaireId);
 
     if (deleteError) {
-      console.error('Error deleting questionnaire:', deleteError);
+      console.error('Error deleting assignment:', deleteError);
       return apiResponse.serverError('Erreur lors de la suppression');
     }
 

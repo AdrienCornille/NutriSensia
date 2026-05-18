@@ -1,18 +1,30 @@
 'use client';
 
 import React from 'react';
-import { Search, Heart, Sparkles, ShoppingCart } from 'lucide-react';
+import {
+  Search,
+  Heart,
+  Sparkles,
+  ShoppingCart,
+  UtensilsCrossed,
+} from 'lucide-react';
 import type { RecipesTab } from '@/types/recipes';
 
 interface RecipesTabsProps {
   activeTab: RecipesTab;
   onTabChange: (tab: RecipesTab) => void;
   favoritesCount?: number;
+  cookedCount?: number;
 }
 
 const tabs: { id: RecipesTab; label: string; icon: React.ReactNode }[] = [
   { id: 'discover', label: 'Découvrir', icon: <Search className='w-4 h-4' /> },
   { id: 'favorites', label: 'Favoris', icon: <Heart className='w-4 h-4' /> },
+  {
+    id: 'cooked',
+    label: 'Cuisinées',
+    icon: <UtensilsCrossed className='w-4 h-4' />,
+  },
   {
     id: 'recommended',
     label: 'Pour vous',
@@ -29,6 +41,7 @@ export function RecipesTabs({
   activeTab,
   onTabChange,
   favoritesCount,
+  cookedCount,
 }: RecipesTabsProps) {
   return (
     <div className='bg-white border-b border-gray-200 px-4 py-4'>
@@ -52,6 +65,13 @@ export function RecipesTabs({
                 favoritesCount > 0 && (
                   <span className='px-1.5 py-0.5 bg-red-100 text-red-600 text-xs font-medium rounded-full'>
                     {favoritesCount}
+                  </span>
+                )}
+              {tab.id === 'cooked' &&
+                cookedCount !== undefined &&
+                cookedCount > 0 && (
+                  <span className='px-1.5 py-0.5 bg-orange-100 text-orange-600 text-xs font-medium rounded-full'>
+                    {cookedCount}
                   </span>
                 )}
             </button>

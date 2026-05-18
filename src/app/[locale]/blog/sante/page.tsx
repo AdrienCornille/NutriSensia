@@ -1,58 +1,70 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React from 'react';
 import { Link } from '@/i18n/navigation';
 import { MarketingHeader } from '@/components/landing/MarketingHeader';
 import { MarketingFooter } from '@/components/landing/MarketingFooter';
-import { CategoryNavBar } from '@/components/blog/CategoryNavBar';
-import { motion, useInView } from 'framer-motion';
-import { BookOpen } from 'lucide-react';
-import { useFirstVisit } from '@/hooks/useFirstVisit';
 
 /**
- * Page Catégorie Santé - NutriSensia
+ * Page Catégorie Santé — DS v2 Editorial
+ *
+ * Mêmes patterns que /blog et /blog/nutrition : intro éditoriale,
+ * topic chips, lead spread asymétrique 1.55fr/1fr, marquee, grille
+ * d'articles et newsletter ink. Styles partagés en globals.css.
  */
 
-// Types
 interface Article {
   slug: string;
   title: string;
   excerpt: string;
-  image?: string;
+  image: string;
   publishedAt: string;
   readingTime: number;
   author: string;
   category: string;
-  tags: string[];
 }
 
-// Articles de la catégorie Santé
-const santeArticles: Article[] = [
+const CATEGORY_LABEL: Record<string, string> = {
+  nutrition: 'Nutrition',
+  sante: 'Santé',
+  'bien-etre': 'Bien-être',
+  recettes: 'Recettes',
+  conseils: 'Conseils',
+};
+
+const CATEGORY_COUNTS: Record<string, number> = {
+  all: 26,
+  nutrition: 10,
+  sante: 9,
+  'bien-etre': 3,
+  recettes: 4,
+  conseils: 3,
+};
+
+const articles: Article[] = [
   {
     slug: 'microbiote-intestinal',
     title: 'Prendre soin de son microbiote intestinal',
     excerpt:
-      'Le microbiote intestinal joue un rôle crucial dans notre santé. Voici comment le nourrir et le préserver pour un bien-être optimal.',
+      'Le second cerveau, l’intestin. On démêle la science récente, sans jargon, et on en tire 5 gestes concrets à intégrer cette semaine.',
     image:
-      'https://images.unsplash.com/photo-1505576399279-565b52d4ac71?w=800&h=600&fit=crop',
-    publishedAt: '2024-12-05',
+      'https://images.unsplash.com/photo-1505576399279-565b52d4ac71?w=1200&h=750&fit=crop',
+    publishedAt: '2026-05-04',
     readingTime: 10,
     author: 'Lucie Cornille',
     category: 'sante',
-    tags: ['microbiote', 'digestion', 'santé'],
   },
   {
     slug: 'systeme-immunitaire-alimentation',
     title: "Renforcer son système immunitaire par l'alimentation",
     excerpt:
-      'Découvrez les nutriments essentiels et les aliments clés pour booster naturellement vos défenses immunitaires.',
+      'Les nutriments essentiels et les aliments clés pour booster naturellement vos défenses immunitaires.',
     image:
-      'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800&h=600&fit=crop',
-    publishedAt: '2024-12-01',
+      'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=900&h=600&fit=crop',
+    publishedAt: '2026-04-22',
     readingTime: 7,
     author: 'Lucie Cornille',
     category: 'sante',
-    tags: ['immunité', 'santé', 'prévention'],
   },
   {
     slug: 'sante-cardiovasculaire',
@@ -60,16 +72,86 @@ const santeArticles: Article[] = [
     excerpt:
       'Les habitudes alimentaires qui contribuent à maintenir un cœur en bonne santé et prévenir les maladies cardiovasculaires.',
     image:
-      'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=800&h=600&fit=crop',
-    publishedAt: '2024-11-25',
+      'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=900&h=600&fit=crop',
+    publishedAt: '2026-04-10',
     readingTime: 9,
     author: 'Lucie Cornille',
     category: 'sante',
-    tags: ['cardiovasculaire', 'santé', 'prévention'],
+  },
+  {
+    slug: 'hormones-feminines-equilibre',
+    title: 'Hormones féminines : équilibre et nutrition',
+    excerpt:
+      "Cycle, ménopause, syndrome prémenstruel — l'assiette est un levier puissant pour accompagner les variations hormonales.",
+    image:
+      'https://images.unsplash.com/photo-1581281863883-2469417a1668?w=900&h=600&fit=crop',
+    publishedAt: '2026-03-30',
+    readingTime: 8,
+    author: 'Lucie Cornille',
+    category: 'sante',
+  },
+  {
+    slug: 'diabete-type-2-prevention',
+    title: 'Diabète de type 2 : la prévention par l’assiette',
+    excerpt:
+      'Comprendre les mécanismes de la résistance à l’insuline et les habitudes alimentaires qui réduisent réellement le risque.',
+    image:
+      'https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?w=900&h=600&fit=crop',
+    publishedAt: '2026-03-15',
+    readingTime: 9,
+    author: 'Lucie Cornille',
+    category: 'sante',
+  },
+  {
+    slug: 'sante-osseuse-alimentation',
+    title: 'Santé osseuse : nourrir le squelette à tout âge',
+    excerpt:
+      'Calcium, vitamine D, magnésium, protéines — comment construire et préserver une masse osseuse solide.',
+    image:
+      'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=900&h=600&fit=crop',
+    publishedAt: '2026-03-02',
+    readingTime: 7,
+    author: 'Lucie Cornille',
+    category: 'sante',
+  },
+  {
+    slug: 'cholesterol-vrai-faux',
+    title: 'Cholestérol : démêler le vrai du faux',
+    excerpt:
+      'Œufs, beurre, statines — on remet de la nuance dans un sujet trop souvent caricaturé. Ce que dit vraiment la science récente.',
+    image:
+      'https://images.unsplash.com/photo-1607619056574-7b8d3ee536b2?w=900&h=600&fit=crop',
+    publishedAt: '2026-02-18',
+    readingTime: 6,
+    author: 'Lucie Cornille',
+    category: 'sante',
+  },
+  {
+    slug: 'stress-chronique-impact',
+    title: 'Stress chronique : comprendre son impact sur la santé',
+    excerpt:
+      'Cortisol, inflammation, sommeil, digestion : ce que le stress fait au corps, et comment l’alimentation peut atténuer ses effets.',
+    image:
+      'https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=900&h=600&fit=crop',
+    publishedAt: '2026-02-04',
+    readingTime: 8,
+    author: 'Lucie Cornille',
+    category: 'sante',
+  },
+  {
+    slug: 'inflammation-chronique-signes',
+    title: 'Inflammation chronique : reconnaître les signes',
+    excerpt:
+      "Fatigue inexpliquée, douleurs diffuses, troubles digestifs — les signaux faibles d'une inflammation silencieuse, et les leviers nutritionnels.",
+    image:
+      'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=900&h=600&fit=crop',
+    publishedAt: '2026-01-22',
+    readingTime: 7,
+    author: 'Lucie Cornille',
+    category: 'sante',
   },
 ];
 
-// Utilitaires
 function formatDate(dateString: string): string {
   const date = new Date(dateString);
   return date.toLocaleDateString('fr-FR', {
@@ -79,243 +161,134 @@ function formatDate(dateString: string): string {
   });
 }
 
-/**
- * Carte Article - Style NutriSensia
- */
-function ArticleCard({ article }: { article: Article }) {
-  const [isHovered, setIsHovered] = React.useState(false);
+const articleHref = (article: Article) =>
+  `/blog/${article.category}/${article.slug}` as never;
 
-  return (
-    <Link
-      href={`/blog/${article.category}/${article.slug}` as any}
-      className='block'
-    >
-      <article
-        style={{
-          backgroundColor: '#ffffff',
-          border: '1px solid #e5e5e5',
-          borderRadius: '10px',
-          overflow: 'hidden',
-          boxShadow: isHovered ? '10px 10px 0 #E5DED6' : '8px 8px 0 #E5DED6',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          transition: 'transform 0.3s ease-out, box-shadow 0.3s ease-out',
-          transform: isHovered ? 'translateY(-4px)' : 'translateY(0)',
-        }}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
-        {/* Image */}
-        <div
-          style={{
-            position: 'relative',
-            width: '100%',
-            height: '220px',
-            overflow: 'hidden',
-          }}
-        >
-          {article.image ? (
-            <>
-              <img
-                src={article.image}
-                alt={article.title}
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              />
-              <div
-                className='absolute inset-0 pointer-events-none'
-                style={{
-                  backgroundColor: 'rgba(27, 153, 139, 0.2)',
-                }}
-              />
-            </>
-          ) : (
-            <div className='w-full h-full flex items-center justify-center bg-gradient-to-br from-[#E8F3EF] to-[#E5DED6]'>
-              <BookOpen className='w-20 h-20 text-[#1B998B] opacity-30' />
-            </div>
-          )}
-        </div>
-
-        {/* Content */}
-        <div
-          style={{
-            padding: '24px',
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          {/* Category badge */}
-          <div style={{ marginBottom: '16px' }}>
-            <span
-              style={{
-                backgroundColor: 'rgba(27, 153, 139, 0.08)',
-                color: '#1B998B',
-                border: '1px solid #E5DED6',
-                padding: '3px 10px',
-                borderRadius: '9999px',
-                fontSize: '10px',
-                fontWeight: 600,
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em',
-                fontFamily:
-                  "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-              }}
-            >
-              Santé
-            </span>
-          </div>
-
-          {/* Title */}
-          <h3
-            style={{
-              fontFamily: "'Marcellus', serif",
-              fontSize: '24px',
-              fontWeight: 400,
-              lineHeight: '1.4',
-              color: '#1a1a1a',
-              paddingBottom: '12px',
-              marginBottom: '12px',
-              borderBottom: '1px solid #e5e5e5',
-            }}
-          >
-            {article.title}
-          </h3>
-
-          {/* Author */}
-          <p
-            style={{
-              fontFamily:
-                "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-              fontSize: '11.2px',
-              color: '#41556b',
-              marginTop: 'auto',
-            }}
-          >
-            Rédigé par{' '}
-            <span style={{ color: '#1a1a1a', fontWeight: 600 }}>
-              {article.author}
-            </span>
-          </p>
-        </div>
-      </article>
-    </Link>
-  );
-}
-
-/**
- * Page Santé
- */
 export default function SantePage() {
-  const headerRef = useRef(null);
-  const gridRef = useRef(null);
-  const isHeaderInView = useInView(headerRef, { once: true, margin: '-100px' });
-  const isGridInView = useInView(gridRef, { once: true, margin: '-100px' });
-  const { isFirstVisit, isReady } = useFirstVisit();
+  const totalReading = articles.reduce((sum, a) => sum + a.readingTime, 0);
 
   return (
     <div
-      className='min-h-screen'
-      style={{
-        backgroundColor: '#FBF9F7',
-        backgroundImage:
-          'radial-gradient(ellipse 2500px 800px at 0% 0%, rgba(27, 153, 139, 0.15) 0%, transparent 50%)',
-      }}
+      className='ns2 min-h-screen'
+      style={{ backgroundColor: 'var(--ns-cream-100)' }}
     >
-      {/* Header - disparaît au scroll, réapparaît uniquement en haut */}
-      <MarketingHeader hideOnScroll={true} />
+      <MarketingHeader />
+      <div style={{ height: 80 }} />
 
-      {/* Spacer pour le header flottant fixe */}
-      <div style={{ height: '100px' }} />
+      <main>
+        {/* Editorial intro */}
+        <section className='blog-intro'>
+          <div className='ns2-container'>
+            <div className='blog-intro-grid'>
+              <div>
+                <span className='ns2-eyebrow ns2-eyebrow-dot'>
+                  Catégorie · Santé
+                </span>
+                <h1>
+                  Le corps <em>parle.</em>
+                  <br />
+                  Apprendre à <span className='hl'>l’écouter.</span>
+                </h1>
+              </div>
+              <div className='blog-intro-meta'>
+                <div className='stat'>
+                  <b>{CATEGORY_COUNTS.sante}</b>
+                  <span>
+                    dossiers dédiés
+                    <br />à la santé
+                  </span>
+                </div>
+                <div className='stat'>
+                  <b>{totalReading}</b>
+                  <span>
+                    minutes de lecture
+                    <br />
+                    pour tout le dossier
+                  </span>
+                </div>
+                <div className='stat'>
+                  <b>5</b>
+                  <span>
+                    sous-thèmes — microbiote, immunité,
+                    <br />
+                    hormones, cardiovasculaire, inflammation
+                  </span>
+                </div>
+              </div>
+            </div>
 
-      {/* Barre de navigation des catégories */}
-      <CategoryNavBar activeCategory='sante' topOffset='80px' />
-
-      {/* Main Content */}
-      <main className='pt-8 pb-24'>
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-          {/* Breadcrumb */}
-          <div
-            className='mb-8 flex items-center gap-2 text-sm'
-            style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-          >
-            <Link
-              href='/blog'
-              className='transition-colors hover:text-[#1B998B]'
-              style={{ color: '#666666' }}
-            >
-              Blog
-            </Link>
-            <span style={{ color: '#666666' }}>›</span>
-            <span style={{ color: '#1a1a1a' }}>Santé</span>
+            <div className='blog-topics'>
+              <Link href='/blog' className='topic'>
+                Tout <span className='count'>{CATEGORY_COUNTS.all}</span>
+              </Link>
+              <Link href={'/blog/nutrition' as never} className='topic'>
+                Nutrition{' '}
+                <span className='count'>{CATEGORY_COUNTS.nutrition}</span>
+              </Link>
+              <Link href={'/blog/sante' as never} className='topic active'>
+                Santé <span className='count'>{CATEGORY_COUNTS.sante}</span>
+              </Link>
+              <Link href={'/blog/bien-etre' as never} className='topic'>
+                Bien-être{' '}
+                <span className='count'>{CATEGORY_COUNTS['bien-etre']}</span>
+              </Link>
+              <Link href={'/blog/recettes' as never} className='topic'>
+                Recettes{' '}
+                <span className='count'>{CATEGORY_COUNTS.recettes}</span>
+              </Link>
+              <Link href={'/blog/conseils' as never} className='topic'>
+                Conseils pratiques{' '}
+                <span className='count'>{CATEGORY_COUNTS.conseils}</span>
+              </Link>
+            </div>
           </div>
+        </section>
 
-          {/* Titre de la catégorie */}
-          <motion.div
-            ref={headerRef}
-            style={
-              isFirstVisit ? { opacity: 0, transform: 'translateY(30px)' } : {}
-            }
-            animate={
-              isReady && isHeaderInView
-                ? { opacity: 1, y: 0 }
-                : { opacity: 0, y: 30 }
-            }
-            transition={
-              isFirstVisit && isReady ? { duration: 0.6 } : { duration: 0 }
-            }
-            className='mb-12'
-          >
-            <h1
-              className='text-4xl lg:text-5xl font-bold mb-4'
-              style={{
-                fontFamily: "'Marcellus', serif",
-                color: '#1B998B',
-                lineHeight: '1.2',
-              }}
-            >
-              Santé
-            </h1>
-            <p
-              className='text-lg max-w-3xl'
-              style={{
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                color: '#666666',
-                lineHeight: '1.6',
-              }}
-            >
-              Explorez nos conseils pour préserver et améliorer votre santé au
-              quotidien grâce à une alimentation adaptée et des habitudes de vie
-              saines.
-            </p>
-          </motion.div>
+        {/* Breadcrumb */}
+        <div className='ns2-container'>
+          <nav className='blog-breadcrumb' aria-label='Fil d’Ariane'>
+            <Link href='/blog'>Le Journal</Link>
+            <span aria-hidden='true'>/</span>
+            <span aria-current='page'>Santé</span>
+          </nav>
+        </div>
 
-          {/* Grille d'articles */}
-          <motion.div
-            ref={gridRef}
-            style={
-              isFirstVisit ? { opacity: 0, transform: 'translateY(30px)' } : {}
-            }
-            animate={
-              isReady && isGridInView
-                ? { opacity: 1, y: 0 }
-                : { opacity: 0, y: 30 }
-            }
-            transition={
-              isFirstVisit && isReady
-                ? { duration: 0.6, delay: 0.2 }
-                : { duration: 0 }
-            }
-            className='grid md:grid-cols-2 lg:grid-cols-3 gap-8'
-          >
-            {santeArticles.map(article => (
-              <ArticleCard key={article.slug} article={article} />
-            ))}
-          </motion.div>
+        {/* Liste des articles */}
+        <div className='ns2-container'>
+          <section className='sec' style={{ borderTop: 0, paddingBottom: 96 }}>
+            <div className='grid-3'>
+              {articles.map(article => (
+                <Link
+                  key={article.slug}
+                  href={articleHref(article)}
+                  className='acard'
+                >
+                  <div
+                    className='acard-img'
+                    style={{ backgroundImage: `url('${article.image}')` }}
+                  />
+                  <div className='acard-body'>
+                    <div className='acard-meta'>
+                      <span className='ns2-tag'>
+                        {CATEGORY_LABEL[article.category]}
+                      </span>
+                      <span className='ns2-meta'>
+                        {article.readingTime} min
+                      </span>
+                    </div>
+                    <h3>{article.title}</h3>
+                    <div className='acard-foot'>
+                      <span>{article.author}</span>
+                      <span>{formatDate(article.publishedAt)}</span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
         </div>
       </main>
 
-      {/* Footer */}
       <MarketingFooter />
     </div>
   );

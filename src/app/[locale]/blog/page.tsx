@@ -1,63 +1,40 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React from 'react';
 import { Link } from '@/i18n/navigation';
 import { MarketingHeader } from '@/components/landing/MarketingHeader';
 import { MarketingFooter } from '@/components/landing/MarketingFooter';
-import { CategoryNavBar } from '@/components/blog/CategoryNavBar';
-import { motion, useInView } from 'framer-motion';
-import { useFirstVisit } from '@/hooks/useFirstVisit';
-import {
-  TrendingUp,
-  BookOpen,
-  Mail,
-  ChevronRight,
-  ChevronLeft,
-  ArrowRight,
-  Sparkles,
-} from 'lucide-react';
 
 /**
- * Page Blog NutriSensia - Design inspiré de Finary
+ * Page Blog NutriSensia — DS v2 Editorial
  *
- * Structure:
- * 1. Header avec titre et sous-titre
- * 2. Onglets de catégories horizontaux
- * 3. Section "Nouveaux articles" - grille featured (1 grand + 2 moyens)
- * 4. Section "Articles tendances" - 4 cartes horizontales
- * 5. Sections par catégorie avec slider
- * 6. Newsletter CTA
- *
- * Style: NutriSensia Design System - Palette Méditerranée
- * - Signature shadow: 8px 8px 0 #E5DED6
- * - Typography: Marcellus + Plus Jakarta Sans
- * - Colors: #1B998B, #41556b, #FBF9F7
+ * Refonte intégrale d'après BLOG_PAGE.md : intro éditoriale,
+ * lead spread asymétrique 1.55fr/1fr, marquee ink, sections
+ * thématiques (Nutrition / Santé / Bien-être / Recettes / Conseils)
+ * et newsletter en panneau ink. Toutes les cards utilisent
+ * le hover signature `translate(-3,-3) + 6px 6px 0 ink`.
  */
 
-// Types
 interface Article {
   slug: string;
   title: string;
   excerpt: string;
-  image?: string;
+  image: string;
   publishedAt: string;
   readingTime: number;
   author: string;
   category: string;
-  tags: string[];
+  difficulty?: string;
 }
 
-// Catégories
-const categories = [
-  { id: 'all', label: 'Tous les articles' },
-  { id: 'nutrition', label: 'Nutrition' },
-  { id: 'sante', label: 'Santé' },
-  { id: 'bien-etre', label: 'Bien-être' },
-  { id: 'recettes', label: 'Recettes' },
-  { id: 'conseils', label: 'Conseils pratiques' },
-];
+const CATEGORY_LABEL: Record<string, string> = {
+  nutrition: 'Nutrition',
+  sante: 'Santé',
+  'bien-etre': 'Bien-être',
+  recettes: 'Recettes',
+  conseils: 'Conseils',
+};
 
-// Articles de démonstration enrichis
 const allArticles: Article[] = [
   {
     slug: 'alimentation-equilibree-bases',
@@ -65,25 +42,23 @@ const allArticles: Article[] = [
     excerpt:
       'Découvrez les principes fondamentaux pour construire une alimentation saine et durable au quotidien. Apprenez à équilibrer vos repas avec les bons nutriments pour optimiser votre énergie et votre bien-être.',
     image:
-      'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800&h=600&fit=crop',
-    publishedAt: '2024-12-10',
+      'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=1200&h=750&fit=crop',
+    publishedAt: '2026-05-02',
     readingTime: 8,
     author: 'Sarah Dupont',
     category: 'nutrition',
-    tags: ['nutrition', 'santé', 'équilibre'],
   },
   {
     slug: 'microbiote-intestinal',
     title: 'Prendre soin de son microbiote intestinal',
     excerpt:
-      'Le microbiote intestinal joue un rôle crucial dans notre santé. Voici comment le nourrir et le préserver pour un bien-être optimal.',
+      'Le second cerveau, l’intestin. On démêle la science récente, sans jargon, et on en tire 5 gestes concrets à intégrer cette semaine.',
     image:
-      'https://images.unsplash.com/photo-1505576399279-565b52d4ac71?w=800&h=600&fit=crop',
-    publishedAt: '2024-12-05',
+      'https://images.unsplash.com/photo-1505576399279-565b52d4ac71?w=1000&h=750&fit=crop',
+    publishedAt: '2026-04-28',
     readingTime: 10,
     author: 'Sarah Dupont',
     category: 'sante',
-    tags: ['microbiote', 'digestion', 'santé'],
   },
   {
     slug: 'systeme-immunitaire-alimentation',
@@ -91,12 +66,11 @@ const allArticles: Article[] = [
     excerpt:
       'Découvrez les nutriments essentiels et les aliments clés pour booster naturellement vos défenses immunitaires.',
     image:
-      'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800&h=600&fit=crop',
-    publishedAt: '2024-12-01',
+      'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=900&h=600&fit=crop',
+    publishedAt: '2026-04-20',
     readingTime: 7,
     author: 'Sarah Dupont',
     category: 'sante',
-    tags: ['immunité', 'santé', 'prévention'],
   },
   {
     slug: 'sante-cardiovasculaire',
@@ -104,12 +78,11 @@ const allArticles: Article[] = [
     excerpt:
       'Les habitudes alimentaires qui contribuent à maintenir un cœur en bonne santé et prévenir les maladies cardiovasculaires.',
     image:
-      'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=800&h=600&fit=crop',
-    publishedAt: '2024-11-25',
+      'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=900&h=600&fit=crop',
+    publishedAt: '2026-04-12',
     readingTime: 9,
     author: 'Sarah Dupont',
     category: 'sante',
-    tags: ['cardiovasculaire', 'santé', 'prévention'],
   },
   {
     slug: 'alimentation-anti-inflammatoire',
@@ -117,12 +90,11 @@ const allArticles: Article[] = [
     excerpt:
       "Réduisez l'inflammation chronique grâce à des choix alimentaires judicieux. Les meilleurs aliments et habitudes à adopter.",
     image:
-      'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&h=600&fit=crop',
-    publishedAt: '2024-11-28',
+      'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=900&h=600&fit=crop',
+    publishedAt: '2026-04-08',
     readingTime: 7,
     author: 'Sarah Dupont',
     category: 'nutrition',
-    tags: ['inflammation', 'santé', 'prévention'],
   },
   {
     slug: 'gerer-stress-alimentation',
@@ -130,25 +102,24 @@ const allArticles: Article[] = [
     excerpt:
       "Certains aliments peuvent aider à réguler le stress et l'anxiété. Découvrez les nutriments essentiels pour un système nerveux apaisé.",
     image:
-      'https://images.unsplash.com/photo-1543362906-acfc16c67564?w=800&h=600&fit=crop',
-    publishedAt: '2024-11-20',
+      'https://images.unsplash.com/photo-1543362906-acfc16c67564?w=900&h=1100&fit=crop',
+    publishedAt: '2026-04-04',
     readingTime: 6,
     author: 'Sarah Dupont',
     category: 'bien-etre',
-    tags: ['stress', 'bien-être', 'nutrition'],
   },
   {
     slug: 'petit-dejeuner-energetique',
-    title: '5 petits-déjeuners énergétiques pour bien commencer la journée',
+    title: 'Petits-déjeuners énergétiques pour bien commencer',
     excerpt:
       "Des recettes simples et nutritives pour un petit-déjeuner qui vous donnera l'énergie nécessaire toute la matinée.",
     image:
-      'https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=800&h=600&fit=crop',
-    publishedAt: '2024-11-15',
+      'https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=800&h=800&fit=crop',
+    publishedAt: '2026-03-30',
     readingTime: 5,
     author: 'Sarah Dupont',
     category: 'recettes',
-    tags: ['recettes', 'petit-déjeuner', 'énergie'],
+    difficulty: 'facile',
   },
   {
     slug: 'bowls-equilibres',
@@ -156,12 +127,12 @@ const allArticles: Article[] = [
     excerpt:
       'Découvrez comment composer des bowls savoureux et complets pour vos déjeuners et dîners.',
     image:
-      'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&h=600&fit=crop',
-    publishedAt: '2024-11-08',
+      'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&h=800&fit=crop',
+    publishedAt: '2026-03-22',
     readingTime: 6,
     author: 'Sarah Dupont',
     category: 'recettes',
-    tags: ['recettes', 'bowls', 'déjeuner'],
+    difficulty: 'facile',
   },
   {
     slug: 'snacks-sains',
@@ -169,12 +140,25 @@ const allArticles: Article[] = [
     excerpt:
       'Des idées de collations nutritives et faciles à préparer pour éviter les grignotages malsains.',
     image:
-      'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800&h=600&fit=crop',
-    publishedAt: '2024-11-02',
+      'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800&h=800&fit=crop',
+    publishedAt: '2026-03-15',
     readingTime: 4,
     author: 'Sarah Dupont',
     category: 'recettes',
-    tags: ['recettes', 'snacks', 'collations'],
+    difficulty: 'facile',
+  },
+  {
+    slug: 'soupes-nourrissantes',
+    title: 'Soupes nourrissantes pour les soirs d’hiver',
+    excerpt:
+      'Quatre recettes de soupes complètes, riches en légumes et en protéines végétales.',
+    image:
+      'https://images.unsplash.com/photo-1547592180-85f173990554?w=800&h=800&fit=crop',
+    publishedAt: '2026-03-08',
+    readingTime: 5,
+    author: 'Sarah Dupont',
+    category: 'recettes',
+    difficulty: 'moyen',
   },
   {
     slug: 'hydratation-importance',
@@ -182,12 +166,11 @@ const allArticles: Article[] = [
     excerpt:
       "L'eau est essentielle à notre organisme. Découvrez combien boire et comment optimiser votre hydratation au quotidien.",
     image:
-      'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&h=600&fit=crop',
-    publishedAt: '2024-11-10',
+      'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=900&h=600&fit=crop',
+    publishedAt: '2026-03-02',
     readingTime: 4,
     author: 'Sarah Dupont',
     category: 'conseils',
-    tags: ['hydratation', 'conseils', 'santé'],
   },
   {
     slug: 'lire-etiquettes-alimentaires',
@@ -195,12 +178,11 @@ const allArticles: Article[] = [
     excerpt:
       'Comprendre les informations nutritionnelles sur les emballages pour faire des choix éclairés au supermarché.',
     image:
-      'https://images.unsplash.com/photo-1534723328310-e82dad3ee43f?w=800&h=600&fit=crop',
-    publishedAt: '2024-11-05',
+      'https://images.unsplash.com/photo-1534723328310-e82dad3ee43f?w=900&h=600&fit=crop',
+    publishedAt: '2026-02-26',
     readingTime: 6,
     author: 'Sarah Dupont',
     category: 'conseils',
-    tags: ['étiquettes', 'conseils', 'alimentation'],
   },
   {
     slug: 'courses-intelligentes',
@@ -208,12 +190,11 @@ const allArticles: Article[] = [
     excerpt:
       'Des astuces pratiques pour organiser vos courses et remplir votre panier de produits sains et nutritifs.',
     image:
-      'https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&h=600&fit=crop',
-    publishedAt: '2024-10-28',
+      'https://images.unsplash.com/photo-1542838132-92c53300491e?w=900&h=600&fit=crop',
+    publishedAt: '2026-02-20',
     readingTime: 5,
     author: 'Sarah Dupont',
     category: 'conseils',
-    tags: ['courses', 'conseils', 'organisation'],
   },
   {
     slug: 'superaliments-mythes-realites',
@@ -221,12 +202,11 @@ const allArticles: Article[] = [
     excerpt:
       'Quinoa, baies de goji, spiruline... Démêlons le vrai du faux sur ces aliments aux vertus supposées extraordinaires.',
     image:
-      'https://images.unsplash.com/photo-1610348725531-843dff563e2c?w=800&h=600&fit=crop',
-    publishedAt: '2024-11-05',
+      'https://images.unsplash.com/photo-1610348725531-843dff563e2c?w=900&h=600&fit=crop',
+    publishedAt: '2026-02-15',
     readingTime: 9,
     author: 'Sarah Dupont',
     category: 'nutrition',
-    tags: ['superaliments', 'nutrition', 'mythes'],
   },
   {
     slug: 'sommeil-alimentation',
@@ -234,25 +214,23 @@ const allArticles: Article[] = [
     excerpt:
       'Ce que vous mangez affecte directement la qualité de votre sommeil. Voici les aliments à privilégier et ceux à éviter.',
     image:
-      'https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?w=800&h=600&fit=crop',
-    publishedAt: '2024-10-30',
+      'https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?w=900&h=1100&fit=crop',
+    publishedAt: '2026-02-10',
     readingTime: 6,
     author: 'Sarah Dupont',
     category: 'bien-etre',
-    tags: ['sommeil', 'bien-être', 'alimentation'],
   },
   {
     slug: 'meditation-pleine-conscience',
     title: 'Méditation et pleine conscience au quotidien',
     excerpt:
-      'Découvrez comment intégrer la méditation dans votre routine quotidienne pour réduire le stress et améliorer votre bien-être global.',
+      'Comment intégrer la méditation dans votre routine quotidienne pour réduire le stress et améliorer votre bien-être global.',
     image:
-      'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&h=600&fit=crop',
-    publishedAt: '2024-10-22',
+      'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=900&h=1100&fit=crop',
+    publishedAt: '2026-02-04',
     readingTime: 7,
     author: 'Sarah Dupont',
     category: 'bien-etre',
-    tags: ['méditation', 'bien-être', 'mindfulness'],
   },
   {
     slug: 'proteines-vegetales',
@@ -260,12 +238,11 @@ const allArticles: Article[] = [
     excerpt:
       'Tout savoir sur les sources de protéines végétales et comment les intégrer dans votre alimentation quotidienne.',
     image:
-      'https://images.unsplash.com/photo-1606787366850-de6330128bfc?w=800&h=600&fit=crop',
-    publishedAt: '2024-10-25',
+      'https://images.unsplash.com/photo-1606787366850-de6330128bfc?w=900&h=600&fit=crop',
+    publishedAt: '2026-01-30',
     readingTime: 8,
     author: 'Sarah Dupont',
     category: 'nutrition',
-    tags: ['protéines', 'végétal', 'nutrition'],
   },
   {
     slug: 'omega-3-bienfaits',
@@ -273,12 +250,11 @@ const allArticles: Article[] = [
     excerpt:
       'Découvrez pourquoi les oméga-3 sont essentiels et où les trouver dans votre alimentation.',
     image:
-      'https://images.unsplash.com/photo-1544943910-4c1dc44aab44?w=800&h=600&fit=crop',
-    publishedAt: '2024-10-20',
+      'https://images.unsplash.com/photo-1544943910-4c1dc44aab44?w=900&h=600&fit=crop',
+    publishedAt: '2026-01-24',
     readingTime: 7,
     author: 'Sarah Dupont',
     category: 'nutrition',
-    tags: ['oméga-3', 'santé', 'nutrition'],
   },
   {
     slug: 'sucres-caches',
@@ -286,12 +262,11 @@ const allArticles: Article[] = [
     excerpt:
       'Apprenez à repérer les sucres cachés dans les aliments du quotidien et réduisez votre consommation.',
     image:
-      'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=800&h=600&fit=crop',
-    publishedAt: '2024-10-15',
+      'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=900&h=600&fit=crop',
+    publishedAt: '2026-01-18',
     readingTime: 6,
     author: 'Sarah Dupont',
     category: 'nutrition',
-    tags: ['sucre', 'alimentation', 'santé'],
   },
   {
     slug: 'fibres-alimentaires',
@@ -299,68 +274,14 @@ const allArticles: Article[] = [
     excerpt:
       'Les fibres sont essentielles pour une bonne santé digestive. Voici comment en consommer suffisamment.',
     image:
-      'https://images.unsplash.com/photo-1507367218428-c9104f878385?w=800&h=600&fit=crop',
-    publishedAt: '2024-10-10',
+      'https://images.unsplash.com/photo-1507367218428-c9104f878385?w=900&h=600&fit=crop',
+    publishedAt: '2026-01-12',
     readingTime: 5,
     author: 'Sarah Dupont',
     category: 'nutrition',
-    tags: ['fibres', 'digestion', 'nutrition'],
-  },
-  {
-    slug: 'vitamines-essentielles',
-    title: 'Les vitamines essentielles et où les trouver',
-    excerpt:
-      'Guide complet des vitamines indispensables et des aliments qui en sont riches.',
-    image:
-      'https://images.unsplash.com/photo-1566385101042-1a0aa0c1268c?w=800&h=600&fit=crop',
-    publishedAt: '2024-10-05',
-    readingTime: 9,
-    author: 'Sarah Dupont',
-    category: 'nutrition',
-    tags: ['vitamines', 'nutriments', 'santé'],
-  },
-  {
-    slug: 'index-glycemique',
-    title: "Comprendre l'index glycémique des aliments",
-    excerpt:
-      "L'index glycémique influence votre énergie et votre poids. Apprenez à l'utiliser à votre avantage.",
-    image:
-      'https://images.unsplash.com/photo-1609501676725-7186f017a4b7?w=800&h=600&fit=crop',
-    publishedAt: '2024-09-30',
-    readingTime: 7,
-    author: 'Sarah Dupont',
-    category: 'nutrition',
-    tags: ['glycémie', 'nutrition', 'santé'],
-  },
-  {
-    slug: 'mineraux-oligoelements',
-    title: 'Minéraux et oligoéléments : rôles et sources',
-    excerpt:
-      'Ces nutriments en petites quantités sont cruciaux pour votre santé. Découvrez lesquels et où les trouver.',
-    image:
-      'https://images.unsplash.com/photo-1476718406336-bb5a9690ee2a?w=800&h=600&fit=crop',
-    publishedAt: '2024-09-25',
-    readingTime: 8,
-    author: 'Sarah Dupont',
-    category: 'nutrition',
-    tags: ['minéraux', 'oligoéléments', 'nutrition'],
-  },
-  {
-    slug: 'hydratation-quotidienne',
-    title: "L'importance de l'hydratation pour votre santé",
-    excerpt:
-      "Découvrez pourquoi bien s'hydrater est essentiel pour votre organisme et comment adapter vos besoins en eau selon votre activité.",
-    image:
-      'https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=800&h=600&fit=crop',
-    publishedAt: '2024-09-20',
-    readingTime: 6,
-    author: 'Sarah Dupont',
-    category: 'nutrition',
-    tags: ['hydratation', 'eau', 'santé'],
   },
 ];
 
-// Utilitaires
 function formatDate(dateString: string): string {
   const date = new Date(dateString);
   return date.toLocaleDateString('fr-FR', {
@@ -370,1102 +291,518 @@ function formatDate(dateString: string): string {
   });
 }
 
-/**
- * Badge de catégorie - Style NutriSensia
- */
-function CategoryBadge({ category }: { category: string }) {
-  const categoryLabel =
-    categories.find(c => c.id === category)?.label || category;
+const articleHref = (article: Article) =>
+  `/blog/${article.category}/${article.slug}` as never;
 
-  return (
-    <span
-      style={{
-        backgroundColor: 'rgba(27, 153, 139, 0.08)' /* Turquoise pale */,
-        color: '#1B998B' /* Turquoise Azur */,
-        border: '1px solid #E5DED6' /* Beige Sand */,
-        padding: '3px 10px',
-        borderRadius: '9999px',
-        fontSize: '10px',
-        fontWeight: 600,
-        textTransform: 'uppercase',
-        letterSpacing: '0.05em',
-        fontFamily:
-          "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-        display: 'inline-block',
-      }}
-    >
-      {categoryLabel}
-    </span>
-  );
-}
-
-/**
- * Carte Article Featured (Grande) - Style Hybride (Finary + NutriSensia)
- */
-function FeaturedCard({ article }: { article: Article }) {
-  return (
-    <Link
-      href={`/blog/${article.category}/${article.slug}` as any}
-      className='block group h-full'
-    >
-      <article
-        className='h-full flex flex-col'
-        style={{
-          border: '1px solid #e5e5e5',
-          borderRadius: '16px',
-          boxShadow: '4px 4px 0 #E5DED6' /* Beige Sand */,
-          overflow: 'hidden',
-          backgroundColor: '#ffffff',
-          transition: 'transform 0.3s ease-out, box-shadow 0.3s ease-out',
-          transform: 'translateY(0)',
-        }}
-        onMouseEnter={e => {
-          e.currentTarget.style.transform = 'translateY(-4px)';
-          e.currentTarget.style.boxShadow = '6px 6px 0 #E5DED6';
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.transform = 'translateY(0)';
-          e.currentTarget.style.boxShadow = '4px 4px 0 #E5DED6';
-        }}
-      >
-        {/* Image - Grande, prend l'espace disponible */}
-        <div className='w-full overflow-hidden bg-[#E8F3EF] relative flex-1'>
-          {article.image ? (
-            <>
-              <img
-                src={article.image}
-                alt={article.title}
-                className='w-full h-full object-cover'
-              />
-              <div
-                className='absolute inset-0 pointer-events-none'
-                style={{
-                  backgroundColor:
-                    'rgba(27, 153, 139, 0.2)' /* Turquoise Azur overlay */,
-                }}
-              />
-            </>
-          ) : (
-            <div className='w-full h-full flex items-center justify-center bg-gradient-to-br from-[#E8F3EF] to-[#E5DED6]'>
-              <BookOpen className='w-20 h-20 text-[#1B998B] opacity-30' />
-            </div>
-          )}
-        </div>
-
-        {/* Content - Sous l'image */}
-        <div style={{ padding: '16px 16px 18px 16px', flexShrink: 0 }}>
-          {/* Category badge NutriSensia */}
-          <div style={{ marginBottom: '10px' }}>
-            <CategoryBadge category={article.category} />
-          </div>
-
-          {/* Title */}
-          <h3
-            className='text-xl transition-colors group-hover:text-[#147569]'
-            style={{
-              fontFamily: "'Marcellus', serif",
-              color: '#1a1a1a',
-              lineHeight: '1.35',
-              fontWeight: '400',
-              paddingBottom: '10px',
-              marginBottom: '10px',
-              borderBottom: '1px solid #e5e5e5',
-              fontSize: '24px',
-            }}
-          >
-            {article.title}
-          </h3>
-
-          {/* Author */}
-          <p
-            style={{
-              fontFamily:
-                "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-              fontSize: '10px',
-              color: '#41556b',
-            }}
-          >
-            Rédigé par{' '}
-            <span style={{ color: '#1a1a1a', fontWeight: 600 }}>
-              {article.author}
-            </span>
-          </p>
-        </div>
-      </article>
-    </Link>
-  );
-}
-
-/**
- * Simple Article List Item - Sans image, style compact
- */
-function SimpleArticleListItem({ article }: { article: Article }) {
-  return (
-    <Link
-      href={`/blog/${article.category}/${article.slug}` as any}
-      className='block'
-    >
-      <article
-        style={{
-          backgroundColor: '#ffffff',
-          border: '1px solid #e5e5e5',
-          borderRadius: '10px',
-          padding: '20px',
-          boxShadow: '4px 4px 0 #E5DED6',
-          transition: 'transform 0.3s ease-out, box-shadow 0.3s ease-out',
-          transform: 'translateY(0)',
-        }}
-        onMouseEnter={e => {
-          e.currentTarget.style.transform = 'translateY(-2px)';
-          e.currentTarget.style.boxShadow = '6px 6px 0 #E5DED6';
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.transform = 'translateY(0)';
-          e.currentTarget.style.boxShadow = '4px 4px 0 #E5DED6';
-        }}
-      >
-        <div style={{ marginBottom: '12px' }}>
-          <CategoryBadge category={article.category} />
-        </div>
-        <h3
-          style={{
-            fontFamily: "'Marcellus', serif",
-            fontSize: '18px',
-            fontWeight: 400,
-            lineHeight: '1.4',
-            color: '#1a1a1a',
-            marginBottom: '12px',
-          }}
-        >
-          {article.title}
-        </h3>
-        <p
-          style={{
-            fontFamily:
-              "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-            fontSize: '10px',
-            color: '#41556b',
-          }}
-        >
-          Rédigé par{' '}
-          <span style={{ color: '#1a1a1a', fontWeight: 600 }}>
-            {article.author}
-          </span>
-        </p>
-      </article>
-    </Link>
-  );
-}
-
-/**
- * Carte Article Tendance (Horizontale) - Style Hybride (Finary + NutriSensia)
- */
-function TrendCard({ article }: { article: Article }) {
-  return (
-    <Link
-      href={`/blog/${article.category}/${article.slug}` as any}
-      className='block group'
-    >
-      <article
-        className='flex gap-0'
-        style={{
-          border: '1px solid #e5e5e5',
-          borderRadius: '12px',
-          boxShadow: '4px 4px 0 #E5DED6' /* Beige Sand */,
-          overflow: 'hidden',
-          backgroundColor: '#ffffff',
-          transition: 'transform 0.3s ease-out, box-shadow 0.3s ease-out',
-          transform: 'translateY(0)',
-        }}
-        onMouseEnter={e => {
-          e.currentTarget.style.transform = 'translateY(-4px)';
-          e.currentTarget.style.boxShadow = '6px 6px 0 #E5DED6';
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.transform = 'translateY(0)';
-          e.currentTarget.style.boxShadow = '4px 4px 0 #E5DED6';
-        }}
-      >
-        {/* Image miniature - prend toute la hauteur de la carte */}
-        <div className='w-48 flex-shrink-0 overflow-hidden bg-[#E8F3EF] relative self-stretch'>
-          {article.image ? (
-            <>
-              <img
-                src={article.image}
-                alt={article.title}
-                className='w-full h-full object-cover'
-              />
-              <div
-                className='absolute inset-0 pointer-events-none'
-                style={{
-                  backgroundColor:
-                    'rgba(27, 153, 139, 0.2)' /* Turquoise Azur overlay */,
-                }}
-              />
-            </>
-          ) : (
-            <div className='w-full h-full flex items-center justify-center bg-gradient-to-br from-[#E8F3EF] to-[#E5DED6]'>
-              <BookOpen className='w-8 h-8 text-[#1B998B] opacity-30' />
-            </div>
-          )}
-        </div>
-
-        {/* Content */}
-        <div className='flex-1 py-3 px-4'>
-          {/* Category badge NutriSensia */}
-          <div className='mb-2'>
-            <CategoryBadge category={article.category} />
-          </div>
-
-          {/* Title */}
-          <h3
-            className='text-base line-clamp-2 transition-colors group-hover:text-[#147569]'
-            style={{
-              fontFamily: "'Marcellus', serif",
-              color: '#1a1a1a',
-              lineHeight: '1.35',
-              fontWeight: '400',
-              paddingBottom: '8px',
-              marginBottom: '8px',
-              borderBottom: '1px solid #e5e5e5',
-              fontSize: '20px',
-            }}
-          >
-            {article.title}
-          </h3>
-
-          {/* Author */}
-          <p
-            style={{
-              fontFamily:
-                "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-              fontSize: '10px',
-              color: '#41556b',
-            }}
-          >
-            Rédigé par{' '}
-            <span style={{ color: '#1a1a1a', fontWeight: 600 }}>
-              {article.author}
-            </span>
-          </p>
-        </div>
-      </article>
-    </Link>
-  );
-}
-
-/**
- * Carte Article Compacte (pour sliders) - Style page d'accueil
- */
-function CompactCard({ article }: { article: Article }) {
-  return (
-    <Link
-      href={`/blog/${article.category}/${article.slug}` as any}
-      className='block flex-shrink-0 w-72'
-    >
-      <article
-        style={{
-          backgroundColor: '#ffffff',
-          border: '1px solid #e5e5e5',
-          borderRadius: '10px',
-          overflow: 'hidden',
-          boxShadow: '8px 8px 0 #E5DED6' /* Beige Sand */,
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
-        {/* Image */}
-        <div
-          style={{
-            position: 'relative',
-            width: '100%',
-            height: '220px',
-            overflow: 'hidden',
-          }}
-        >
-          {article.image ? (
-            <>
-              <img
-                src={article.image}
-                alt={article.title}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                }}
-              />
-              <div
-                className='absolute inset-0 pointer-events-none'
-                style={{
-                  backgroundColor:
-                    'rgba(27, 153, 139, 0.2)' /* Turquoise Azur overlay */,
-                }}
-              />
-            </>
-          ) : (
-            <div className='w-full h-full flex items-center justify-center bg-gradient-to-br from-[#E8F3EF] to-[#E5DED6]'>
-              <BookOpen className='w-10 h-10 text-[#1B998B] opacity-30' />
-            </div>
-          )}
-        </div>
-
-        {/* Content */}
-        <div
-          style={{
-            padding: '24px',
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          {/* Badge catégorie */}
-          <div style={{ marginBottom: '16px' }}>
-            <CategoryBadge category={article.category} />
-          </div>
-
-          {/* Titre */}
-          <h3
-            style={{
-              fontFamily: "'Marcellus', serif",
-              fontSize: '24px',
-              fontWeight: 400,
-              lineHeight: '1.4',
-              color: '#1a1a1a',
-              paddingBottom: '12px',
-              marginBottom: '12px',
-              borderBottom: '1px solid #e5e5e5',
-            }}
-          >
-            {article.title}
-          </h3>
-
-          {/* Auteur */}
-          <p
-            style={{
-              fontFamily:
-                "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-              fontSize: '10px',
-              color: '#41556b',
-              marginTop: 'auto',
-            }}
-          >
-            Rédigé par{' '}
-            <span style={{ color: '#1a1a1a', fontWeight: 600 }}>
-              {article.author}
-            </span>
-          </p>
-        </div>
-      </article>
-    </Link>
-  );
-}
-
-/**
- * Carte Article Minimaliste (texte seul) - Style Hybride (Finary + NutriSensia)
- */
-function MinimalCard({ article }: { article: Article }) {
-  return (
-    <Link
-      href={`/blog/${article.category}/${article.slug}` as any}
-      className='block group pb-6 mb-6 border-b border-[#e5e5e5] relative'
-    >
-      <article>
-        {/* Category badge NutriSensia */}
-        <div className='mb-3'>
-          <CategoryBadge category={article.category} />
-        </div>
-
-        {/* Title */}
-        <h3
-          className='text-base mb-3 pb-2 transition-colors group-hover:text-[#147569]'
-          style={{
-            fontFamily: "'Marcellus', serif",
-            color: '#1a1a1a',
-            lineHeight: '1.45',
-            fontWeight: '400',
-            borderBottom: '1px solid #f0f0f0',
-            fontSize: '18px',
-          }}
-        >
-          {article.title}
-        </h3>
-
-        {/* Author */}
-        <p
-          style={{
-            fontFamily:
-              "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-            fontSize: '10px',
-            color: '#41556b',
-          }}
-        >
-          Rédigé par{' '}
-          <span style={{ color: '#1a1a1a', fontWeight: 600 }}>
-            {article.author}
-          </span>
-        </p>
-      </article>
-
-      {/* Barre verte animée au hover */}
-      <span
-        className='absolute bottom-0 left-0 h-[2px] bg-[#1B998B] w-0 group-hover:w-full transition-all duration-500 ease-out'
-        style={{
-          transitionProperty: 'width',
-        }}
-      />
-    </Link>
-  );
-}
-
-/**
- * Section avec slider horizontal
- */
-function CategorySection({
-  title,
-  articles,
-  icon: Icon,
-}: {
-  title: string;
-  articles: Article[];
-  icon: React.ElementType;
-}) {
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  const scroll = (direction: 'left' | 'right') => {
-    if (scrollRef.current) {
-      const scrollAmount = 300;
-      scrollRef.current.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
-        behavior: 'smooth',
-      });
-    }
+export default function BlogPage() {
+  const totalCount = allArticles.length;
+  const counts: Record<string, number> = {
+    nutrition: allArticles.filter(a => a.category === 'nutrition').length,
+    sante: allArticles.filter(a => a.category === 'sante').length,
+    'bien-etre': allArticles.filter(a => a.category === 'bien-etre').length,
+    recettes: allArticles.filter(a => a.category === 'recettes').length,
+    conseils: allArticles.filter(a => a.category === 'conseils').length,
   };
 
-  if (articles.length === 0) return null;
-
-  return (
-    <section className='mb-16'>
-      {/* Header */}
-      <div className='flex items-center justify-between mb-6'>
-        <h2
-          className='text-2xl font-bold flex items-center gap-3'
-          style={{
-            fontFamily: "'Marcellus', serif",
-            color: '#1B998B' /* Turquoise Azur */,
-          }}
-        >
-          <Icon className='w-6 h-6' />
-          {title}
-        </h2>
-        <div className='flex items-center gap-2'>
-          <button
-            onClick={() => scroll('left')}
-            className='w-10 h-10 rounded-full border border-[#1B998B] flex items-center justify-center transition-all hover:bg-[#1B998B] hover:text-white'
-            style={{ color: '#1B998B' }}
-          >
-            <ChevronLeft className='w-5 h-5' />
-          </button>
-          <button
-            onClick={() => scroll('right')}
-            className='w-10 h-10 rounded-full border border-[#1B998B] flex items-center justify-center transition-all hover:bg-[#1B998B] hover:text-white'
-            style={{ color: '#1B998B' }}
-          >
-            <ChevronRight className='w-5 h-5' />
-          </button>
-          <Link
-            href='/blog'
-            className='ml-4 flex items-center gap-2 text-sm font-semibold transition-colors hover:text-[#147569]'
-            style={{
-              color: '#1B998B',
-              /* Turquoise Azur */ fontFamily:
-                "'Plus Jakarta Sans', sans-serif",
-            }}
-          >
-            Voir plus
-            <ArrowRight className='w-4 h-4' />
-          </Link>
-        </div>
-      </div>
-
-      {/* Slider */}
-      <div
-        ref={scrollRef}
-        className='flex gap-6 overflow-x-auto pb-4 scrollbar-hide'
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-      >
-        {articles.map(article => (
-          <CompactCard key={article.slug} article={article} />
-        ))}
-      </div>
-    </section>
+  const lead = allArticles[0];
+  const trending = allArticles.slice(1, 5);
+  const nutritionList = allArticles.filter(
+    a => a.category === 'nutrition' && a.slug !== lead.slug
   );
-}
-
-/**
- * Newsletter CTA Section
- */
-function NewsletterCTA() {
-  return (
-    <section
-      className='rounded-3xl p-8 md:p-12 text-center mb-16'
-      style={{
-        backgroundColor: '#1B998B' /* Turquoise Azur */,
-        boxShadow: '8px 8px 0 #E5DED6' /* Beige Sand */,
-      }}
-    >
-      <div className='max-w-2xl mx-auto'>
-        <div
-          className='w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6'
-          style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)' }}
-        >
-          <Mail className='w-8 h-8 text-white' />
-        </div>
-        <h2
-          className='text-3xl font-bold mb-4 text-white'
-          style={{ fontFamily: "'Marcellus', serif" }}
-        >
-          Restez informé(e) chaque semaine
-        </h2>
-        <p
-          className='text-lg mb-8'
-          style={{
-            fontFamily: "'Plus Jakarta Sans', sans-serif",
-            color: 'rgba(255, 255, 255, 0.9)',
-          }}
-        >
-          Recevez nos meilleurs conseils nutrition, recettes exclusives et
-          actualités directement dans votre boîte mail.
-        </p>
-        <div className='flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto'>
-          <input
-            type='email'
-            placeholder='Votre adresse email'
-            className='flex-1 px-6 py-3 rounded-full text-[#147569] outline-none'
-            style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-          />
-          <button
-            className='px-8 py-3 font-semibold transition-all duration-300 hover:opacity-90'
-            style={{
-              backgroundColor: '#ffffff',
-              color: '#147569' /* Turquoise foncé */,
-              borderRadius: '35px',
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-            }}
-          >
-            S&apos;abonner →
-          </button>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/**
- * Page principale du Blog
- */
-export default function BlogPage() {
-  // Refs pour les animations
-  const titleRef = useRef(null);
-  const mainSectionRef = useRef(null);
-  const nutritionRef = useRef(null);
-  const santeRef = useRef(null);
-  const bienEtreRef = useRef(null);
-  const recettesRef = useRef(null);
-  const conseilsRef = useRef(null);
-
-  // First visit check pour animations conditionnelles
-  const { isFirstVisit, isReady } = useFirstVisit();
-
-  // Hooks useInView
-  const isTitleInView = useInView(titleRef, { once: true, margin: '-100px' });
-  const isMainSectionInView = useInView(mainSectionRef, {
-    once: true,
-    margin: '-100px',
-  });
-  const isNutritionInView = useInView(nutritionRef, {
-    once: true,
-    margin: '-100px',
-  });
-  const isSanteInView = useInView(santeRef, { once: true, margin: '-100px' });
-  const isBienEtreInView = useInView(bienEtreRef, {
-    once: true,
-    margin: '-100px',
-  });
-  const isRecettesInView = useInView(recettesRef, {
-    once: true,
-    margin: '-100px',
-  });
-  const isConseilsInView = useInView(conseilsRef, {
-    once: true,
-    margin: '-100px',
-  });
-
-  // Articles pour chaque section
-  const newArticles = allArticles.slice(0, 3);
-  const trendArticles = allArticles.slice(0, 4);
-  const nutritionArticles = allArticles.filter(a => a.category === 'nutrition');
-  const santeArticles = allArticles.filter(a => a.category === 'sante');
-  const recettesArticles = allArticles.filter(a => a.category === 'recettes');
-  const bienEtreArticles = allArticles.filter(a => a.category === 'bien-etre');
-  const conseilsArticles = allArticles.filter(a => a.category === 'conseils');
+  const santeList = allArticles.filter(a => a.category === 'sante');
+  const bienEtreList = allArticles.filter(a => a.category === 'bien-etre');
+  const recettesList = allArticles.filter(a => a.category === 'recettes');
+  const conseilsList = allArticles.filter(a => a.category === 'conseils');
 
   return (
     <div
-      className='min-h-screen'
-      style={{
-        backgroundColor: '#FBF9F7' /* Warm Cream - Méditerranée */,
-        backgroundImage:
-          'radial-gradient(ellipse 2500px 800px at 0% 0%, rgba(27, 153, 139, 0.15) 0%, transparent 50%)',
-      }}
+      className='ns2 min-h-screen'
+      style={{ backgroundColor: 'var(--ns-cream-100)' }}
     >
-      {/* Header - disparaît au scroll, réapparaît uniquement en haut */}
-      <MarketingHeader hideOnScroll={true} />
+      <MarketingHeader />
+      <div style={{ height: 80 }} />
 
-      {/* Spacer pour le header flottant fixe (announcement bar + header) */}
-      <div style={{ height: '100px' }} />
-
-      {/* Barre de navigation des catégories - Style Blog */}
-      <CategoryNavBar activeCategory='all' topOffset='80px' />
-
-      {/* Main Content */}
-      <main className='pt-8 pb-24'>
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-          {/* Titre principal de la page - Style Finary */}
-          <motion.h1
-            ref={titleRef}
-            animate={
-              isReady && isTitleInView
-                ? { opacity: 1, y: 0 }
-                : { opacity: 0, y: 30 }
-            }
-            transition={
-              isFirstVisit && isReady ? { duration: 0.6 } : { duration: 0 }
-            }
-            className='text-4xl lg:text-5xl font-bold mb-12'
-            style={{
-              fontFamily: "'Marcellus', serif",
-              color: '#1B998B' /* Turquoise Azur */,
-              lineHeight: '1.2',
-            }}
-          >
-            Tout savoir sur la nutrition avec NutriSensia
-          </motion.h1>
-
-          {/* Section principale: Nouveaux articles + Articles tendances - Style Finary */}
-          <motion.section
-            ref={mainSectionRef}
-            animate={
-              isReady && isMainSectionInView
-                ? { opacity: 1, y: 0 }
-                : { opacity: 0, y: 30 }
-            }
-            transition={
-              isFirstVisit && isReady
-                ? { duration: 0.6, delay: 0.2 }
-                : { duration: 0 }
-            }
-            className='mb-16'
-          >
-            <div className='grid lg:grid-cols-[1fr_1px_1fr] gap-8 lg:gap-12'>
-              {/* Colonne gauche: Nouveaux articles */}
-              <div className='flex flex-col'>
-                {/* Header avec flèches de navigation */}
-                <div className='flex items-center justify-between mb-6'>
-                  <h2
-                    className='text-2xl font-bold'
-                    style={{
-                      fontFamily: "'Marcellus', serif",
-                      color: '#1a1a1a',
-                    }}
-                  >
-                    Nouveaux articles
-                  </h2>
-                  <div className='flex items-center gap-2'>
-                    <button
-                      className='w-8 h-8 rounded-full border border-[#e5e5e5] flex items-center justify-center transition-all hover:border-[#1B998B] hover:text-[#1B998B]'
-                      style={{ color: '#999999' }}
-                    >
-                      <ChevronLeft className='w-4 h-4' />
-                    </button>
-                    <button
-                      className='w-8 h-8 rounded-full border border-[#e5e5e5] flex items-center justify-center transition-all hover:border-[#1B998B] hover:text-[#1B998B]'
-                      style={{ color: '#999999' }}
-                    >
-                      <ChevronRight className='w-4 h-4' />
-                    </button>
-                  </div>
-                </div>
-
-                {/* Grande carte article - Prend tout l'espace restant */}
-                <div className='flex-1'>
-                  {newArticles.length > 0 ? (
-                    <FeaturedCard article={newArticles[0]} />
-                  ) : (
-                    <div className='aspect-[4/3] rounded-2xl bg-[#E8F3EF] flex items-center justify-center'>
-                      <BookOpen className='w-16 h-16 text-[#1B998B] opacity-30' />
-                    </div>
-                  )}
-                </div>
+      <main>
+        {/* 3.1 — Editorial intro */}
+        <section className='blog-intro'>
+          <div className='ns2-container'>
+            <div className='blog-intro-grid'>
+              <div>
+                <span className='ns2-eyebrow ns2-eyebrow-dot'>
+                  Le Journal NutriSensia
+                </span>
+                <h1>
+                  Tout savoir sur la <em>nutrition</em>,
+                  <br />
+                  avec <span className='hl'>NutriSensia.</span>
+                </h1>
               </div>
-
-              {/* Barre séparatrice verticale */}
-              <div className='hidden lg:block w-px bg-[#e5e5e5]' />
-
-              {/* Colonne droite: Articles tendances */}
-              <div className='flex flex-col'>
-                <h2
-                  className='text-2xl font-bold mb-6'
-                  style={{
-                    fontFamily: "'Marcellus', serif",
-                    color: '#1a1a1a',
-                  }}
-                >
-                  Articles tendances
-                </h2>
-
-                {/* Liste verticale de 4 cartes horizontales */}
-                <div className='flex flex-col gap-6'>
-                  {trendArticles.slice(0, 4).map(article => (
-                    <TrendCard key={article.slug} article={article} />
-                  ))}
+              <div className='blog-intro-meta'>
+                <div className='stat'>
+                  <b>{totalCount}</b>
+                  <span>
+                    articles publiés depuis
+                    <br />
+                    janvier 2026
+                  </span>
+                </div>
+                <div className='stat'>
+                  <b>5</b>
+                  <span>
+                    thèmes éditoriaux —<br />
+                    nutrition, santé, bien-être, recettes, conseils
+                  </span>
+                </div>
+                <div className='stat'>
+                  <b>1×</b>
+                  <span>
+                    par semaine, dans
+                    <br />
+                    votre boîte mail
+                  </span>
                 </div>
               </div>
             </div>
-          </motion.section>
 
-          {/* Section Nutrition - 2 colonnes avec séparateur - Style Finary */}
-          <motion.section
-            ref={nutritionRef}
-            style={
-              isFirstVisit ? { opacity: 0, transform: 'translateY(30px)' } : {}
-            }
-            animate={
-              isReady && isNutritionInView
-                ? { opacity: 1, y: 0 }
-                : { opacity: 0, y: 30 }
-            }
-            transition={
-              isFirstVisit && isReady ? { duration: 0.6 } : { duration: 0 }
-            }
-            className='mb-16 mt-[125px]'
-          >
-            {/* Header principal */}
-            <div className='flex items-center justify-between mb-8'>
-              <h2
-                className='text-2xl font-bold'
-                style={{
-                  fontFamily: "'Marcellus', serif",
-                  color: '#1a1a1a',
-                }}
+            <div className='blog-topics'>
+              <Link href='/blog' className='topic active'>
+                Tout <span className='count'>{totalCount}</span>
+              </Link>
+              <Link href={'/blog/nutrition' as never} className='topic'>
+                Nutrition <span className='count'>{counts.nutrition}</span>
+              </Link>
+              <Link href={'/blog/sante' as never} className='topic'>
+                Santé <span className='count'>{counts.sante}</span>
+              </Link>
+              <Link href={'/blog/bien-etre' as never} className='topic'>
+                Bien-être <span className='count'>{counts['bien-etre']}</span>
+              </Link>
+              <Link href={'/blog/recettes' as never} className='topic'>
+                Recettes <span className='count'>{counts.recettes}</span>
+              </Link>
+              <Link href={'/blog/conseils' as never} className='topic'>
+                Conseils pratiques{' '}
+                <span className='count'>{counts.conseils}</span>
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* 3.2 — Lead spread */}
+        <div className='ns2-container'>
+          <section className='lead-spread'>
+            <Link href={articleHref(lead)} className='lead-card'>
+              <div
+                className='lead-card-img'
+                style={{ backgroundImage: `url('${lead.image}')` }}
               >
-                Nutrition
-              </h2>
+                <div className='sticker-tl'>
+                  <div className='ns2-sticker'>À LIRE ↘</div>
+                </div>
+              </div>
+              <div className='lead-card-body'>
+                <div>
+                  <span className='ns2-eyebrow ns2-eyebrow-dot'>
+                    {CATEGORY_LABEL[lead.category]} · à la une
+                  </span>
+                  <h2>
+                    Les bases d&apos;une <em>alimentation équilibrée</em>
+                  </h2>
+                </div>
+                <div className='lead-card-meta'>
+                  <b>{lead.author}</b>
+                  {lead.readingTime} min · {formatDate(lead.publishedAt)}
+                </div>
+              </div>
+            </Link>
+
+            <div className='lead-rail'>
+              <div className='lead-rail-head'>
+                <h4>
+                  Tendances <em>cette semaine</em>
+                </h4>
+                <span className='ns2-meta'>{trending.length} lectures</span>
+              </div>
+              {trending.map(article => (
+                <Link
+                  key={article.slug}
+                  href={articleHref(article)}
+                  className='rail-item'
+                >
+                  <div
+                    className='rail-item-img'
+                    style={{ backgroundImage: `url('${article.image}')` }}
+                  />
+                  <div>
+                    <div className='rail-item-eyebrow'>
+                      {CATEGORY_LABEL[article.category]}
+                    </div>
+                    <h3>{article.title}</h3>
+                    <span className='ns2-meta'>{article.readingTime} min</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        </div>
+
+        {/* 3.3 — Marquee */}
+        <div className='ns2-marquee' aria-hidden='true'>
+          <div className='ns2-marquee-track'>
+            {[...Array(4)].flatMap((_, dup) =>
+              [
+                'manger en conscience',
+                'le corps a raison',
+                'douceur > performance',
+                'une nutrition vivante',
+              ].map((word, i) => (
+                <span key={`${dup}-${i}`} className='ns2-marquee-item'>
+                  <span>{word}</span>
+                  <span className='ns2-marquee-star'>✦</span>
+                </span>
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* 3.4 — Nutrition (3-up) */}
+        <div className='ns2-container'>
+          <section className='sec' style={{ borderTop: 0 }}>
+            <div className='sec-head'>
+              <div>
+                <span className='ns2-eyebrow ns2-eyebrow-dot'>
+                  Nutrition · {counts.nutrition} articles
+                </span>
+                <h2>
+                  Comprendre ce que <em>vous mangez</em>
+                </h2>
+              </div>
               <Link
-                href={'/blog/nutrition' as any}
-                className='flex items-center gap-2 px-4 py-2 text-sm border border-[#d0d0d0] rounded-full transition-all duration-300'
-                style={{
-                  color: '#1a1a1a',
-                  fontFamily: "'Plus Jakarta Sans', sans-serif",
-                }}
-                onMouseEnter={e =>
-                  (e.currentTarget.style.backgroundColor =
-                    'rgba(27, 153, 139, 0.08)')
-                }
-                onMouseLeave={e =>
-                  (e.currentTarget.style.backgroundColor = 'transparent')
-                }
+                href={'/blog/nutrition' as never}
+                className='ns2-btn ns2-btn-outline ns2-btn-sm'
               >
-                Voir plus
-                <ChevronRight className='w-4 h-4' />
+                Voir tout →
               </Link>
             </div>
 
-            {/* Layout 2 colonnes - Ratio 2/3 - 1/3 */}
-            <div className='grid lg:grid-cols-[2fr_1fr] gap-4 lg:gap-6'>
-              {/* Colonne gauche: Grille d'articles avec images */}
-              <div className='flex flex-col'>
-                <div className='grid md:grid-cols-2 gap-x-4 gap-y-8'>
-                  {nutritionArticles.slice(0, 4).map(article => (
-                    <FeaturedCard key={article.slug} article={article} />
-                  ))}
-                </div>
-              </div>
+            <div className='grid-3'>
+              {nutritionList.slice(0, 3).map((article, i) => (
+                <Link
+                  key={article.slug}
+                  href={articleHref(article)}
+                  className='acard'
+                >
+                  <div
+                    className='acard-img'
+                    style={{ backgroundImage: `url('${article.image}')` }}
+                  >
+                    {i === 0 && (
+                      <div className='sticker-tl'>
+                        <div className='ns2-sticker'>NOUVEAU</div>
+                      </div>
+                    )}
+                  </div>
+                  <div className='acard-body'>
+                    <div className='acard-meta'>
+                      <span className='ns2-tag'>
+                        {CATEGORY_LABEL[article.category]}
+                      </span>
+                      <span className='ns2-meta'>
+                        {article.readingTime} min
+                      </span>
+                    </div>
+                    <h3>{article.title}</h3>
+                    <div className='acard-foot'>
+                      <span>{article.author}</span>
+                      <span>{formatDate(article.publishedAt)}</span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        </div>
 
-              {/* Colonne droite: Liste d'articles sans image - Style NutriSensia */}
-              <div className='flex flex-col gap-4'>
-                {nutritionArticles.slice(4, 10).map(article => (
-                  <SimpleArticleListItem key={article.slug} article={article} />
+        {/* 3.5 — Santé (1 feature + 2 secondaires) */}
+        <div className='ns2-container'>
+          <section className='sec'>
+            <div className='sec-head'>
+              <div>
+                <span className='ns2-eyebrow ns2-eyebrow-dot'>
+                  Santé · {counts.sante} articles
+                </span>
+                <h2>
+                  Prévenir, comprendre, <em>équilibrer</em>
+                </h2>
+              </div>
+              <Link
+                href={'/blog/sante' as never}
+                className='ns2-btn ns2-btn-outline ns2-btn-sm'
+              >
+                Voir tout →
+              </Link>
+            </div>
+
+            <div className='sante-grid'>
+              {santeList[0] && (
+                <Link
+                  href={articleHref(santeList[0])}
+                  className='sante-feature'
+                >
+                  <div
+                    className='sante-feature-img'
+                    style={{
+                      backgroundImage: `url('${santeList[0].image}')`,
+                    }}
+                  />
+                  <div className='sante-feature-body'>
+                    <div>
+                      <span className='ns2-eyebrow ns2-eyebrow-dot'>
+                        Dossier · à la une
+                      </span>
+                      <h3>{santeList[0].title}</h3>
+                      <p className='ns2-body' style={{ margin: 0 }}>
+                        {santeList[0].excerpt}
+                      </p>
+                    </div>
+                    <div className='acard-foot' style={{ marginTop: 32 }}>
+                      <span>
+                        {santeList[0].author} · {santeList[0].readingTime} min
+                      </span>
+                      <span>{formatDate(santeList[0].publishedAt)}</span>
+                    </div>
+                  </div>
+                </Link>
+              )}
+
+              <div className='sante-side'>
+                {santeList.slice(1, 3).map(article => (
+                  <Link
+                    key={article.slug}
+                    href={articleHref(article)}
+                    className='acard'
+                  >
+                    <div
+                      className='acard-img sante-side-img'
+                      style={{ backgroundImage: `url('${article.image}')` }}
+                    />
+                    <div className='acard-body'>
+                      <div className='acard-meta'>
+                        <span className='ns2-tag'>
+                          {CATEGORY_LABEL[article.category]}
+                        </span>
+                        <span className='ns2-meta'>
+                          {article.readingTime} min
+                        </span>
+                      </div>
+                      <h3>{article.title}</h3>
+                    </div>
+                  </Link>
                 ))}
               </div>
             </div>
-          </motion.section>
+          </section>
+        </div>
 
-          {/* Section Santé - 3 colonnes - Style Finary */}
-          <motion.section
-            ref={santeRef}
-            style={
-              isFirstVisit ? { opacity: 0, transform: 'translateY(30px)' } : {}
-            }
-            animate={
-              isReady && isSanteInView
-                ? { opacity: 1, y: 0 }
-                : { opacity: 0, y: 30 }
-            }
-            transition={
-              isFirstVisit && isReady ? { duration: 0.6 } : { duration: 0 }
-            }
-            className='mb-16 mt-[125px]'
-          >
-            {/* Header principal */}
-            <div className='flex items-center justify-between mb-8'>
-              <h2
-                className='text-2xl font-bold'
-                style={{
-                  fontFamily: "'Marcellus', serif",
-                  color: '#1a1a1a',
-                }}
-              >
-                Santé
-              </h2>
+        {/* 3.6 — Newsletter (panneau ink) */}
+        <div className='ns2-container'>
+          <section style={{ padding: '40px 0' }}>
+            <div className='newsletter'>
+              <div>
+                <span
+                  className='ns2-eyebrow'
+                  style={{ color: 'var(--ns-peps)' }}
+                >
+                  ↘ Chaque semaine
+                </span>
+                <h3>
+                  Restez informé·e
+                  <br />
+                  <em>sans spam.</em>
+                </h3>
+                <p>
+                  Nos meilleurs conseils nutrition, recettes exclusives et
+                  actualités, dans votre boîte mail. Une fois par semaine, rien
+                  d&apos;autre.
+                </p>
+                <div className='newsletter-meta'>
+                  <span>
+                    <b>2 400+</b> abonnés
+                  </span>
+                  <span>
+                    <b>0</b> spam, jamais
+                  </span>
+                  <span>
+                    désinscription en <b>1 clic</b>
+                  </span>
+                </div>
+              </div>
+              <form onSubmit={e => e.preventDefault()}>
+                <input
+                  type='email'
+                  placeholder='votre@email.fr'
+                  aria-label='Adresse email'
+                  required
+                />
+                <button type='submit'>S&apos;abonner ↘</button>
+              </form>
+            </div>
+          </section>
+        </div>
+
+        {/* 3.7 — Bien-être (3-up portrait) */}
+        <div className='ns2-container'>
+          <section className='sec'>
+            <div className='sec-head'>
+              <div>
+                <span className='ns2-eyebrow ns2-eyebrow-dot'>
+                  Bien-être · {counts['bien-etre']} articles
+                </span>
+                <h2>
+                  Pour le corps <em>&amp; l&apos;esprit</em>
+                </h2>
+              </div>
               <Link
-                href={'/blog/sante' as any}
-                className='flex items-center gap-2 px-4 py-2 text-sm border border-[#d0d0d0] rounded-full transition-all duration-300'
-                style={{
-                  color: '#1a1a1a',
-                  fontFamily: "'Plus Jakarta Sans', sans-serif",
-                }}
-                onMouseEnter={e =>
-                  (e.currentTarget.style.backgroundColor =
-                    'rgba(27, 153, 139, 0.08)')
-                }
-                onMouseLeave={e =>
-                  (e.currentTarget.style.backgroundColor = 'transparent')
-                }
+                href={'/blog/bien-etre' as never}
+                className='ns2-btn ns2-btn-outline ns2-btn-sm'
               >
-                Voir plus
-                <ChevronRight className='w-4 h-4' />
+                Voir tout →
               </Link>
             </div>
 
-            {/* Grille 3 colonnes */}
-            <div className='grid md:grid-cols-3 gap-x-6'>
-              {santeArticles.slice(0, 3).map(article => (
-                <FeaturedCard key={article.slug} article={article} />
+            <div className='grid-3'>
+              {bienEtreList.slice(0, 3).map(article => (
+                <Link
+                  key={article.slug}
+                  href={articleHref(article)}
+                  className='acard'
+                >
+                  <div
+                    className='acard-img acard-img-portrait'
+                    style={{ backgroundImage: `url('${article.image}')` }}
+                  />
+                  <div className='acard-body'>
+                    <div className='acard-meta'>
+                      <span className='ns2-tag'>
+                        {CATEGORY_LABEL[article.category]}
+                      </span>
+                      <span className='ns2-meta'>
+                        {article.readingTime} min
+                      </span>
+                    </div>
+                    <h3>{article.title}</h3>
+                    <div className='acard-foot'>
+                      <span>{article.author}</span>
+                      <span>→</span>
+                    </div>
+                  </div>
+                </Link>
               ))}
             </div>
-          </motion.section>
+          </section>
+        </div>
 
-          {/* Section Bien-être - Layout asymétrique - Style Finary */}
-          <motion.section
-            ref={bienEtreRef}
-            style={
-              isFirstVisit ? { opacity: 0, transform: 'translateY(30px)' } : {}
-            }
-            animate={
-              isReady && isBienEtreInView
-                ? { opacity: 1, y: 0 }
-                : { opacity: 0, y: 30 }
-            }
-            transition={
-              isFirstVisit && isReady ? { duration: 0.6 } : { duration: 0 }
-            }
-            className='mb-16 mt-[125px]'
-          >
-            {/* Header principal */}
-            <div className='flex items-center justify-between mb-8'>
-              <h2
-                className='text-2xl font-bold'
-                style={{
-                  fontFamily: "'Marcellus', serif",
-                  color: '#1a1a1a',
-                }}
-              >
-                Bien-être
-              </h2>
+        {/* 3.8 — Recettes (4-up serré, "carnet") */}
+        <div className='ns2-container'>
+          <section className='sec'>
+            <div className='sec-head'>
+              <div>
+                <span className='ns2-eyebrow ns2-eyebrow-dot'>
+                  Recettes · {counts.recettes} articles
+                </span>
+                <h2>
+                  Cuisiner simple, <em>nutritif</em>
+                </h2>
+              </div>
               <Link
-                href={'/blog/bien-etre' as any}
-                className='flex items-center gap-2 px-4 py-2 text-sm border border-[#d0d0d0] rounded-full transition-all duration-300'
-                style={{
-                  color: '#1a1a1a',
-                  fontFamily: "'Plus Jakarta Sans', sans-serif",
-                }}
-                onMouseEnter={e =>
-                  (e.currentTarget.style.backgroundColor =
-                    'rgba(27, 153, 139, 0.08)')
-                }
-                onMouseLeave={e =>
-                  (e.currentTarget.style.backgroundColor = 'transparent')
-                }
+                href={'/blog/recettes' as never}
+                className='ns2-btn ns2-btn-outline ns2-btn-sm'
               >
-                Voir plus
-                <ChevronRight className='w-4 h-4' />
+                Voir tout →
               </Link>
             </div>
 
-            {/* Layout asymétrique: petite à gauche, grande au centre, moyenne à droite */}
-            <div className='grid grid-cols-12 gap-6'>
-              {/* Colonne gauche - Petite carte */}
-              <div className='col-span-3'>
-                {bienEtreArticles[0] && (
-                  <FeaturedCard article={bienEtreArticles[0]} />
-                )}
-              </div>
-
-              {/* Colonne centre - Grande carte */}
-              <div className='col-span-6'>
-                {bienEtreArticles[1] && (
-                  <FeaturedCard article={bienEtreArticles[1]} />
-                )}
-              </div>
-
-              {/* Colonne droite - Moyenne carte */}
-              <div className='col-span-3'>
-                {bienEtreArticles[2] && (
-                  <FeaturedCard article={bienEtreArticles[2]} />
-                )}
-              </div>
-            </div>
-          </motion.section>
-
-          {/* Section Recettes - Layout 2 colonnes asymétrique - Style Finary */}
-          <motion.section
-            ref={recettesRef}
-            style={
-              isFirstVisit ? { opacity: 0, transform: 'translateY(30px)' } : {}
-            }
-            animate={
-              isReady && isRecettesInView
-                ? { opacity: 1, y: 0 }
-                : { opacity: 0, y: 30 }
-            }
-            transition={
-              isFirstVisit && isReady ? { duration: 0.6 } : { duration: 0 }
-            }
-            className='mb-16 mt-[125px]'
-          >
-            {/* Header principal */}
-            <div className='flex items-center justify-between mb-8'>
-              <h2
-                className='text-2xl font-bold'
-                style={{
-                  fontFamily: "'Marcellus', serif",
-                  color: '#1a1a1a',
-                }}
-              >
-                Recettes
-              </h2>
-              <Link
-                href={'/blog/recettes' as any}
-                className='flex items-center gap-2 px-4 py-2 text-sm border border-[#d0d0d0] rounded-full transition-all duration-300'
-                style={{
-                  color: '#1a1a1a',
-                  fontFamily: "'Plus Jakarta Sans', sans-serif",
-                }}
-                onMouseEnter={e =>
-                  (e.currentTarget.style.backgroundColor =
-                    'rgba(27, 153, 139, 0.08)')
-                }
-                onMouseLeave={e =>
-                  (e.currentTarget.style.backgroundColor = 'transparent')
-                }
-              >
-                Voir plus
-                <ChevronRight className='w-4 h-4' />
-              </Link>
-            </div>
-
-            {/* Layout: 2 grandes cartes + 1 petite carte sur la même ligne */}
-            <div className='grid grid-cols-12 gap-6'>
-              {/* Première grande carte */}
-              <div className='col-span-4'>
-                {recettesArticles[0] && (
-                  <FeaturedCard article={recettesArticles[0]} />
-                )}
-              </div>
-
-              {/* Deuxième grande carte */}
-              <div className='col-span-5'>
-                {recettesArticles[1] && (
-                  <FeaturedCard article={recettesArticles[1]} />
-                )}
-              </div>
-
-              {/* Petite carte */}
-              <div className='col-span-3'>
-                {recettesArticles[2] && (
-                  <FeaturedCard article={recettesArticles[2]} />
-                )}
-              </div>
-            </div>
-          </motion.section>
-
-          {/* Section Conseils pratiques - 3 colonnes - Style Finary */}
-          <motion.section
-            ref={conseilsRef}
-            style={
-              isFirstVisit ? { opacity: 0, transform: 'translateY(30px)' } : {}
-            }
-            animate={
-              isReady && isConseilsInView
-                ? { opacity: 1, y: 0 }
-                : { opacity: 0, y: 30 }
-            }
-            transition={
-              isFirstVisit && isReady ? { duration: 0.6 } : { duration: 0 }
-            }
-            className='mb-16 mt-[125px]'
-          >
-            {/* Header principal */}
-            <div className='flex items-center justify-between mb-8'>
-              <h2
-                className='text-2xl font-bold'
-                style={{
-                  fontFamily: "'Marcellus', serif",
-                  color: '#1a1a1a',
-                }}
-              >
-                Conseils pratiques
-              </h2>
-              <Link
-                href={'/blog/conseils' as any}
-                className='flex items-center gap-2 px-4 py-2 text-sm border border-[#d0d0d0] rounded-full transition-all duration-300'
-                style={{
-                  color: '#1a1a1a',
-                  fontFamily: "'Plus Jakarta Sans', sans-serif",
-                }}
-                onMouseEnter={e =>
-                  (e.currentTarget.style.backgroundColor =
-                    'rgba(27, 153, 139, 0.08)')
-                }
-                onMouseLeave={e =>
-                  (e.currentTarget.style.backgroundColor = 'transparent')
-                }
-              >
-                Voir plus
-                <ChevronRight className='w-4 h-4' />
-              </Link>
-            </div>
-
-            {/* Grille 3 colonnes */}
-            <div className='grid md:grid-cols-3 gap-x-6'>
-              {conseilsArticles.slice(0, 3).map(article => (
-                <FeaturedCard key={article.slug} article={article} />
+            <div className='grid-4'>
+              {recettesList.slice(0, 4).map(article => (
+                <Link
+                  key={article.slug}
+                  href={articleHref(article)}
+                  className='rec-card'
+                >
+                  <div
+                    className='rec-card-img'
+                    style={{ backgroundImage: `url('${article.image}')` }}
+                  />
+                  <div className='rec-card-body'>
+                    <span className='ns2-tag'>
+                      {CATEGORY_LABEL[article.category]}
+                    </span>
+                    <h3>{article.title}</h3>
+                    <div className='ns2-meta' style={{ marginTop: 12 }}>
+                      {article.readingTime} min ·{' '}
+                      {article.difficulty ?? 'facile'}
+                    </div>
+                  </div>
+                </Link>
               ))}
             </div>
-          </motion.section>
+          </section>
+        </div>
+
+        {/* 3.9 — Conseils pratiques (3-up) */}
+        <div className='ns2-container'>
+          <section className='sec'>
+            <div className='sec-head'>
+              <div>
+                <span className='ns2-eyebrow ns2-eyebrow-dot'>
+                  Conseils pratiques · {counts.conseils} articles
+                </span>
+                <h2>
+                  Au quotidien, <em>sans complications</em>
+                </h2>
+              </div>
+              <Link
+                href={'/blog/conseils' as never}
+                className='ns2-btn ns2-btn-outline ns2-btn-sm'
+              >
+                Voir tout →
+              </Link>
+            </div>
+
+            <div className='grid-3'>
+              {conseilsList.slice(0, 3).map(article => (
+                <Link
+                  key={article.slug}
+                  href={articleHref(article)}
+                  className='acard'
+                >
+                  <div
+                    className='acard-img'
+                    style={{ backgroundImage: `url('${article.image}')` }}
+                  />
+                  <div className='acard-body'>
+                    <div className='acard-meta'>
+                      <span className='ns2-tag'>
+                        {CATEGORY_LABEL[article.category]}
+                      </span>
+                      <span className='ns2-meta'>
+                        {article.readingTime} min
+                      </span>
+                    </div>
+                    <h3>{article.title}</h3>
+                    <div className='acard-foot'>
+                      <span>{article.author}</span>
+                      <span>{formatDate(article.publishedAt)}</span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
         </div>
       </main>
 
-      {/* Footer */}
       <MarketingFooter />
-
-      {/* Hide scrollbar CSS */}
-      <style jsx global>{`
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-      `}</style>
     </div>
   );
 }

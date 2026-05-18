@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { Providers } from '../providers';
 import '../globals.css';
 
-// Force dynamic rendering pour les pages auth qui utilisent useSearchParams
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
@@ -12,12 +11,11 @@ export const metadata: Metadata = {
 };
 
 /**
- * Layout pour les pages d'authentification
+ * Layout for non-localized auth routes (callback, confirm, reset-password, update-password).
  *
- * Ce layout est séparé du layout principal [locale] car les pages auth
- * sont exclues du middleware i18n pour simplifier les URLs.
- *
- * Design: Palette Méditerranée (Style Guide NutriSensia)
+ * Localized auth routes ([locale]/auth/{signin,signup,forgot-password}) inherit from
+ * [locale]/layout.tsx instead. DS v2 fonts (Fraunces, Inter, Caveat) and tokens are
+ * loaded globally via globals.css — no extra imports needed here.
  */
 export default function AuthLayout({
   children,
@@ -26,20 +24,7 @@ export default function AuthLayout({
 }) {
   return (
     <html lang='fr'>
-      <head>
-        {/* Google Fonts - Marcellus (titres) et Plus Jakarta Sans (body) */}
-        <link rel='preconnect' href='https://fonts.googleapis.com' />
-        <link
-          rel='preconnect'
-          href='https://fonts.gstatic.com'
-          crossOrigin='anonymous'
-        />
-        <link
-          href='https://fonts.googleapis.com/css2?family=Marcellus&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap'
-          rel='stylesheet'
-        />
-      </head>
-      <body className='antialiased' style={{ backgroundColor: '#f8f7ef' }}>
+      <body className='ns2 antialiased bg-cream-100 text-ink'>
         <Providers>{children}</Providers>
       </body>
     </html>

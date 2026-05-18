@@ -1,12 +1,22 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import dynamic from 'next/dynamic';
 import { Loader2, Ruler } from 'lucide-react';
 import type { TimeRange, MeasurementType } from '@/types/suivi';
 import { measurementTypeConfig } from '@/types/suivi';
 import { usePatientMeasurements } from '@/hooks/useNutritionistSuivi';
 import { TimeRangeSelector } from './TimeRangeSelector';
-import { MeasurementChart } from './charts/MeasurementChart';
+
+const MeasurementChart = dynamic(
+  () => import('./charts/MeasurementChart').then(m => m.MeasurementChart),
+  {
+    ssr: false,
+    loading: () => (
+      <div className='h-64 rounded-lg bg-gray-100 animate-pulse' />
+    ),
+  }
+);
 
 // ============================================================================
 // Types
@@ -33,12 +43,32 @@ const typeColorConfig: Record<
   MeasurementType,
   { color: string; bgColor: string; textColor: string }
 > = {
-  poitrine: { color: '#E76F51', bgColor: 'bg-orange-50', textColor: 'text-orange-600' },
-  taille: { color: '#1B998B', bgColor: 'bg-teal-50', textColor: 'text-teal-600' },
-  hanches: { color: '#F4A261', bgColor: 'bg-amber-50', textColor: 'text-amber-600' },
-  cuisse: { color: '#8B5CF6', bgColor: 'bg-violet-50', textColor: 'text-violet-600' },
+  poitrine: {
+    color: '#E76F51',
+    bgColor: 'bg-orange-50',
+    textColor: 'text-orange-600',
+  },
+  taille: {
+    color: '#1B998B',
+    bgColor: 'bg-teal-50',
+    textColor: 'text-teal-600',
+  },
+  hanches: {
+    color: '#F4A261',
+    bgColor: 'bg-amber-50',
+    textColor: 'text-amber-600',
+  },
+  cuisse: {
+    color: '#8B5CF6',
+    bgColor: 'bg-violet-50',
+    textColor: 'text-violet-600',
+  },
   bras: { color: '#3B82F6', bgColor: 'bg-blue-50', textColor: 'text-blue-600' },
-  mollet: { color: '#EC4899', bgColor: 'bg-pink-50', textColor: 'text-pink-600' },
+  mollet: {
+    color: '#EC4899',
+    bgColor: 'bg-pink-50',
+    textColor: 'text-pink-600',
+  },
 };
 
 const MEASUREMENT_TYPES: MeasurementType[] = [
@@ -83,8 +113,7 @@ export function MeasurementsSection({ patientId }: MeasurementsSectionProps) {
       const typeEntries = data.measurements
         .filter(m => m.measurement_type === type)
         .sort(
-          (a, b) =>
-            new Date(b.date).getTime() - new Date(a.date).getTime()
+          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
         );
 
       const latestValue =
@@ -206,7 +235,9 @@ export function MeasurementsSection({ patientId }: MeasurementsSectionProps) {
                   cm
                 </span>
               </p>
-              <p className='text-xs text-gray-500 truncate mt-1'>{summary.label}</p>
+              <p className='text-xs text-gray-500 truncate mt-1'>
+                {summary.label}
+              </p>
             </button>
           );
         })}

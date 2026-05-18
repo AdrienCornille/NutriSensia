@@ -7,6 +7,7 @@ import {
   Home,
   UtensilsCrossed,
   ClipboardList,
+  ClipboardCheck,
   TrendingUp,
   FolderOpen,
   Calendar,
@@ -18,6 +19,7 @@ import {
   User,
   LogOut,
 } from 'lucide-react';
+import { usePatientQuestionnaireInbox } from '@/hooks/usePatientQuestionnaires';
 
 // ==================== TYPES ====================
 
@@ -77,7 +79,7 @@ const baseNavItems: Omit<NavItem, 'badge'>[] = [
   },
   {
     id: 'aliments',
-    label: 'Base aliments',
+    label: 'Aliments & plats',
     icon: <Apple className='w-5 h-5' />,
     href: '/dashboard/patient/aliments',
   },
@@ -86,6 +88,12 @@ const baseNavItems: Omit<NavItem, 'badge'>[] = [
     label: 'Messagerie',
     icon: <MessageSquare className='w-5 h-5' />,
     href: '/dashboard/patient/messagerie',
+  },
+  {
+    id: 'questionnaires',
+    label: 'Questionnaires',
+    icon: <ClipboardCheck className='w-5 h-5' />,
+    href: '/dashboard/patient/questionnaires',
   },
   {
     id: 'contenu',
@@ -118,15 +126,34 @@ export function PatientSidebar({
   const pathname = usePathname();
   const [activeNav, setActiveNav] = useState('dashboard');
 
+  // Surface "pending questionnaires" count as a sidebar badge.
+  const { data: questionnaireInbox } = usePatientQuestionnaireInbox();
+  const pendingQuestionnaireCount = useMemo(
+    () =>
+      (questionnaireInbox || []).filter(q => q.status === 'in_progress').length,
+    [questionnaireInbox]
+  );
+
   // Navigation items with dynamic badge
   const navItems: NavItem[] = useMemo(() => {
     return baseNavItems.map(item => {
       if (item.id === 'messagerie' && unreadMessagesCount > 0) {
-        return { ...item, badge: unreadMessagesCount, badgeType: 'dot' as const };
+        return {
+          ...item,
+          badge: unreadMessagesCount,
+          badgeType: 'dot' as const,
+        };
+      }
+      if (item.id === 'questionnaires' && pendingQuestionnaireCount > 0) {
+        return {
+          ...item,
+          badge: pendingQuestionnaireCount,
+          badgeType: 'count' as const,
+        };
       }
       return item as NavItem;
     });
-  }, [unreadMessagesCount]);
+  }, [unreadMessagesCount, pendingQuestionnaireCount]);
 
   // Determine active nav based on pathname
   const currentActiveNav = useMemo(() => {
@@ -137,6 +164,8 @@ export function PatientSidebar({
     if (pathname?.includes('/dashboard/patient/agenda')) return 'agenda';
     if (pathname?.includes('/dashboard/patient/messagerie'))
       return 'messagerie';
+    if (pathname?.includes('/dashboard/patient/questionnaires'))
+      return 'questionnaires';
     if (pathname?.includes('/dashboard/patient/recettes')) return 'recettes';
     if (pathname?.includes('/dashboard/patient/aliments')) return 'aliments';
     if (pathname?.includes('/dashboard/patient/contenu')) return 'contenu';

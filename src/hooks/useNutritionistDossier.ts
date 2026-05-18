@@ -205,15 +205,23 @@ export function useAnamneseVersion(
   patientId: string | null,
   anamneseId: string | null
 ) {
-  return useQuery<{
-    id: string;
-    version: number;
-    status: string;
-    is_current: boolean;
-    created_at: string;
-    updated_at: string;
-    sections: { id: string; label: string; icon: string; fields: { label: string; value: string }[] }[];
-  }, Error>({
+  return useQuery<
+    {
+      id: string;
+      version: number;
+      status: string;
+      is_current: boolean;
+      created_at: string;
+      updated_at: string;
+      sections: {
+        id: string;
+        label: string;
+        icon: string;
+        fields: { label: string; value: string }[];
+      }[];
+    },
+    Error
+  >({
     queryKey: dossierKeys.anamneseVersion(patientId || '', anamneseId || ''),
     queryFn: () =>
       fetchJson(dossierUrl(patientId!, `/anamnese/${anamneseId!}`)),
@@ -323,6 +331,7 @@ export function useCreateQuestionnaire(patientId: string) {
       title: string;
       questionnaire_type: string;
       due_date?: string;
+      template_version_id?: string;
       questions: {
         question: string;
         type: string;

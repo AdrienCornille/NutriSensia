@@ -2,21 +2,13 @@
 
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { cn } from '@/lib/utils';
 import { useFirstVisit } from '@/hooks/useFirstVisit';
 
 /**
- * Section Valeurs Fondamentales - Ce qui guide notre pratique au quotidien
+ * Section Valeurs Fondamentales (DS v2 Editorial)
  *
- * Cette section présente les 6 valeurs fondamentales de NutriSensia
- * avec le design signature (border + shadow offset).
- *
- * Features:
- * - 6 cartes de valeurs en grille responsive (3x2)
- * - Design NutriSensia avec bordure verte et ombre offset
- * - Titres en vert et en gras
- * - Contenu centré sur la page
- * - Animations au scroll
+ * 6 cartes ns2-card avec hover lift, badge numéroté
+ * en peps-soft, tags variés. Background cream-200.
  */
 export function ValuesSection() {
   const ref = useRef(null);
@@ -27,159 +19,216 @@ export function ValuesSection() {
   });
   const { isFirstVisit } = useFirstVisit();
 
-  // Animation conditionnelle basée sur première visite
   const shouldAnimate = isFirstVisit && isInView;
   const showContent = !isFirstVisit || isInView;
 
-  // Helpers pour les animations conditionnelles
-  const getHiddenStyle = (yOffset: number) => {
-    if (!isFirstVisit) return {};
-    return { opacity: 0, transform: `translateY(${yOffset}px)` };
-  };
+  const getHidden = (yOffset: number) =>
+    !isFirstVisit ? {} : { opacity: 0, transform: `translateY(${yOffset}px)` };
 
-  const getTransition = (delay: number) => {
-    if (shouldAnimate) {
-      return { duration: 0.6, delay, ease: 'easeOut' as const };
-    }
-    return { duration: 0 };
-  };
+  const getTransition = (delay: number) =>
+    shouldAnimate
+      ? { duration: 0.6, delay, ease: 'easeOut' as const }
+      : { duration: 0 };
 
-  // Données des 6 valeurs fondamentales
-  const values = [
+  const values: {
+    title: string;
+    tag: string;
+    tagVariant: 'peps' | 'sage' | 'coral' | 'dark';
+    description: string;
+  }[] = [
     {
       title: 'Accessibilité',
+      tag: 'Pour tous',
+      tagVariant: 'peps',
       description:
-        "Chaque personne devrait pouvoir consulter un·e diététicien·ne diplômé·e. Nous proposons des consultations en ligne pour vous faciliter l'accès, quel que soit votre lieu de résidence en Suisse.",
+        'Voir une nutritionniste diplômée ne devrait pas dépendre de votre code postal. Nos consultations sont en ligne, partout en Suisse — de Genève à St-Gall, du Tessin au Jura.',
     },
     {
       title: 'Bienveillance',
+      tag: 'Sans jugement',
+      tagVariant: 'sage',
       description:
-        'La santé est un droit, et chacun·e mérite de se sentir bien. Nous vous respectons, quelle que soit votre histoire, votre morphologie ou vos difficultés de santé. Notre approche est sans jugement.',
+        "Aucun corps n'est trop ceci, trop cela, ou pas assez quelque chose. On respecte votre histoire, votre morphologie, vos difficultés. Toujours.",
     },
     {
       title: 'Confiance',
+      tag: 'Honnêteté',
+      tagVariant: 'coral',
       description:
-        'La relation entre patient·e et thérapeute est sacrée. Nous construisons cette confiance par une communication ouverte et honnête sur votre santé, vos progrès et le coût de vos consultations.',
+        "Vous nous confiez quelque chose de précieux : votre santé. On vous le rend par de l'honnêteté — sur vos progrès, sur ce qui coince, et sur ce que ça coûte. Aucune surprise.",
     },
     {
       title: 'Science',
+      tag: 'Données actuelles',
+      tagVariant: 'dark',
       description:
-        'Nos recommandations sont toujours fondées sur les dernières recherches en nutrition et en santé. Nous rendons la science nutritionnelle accessible et applicable à votre vie quotidienne.',
+        "La nutrition est une science qui évolue vite. Nos recommandations s'appuient sur la recherche la plus récente — pas sur le dernier livre à la mode.",
     },
     {
       title: 'Personnalisation',
+      tag: 'Sur mesure',
+      tagVariant: 'peps',
       description:
-        'Chaque personne est unique. Nous travaillons avec vous et non contre vous pour vous aider à développer votre confiance en matière de santé. Nous adaptons nos conseils à votre réalité, vos goûts et votre rythme de vie.',
+        "Vos conseils ne sont pas ceux d'une autre. Ils s'adaptent à votre vie, vos goûts, votre rythme — avec vous, jamais contre vous.",
     },
     {
       title: 'Collaboration',
+      tag: 'En équipe',
+      tagVariant: 'sage',
       description:
-        "Une meilleure santé nécessite un travail d'équipe. Nous pouvons, si vous le souhaitez, travailler en complémentarité avec votre médecin traitant et vos autres professionnel·le·s de santé pour optimiser votre bien-être global.",
+        'La santé ne se joue pas en solo. On travaille main dans la main avec votre médecin et les autres professionnel·le·s qui vous accompagnent — chacun son rôle, tous dans le même sens.',
     },
   ];
 
   return (
     <section
       ref={ref}
-      className={cn(
-        'relative w-full',
-        'py-[100px] px-10',
-        'max-md:py-[60px] max-md:px-6'
-      )}
-      style={{ backgroundColor: '#E5DED6' }} /* Beige Sand - Méditerranée */
+      style={{
+        background: 'var(--ns-cream-200)',
+        padding: '112px 0',
+        borderTop: '1.5px solid var(--ns-ink)',
+        borderBottom: '1.5px solid var(--ns-ink)',
+      }}
     >
-      <div className='container mx-auto max-w-[1200px]'>
-        {/* Titre de section */}
-        <motion.h2
+      <div className='ns2-container'>
+        <div
           style={{
-            fontFamily: "'Marcellus', serif",
-            fontSize: '48px',
-            lineHeight: '57.6px',
-            fontWeight: 700,
-            color: '#1B998B' /* Turquoise Azur */,
-            textAlign: 'center',
-            marginBottom: '20px',
-            ...getHiddenStyle(30),
+            display: 'grid',
+            gridTemplateColumns: '1fr 1.4fr',
+            gap: 64,
+            alignItems: 'end',
+            marginBottom: 56,
           }}
-          animate={showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={getTransition(0)}
-          className='max-md:!text-[32px] max-md:!leading-[1.3]'
+          className='values-header'
         >
-          Nos Valeurs Fondamentales
-        </motion.h2>
-
-        {/* Sous-titre */}
-        <motion.p
-          style={{
-            fontFamily: "'Plus Jakarta Sans', sans-serif",
-            fontSize: '20px',
-            lineHeight: '1.6',
-            color: '#4B5563',
-            textAlign: 'center',
-            marginBottom: '60px',
-            ...getHiddenStyle(20),
-          }}
-          animate={showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={getTransition(0.1)}
-          className='max-md:!text-[18px]'
-        >
-          Ce qui guide notre pratique au quotidien
-        </motion.p>
-
-        {/* Grille de cartes - 2 colonnes sur desktop, 1 sur mobile */}
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-8 max-w-[1000px] mx-auto items-stretch'>
-          {values.map((value, index) => (
+          <div>
             <motion.div
-              key={index}
+              className='ns2-eyebrow ns2-eyebrow-dot'
+              style={{ marginBottom: 16, ...getHidden(20) }}
+              animate={
+                showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+              }
+              transition={getTransition(0)}
+            >
+              Nos valeurs fondamentales
+            </motion.div>
+            <motion.h2
+              className='ns2-display'
               style={{
-                backgroundColor: '#FBF9F7' /* Warm Cream */,
-                border: '1px solid #e5e5e5',
-                borderRadius: '10px',
-                padding: '48px',
-                textAlign: 'center',
-                transition: 'all 0.3s ease',
+                fontSize: 'clamp(36px, 5vw, 60px)',
+                margin: 0,
+                ...getHidden(20),
+              }}
+              animate={
+                showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+              }
+              transition={getTransition(0.05)}
+            >
+              Ce qui guide
+              <br />
+              notre pratique <em>au</em>{' '}
+              <span className='ns2-hl'>quotidien</span>.
+            </motion.h2>
+          </div>
+          <motion.p
+            className='ns2-body-lg'
+            style={getHidden(20)}
+            animate={showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={getTransition(0.1)}
+          >
+            Six convictions, pas des slogans. Elles se voient en consultation,
+            pas seulement sur cette page.
+          </motion.p>
+        </div>
+
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, 1fr)',
+            gap: 24,
+          }}
+          className='values-grid'
+        >
+          {values.map((value, index) => (
+            <motion.article
+              key={value.title}
+              className='ns2-card'
+              style={{
+                padding: 32,
                 display: 'flex',
                 flexDirection: 'column',
-                height: '100%',
-                ...getHiddenStyle(30),
+                gap: 16,
+                ...getHidden(30),
               }}
               animate={
                 showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }
               }
-              transition={getTransition(0.2 + index * 0.1)}
-              className='hover:border-[2px] max-md:!p-8'
+              transition={getTransition(0.15 + index * 0.06)}
             >
-              {/* Titre de la valeur */}
-              <h3
+              <div
                 style={{
-                  fontFamily: "'Plus Jakarta Sans', sans-serif",
-                  fontSize: '24px',
-                  fontWeight: 700,
-                  color: '#1B998B' /* Turquoise Azur */,
-                  marginBottom: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
                 }}
-                className='max-md:!text-[22px]'
+              >
+                <span
+                  style={{
+                    fontFamily: 'var(--ns-font-serif-stack)',
+                    fontSize: 28,
+                    fontStyle: 'italic',
+                    fontWeight: 500,
+                    color: 'var(--ns-peps-deep)',
+                    lineHeight: 1,
+                  }}
+                >
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                <span className={`ns2-tag ns2-tag-${value.tagVariant}`}>
+                  {value.tag}
+                </span>
+              </div>
+
+              <h3
+                className='ns2-display'
+                style={{ fontSize: 26, lineHeight: 1.2, margin: 0 }}
               >
                 {value.title}
               </h3>
 
-              {/* Description */}
               <p
+                className='ns2-body'
                 style={{
-                  fontFamily: "'Plus Jakarta Sans', sans-serif",
-                  fontSize: '16px',
-                  lineHeight: '1.7',
-                  color: '#4B5563',
                   margin: 0,
+                  lineHeight: 1.65,
+                  borderTop: '1.5px solid var(--ns-ink)',
+                  paddingTop: 16,
                 }}
-                className='max-md:!text-[15px]'
               >
                 {value.description}
               </p>
-            </motion.div>
+            </motion.article>
           ))}
         </div>
       </div>
+
+      <style jsx>{`
+        @media (max-width: 1024px) {
+          .values-header {
+            grid-template-columns: 1fr !important;
+            gap: 24px !important;
+            align-items: start !important;
+          }
+          .values-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+        }
+        @media (max-width: 640px) {
+          .values-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

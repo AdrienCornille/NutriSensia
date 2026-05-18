@@ -4,6 +4,7 @@ import React from 'react';
 import { Bell } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { useUnreadNotificationCount } from '@/hooks/useNotifications';
 
 interface DashboardHeaderProps {
   title?: string;
@@ -19,10 +20,12 @@ export function DashboardHeader({
   subtitle,
   showGreeting = true,
   showNotifications = true,
-  unreadNotificationsCount = 3, // Default mock value
+  unreadNotificationsCount,
   children,
 }: DashboardHeaderProps) {
   const { user } = useAuth();
+  const { data: apiUnreadCount } = useUnreadNotificationCount();
+  const effectiveUnreadCount = unreadNotificationsCount ?? apiUnreadCount ?? 0;
 
   // User info
   const firstName =
@@ -71,11 +74,9 @@ export function DashboardHeader({
               className='block p-2 text-gray-400 hover:text-gray-600 relative rounded-lg hover:bg-gray-100 transition-colors'
             >
               <Bell className='w-6 h-6' />
-              {unreadNotificationsCount > 0 && (
+              {effectiveUnreadCount > 0 && (
                 <span className='absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center'>
-                  {unreadNotificationsCount > 9
-                    ? '9+'
-                    : unreadNotificationsCount}
+                  {effectiveUnreadCount > 9 ? '9+' : effectiveUnreadCount}
                 </span>
               )}
             </Link>

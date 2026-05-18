@@ -7,6 +7,7 @@ import { SmoothScrollProvider } from '@/components/ui/SmoothScrollProvider';
 import {
   HeroSection,
   AccordionBenefitsSection,
+  MarqueeStrip,
 } from '@/components/landing/home';
 
 // Sections below the fold - lazy loading pour améliorer les performances
@@ -56,7 +57,10 @@ const FAQSection = dynamic(
 export default function HomePage() {
   return (
     <SmoothScrollProvider>
-      <div className='min-h-screen bg-background'>
+      <div
+        className='ns2 min-h-screen'
+        style={{ backgroundColor: 'var(--ns-cream-100)' }}
+      >
         <MarketingHeader />
         <main>
           {/* 1 - Hero (critique - chargement immédiat) */}
@@ -71,6 +75,8 @@ export default function HomePage() {
           <CTABannerSection />
           {/* 5 - Pourquoi nous faire confiance ? (lazy) */}
           <AboutMeSection />
+          {/* Marquee separator */}
+          <MarqueeStrip />
           {/* 6 - Nos derniers articles de blog (lazy) */}
           <BlogPreviewSection />
           {/* 7 - FAQ (lazy) */}

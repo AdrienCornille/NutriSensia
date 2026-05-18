@@ -4,14 +4,15 @@
     "prettier",
     "plugin:storybook/recommended"
   ],
-  "plugins": ["prettier"],
+  "plugins": ["prettier", "@typescript-eslint"],
   "rules": {
     "prettier/prettier": "error",
     "no-unused-vars": "off",
     "no-console": "off",
     "@next/next/no-img-element": "off",
     "react-hooks/exhaustive-deps": "warn",
-    "react/no-unescaped-entities": "off"
+    "react/no-unescaped-entities": "off",
+    "@typescript-eslint/no-explicit-any": "off"
   },
   "env": {
     "browser": true,

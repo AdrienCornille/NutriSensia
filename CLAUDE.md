@@ -11,6 +11,7 @@ NutriSensia is a Swiss-based personalized nutrition platform built with Next.js 
 **IMPORTANT**: Claude Code must follow the standardized workflow defined in [docs/claude-workflow.md](docs/claude-workflow.md).
 
 This workflow document defines:
+
 - How to classify tasks by complexity (Trivial, Medium, Complex, Refactoring)
 - When and how to use sub-agents (Explore, Plan, Bash, general-purpose)
 - Step-by-step workflows for each complexity level
@@ -20,6 +21,7 @@ This workflow document defines:
 - Templates for sub-agent prompts
 
 **Default behavior**: Always follow the workflow in `docs/claude-workflow.md` unless explicitly instructed otherwise by the user. This ensures:
+
 - Efficient use of context window via sub-agents
 - Consistent code quality and patterns
 - Proper exploration before implementation
@@ -173,9 +175,31 @@ Two database schemas coexist:
 
 ### Design System
 
-NutriSensia has a **comprehensive custom design system** in `tailwind.config.ts`:
+**TWO design systems coexist. DS v2 is the default for all new work.**
 
-**Color Palette**:
+#### DS v2 — "Editorial" (default, use this) 🌿
+
+Sage / cream / electric lime ("peps") + hard 1.5px ink borders + offset shadows. Fraunces (serif) + Inter (sans) + Caveat (script).
+
+- **Tokens** live in `src/app/globals.css` as `--ns-*` CSS variables (always available, no import needed).
+- **Tailwind extensions** in `tailwind.config.ts`: `bg-cream-100`, `text-ink`, `bg-peps`, `bg-coral`, `text-honey`, `font-serif`, `font-script`, `shadow-hard`, `shadow-hard-lg`, `rounded-pill`, `rounded-ns-md`. Note: DS v2 sage is intentionally **not** on Tailwind (legacy `sage` scale conflicts) — reach for `var(--ns-sage-500)` directly.
+- **Utility classes** in `globals.css`: `.ns2-display`, `.ns2-eyebrow(-dot)`, `.ns2-hl`, `.ns2-btn(-peps/-dark/-outline/-ghost)`, `.ns2-tag(-peps/-dark/-sage/-coral)`, `.ns2-sticker`, `.ns2-card`, `.ns2-frame`, `.ns2-img(-warm/-peps/-dark/-coral)`, `.ns2-marquee`, `.ns2-input`. All work standalone — no wrapper needed.
+- **Optional `.ns2` wrapper** activates base styles (cream bg, ink fg, Inter body, Fraunces on h1-h4, border-box reset). Use it on a page root when you want the full editorial look out of the box. The homepage `src/app/[locale]/page.tsx` does this.
+- **Reference component**: see `src/components/landing/home/*` and `src/components/landing/Marketing{Header,Footer}.tsx` for canonical usage.
+
+**Personality rules** (from the source spec):
+
+1. Cream is the page, ink is the structure. Hard borders before fills.
+2. Peps (lime) is rare — one CTA per fold, one highlight, one sticker.
+3. Pair Fraunces italic + Inter regular in the same heading line for tension.
+4. Use `<em>` inside h-tags to italic a single phrase. Use `.ns2-hl` to lime-highlight a single word per heading.
+5. Cards lift `-3,-3px` and gain `6px 6px 0 ink` shadow on hover (signature interaction).
+
+#### Legacy palette — Méditerranée (existing screens only) 🌊
+
+The legacy palette below is still wired in `tailwind.config.ts` and used by every dashboard / admin / unmigrated marketing screen. **Do not extend it for new work.** Migrate page by page when you touch them.
+
+**Color Palette** (legacy):
 
 - Primary: `#2E7D5E` (green), `#1B4F3F` (dark), `#FAFBFC` (white)
 - Secondary: Sage greens (`#4A9B7B`, `#E8F3EF`, `#B8D4C7`)

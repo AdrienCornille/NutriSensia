@@ -1,46 +1,30 @@
 'use client';
 
-import React, { useState } from 'react';
-import {
-  Loader2,
-  AlertCircle,
-  Plus,
-  FileText,
-  Trash2,
-  CheckCircle,
-  Clock,
-} from 'lucide-react';
+import React, { useMemo, useState } from 'react';
+import { Loader2, AlertCircle, FileText } from 'lucide-react';
 import {
   usePatientQuestionnaires,
   useDeleteQuestionnaire,
 } from '@/hooks/useNutritionistDossier';
 import { QuestionnaireCreateModal } from './QuestionnaireCreateModal';
+import { QuestionnaireCard } from './QuestionnaireCard';
 
 interface NutritionistQuestionnairesViewProps {
   patientId: string;
 }
 
-const statusConfig: Record<
-  string,
-  { label: string; color: string; icon: React.ElementType }
-> = {
-  pending: {
-    label: 'En attente',
-    color: 'bg-amber-100 text-amber-700',
-    icon: Clock,
-  },
-  completed: {
-    label: 'Complété',
-    color: 'bg-green-100 text-green-700',
-    icon: CheckCircle,
-  },
+const FILTERS = ['all', 'pending', 'overdue', 'completed'] as const;
+const FILTER_LABELS: Record<(typeof FILTERS)[number], string> = {
+  all: 'Tous',
+  pending: 'En attente',
+  overdue: 'En retard',
+  completed: 'Complétés',
 };
 
-function formatDate(dateStr: string | null): string {
-  if (!dateStr) return '—';
-  return new Date(dateStr).toLocaleDateString('fr-FR', {
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString('fr-FR', {
     day: 'numeric',
-    month: 'short',
+    month: 'long',
     year: 'numeric',
   });
 }
@@ -49,6 +33,7 @@ export function NutritionistQuestionnairesView({
   patientId,
 }: NutritionistQuestionnairesViewProps) {
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [filter, setFilter] = useState<(typeof FILTERS)[number]>('all');
 
   const {
     data: questionnaires,
@@ -57,159 +42,191 @@ export function NutritionistQuestionnairesView({
   } = usePatientQuestionnaires(patientId);
   const deleteQuestionnaire = useDeleteQuestionnaire(patientId);
 
+  const allQuestionnaires = useMemo(
+    () => questionnaires || [],
+    [questionnaires]
+  );
+  const now = Date.now();
+
+  const counts = useMemo(() => {
+    const completed = allQuestionnaires.filter(
+      q => q.status === 'completed'
+    ).length;
+    const overdue = allQuestionnaires.filter(
+      q =>
+        q.status === 'pending' &&
+        q.due_date &&
+        new Date(q.due_date).getTime() < now
+    ).length;
+    const pending = allQuestionnaires.filter(
+      q => q.status === 'pending'
+    ).length;
+    return {
+      all: allQuestionnaires.length,
+      pending,
+      overdue,
+      completed,
+    };
+  }, [allQuestionnaires, now]);
+
+  const filtered = useMemo(() => {
+    if (filter === 'all') return allQuestionnaires;
+    if (filter === 'completed') {
+      return allQuestionnaires.filter(q => q.status === 'completed');
+    }
+    if (filter === 'overdue') {
+      return allQuestionnaires.filter(
+        q =>
+          q.status === 'pending' &&
+          q.due_date &&
+          new Date(q.due_date).getTime() < now
+      );
+    }
+    // 'pending'
+    return allQuestionnaires.filter(q => q.status === 'pending');
+  }, [allQuestionnaires, filter, now]);
+
+  const lastSent = allQuestionnaires.reduce<string | null>((acc, q) => {
+    if (!acc) return q.created_at;
+    return q.created_at > acc ? q.created_at : acc;
+  }, null);
+
   if (isLoading) {
     return (
       <div className='flex items-center justify-center py-16'>
-        <Loader2 className='w-6 h-6 animate-spin text-[#1B998B]' />
-        <span className='ml-2 text-sm text-gray-500'>Chargement...</span>
+        <Loader2
+          className='w-6 h-6 animate-spin'
+          style={{ color: 'var(--ns-peps-deep)' }}
+        />
+        <span className='ml-2 text-sm' style={{ color: 'var(--ns-ink-3)' }}>
+          Chargement…
+        </span>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className='bg-white rounded-xl border border-gray-200 p-8 text-center'>
-        <AlertCircle className='w-8 h-8 text-red-500 mx-auto mb-3' />
-        <p className='text-sm text-gray-500'>{error.message}</p>
+      <div className='fp-card text-center'>
+        <AlertCircle
+          className='w-8 h-8 mx-auto mb-3'
+          style={{ color: 'var(--ns-coral)' }}
+        />
+        <p className='text-sm' style={{ color: 'var(--ns-ink-3)' }}>
+          {error.message}
+        </p>
       </div>
     );
   }
 
-  const allQuestionnaires = questionnaires || [];
-
   return (
     <div className='space-y-4'>
-      {/* Header */}
-      <div className='bg-white rounded-xl border border-gray-200 p-6'>
-        <div className='flex items-center justify-between'>
-          <div>
-            <h3 className='text-lg font-semibold text-gray-800'>
-              Questionnaires
-            </h3>
-            <p className='text-sm text-gray-500 mt-1'>
-              {allQuestionnaires.filter(q => q.status === 'pending').length} en
-              attente &middot;{' '}
-              {allQuestionnaires.filter(q => q.status === 'completed').length}{' '}
-              complétés
-            </p>
+      {/* ─── Pane intro ─── */}
+      <section className='fp-pane-intro'>
+        <div>
+          <h2 className='fp-pane-intro-title'>
+            Questionnaires <em>de suivi</em>
+          </h2>
+          <div className='fp-pane-intro-meta'>
+            <span>
+              <b>{counts.all}</b> total
+            </span>
+            {counts.pending > 0 && (
+              <>
+                <span className='dot' />
+                <span>
+                  <b>{counts.pending}</b> en attente
+                </span>
+              </>
+            )}
+            {counts.overdue > 0 && (
+              <>
+                <span className='dot' />
+                <span style={{ color: 'var(--ns-coral)' }}>
+                  <b style={{ color: 'var(--ns-coral)' }}>
+                    {counts.overdue} en retard
+                  </b>
+                </span>
+              </>
+            )}
+            <span className='dot' />
+            <span>
+              <b>{counts.completed}</b> complété
+              {counts.completed > 1 ? 's' : ''}
+            </span>
+            {lastSent && (
+              <>
+                <span className='dot' />
+                <span>
+                  Dernier envoi · <b>{formatDate(lastSent)}</b>
+                </span>
+              </>
+            )}
           </div>
+        </div>
+        <div className='fp-pane-intro-actions'>
           <button
+            type='button'
+            className='fp-btn fp-btn-peps'
             onClick={() => setShowCreateModal(true)}
-            className='inline-flex items-center gap-2 px-4 py-2 bg-[#1B998B] text-white rounded-lg hover:bg-[#147569] transition-colors text-sm font-medium'
           >
-            <Plus className='w-4 h-4' />
-            Nouveau questionnaire
+            + Nouveau questionnaire
           </button>
         </div>
-      </div>
+      </section>
 
-      {/* Questionnaires list */}
+      {/* ─── Filters ─── */}
+      {allQuestionnaires.length > 0 && (
+        <div className='fp-list-toolbar'>
+          <div className='fp-list-toolbar-filters'>
+            {FILTERS.map(f => (
+              <button
+                key={f}
+                type='button'
+                onClick={() => setFilter(f)}
+                className={filter === f ? 'is-active' : ''}
+              >
+                {FILTER_LABELS[f]} · {counts[f]}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ─── List ─── */}
       {allQuestionnaires.length === 0 ? (
-        <div className='bg-white rounded-xl border border-gray-200 p-8 text-center'>
-          <FileText className='w-12 h-12 text-gray-300 mx-auto mb-3' />
-          <p className='text-gray-800 font-medium mb-1'>Aucun questionnaire</p>
-          <p className='text-sm text-gray-500'>
+        <div className='fp-card text-center' style={{ padding: '48px 32px' }}>
+          <FileText
+            className='w-10 h-10 mx-auto mb-3'
+            style={{ color: 'var(--ns-ink-4)' }}
+          />
+          <p
+            className='font-serif text-lg mb-1'
+            style={{ color: 'var(--ns-ink)' }}
+          >
+            Aucun questionnaire
+          </p>
+          <p className='text-sm' style={{ color: 'var(--ns-ink-3)' }}>
             Envoyez un questionnaire de suivi au patient.
           </p>
         </div>
+      ) : filtered.length === 0 ? (
+        <div className='fp-cr-empty'>
+          Aucun questionnaire {FILTER_LABELS[filter].toLowerCase()}.
+        </div>
       ) : (
-        <div className='space-y-3'>
-          {allQuestionnaires.map(q => {
-            const config = statusConfig[q.status] || statusConfig.pending;
-            const StatusIcon = config.icon;
-            const questionCount = Array.isArray(q.questions)
-              ? q.questions.length
-              : 0;
-            const answerCount = Array.isArray(q.answers) ? q.answers.length : 0;
-
-            return (
-              <div
-                key={q.id}
-                className='bg-white rounded-xl border border-gray-200 p-5'
-              >
-                <div className='flex items-start justify-between'>
-                  <div className='flex-1'>
-                    <div className='flex items-center gap-2 mb-1'>
-                      <h4 className='text-sm font-semibold text-gray-800'>
-                        {q.title}
-                      </h4>
-                      <span
-                        className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium ${config.color}`}
-                      >
-                        <StatusIcon className='w-3 h-3' />
-                        {config.label}
-                      </span>
-                    </div>
-                    <div className='flex items-center gap-3 text-xs text-gray-400'>
-                      <span>Type : {q.questionnaire_type}</span>
-                      <span>
-                        {questionCount} question{questionCount !== 1 ? 's' : ''}
-                      </span>
-                      {q.status === 'completed' && (
-                        <span>
-                          {answerCount} réponse{answerCount !== 1 ? 's' : ''}
-                        </span>
-                      )}
-                      <span>Créé le {formatDate(q.created_at)}</span>
-                      {q.due_date && (
-                        <span>Échéance : {formatDate(q.due_date)}</span>
-                      )}
-                      {q.completed_at && (
-                        <span>Complété le {formatDate(q.completed_at)}</span>
-                      )}
-                    </div>
-                  </div>
-                  {q.status === 'pending' && (
-                    <button
-                      onClick={() => {
-                        if (confirm('Supprimer ce questionnaire ?')) {
-                          deleteQuestionnaire.mutate(q.id);
-                        }
-                      }}
-                      disabled={deleteQuestionnaire.isPending}
-                      className='p-2 text-gray-400 hover:text-red-500 transition-colors'
-                      title='Supprimer'
-                    >
-                      <Trash2 className='w-4 h-4' />
-                    </button>
-                  )}
-                </div>
-
-                {/* Show answers summary if completed */}
-                {q.status === 'completed' &&
-                  q.answers &&
-                  q.answers.length > 0 && (
-                    <div className='mt-3 bg-gray-50 rounded-lg p-3'>
-                      <p className='text-xs font-medium text-gray-500 mb-2'>
-                        Réponses
-                      </p>
-                      <div className='space-y-1'>
-                        {q.answers.slice(0, 3).map((a, i) => {
-                          const question = Array.isArray(q.questions)
-                            ? q.questions[i]
-                            : null;
-                          return (
-                            <div key={a.question_id || i} className='text-xs'>
-                              <span className='text-gray-500'>
-                                {question?.question || `Q${i + 1}`}:{' '}
-                              </span>
-                              <span className='text-gray-800 font-medium'>
-                                {String(a.answer)}
-                              </span>
-                            </div>
-                          );
-                        })}
-                        {q.answers.length > 3 && (
-                          <p className='text-xs text-gray-400'>
-                            +{q.answers.length - 3} autres réponses
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  )}
-              </div>
-            );
-          })}
+        <div className='fp-q-list'>
+          {filtered.map(q => (
+            <QuestionnaireCard
+              key={q.id}
+              questionnaire={q}
+              onDelete={id => deleteQuestionnaire.mutate(id)}
+              isDeleting={
+                deleteQuestionnaire.isPending &&
+                (deleteQuestionnaire.variables as string | undefined) === q.id
+              }
+            />
+          ))}
         </div>
       )}
 

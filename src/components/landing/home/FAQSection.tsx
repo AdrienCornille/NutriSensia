@@ -1,219 +1,175 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
-import { cn } from '@/lib/utils';
+import Link from 'next/link';
 import { motion, useInView } from 'framer-motion';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, ArrowRight } from 'lucide-react';
 import { useFirstVisit } from '@/hooks/useFirstVisit';
 
 /**
- * Section FAQ - Design 2025
- *
- * Section FAQ concise avec accordion functionality pour répondre
- * aux questions fréquentes et lever les objections avant la réservation.
- *
- * Features:
- * - 6 questions essentielles avec accordion
- * - Animation smooth slide-down/up
- * - Un seul item ouvert à la fois
- * - Accessibilité WCAG AA complète
- * - Responsive mobile optimisé
- * - Link vers FAQ complète
+ * FAQ — DS v2.
+ * Cream section with hard-bordered accordion items (single-open). Question
+ * inline with peps + ink toggle button. Closing CTA outline-style.
  */
 export function FAQSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
   const { isFirstVisit } = useFirstVisit();
 
-  // Animation conditionnelle basée sur première visite
-  const shouldAnimate = isFirstVisit && isInView;
   const showContent = !isFirstVisit || isInView;
+  const getHidden = (yOffset: number) =>
+    !isFirstVisit ? {} : { opacity: 0, transform: `translateY(${yOffset}px)` };
+  const getTransition = (delay: number) =>
+    isFirstVisit && isInView
+      ? { duration: 0.6, delay, ease: 'easeOut' as const }
+      : { duration: 0 };
 
-  // Style initial : cacher seulement si première visite
-  const getHiddenStyle = (yOffset: number) => {
-    if (!isFirstVisit) {
-      return {};
-    }
-    return {
-      opacity: 0,
-      transform: `translateY(${yOffset}px)`,
-    };
-  };
-
-  // Transition : animation seulement si première visite et en vue
-  const getTransition = (delay: number) => {
-    if (shouldAnimate) {
-      return { duration: 0.6, delay, ease: 'easeOut' as const };
-    }
-    return { duration: 0 };
-  };
-
-  // Données des 6 questions essentielles
   const faqs = [
     {
       id: 1,
       question: 'Combien de temps dure une consultation ?',
       answer:
-        "La consultation découverte dure 1h30. Les consultations de suivi durent 1h chacune. C'est du temps vraiment dédié à vous, sans précipitation.",
+        'La consultation découverte dure 30 minutes. Les consultations de suivi durent une heure chacune. Du temps vraiment dédié à vous, sans précipitation.',
     },
     {
       id: 2,
       question: 'Dois-je suivre un régime strict ?',
       answer:
-        'Non, absolument pas. Je ne crois pas aux régimes restrictifs. On travaille sur un rééquilibrage progressif, adapté à votre vie, vos goûts, et vos besoins réels. Pas de calculs obsessionnels ni de privation.',
+        'Non. Si vous vouliez un régime strict, vous seriez ailleurs. Notre approche : des ajustements progressifs qui tiennent dans la durée — pas trois semaines.',
     },
     {
       id: 3,
-      question: "Comment se passe le remboursement par l'assurance ?",
+      question: 'Comment ça se passe avec mon assurance ?',
       answer:
-        'Vous recevez une facture conforme aux standards ASCA/RME que vous transmettez directement à votre assurance complémentaire. Le taux de remboursement dépend de votre contrat (généralement 70-90%). La plupart des assurances suisses couvrent mes consultations (Visana, Swica, CSS, Helsana, Sanitas...).',
+        'Lucie est agréée ASCA & RME. Les consultations sont remboursées par la plupart des assurances complémentaires en Suisse. On vous aide à vérifier votre couverture avant de commencer.',
     },
     {
       id: 4,
       question: 'Est-ce efficace sans se voir en personne ?',
       answer:
-        "Oui, tout aussi efficace ! L'accompagnement en ligne offre même des avantages : flexibilité totale, pas de déplacement, et un suivi continu via la plateforme entre les consultations. Vous avez accès à tous vos outils 24/7.",
+        'Oui. Le suivi à distance permet plus de régularité, des ajustements plus rapides, et zéro trajet sous la pluie. La consultation découverte est d’ailleurs un bon test.',
     },
     {
       id: 5,
-      question: "Combien de temps dure l'accompagnement ?",
+      question: 'Combien de temps avant que je n’aie plus besoin de vous ?',
       answer:
-        "Ça dépend de vos besoins. Certaines personnes trouvent ce qu'elles cherchent en une seule consultation. D'autres préfèrent un suivi sur 3 ou 6 mois pour ancrer durablement leurs nouvelles habitudes. On adapte ensemble.",
+        'L’objectif, c’est précisément que vous deveniez autonome. La plupart des accompagnements durent entre trois et six mois. Après, on se revoit quand vous le souhaitez — pas par obligation.',
     },
     {
       id: 6,
-      question: 'Dois-je acheter des suppléments ou produits spéciaux ?',
+      question: 'Allez-vous me vendre des compléments ?',
       answer:
-        "Non. Je ne vends aucun produit et ne touche aucune commission. Si je recommande des compléments alimentaires, c'est uniquement parce que votre situation le nécessite vraiment. Et vous êtes libre de les acheter où vous voulez.",
+        'Non. Nous ne vendons aucun complément. Si une supplémentation est utile, on vous l’indique — vous l’achetez où vous voulez. Notre revenu, ce sont les consultations, point.',
     },
   ];
-
-  const toggleAccordion = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
-  };
-
-  const handleKeyDown = (event: React.KeyboardEvent, index: number) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      toggleAccordion(index);
-    }
-  };
 
   return (
     <section
       id='faq'
-      className={cn(
-        'relative',
-        'pt-[100px] pb-[80px]',
-        'md:pt-[120px] md:pb-[100px]'
-      )}
+      ref={ref}
       style={{
-        backgroundColor: '#1B998B' /* Turquoise Méditerranée */,
+        background: 'var(--ns-cream-200)',
+        paddingTop: 96,
+        paddingBottom: 96,
+        borderTop: 'var(--ns-bw) solid var(--ns-ink)',
       }}
     >
-      {/* Container principal */}
-      <div className='container mx-auto max-w-[1370px] px-6 md:px-10 lg:px-14 xl:px-20'>
-        {/* ============================================ */}
-        {/* HEADER SECTION                               */}
-        {/* ============================================ */}
-        <div className='text-center mb-[50px]'>
-          {/* H2 Title - Marcellus serif selon Style Guide */}
-          <motion.h2
+      <div className='ns2-container'>
+        {/* Header */}
+        <motion.div
+          style={{ marginBottom: 56, ...getHidden(20) }}
+          animate={showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={getTransition(0)}
+        >
+          <div className='ns2-eyebrow ns2-eyebrow-dot'>Vos questions</div>
+          <h2
+            className='ns2-display'
             style={{
-              fontFamily: "'Marcellus', serif",
-              fontSize: '48px',
-              lineHeight: '57.6px',
-              fontWeight: 700,
-              color: '#ffffff',
-              ...getHiddenStyle(30),
+              fontSize: 'clamp(36px, 5vw, 60px)',
+              marginTop: 18,
+              color: 'var(--ns-ink)',
+              maxWidth: 820,
             }}
-            animate={showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-            transition={getTransition(0)}
           >
-            Vos questions
-          </motion.h2>
-        </div>
+            Les <em>petites</em> et les <span className='ns2-hl'>vraies</span>{' '}
+            questions.
+          </h2>
+        </motion.div>
 
-        {/* ============================================ */}
-        {/* ACCORDION CONTAINER                          */}
-        {/* ============================================ */}
-        <div ref={ref} className={cn('w-full', 'flex flex-col')}>
+        {/* Accordion list */}
+        <div
+          style={{
+            background: 'var(--ns-cream-50)',
+            border: 'var(--ns-bw) solid var(--ns-ink)',
+            borderRadius: 'var(--ns-r-lg)',
+            boxShadow: 'var(--ns-shadow-hard)',
+            overflow: 'hidden',
+          }}
+        >
           {faqs.map((faq, index) => {
             const isOpen = openIndex === index;
-
             return (
               <motion.div
                 key={faq.id}
-                style={getHiddenStyle(20)}
+                style={{
+                  ...getHidden(10),
+                  borderBottom:
+                    index === faqs.length - 1
+                      ? 'none'
+                      : '1.5px solid var(--ns-ink)',
+                }}
                 animate={
-                  showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+                  showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }
                 }
-                transition={getTransition(index * 0.1)}
-                className={cn(
-                  'border-b border-white/20',
-                  'py-6',
-                  index === 0 && 'pt-0'
-                )}
+                transition={getTransition(index * 0.05)}
               >
-                {/* Question Button */}
                 <button
-                  onClick={() => toggleAccordion(index)}
-                  onKeyDown={e => handleKeyDown(e, index)}
-                  className={cn(
-                    'w-full',
-                    'flex justify-between items-center',
-                    'bg-transparent',
-                    'border-none',
-                    'text-left',
-                    'p-0',
-                    'cursor-pointer',
-                    'transition-all duration-300',
-                    'hover:text-primary',
-                    'focus:outline-none focus:ring-2 focus:ring-primary/20 focus:ring-offset-2',
-                    'rounded-lg',
-                    'min-h-[44px]', // Touch target minimum
-                    'py-2' // Extra padding for better touch
-                  )}
+                  type='button'
+                  onClick={() => setOpenIndex(isOpen ? null : index)}
                   aria-expanded={isOpen}
                   aria-controls={`faq-answer-${faq.id}`}
-                  role='button'
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: 24,
+                    padding: '24px 28px',
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    color: 'var(--ns-ink)',
+                    fontFamily: 'var(--ns-font-serif-stack)',
+                    fontSize: 22,
+                    fontWeight: 500,
+                    letterSpacing: '-0.015em',
+                    lineHeight: 1.2,
+                  }}
                 >
-                  {/* Question Text */}
-                  <span
+                  <span>{faq.question}</span>
+                  <motion.span
+                    animate={{ rotate: isOpen ? 180 : 0 }}
+                    transition={{ duration: 0.25 }}
                     style={{
-                      fontFamily:
-                        "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-                      fontSize: '18px',
-                      fontWeight: 700,
-                      color: '#ffffff',
-                      lineHeight: '27px',
-                      flex: 1,
-                      transition: 'color 0.3s',
+                      flexShrink: 0,
+                      width: 36,
+                      height: 36,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      background: isOpen ? 'var(--ns-peps)' : 'transparent',
+                      border: '1.5px solid var(--ns-ink)',
+                      borderRadius: 999,
+                      color: 'var(--ns-ink)',
+                      transition: 'background 0.2s ease',
                     }}
                   >
-                    {faq.question}
-                  </span>
-
-                  {/* Chevron Icon */}
-                  <motion.div
-                    animate={{ rotate: isOpen ? 180 : 0 }}
-                    transition={{ duration: 0.3 }}
-                    className={cn(
-                      'flex-shrink-0',
-                      'ml-4',
-                      'transition-colors duration-300'
-                    )}
-                  >
-                    <ChevronDown
-                      className={cn('w-5 h-5 md:w-6 md:h-6', 'text-white')}
-                      strokeWidth={2}
-                      aria-hidden='true'
-                    />
-                  </motion.div>
+                    <ChevronDown className='w-4 h-4' strokeWidth={2.2} />
+                  </motion.span>
                 </button>
 
-                {/* Answer Panel */}
                 <motion.div
                   id={`faq-answer-${faq.id}`}
                   initial={false}
@@ -221,67 +177,43 @@ export function FAQSection() {
                     height: isOpen ? 'auto' : 0,
                     opacity: isOpen ? 1 : 0,
                   }}
-                  transition={{ duration: 0.3, ease: 'easeInOut' }}
-                  className={cn('overflow-hidden')}
+                  transition={{ duration: 0.28, ease: 'easeInOut' }}
+                  style={{ overflow: 'hidden' }}
                 >
-                  <motion.div
-                    initial={false}
-                    animate={{ y: isOpen ? 0 : -10 }}
-                    transition={{ duration: 0.3 }}
-                    className='pt-4'
+                  <div
+                    style={{
+                      padding: '0 28px 24px',
+                      maxWidth: 820,
+                    }}
                   >
                     <p
-                      style={{
-                        fontFamily:
-                          "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-                        fontSize: '16px',
-                        lineHeight: '24px',
-                        color: 'rgba(255, 255, 255, 0.9)',
-                      }}
+                      className='ns2-body-lg'
+                      style={{ color: 'var(--ns-fg-muted)' }}
                     >
                       {faq.answer}
                     </p>
-                  </motion.div>
+                  </div>
                 </motion.div>
               </motion.div>
             );
           })}
         </div>
 
-        {/* ============================================ */}
-        {/* LINK TO FULL FAQ                             */}
-        {/* ============================================ */}
+        {/* Outro CTA */}
         <motion.div
-          className='text-center mt-10'
-          style={getHiddenStyle(20)}
+          style={{
+            marginTop: 40,
+            display: 'flex',
+            justifyContent: 'center',
+            ...getHidden(20),
+          }}
           animate={showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={getTransition(0.8)}
+          transition={getTransition(0.5)}
         >
-          <motion.a
-            href='/faq'
-            whileHover={{ scale: 1.02 }}
-            className={cn(
-              'inline-flex items-center gap-2',
-              "font-['Inter',system-ui,sans-serif]",
-              'text-[1rem]',
-              'font-semibold',
-              'text-white',
-              'transition-all duration-300',
-              'hover:gap-3',
-              'group',
-              'focus:outline-none focus:ring-2 focus:ring-white/20 focus:ring-offset-2',
-              'rounded-lg',
-              'px-2 py-1',
-              'cursor-pointer'
-            )}
-          >
-            <span className='transition-transform group-hover:translate-x-1'>
-              →
-            </span>
-            <span className='border-b-2 border-transparent group-hover:border-white transition-all'>
-              Voir toutes les questions
-            </span>
-          </motion.a>
+          <Link href='/faq' className='ns2-btn ns2-btn-outline'>
+            Voir toutes les questions
+            <ArrowRight className='w-4 h-4' />
+          </Link>
         </motion.div>
       </div>
     </section>

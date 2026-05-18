@@ -1,264 +1,250 @@
 'use client';
 
 import React, { useRef } from 'react';
-import { cn } from '@/lib/utils';
+import Link from 'next/link';
 import { motion, useInView } from 'framer-motion';
+import { ArrowRight } from 'lucide-react';
 import { useFirstVisit } from '@/hooks/useFirstVisit';
 
 /**
- * Section "Pourquoi me faire confiance ?"
- *
- * Design inspiré de Culina Health selon le Style Guide NutriSensia :
- * - Layout split 50/50 : Image à gauche, contenu à droite
- * - Titre H2 en Marcellus (serif), 48px, #3f6655
- * - Liste à puces avec éléments en gras
- * - Bouton CTA pill-shaped (border-radius: 35px)
- * - Image avec coins arrondis 20px
+ * Pourquoi me faire confiance — DS v2.
+ * Asymmetric grid 1.4fr / 1fr (image left), Fraunces display title with italic
+ * accent and lime highlight, eyebrow, body lead, bordered checklist, dark CTA.
+ * Image lives inside .ns2-frame with offset ink shadow + script-caption sticker.
  */
 export function AboutMeSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
   const { isFirstVisit } = useFirstVisit();
 
-  // Animation conditionnelle basée sur première visite
-  const shouldAnimate = isFirstVisit && isInView;
   const showContent = !isFirstVisit || isInView;
+  const getHidden = (axis: 'x' | 'y', offset: number) =>
+    !isFirstVisit
+      ? {}
+      : {
+          opacity: 0,
+          transform:
+            axis === 'x'
+              ? `translateX(${offset}px)`
+              : `translateY(${offset}px)`,
+        };
+  const getTransition = (delay: number) =>
+    isFirstVisit && isInView
+      ? { duration: 0.7, delay, ease: 'easeOut' as const }
+      : { duration: 0 };
 
-  // Transition : animation seulement si première visite et en vue
-  const getTransition = (delay: number) => {
-    if (shouldAnimate) {
-      return { duration: 0.7, delay, ease: 'easeOut' as const };
-    }
-    return { duration: 0 };
-  };
+  const offers = [
+    'Un accompagnement qui évolue avec vous, pas malgré vous',
+    'Une écoute pour comprendre votre relation à l’alimentation',
+    'Des ajustements en temps réel, selon vos ressentis',
+    'Un soutien humain dans les moments de doute',
+  ];
 
   return (
     <section
       id='about-me'
       ref={ref}
-      className='relative bg-white'
-      style={{ padding: '96px 0' }}
+      style={{
+        background: 'var(--ns-cream-200)',
+        paddingTop: 96,
+        paddingBottom: 96,
+        borderTop: 'var(--ns-bw) solid var(--ns-ink)',
+      }}
     >
-      {/* Container principal - max-width 1200px */}
-      <div className='container mx-auto max-w-[1200px] px-6'>
-        {/* Layout Grid 2 colonnes */}
-        <div
-          className={cn('grid', 'grid-cols-1 lg:grid-cols-2', 'items-center')}
-          style={{ gap: '96px' }}
-        >
-          {/* ============================================ */}
-          {/* LEFT COLUMN - Image                          */}
-          {/* ============================================ */}
+      <div className='ns2-container'>
+        <div className='about-grid'>
+          {/* Image */}
           <motion.div
-            className='relative'
-            style={
-              isFirstVisit ? { opacity: 0, transform: 'translateX(-40px)' } : {}
-            }
+            style={{ position: 'relative', ...getHidden('x', -30) }}
             animate={
-              showContent ? { opacity: 1, x: 0 } : { opacity: 0, x: -40 }
+              showContent ? { opacity: 1, x: 0 } : { opacity: 0, x: -30 }
             }
             transition={getTransition(0)}
           >
             <div
-              className='relative overflow-hidden min-h-[400px] lg:min-h-[500px]'
-              style={{
-                backgroundColor: '#F0F9F8' /* Turquoise pale */,
-                borderRadius: '20px',
-              }}
+              className='ns2-frame'
+              style={{ aspectRatio: '4 / 5', maxWidth: 520 }}
             >
               <img
                 src='/images/lucie-cornille-profile.jpg'
-                alt='Lucie Cornille - Nutritionniste ASCA/RME'
+                alt='Lucie Cornille — Nutritionniste ASCA/RME'
                 onError={e => {
-                  e.currentTarget.src =
-                    'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=800&auto=format&fit=crop';
+                  (e.currentTarget as HTMLImageElement).src =
+                    'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=900&auto=format&fit=crop';
                 }}
-                className='w-full h-full object-cover min-h-[400px] lg:min-h-[500px]'
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  display: 'block',
+                }}
               />
+            </div>
+
+            {/* Sticker eyebrow */}
+            <div
+              style={{
+                position: 'absolute',
+                top: -14,
+                left: -14,
+              }}
+            >
+              <span className='ns2-sticker'>L'équipe ↘</span>
+            </div>
+
+            {/* Caption card bottom */}
+            <div
+              style={{
+                position: 'absolute',
+                bottom: -22,
+                right: -10,
+                background: 'var(--ns-cream-50)',
+                border: 'var(--ns-bw) solid var(--ns-ink)',
+                borderRadius: 'var(--ns-r-md)',
+                padding: '12px 18px',
+                boxShadow: 'var(--ns-shadow-hard-sm)',
+                maxWidth: 240,
+              }}
+            >
+              <div className='ns2-eyebrow'>Diététicienne</div>
+              <div
+                className='ns2-display'
+                style={{
+                  fontSize: 22,
+                  marginTop: 4,
+                  color: 'var(--ns-ink)',
+                  fontStyle: 'italic',
+                  lineHeight: 1.05,
+                }}
+              >
+                Lucie Cornille
+              </div>
+              <div className='ns2-meta' style={{ marginTop: 4 }}>
+                ASCA & RME · Lausanne
+              </div>
             </div>
           </motion.div>
 
-          {/* ============================================ */}
-          {/* RIGHT COLUMN - Content                       */}
-          {/* ============================================ */}
+          {/* Content */}
           <motion.div
-            style={
-              isFirstVisit ? { opacity: 0, transform: 'translateX(40px)' } : {}
-            }
-            animate={showContent ? { opacity: 1, x: 0 } : { opacity: 0, x: 40 }}
-            transition={getTransition(0.2)}
+            style={getHidden('x', 30)}
+            animate={showContent ? { opacity: 1, x: 0 } : { opacity: 0, x: 30 }}
+            transition={getTransition(0.15)}
           >
-            {/* H2 Title - Marcellus serif */}
+            <div className='ns2-eyebrow ns2-eyebrow-dot'>À propos</div>
+
             <h2
+              className='ns2-display'
               style={{
-                fontFamily: "'Marcellus', serif",
-                color: '#1B998B' /* Turquoise Méditerranée */,
-                fontSize: '48px',
-                lineHeight: '57.6px',
-                textAlign: 'left',
-                marginBottom: '24px',
-                fontWeight: 700,
+                fontSize: 'clamp(36px, 5vw, 60px)',
+                color: 'var(--ns-ink)',
+                marginTop: 18,
+                marginBottom: 24,
               }}
             >
-              Pourquoi une nutritionniste, pas une IA ?
+              Pourquoi <em>une humaine</em>, pas une IA&nbsp;?
             </h2>
 
-            {/* Subtitle - Greeting */}
-            <p
-              style={{
-                fontFamily:
-                  "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-                color: '#2D3748',
-                textAlign: 'left',
-                marginBottom: '24px',
-                fontWeight: 600,
-                fontSize: '18px',
-              }}
-            >
-              Moi, c'est Lucie
+            <p className='ns2-body-lg' style={{ marginBottom: 16 }}>
+              Une IA peut générer votre plan alimentaire en trois secondes. Elle
+              peut même le rendre joli. Ce qu’elle ne peut pas faire&nbsp;:
+              entendre dans votre voix que cette semaine a été dure. Comprendre
+              pourquoi vous avez sauté trois repas. Réajuster, sans jugement,
+              quand la vie déborde.
+            </p>
+            <p className='ns2-body' style={{ marginBottom: 32 }}>
+              C’est pour ça que Lucie a créé NutriSensia. Trois ans d’études en
+              nutrition, et l’envie de faire les choses autrement.
             </p>
 
-            {/* Story Paragraphs */}
-            <div style={{ marginBottom: '24px' }}>
-              <p
-                style={{
-                  fontFamily:
-                    "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-                  color: '#41556b',
-                  fontSize: '16px',
-                  lineHeight: '24px',
-                  textAlign: 'left',
-                  marginBottom: '16px',
-                }}
-              >
-                Oui, une IA peut vous générer un plan alimentaire en quelques
-                secondes. Mais elle ne vous demandera jamais comment s'est
-                passée votre semaine, ne percevra pas votre fatigue, ne
-                réajustera pas votre programme quand la vie bouleverse vos
-                routines.
-              </p>
-              <p
-                style={{
-                  fontFamily:
-                    "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-                  color: '#41556b',
-                  fontSize: '16px',
-                  lineHeight: '24px',
-                  textAlign: 'left',
-                  marginBottom: '24px',
-                }}
-              >
-                C'est justement pour ça que j'ai créé NutriSensia. Après 3 ans
-                d'études en nutrition, j'en avais assez de voir des personnes se
-                battre contre leur corps avec des régimes standardisés qui ne
-                tiennent jamais leurs promesses.
-              </p>
-
-              {/* Ce que nous vous offrons - Liste */}
-              <p
-                style={{
-                  fontFamily:
-                    "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-                  color: '#2D3748',
-                  fontSize: '16px',
-                  lineHeight: '24px',
-                  textAlign: 'left',
-                  fontWeight: 600,
-                  marginBottom: '12px',
-                }}
-              >
-                Ce que nous vous offrons :
-              </p>
+            <div
+              style={{
+                background: 'var(--ns-cream-50)',
+                border: 'var(--ns-bw) solid var(--ns-ink)',
+                borderRadius: 'var(--ns-r-md)',
+                padding: 24,
+                marginBottom: 32,
+              }}
+            >
+              <div className='ns2-eyebrow'>Ce que nous offrons</div>
               <ul
                 style={{
-                  fontFamily:
-                    "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-                  color: '#41556b',
-                  fontSize: '16px',
-                  lineHeight: '28px',
-                  textAlign: 'left',
-                  paddingLeft: '20px',
-                  marginBottom: '24px',
-                  listStyleType: 'disc',
+                  listStyle: 'none',
+                  padding: 0,
+                  marginTop: 14,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 10,
                 }}
               >
-                <li>
-                  Un accompagnement qui évolue avec vous, pas un programme figé
-                </li>
-                <li>
-                  Une écoute pour comprendre votre relation à l'alimentation
-                </li>
-                <li>Des ajustements en temps réel selon vos ressentis</li>
-                <li>Un soutien humain dans les moments de doute</li>
+                {offers.map(offer => (
+                  <li
+                    key={offer}
+                    style={{
+                      display: 'flex',
+                      gap: 12,
+                      alignItems: 'flex-start',
+                      fontFamily: 'var(--ns-font-sans-stack)',
+                      fontSize: 15,
+                      color: 'var(--ns-fg-muted)',
+                      lineHeight: 1.55,
+                    }}
+                  >
+                    <span
+                      style={{
+                        flexShrink: 0,
+                        marginTop: 6,
+                        width: 10,
+                        height: 10,
+                        background: 'var(--ns-peps-deep)',
+                        borderRadius: 999,
+                        border: '1.5px solid var(--ns-ink)',
+                      }}
+                    />
+                    {offer}
+                  </li>
+                ))}
               </ul>
-
-              <p
-                style={{
-                  fontFamily:
-                    "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-                  color: '#41556b',
-                  fontSize: '16px',
-                  lineHeight: '24px',
-                  textAlign: 'left',
-                  fontStyle: 'italic',
-                }}
-              >
-                Parce que{' '}
-                <strong style={{ color: '#2D3748', fontStyle: 'normal' }}>
-                  chaque corps est unique
-                </strong>
-                , et qu'un changement durable ne se fait pas seul·e devant un
-                écran.
-              </p>
             </div>
 
-            {/* CTA Button - Style guide: pill-shaped, #3f6655 */}
-            <motion.div
-              style={
-                isFirstVisit
-                  ? { opacity: 0, transform: 'translateY(20px)' }
-                  : {}
-              }
-              animate={
-                showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
-              }
-              transition={getTransition(0.9)}
+            <p
+              className='ns2-body'
+              style={{
+                fontFamily: 'var(--ns-font-serif-stack)',
+                fontStyle: 'italic',
+                fontSize: 18,
+                color: 'var(--ns-ink)',
+                marginBottom: 32,
+              }}
             >
-              <a
-                href='/a-propos'
-                style={{
-                  background:
-                    'linear-gradient(135deg, #1B998B 0%, #147569 100%)' /* Dégradé CTA */,
-                  borderRadius: '35px',
-                  lineHeight: '16px',
-                  color: '#fff',
-                  display: 'inline-block',
-                  fontFamily:
-                    "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-                  fontSize: '14px',
-                  fontWeight: 700,
-                  textAlign: 'center',
-                  padding: '14px 32px',
-                  border: 'none',
-                  cursor: 'pointer',
-                  textDecoration: 'none',
-                  transition: 'all 0.3s ease',
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.background =
-                    'linear-gradient(135deg, #147569 0%, #0f5a50 100%)'; /* Dégradé hover */
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.background =
-                    'linear-gradient(135deg, #1B998B 0%, #147569 100%)';
-                }}
-              >
-                Découvrir notre histoire complète →
-              </a>
-            </motion.div>
+              Parce que{' '}
+              <span className='ns2-hl'>votre corps n’est pas un dataset</span> —
+              et qu’un vrai changement ne se construit pas seule devant un
+              écran.
+            </p>
+
+            <Link href='/a-propos' className='ns2-btn ns2-btn-dark'>
+              Notre histoire complète
+              <ArrowRight className='w-4 h-4' />
+            </Link>
           </motion.div>
         </div>
       </div>
+
+      <style jsx>{`
+        .about-grid {
+          display: grid;
+          grid-template-columns: 1fr 1.2fr;
+          gap: 80px;
+          align-items: center;
+        }
+        @media (max-width: 1024px) {
+          .about-grid {
+            grid-template-columns: 1fr;
+            gap: 64px;
+          }
+        }
+      `}</style>
     </section>
   );
 }

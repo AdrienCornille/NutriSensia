@@ -38,9 +38,11 @@ interface RoleCheckResult {
   nutritionistStatus: NutritionistStatus;
 }
 
-// Cache du rôle dans un cookie (TTL 10 minutes)
+// Cache du rôle dans un cookie (TTL 30 minutes)
+// Why: réduire la latence des navigations protégées en évitant des requêtes DB.
+// L'invalidation explicite a lieu à la connexion/déconnexion via response.cookies.delete().
 const ROLE_CACHE_COOKIE = 'ns-role-cache';
-const ROLE_CACHE_TTL_MS = 10 * 60 * 1000;
+const ROLE_CACHE_TTL_MS = 30 * 60 * 1000;
 
 interface RoleCacheData {
   role: UserRole;
@@ -61,10 +63,7 @@ function getRoleCacheFromCookie(request: NextRequest): RoleCacheData | null {
   }
 }
 
-function setRoleCacheCookie(
-  response: NextResponse,
-  data: RoleCacheData
-): void {
+function setRoleCacheCookie(response: NextResponse, data: RoleCacheData): void {
   response.cookies.set(ROLE_CACHE_COOKIE, JSON.stringify(data), {
     path: '/',
     httpOnly: true,
@@ -150,11 +149,7 @@ async function checkUserRole(
 
   // Cache miss → requêtes DB en parallèle
   const [{ data: profile }, { data: nutritionistProfile }] = await Promise.all([
-    supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', session.user.id)
-      .single(),
+    supabase.from('profiles').select('role').eq('id', session.user.id).single(),
     supabase
       .from('nutritionist_profiles')
       .select('status')
@@ -394,7 +389,7 @@ export async function middleware(request: NextRequest) {
   if (isDev) {
     response.headers.set(
       'Content-Security-Policy',
-      "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://meet.jit.si; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: wss:; frame-src 'self' https://meet.jit.si;"
+      "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://meet.jit.si; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: wss:; frame-src 'self' https://meet.jit.si https://www.youtube.com https://youtube.com https://player.vimeo.com;"
     );
   }
 

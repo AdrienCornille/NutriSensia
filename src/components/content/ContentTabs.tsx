@@ -7,14 +7,21 @@ import {
   Video,
   BookOpen,
   Mic,
-  Bookmark,
+  GraduationCap,
 } from 'lucide-react';
-import type { ContentTab } from '@/types/content';
+
+type ContentTab =
+  | 'all'
+  | 'articles'
+  | 'videos'
+  | 'guides'
+  | 'podcasts'
+  | 'courses';
 
 interface ContentTabsProps {
-  activeTab: ContentTab;
+  activeTab: string;
   onTabChange: (tab: ContentTab) => void;
-  savedCount: number;
+  coursesCount?: number;
 }
 
 const tabsConfig: { id: ContentTab; label: string; icon: React.ElementType }[] =
@@ -24,13 +31,13 @@ const tabsConfig: { id: ContentTab; label: string; icon: React.ElementType }[] =
     { id: 'videos', label: 'Vidéos', icon: Video },
     { id: 'guides', label: 'Guides', icon: BookOpen },
     { id: 'podcasts', label: 'Podcasts', icon: Mic },
-    { id: 'saved', label: 'Sauvegardés', icon: Bookmark },
+    { id: 'courses', label: 'Cours', icon: GraduationCap },
   ];
 
 export function ContentTabs({
   activeTab,
   onTabChange,
-  savedCount,
+  coursesCount,
 }: ContentTabsProps) {
   return (
     <div className='bg-white border-b border-gray-200 px-4 py-4'>
@@ -51,11 +58,13 @@ export function ContentTabs({
             >
               <Icon className='w-4 h-4' />
               <span>{tab.label}</span>
-              {tab.id === 'saved' && savedCount > 0 && (
-                <span className='px-1.5 py-0.5 bg-red-100 text-red-600 text-xs font-medium rounded-full'>
-                  {savedCount}
-                </span>
-              )}
+              {tab.id === 'courses' &&
+                coursesCount !== undefined &&
+                coursesCount > 0 && (
+                  <span className='px-1.5 py-0.5 bg-[#1B998B]/10 text-[#1B998B] text-xs font-medium rounded-full'>
+                    {coursesCount}
+                  </span>
+                )}
             </button>
           );
         })}

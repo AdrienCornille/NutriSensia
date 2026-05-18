@@ -97,6 +97,37 @@ const config: Config = {
           800: '#8D3725',
           900: '#6A291B',
         },
+        // ────────────────────────────────────────────────────────────
+        // DS v2 — Editorial sage / cream / peps + ink borders
+        // Use these for ALL new work. The legacy palette above (primary
+        // turquoise, sand, terracotta, sage, neutral) is kept only for
+        // unmigrated screens and will be retired progressively.
+        // Sage from DS v2 is intentionally NOT exposed on Tailwind to
+        // avoid colliding with the legacy turquoise `sage` scale above.
+        // Reach for `var(--ns-sage-500)` directly when you need it.
+        // ────────────────────────────────────────────────────────────
+        cream: {
+          50: '#ffffff',
+          100: '#faf6ea',
+          200: '#f3ecd8',
+          300: '#e8dec5',
+        },
+        ink: {
+          DEFAULT: '#14160f',
+          2: '#2a2d22',
+          3: '#6b6d62',
+          4: '#b3b3a8',
+        },
+        peps: {
+          DEFAULT: '#c4f048',
+          deep: '#9bd418',
+          soft: '#e7f9b3',
+        },
+        coral: {
+          DEFAULT: '#ff6b4a',
+          soft: '#ffd8cc',
+        },
+        honey: '#f4b860',
       },
       // Configuration de la typographie
       fontFamily: {
@@ -108,6 +139,9 @@ const config: Config = {
           '-apple-system',
           'sans-serif',
         ],
+        // DS v2 — display + script. Loaded via next/font in [locale]/layout.tsx
+        serif: ['var(--ns-font-serif)', 'Fraunces', 'Georgia', 'serif'],
+        script: ['var(--ns-font-script)', 'Caveat', 'cursive'],
       },
       // Poids de police
       fontWeight: {
@@ -184,6 +218,12 @@ const config: Config = {
         '12dp': '12px',
         '16dp': '16px',
         '22dp': '22px',
+        // DS v2
+        pill: '9999px',
+        'ns-sm': '6px',
+        'ns-md': '14px',
+        'ns-lg': '28px',
+        'ns-xl': '40px',
       },
       // Ombres personnalisées - Méditerranée
       boxShadow: {
@@ -193,6 +233,10 @@ const config: Config = {
         'card-signature-hover': '10px 10px 0 #E5DED6', // Ombre signature hover
         focus: '0 0 0 2px rgba(27, 153, 139, 0.2)', // Primary Turquoise avec 20% d'opacité
         'focus-terracotta': '0 0 0 2px rgba(231, 111, 81, 0.2)', // Terracotta avec 20% d'opacité
+        // DS v2 — hard offset shadows (ink), signature interaction
+        'hard-sm': '3px 3px 0 #14160f',
+        hard: '4px 4px 0 #14160f',
+        'hard-lg': '6px 6px 0 #14160f',
       },
       // Animations et transitions
       transitionDuration: {
@@ -267,7 +311,7 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/typography')],
 };
 
 export default config;

@@ -1,21 +1,31 @@
 'use client';
 
 import React from 'react';
-import { Search, X, Camera, Grid3X3, List } from 'lucide-react';
+import {
+  Search,
+  X,
+  Camera,
+  Grid3X3,
+  List,
+  SlidersHorizontal,
+} from 'lucide-react';
+import { CustomDropdown } from '@/components/ui/CustomDropdown';
 import type { ViewMode, SortOption } from '@/types/foods';
 import { sortOptions } from '@/types/foods';
 
 interface FoodsHeaderProps {
   searchQuery: string;
-  viewMode: ViewMode;
-  sortOption: SortOption;
+  viewMode?: ViewMode;
+  sortOption?: SortOption;
   recentSearches: string[];
   totalFoods: number;
   onSearchChange: (query: string) => void;
-  onViewModeChange: (mode: ViewMode) => void;
-  onSortChange: (option: SortOption) => void;
+  onViewModeChange?: (mode: ViewMode) => void;
+  onSortChange?: (option: SortOption) => void;
   onOpenScanner: () => void;
   onRecentSearchClick: (term: string) => void;
+  showFilters?: boolean;
+  onToggleFilters?: () => void;
 }
 
 export function FoodsHeader({
@@ -29,6 +39,8 @@ export function FoodsHeader({
   onSortChange,
   onOpenScanner,
   onRecentSearchClick,
+  showFilters,
+  onToggleFilters,
 }: FoodsHeaderProps) {
   return (
     <div className='bg-white px-4 py-6 border-b border-gray-100'>
@@ -41,30 +53,32 @@ export function FoodsHeader({
           </p>
         </div>
         {/* View toggle */}
-        <div className='flex bg-gray-100 rounded-lg p-1'>
-          <button
-            onClick={() => onViewModeChange('grid')}
-            className={`p-2 rounded-md transition-colors ${
-              viewMode === 'grid'
-                ? 'bg-white text-gray-800 shadow-sm'
-                : 'text-gray-500'
-            }`}
-            title='Vue grille'
-          >
-            <Grid3X3 className='w-4 h-4' />
-          </button>
-          <button
-            onClick={() => onViewModeChange('list')}
-            className={`p-2 rounded-md transition-colors ${
-              viewMode === 'list'
-                ? 'bg-white text-gray-800 shadow-sm'
-                : 'text-gray-500'
-            }`}
-            title='Vue liste'
-          >
-            <List className='w-4 h-4' />
-          </button>
-        </div>
+        {viewMode && onViewModeChange && (
+          <div className='flex bg-gray-100 rounded-lg p-1'>
+            <button
+              onClick={() => onViewModeChange('grid')}
+              className={`p-2 rounded-md transition-colors ${
+                viewMode === 'grid'
+                  ? 'bg-white text-gray-800 shadow-sm'
+                  : 'text-gray-500'
+              }`}
+              title='Vue grille'
+            >
+              <Grid3X3 className='w-4 h-4' />
+            </button>
+            <button
+              onClick={() => onViewModeChange('list')}
+              className={`p-2 rounded-md transition-colors ${
+                viewMode === 'list'
+                  ? 'bg-white text-gray-800 shadow-sm'
+                  : 'text-gray-500'
+              }`}
+              title='Vue liste'
+            >
+              <List className='w-4 h-4' />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Search and Scanner */}
@@ -98,18 +112,32 @@ export function FoodsHeader({
           <span className='text-sm font-medium'>Scanner</span>
         </button>
 
-        {/* Sort dropdown */}
-        <select
-          value={sortOption}
-          onChange={e => onSortChange(e.target.value as SortOption)}
-          className='px-3 py-2.5 bg-gray-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1B998B]/20'
-        >
-          {sortOptions.map(option => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
+        {/* Filters toggle */}
+        {onToggleFilters && (
+          <button
+            onClick={onToggleFilters}
+            className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border rounded-xl transition-colors ${
+              showFilters
+                ? 'bg-[#1B998B]/10 border-[#1B998B]/30 text-[#1B998B]'
+                : 'text-gray-600 border-gray-200 hover:bg-gray-50'
+            }`}
+          >
+            <SlidersHorizontal className='w-4 h-4' />
+            Filtres
+          </button>
+        )}
+
+        {/* Sort dropdown (optional) */}
+        {sortOption && onSortChange && (
+          <CustomDropdown
+            value={sortOption}
+            options={sortOptions.map(o => ({ value: o.value, label: o.label }))}
+            placeholder='Trier par...'
+            onChange={v => onSortChange(v as SortOption)}
+            className='w-52'
+            allowReset={false}
+          />
+        )}
       </div>
 
       {/* Recent searches */}

@@ -1,19 +1,22 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
-import {
-  MessageCircle,
-  Search,
-  ChevronLeft,
-} from 'lucide-react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
+import { MessageCircle, Search, ChevronLeft } from 'lucide-react';
 import {
   MessagingHeader,
   MessagesList,
   MessageInput,
   QuickReplies,
   ImagePreviewModal,
+  SearchMessages,
+  ExportConversationButton,
+  AttachmentPreview,
+  ThreadPanel,
 } from '@/components/messaging';
 import type { MessageAttachment, Conversation } from '@/types/messaging';
+import type { MessagesListHandle } from '@/components/messaging/MessagesList';
+import type { MessageSearchResult } from '@/hooks/useConversations';
+import { useAuth } from '@/contexts/AuthContext';
 import {
   useConversations,
   useMessages,
@@ -21,6 +24,12 @@ import {
   useSendMessage,
   useUploadAttachment,
   useRealtimeMessages,
+  useHeartbeat,
+  useUpdateTyping,
+  useRealtimeTyping,
+  useToggleReaction,
+  useEditMessage,
+  useDeleteMessage,
 } from '@/hooks/useConversations';
 
 // ==================== CONVERSATION LIST ITEM ====================
@@ -122,7 +131,13 @@ function formatRelativeTime(date: Date): string {
 // ==================== MAIN PAGE ====================
 
 export default function NutritionistMessagingPage() {
+  const { user } = useAuth();
+  const currentUserId = user?.id || '';
+
   // ==================== DATA HOOKS ====================
+
+  // Send heartbeat to track online status (MSG-008)
+  useHeartbeat();
 
   const {
     data: conversationsData,
@@ -138,6 +153,7 @@ export default function NutritionistMessagingPage() {
     string | null
   >(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const messagesListRef = useRef<MessagesListHandle>(null);
   const [inputText, setInputText] = useState('');
   const [showAttachmentMenu, setShowAttachmentMenu] = useState(false);
   const [showImagePreview, setShowImagePreview] = useState(false);
@@ -147,6 +163,16 @@ export default function NutritionistMessagingPage() {
   const [selectedQuickReply, setSelectedQuickReply] = useState<string | null>(
     null
   );
+  const [showMessageSearch, setShowMessageSearch] = useState(false);
+  const [pendingAttachment, setPendingAttachment] = useState<{
+    file: File;
+    type: 'image' | 'document';
+  } | null>(null);
+  const [editingMessage, setEditingMessage] = useState<{
+    id: string;
+    content: string;
+  } | null>(null);
+  const [threadAnchorId, setThreadAnchorId] = useState<string | null>(null);
 
   // ==================== SELECTED CONVERSATION HOOKS ====================
 
@@ -162,6 +188,31 @@ export default function NutritionistMessagingPage() {
 
   const sendMutation = useSendMessage(selectedConversationId || '');
   const uploadMutation = useUploadAttachment(selectedConversationId || '');
+  const reactionMutation = useToggleReaction(selectedConversationId || '');
+  const editMutation = useEditMessage(selectedConversationId || '');
+  const deleteMutation = useDeleteMessage(selectedConversationId || '');
+
+  // Typing indicator hooks
+  const { onTypingChange } = useUpdateTyping(selectedConversationId || '');
+  const { isOtherTyping, typingUserName } = useRealtimeTyping(
+    selectedConversationId || '',
+    currentUserId
+  );
+
+  // Auto-dismiss error toasts after 5 seconds
+  useEffect(() => {
+    if (sendMutation.isError) {
+      const t = setTimeout(() => sendMutation.reset(), 5000);
+      return () => clearTimeout(t);
+    }
+  }, [sendMutation.isError]);
+
+  useEffect(() => {
+    if (uploadMutation.isError) {
+      const t = setTimeout(() => uploadMutation.reset(), 5000);
+      return () => clearTimeout(t);
+    }
+  }, [uploadMutation.isError]);
 
   // Subscribe to Supabase Realtime for instant message delivery
   useRealtimeMessages(selectedConversationId || '');
@@ -170,56 +221,91 @@ export default function NutritionistMessagingPage() {
 
   const filteredConversations = searchQuery
     ? conversations.filter(c =>
-        c.nutritionist.name
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase())
+        c.nutritionist.name.toLowerCase().includes(searchQuery.toLowerCase())
       )
     : conversations;
 
   // ==================== HANDLERS ====================
 
-  const handleSelectConversation = useCallback(
-    (id: string) => {
-      setSelectedConversationId(id);
-      setInputText('');
-      setSelectedQuickReply(null);
-      setShowAttachmentMenu(false);
-    },
-    []
-  );
+  const handleSelectConversation = useCallback((id: string) => {
+    setSelectedConversationId(id);
+    setInputText('');
+    setSelectedQuickReply(null);
+    setShowAttachmentMenu(false);
+    setPendingAttachment(null);
+    setShowMessageSearch(false);
+    setEditingMessage(null);
+    setThreadAnchorId(null);
+  }, []);
 
   const handleSendMessage = useCallback(() => {
-    if (!inputText.trim() || sendMutation.isPending) return;
+    const hasText = inputText.trim().length > 0;
+    const hasAttachment = pendingAttachment !== null;
+
+    if (!hasText && !hasAttachment) return;
+    if (sendMutation.isPending || uploadMutation.isPending) return;
+
+    // Edit mode: update existing message
+    if (editingMessage && hasText) {
+      editMutation.mutate(
+        { messageId: editingMessage.id, content: inputText.trim() },
+        {
+          onSuccess: () => {
+            setInputText('');
+            setEditingMessage(null);
+          },
+        }
+      );
+      return;
+    }
 
     setSelectedQuickReply(null);
 
-    sendMutation.mutate(
-      { content: inputText.trim() },
-      {
-        onSuccess: () => {
-          setInputText('');
-        },
-        onError: (error) => {
-          console.error('Error sending message:', error);
-        },
-      }
-    );
-  }, [inputText, sendMutation]);
-
-  const handleAttachmentSelect = useCallback(
-    (file: File, type: 'image' | 'document') => {
-      setShowAttachmentMenu(false);
-
+    if (hasAttachment) {
       uploadMutation.mutate(
-        { file, file_type: type },
         {
-          onError: (error) => {
+          file: pendingAttachment.file,
+          file_type: pendingAttachment.type,
+          caption: hasText ? inputText.trim() : undefined,
+        },
+        {
+          onSuccess: () => {
+            setInputText('');
+            setPendingAttachment(null);
+          },
+          onError: error => {
             console.error('Error uploading attachment:', error);
           },
         }
       );
+    } else {
+      sendMutation.mutate(
+        { content: inputText.trim() },
+        {
+          onSuccess: () => {
+            setInputText('');
+          },
+          onError: error => {
+            console.error('Error sending message:', error);
+          },
+        }
+      );
+    }
+  }, [
+    inputText,
+    pendingAttachment,
+    sendMutation,
+    uploadMutation,
+    editingMessage,
+    editMutation,
+  ]);
+
+  const handleAttachmentSelect = useCallback(
+    (file: File, type: 'image' | 'document') => {
+      setShowAttachmentMenu(false);
+      setPendingAttachment({ file, type });
     },
-    [uploadMutation]
+    []
   );
 
   const handleQuickReplySelect = useCallback((text: string) => {
@@ -242,9 +328,85 @@ export default function NutritionistMessagingPage() {
     [selectedQuickReply]
   );
 
+  const handleReaction = useCallback(
+    (messageId: string, emoji: string) => {
+      reactionMutation.mutate({ messageId, emoji });
+    },
+    [reactionMutation]
+  );
+
+  const handleReply = useCallback((messageId: string) => {
+    setThreadAnchorId(messageId);
+    setEditingMessage(null);
+  }, []);
+
+  const handleEdit = useCallback((messageId: string, content: string) => {
+    setEditingMessage({ id: messageId, content });
+    setThreadAnchorId(null);
+    setInputText(content);
+  }, []);
+
+  const handleCancelEdit = useCallback(() => {
+    setEditingMessage(null);
+    setInputText('');
+  }, []);
+
+  const handleDelete = useCallback(
+    (messageId: string) => {
+      deleteMutation.mutate({ messageId });
+    },
+    [deleteMutation]
+  );
+
+  const handleOpenThread = useCallback((messageId: string) => {
+    setThreadAnchorId(messageId);
+  }, []);
+
+  const handleCloseThread = useCallback(() => {
+    setThreadAnchorId(null);
+  }, []);
+
+  const handleSendInThread = useCallback(
+    (content: string, replyToId: string) => {
+      sendMutation.mutate(
+        {
+          content,
+          reply_to_id: replyToId,
+          _replyTo: {
+            id: replyToId,
+            content: '',
+            senderName: '',
+            isFromUser: false,
+          },
+        },
+        {
+          onError: error => {
+            console.error('Error sending thread message:', error);
+          },
+        }
+      );
+    },
+    [sendMutation]
+  );
+
   const handleBack = useCallback(() => {
     setSelectedConversationId(null);
   }, []);
+
+  const handleSearchResult = useCallback(
+    (result: MessageSearchResult, searchTerm: string) => {
+      setShowMessageSearch(false);
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          messagesListRef.current?.scrollToMessage(
+            result.message_id,
+            searchTerm
+          );
+        }, 100);
+      });
+    },
+    []
+  );
 
   // ==================== LOADING STATE ====================
 
@@ -282,7 +444,7 @@ export default function NutritionistMessagingPage() {
   // ==================== RENDER ====================
 
   return (
-    <div className='h-[calc(100vh-64px)] flex bg-gray-100'>
+    <div className='h-screen flex bg-gray-100'>
       {/* Left sidebar: Conversation list */}
       <div
         className={`w-full md:w-80 lg:w-96 bg-white border-r border-gray-200 flex flex-col ${
@@ -291,10 +453,10 @@ export default function NutritionistMessagingPage() {
       >
         {/* Header */}
         <div className='p-4 border-b border-gray-100'>
-          <h1 className='text-lg font-semibold text-gray-800 mb-3'>
-            Messagerie
-          </h1>
-          {/* Search */}
+          <div className='flex items-center justify-between mb-3'>
+            <h1 className='text-lg font-semibold text-gray-800'>Messagerie</h1>
+          </div>
+          {/* Patient search */}
           <div className='relative'>
             <Search className='absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400' />
             <input
@@ -313,9 +475,7 @@ export default function NutritionistMessagingPage() {
             <div className='flex flex-col items-center justify-center py-12 px-4'>
               <MessageCircle className='w-12 h-12 text-gray-300 mb-3' />
               <p className='text-gray-500 text-sm text-center'>
-                {searchQuery
-                  ? 'Aucun patient trouvé'
-                  : 'Aucune conversation'}
+                {searchQuery ? 'Aucun patient trouvé' : 'Aucune conversation'}
               </p>
               {!searchQuery && (
                 <p className='text-gray-400 text-xs text-center mt-1'>
@@ -338,7 +498,7 @@ export default function NutritionistMessagingPage() {
 
       {/* Right panel: Selected conversation */}
       <div
-        className={`flex-1 flex flex-col ${
+        className={`flex-1 flex flex-col bg-white ${
           selectedConversationId ? 'flex' : 'hidden md:flex'
         }`}
       >
@@ -356,30 +516,80 @@ export default function NutritionistMessagingPage() {
               </div>
               <MessagingHeader
                 nutritionist={selectedConversation.nutritionist}
+                participantRole='patient'
+                actions={
+                  <div className='flex items-center gap-1'>
+                    <button
+                      onClick={() => setShowMessageSearch(true)}
+                      className='p-2 text-gray-400 hover:text-[#1B998B] hover:bg-[#1B998B]/5 rounded-lg transition-colors'
+                      title='Rechercher dans la conversation'
+                    >
+                      <Search className='w-4 h-4' />
+                    </button>
+                    <ExportConversationButton
+                      conversationId={selectedConversationId || ''}
+                    />
+                  </div>
+                }
               />
             </div>
 
-            {/* Messages */}
-            <div className='flex-1 overflow-y-auto'>
-              {loadingMessages ? (
-                <div className='flex items-center justify-center h-full'>
-                  <div className='w-6 h-6 border-2 border-[#1B998B] border-t-transparent rounded-full animate-spin' />
-                </div>
-              ) : (
-                <MessagesList
+            {/* Messages + Thread panel */}
+            <div className='flex-1 flex overflow-hidden'>
+              <div className='flex-1 overflow-y-auto'>
+                {loadingMessages ? (
+                  <div className='flex items-center justify-center h-full'>
+                    <div className='w-6 h-6 border-2 border-[#1B998B] border-t-transparent rounded-full animate-spin' />
+                  </div>
+                ) : (
+                  <MessagesList
+                    ref={messagesListRef}
+                    messages={messages}
+                    onImageClick={handleImageClick}
+                    onReaction={handleReaction}
+                    onReply={handleReply}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                    onOpenThread={handleOpenThread}
+                    isOtherTyping={isOtherTyping}
+                    typingUserName={
+                      typingUserName || selectedConversation.nutritionist.name
+                    }
+                  />
+                )}
+              </div>
+
+              {threadAnchorId && (
+                <ThreadPanel
+                  anchorMessageId={threadAnchorId}
                   messages={messages}
+                  onClose={handleCloseThread}
+                  onSendInThread={handleSendInThread}
                   onImageClick={handleImageClick}
+                  onReaction={handleReaction}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                  isSending={sendMutation.isPending}
                 />
               )}
             </div>
 
             {/* Input area */}
             <div className='flex-shrink-0 bg-white border-t border-gray-100'>
-              <QuickReplies
-                replies={quickReplies}
-                onSelect={handleQuickReplySelect}
-                selectedReply={selectedQuickReply}
-              />
+              {!editingMessage && (
+                <QuickReplies
+                  replies={quickReplies}
+                  onSelect={handleQuickReplySelect}
+                  selectedReply={selectedQuickReply}
+                />
+              )}
+              {pendingAttachment && (
+                <AttachmentPreview
+                  file={pendingAttachment.file}
+                  fileType={pendingAttachment.type}
+                  onRemove={() => setPendingAttachment(null)}
+                />
+              )}
               <MessageInput
                 value={inputText}
                 onChange={handleInputChange}
@@ -391,6 +601,10 @@ export default function NutritionistMessagingPage() {
                 }
                 onCloseAttachmentMenu={() => setShowAttachmentMenu(false)}
                 isSending={isSending}
+                hasAttachment={!!pendingAttachment}
+                onTypingChange={onTypingChange}
+                editingMessage={editingMessage}
+                onCancelEdit={handleCancelEdit}
               />
             </div>
           </>
@@ -409,6 +623,19 @@ export default function NutritionistMessagingPage() {
           </div>
         )}
       </div>
+
+      {/* Message search overlay (MSG-N-006) */}
+      {showMessageSearch && (
+        <div className='fixed inset-0 z-50 bg-black/30 flex items-start justify-center pt-16'>
+          <div className='w-full max-w-lg bg-white rounded-xl shadow-2xl max-h-[70vh] flex flex-col overflow-hidden'>
+            <SearchMessages
+              onSelectResult={handleSearchResult}
+              onClose={() => setShowMessageSearch(false)}
+              conversationId={selectedConversationId || undefined}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Image preview modal */}
       <ImagePreviewModal

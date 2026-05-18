@@ -11,6 +11,7 @@ import { createClient } from '@/lib/supabase/server';
 import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 import { verifyAuth, apiResponse } from '@/lib/api-auth';
 import { createMessageSchema } from '@/lib/api-schemas';
+import { notifyNewMessage } from '@/lib/notifications';
 import { z } from 'zod';
 
 /**
@@ -98,7 +99,7 @@ export async function GET(
       }
     }
 
-    // 6. Récupérer les messages
+    // 6. Récupérer les messages (sans self-join reply_to — résolu manuellement)
     // On demande limit + 1 pour savoir s'il y a plus de messages
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let messagesQuery = (supabase as any)
@@ -114,11 +115,14 @@ export async function GET(
           file_size,
           mime_type,
           thumbnail_url
+        ),
+        message_reactions (
+          emoji,
+          user_id
         )
       `
       )
       .eq('conversation_id', conversationId)
-      .is('deleted_at', null)
       .order('created_at', { ascending: false })
       .limit(limit + 1);
 
@@ -141,10 +145,87 @@ export async function GET(
       ? (messages || []).slice(0, limit)
       : messages || [];
 
-    // 8. Inverser pour l'ordre chronologique (ASC)
-    const chronological = truncated.reverse();
+    // 7b. Résoudre les reply_to manuellement (self-join Supabase ne fonctionne pas)
+    const replyToIds = [
+      ...new Set(
+        truncated
+          .map((msg: Record<string, unknown>) => msg.reply_to_id)
+          .filter(Boolean) as string[]
+      ),
+    ];
 
-    // 9. Marquer les messages comme lus
+    let replyMap: Record<string, Record<string, unknown>> = {};
+    if (replyToIds.length > 0) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: replyMessages } = await (supabase as any)
+        .from('messages')
+        .select('id, content, sender_id, deleted_at')
+        .in('id', replyToIds);
+
+      if (replyMessages) {
+        // Fetch sender profiles for reply messages
+        const senderIds = [
+          ...new Set(
+            replyMessages.map((m: Record<string, unknown>) => m.sender_id)
+          ),
+        ] as string[];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data: senderProfiles } = await (supabase as any)
+          .from('profiles')
+          .select('id, first_name, last_name')
+          .in('id', senderIds);
+
+        const profileMap: Record<
+          string,
+          { first_name: string | null; last_name: string | null }
+        > = {};
+        if (senderProfiles) {
+          for (const p of senderProfiles) {
+            profileMap[p.id] = {
+              first_name: p.first_name,
+              last_name: p.last_name,
+            };
+          }
+        }
+
+        for (const rm of replyMessages) {
+          replyMap[rm.id as string] = {
+            id: rm.id,
+            content: rm.content,
+            sender_id: rm.sender_id,
+            deleted_at: rm.deleted_at,
+            sender: profileMap[rm.sender_id as string] || null,
+          };
+        }
+      }
+    }
+
+    // Attach reply_to data to each message
+    const withReplies = truncated.map((msg: Record<string, unknown>) => ({
+      ...msg,
+      reply_to: msg.reply_to_id
+        ? replyMap[msg.reply_to_id as string] || null
+        : null,
+    }));
+
+    // 8. Sanitize deleted messages (strip content & attachments server-side)
+    const sanitized = withReplies.map((msg: Record<string, unknown>) => {
+      if (msg.deleted_at) {
+        return {
+          ...msg,
+          content: null,
+          message_attachments: [],
+          message_reactions: [],
+          plan_modification: null,
+        };
+      }
+      return msg;
+    });
+
+    // 9. Inverser pour l'ordre chronologique (ASC)
+    const chronological = sanitized.reverse();
+
+    // 10. Marquer les messages comme lus
     // Uses admin client to bypass RLS (messages UPDATE policy only allows sender_id = auth.uid(),
     // but we need to update messages sent by the OTHER participant)
     const markedAsRead = await markMessagesAsRead(
@@ -232,25 +313,10 @@ export async function POST(
       );
     }
 
-    // 5. Envoyer le message via RPC
+    // 5. Envoyer le message
+    // If reply_to_id is provided, skip RPC (which doesn't support it) and use direct INSERT
     let messageId: string;
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data: rpcResult, error: rpcError } = await (supabase as any).rpc(
-        'send_message',
-        {
-          p_conversation_id: conversationId,
-          p_sender_id: auth.user.id,
-          p_content: validatedData.content,
-          p_message_type: 'text',
-        }
-      );
-
-      if (rpcError) throw rpcError;
-      messageId = rpcResult;
-    } catch (rpcError) {
-      // Fallback: INSERT direct si la fonction RPC n'existe pas
-      console.warn('send_message RPC failed, using fallback:', rpcError);
+    if (validatedData.reply_to_id) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data: inserted, error: insertError } = await (supabase as any)
         .from('messages')
@@ -260,6 +326,7 @@ export async function POST(
           content: validatedData.content,
           message_type: 'text',
           status: 'sent',
+          reply_to_id: validatedData.reply_to_id,
         })
         .select('id')
         .single();
@@ -269,13 +336,47 @@ export async function POST(
         return apiResponse.serverError("Erreur lors de l'envoi du message");
       }
       messageId = inserted.id;
+    } else {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data: rpcResult, error: rpcError } = await (
+          supabase as any
+        ).rpc('send_message', {
+          p_conversation_id: conversationId,
+          p_sender_id: auth.user.id,
+          p_content: validatedData.content,
+          p_message_type: 'text',
+        });
+
+        if (rpcError) throw rpcError;
+        messageId = rpcResult;
+      } catch (rpcError) {
+        // Fallback: INSERT direct si la fonction RPC n'existe pas
+        console.warn('send_message RPC failed, using fallback:', rpcError);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data: inserted, error: insertError } = await (supabase as any)
+          .from('messages')
+          .insert({
+            conversation_id: conversationId,
+            sender_id: auth.user.id,
+            content: validatedData.content,
+            message_type: 'text',
+            status: 'sent',
+          })
+          .select('id')
+          .single();
+
+        if (insertError || !inserted) {
+          console.error('Error inserting message:', insertError);
+          return apiResponse.serverError("Erreur lors de l'envoi du message");
+        }
+        messageId = inserted.id;
+      }
     }
 
     // 6. Récupérer le message créé avec ses attachments
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: createdMessage, error: fetchError } = await (
-      supabase as any
-    )
+    const { data: createdMessage, error: fetchError } = await (supabase as any)
       .from('messages')
       .select(
         `
@@ -294,6 +395,37 @@ export async function POST(
       .eq('id', messageId)
       .single();
 
+    // Resolve reply_to manually if present
+    if (createdMessage && createdMessage.reply_to_id) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: replyMsg } = await (supabase as any)
+        .from('messages')
+        .select('id, content, sender_id, deleted_at')
+        .eq('id', createdMessage.reply_to_id)
+        .single();
+
+      if (replyMsg) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data: senderProfile } = await (supabase as any)
+          .from('profiles')
+          .select('first_name, last_name')
+          .eq('id', replyMsg.sender_id)
+          .single();
+
+        createdMessage.reply_to = {
+          id: replyMsg.id,
+          content: replyMsg.content,
+          sender_id: replyMsg.sender_id,
+          deleted_at: replyMsg.deleted_at,
+          sender: senderProfile || null,
+        };
+      } else {
+        createdMessage.reply_to = null;
+      }
+    } else if (createdMessage) {
+      createdMessage.reply_to = null;
+    }
+
     if (fetchError || !createdMessage) {
       console.error('Error fetching created message:', fetchError);
       // Message was created, return minimal data
@@ -301,6 +433,36 @@ export async function POST(
         { id: messageId, status: 'sent' },
         { status: 201 }
       );
+    }
+
+    // 7. Send notification to the other participant
+    try {
+      const recipientId =
+        conversation.patient_id === auth.user.id
+          ? conversation.nutritionist_id
+          : conversation.patient_id;
+
+      // Get sender name for notification
+      const adminClient = createAdminClient();
+      if (adminClient) {
+        const { data: senderProfile } = await adminClient
+          .from('profiles')
+          .select('first_name, last_name')
+          .eq('id', auth.user.id)
+          .single();
+
+        const senderName = senderProfile
+          ? `${senderProfile.first_name} ${senderProfile.last_name}`
+          : 'Un utilisateur';
+
+        await notifyNewMessage(adminClient, recipientId, {
+          sender: senderName,
+          conversationId,
+        });
+      }
+    } catch (notifError) {
+      // Non-blocking: log but don't fail the request
+      console.warn('Failed to send message notification:', notifError);
     }
 
     return NextResponse.json(createdMessage, { status: 201 });

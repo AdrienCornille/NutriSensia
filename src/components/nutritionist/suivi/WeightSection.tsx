@@ -1,11 +1,21 @@
 'use client';
 
 import React, { useState } from 'react';
+import dynamic from 'next/dynamic';
 import { Loader2, Scale } from 'lucide-react';
 import type { TimeRange } from '@/types/suivi';
 import { usePatientWeight } from '@/hooks/useNutritionistSuivi';
 import { TimeRangeSelector } from './TimeRangeSelector';
-import { WeightChart } from './charts/WeightChart';
+
+const WeightChart = dynamic(
+  () => import('./charts/WeightChart').then(m => m.WeightChart),
+  {
+    ssr: false,
+    loading: () => (
+      <div className='h-64 rounded-lg bg-gray-100 animate-pulse' />
+    ),
+  }
+);
 
 // ============================================================================
 // Types
@@ -116,7 +126,9 @@ export function WeightSection({ patientId }: WeightSectionProps) {
         {/* Poids actuel */}
         <div className='bg-white rounded-xl p-4 border border-gray-200'>
           <div className='flex items-center justify-between mb-2'>
-            <span className='text-sm font-medium text-gray-600'>Poids actuel</span>
+            <span className='text-sm font-medium text-gray-600'>
+              Poids actuel
+            </span>
           </div>
           <div className='flex items-baseline gap-1 mb-2'>
             <span className='text-2xl font-bold text-gray-800'>
@@ -146,7 +158,9 @@ export function WeightSection({ patientId }: WeightSectionProps) {
         {/* Variation totale */}
         <div className='bg-white rounded-xl p-4 border border-gray-200'>
           <div className='flex items-center justify-between mb-2'>
-            <span className='text-sm font-medium text-gray-600'>Variation totale</span>
+            <span className='text-sm font-medium text-gray-600'>
+              Variation totale
+            </span>
           </div>
           <div className='flex items-baseline gap-1 mb-2'>
             <span className={`text-2xl font-bold ${totalChangeColor}`}>
@@ -160,7 +174,9 @@ export function WeightSection({ patientId }: WeightSectionProps) {
         {/* Variation hebdo */}
         <div className='bg-white rounded-xl p-4 border border-gray-200'>
           <div className='flex items-center justify-between mb-2'>
-            <span className='text-sm font-medium text-gray-600'>Variation hebdo</span>
+            <span className='text-sm font-medium text-gray-600'>
+              Variation hebdo
+            </span>
           </div>
           <div className='flex items-baseline gap-1 mb-2'>
             <span className={`text-2xl font-bold ${weeklyChangeColor}`}>
@@ -173,10 +189,7 @@ export function WeightSection({ patientId }: WeightSectionProps) {
       </div>
 
       {/* Chart */}
-      <WeightChart
-        entries={data.entries}
-        goalWeight={statistics.goal_weight}
-      />
+      <WeightChart entries={data.entries} goalWeight={statistics.goal_weight} />
     </div>
   );
 }

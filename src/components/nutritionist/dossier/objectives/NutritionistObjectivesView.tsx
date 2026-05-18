@@ -1,80 +1,74 @@
 'use client';
 
-import React, { useState } from 'react';
-import {
-  Loader2,
-  AlertCircle,
-  Plus,
-  Target,
-  CheckCircle,
-  Pause,
-  TrendingUp,
-} from 'lucide-react';
+import React, { useMemo, useState } from 'react';
+import { Loader2, AlertCircle, Target } from 'lucide-react';
 import {
   usePatientObjectives,
   useUpdateObjective,
 } from '@/hooks/useNutritionistDossier';
 import { ObjectiveCreateModal } from './ObjectiveCreateModal';
+import { ObjectiveCard } from './ObjectiveCard';
 
 interface NutritionistObjectivesViewProps {
   patientId: string;
 }
 
-const statusConfig: Record<
-  string,
-  { label: string; color: string; icon: React.ElementType }
-> = {
-  active: {
-    label: 'Actif',
-    color: 'bg-green-100 text-green-700',
-    icon: TrendingUp,
-  },
-  paused: {
-    label: 'En pause',
-    color: 'bg-amber-100 text-amber-700',
-    icon: Pause,
-  },
-  completed: {
-    label: 'Terminé',
-    color: 'bg-blue-100 text-blue-700',
-    icon: CheckCircle,
-  },
-  cancelled: {
-    label: 'Annulé',
-    color: 'bg-gray-100 text-gray-600',
-    icon: Target,
-  },
+const FILTERS = ['all', 'active', 'paused', 'completed', 'cancelled'] as const;
+const FILTER_LABELS: Record<(typeof FILTERS)[number], string> = {
+  all: 'Tous',
+  active: 'Actifs',
+  paused: 'En pause',
+  completed: 'Terminés',
+  cancelled: 'Annulés',
 };
-
-function formatDate(dateStr: string | null): string {
-  if (!dateStr) return '—';
-  return new Date(dateStr).toLocaleDateString('fr-FR', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  });
-}
 
 export function NutritionistObjectivesView({
   patientId,
 }: NutritionistObjectivesViewProps) {
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [statusFilter, setStatusFilter] =
+    useState<(typeof FILTERS)[number]>('all');
 
   const {
     data: objectives,
     isLoading,
     error,
   } = usePatientObjectives(patientId);
-
   const updateObjective = useUpdateObjective(patientId);
+
+  const allObjectives = useMemo(() => objectives || [], [objectives]);
+
+  const counts = useMemo(() => {
+    const c: Record<string, number> = { all: allObjectives.length };
+    for (const filter of FILTERS) {
+      if (filter === 'all') continue;
+      c[filter] = allObjectives.filter(o => o.status === filter).length;
+    }
+    return c;
+  }, [allObjectives]);
+
+  const filtered = useMemo(() => {
+    if (statusFilter === 'all') return allObjectives;
+    return allObjectives.filter(o => o.status === statusFilter);
+  }, [allObjectives, statusFilter]);
+
+  const avgProgress = useMemo(() => {
+    const active = allObjectives.filter(o => o.status === 'active');
+    if (active.length === 0) return 0;
+    return Math.round(
+      active.reduce((sum, o) => sum + o.progress, 0) / active.length
+    );
+  }, [allObjectives]);
 
   if (isLoading) {
     return (
       <div className='flex items-center justify-center py-16'>
-        <Loader2 className='w-6 h-6 animate-spin text-[#1B998B]' />
-        <span className='ml-2 text-sm text-gray-500'>
-          Chargement des objectifs...
+        <Loader2
+          className='w-6 h-6 animate-spin'
+          style={{ color: 'var(--ns-peps-deep)' }}
+        />
+        <span className='ml-2 text-sm' style={{ color: 'var(--ns-ink-3)' }}>
+          Chargement…
         </span>
       </div>
     );
@@ -82,183 +76,133 @@ export function NutritionistObjectivesView({
 
   if (error) {
     return (
-      <div className='bg-white rounded-xl border border-gray-200 p-8 text-center'>
-        <AlertCircle className='w-8 h-8 text-red-500 mx-auto mb-3' />
-        <p className='text-gray-800 font-medium mb-1'>Erreur de chargement</p>
-        <p className='text-sm text-gray-500'>{error.message}</p>
+      <div className='fp-card text-center'>
+        <AlertCircle
+          className='w-8 h-8 mx-auto mb-3'
+          style={{ color: 'var(--ns-coral)' }}
+        />
+        <p
+          className='font-serif text-lg mb-1'
+          style={{ color: 'var(--ns-ink)' }}
+        >
+          Erreur de chargement
+        </p>
+        <p className='text-sm' style={{ color: 'var(--ns-ink-3)' }}>
+          {error.message}
+        </p>
       </div>
     );
   }
 
-  const allObjectives = objectives || [];
-  const filtered =
-    statusFilter === 'all'
-      ? allObjectives
-      : allObjectives.filter(o => o.status === statusFilter);
-
-  const activeCount = allObjectives.filter(o => o.status === 'active').length;
-  const completedCount = allObjectives.filter(
-    o => o.status === 'completed'
-  ).length;
-
   return (
     <div className='space-y-4'>
-      {/* Header */}
-      <div className='bg-white rounded-xl border border-gray-200 p-6'>
-        <div className='flex items-center justify-between'>
-          <div>
-            <h3 className='text-lg font-semibold text-gray-800'>Objectifs</h3>
-            <p className='text-sm text-gray-500 mt-1'>
-              {activeCount} actif{activeCount !== 1 ? 's' : ''} &middot;{' '}
-              {completedCount} terminé{completedCount !== 1 ? 's' : ''}
-            </p>
+      {/* ─── Pane intro ─── */}
+      <section className='fp-pane-intro'>
+        <div>
+          <h2 className='fp-pane-intro-title'>
+            Objectifs <em>SMART</em>
+          </h2>
+          <div className='fp-pane-intro-meta'>
+            <span>
+              <b>{counts.active}</b> actif{counts.active > 1 ? 's' : ''}
+            </span>
+            {counts.completed > 0 && (
+              <>
+                <span className='dot' />
+                <span>
+                  <b>{counts.completed}</b> terminé
+                  {counts.completed > 1 ? 's' : ''}
+                </span>
+              </>
+            )}
+            {counts.paused > 0 && (
+              <>
+                <span className='dot' />
+                <span>
+                  <b>{counts.paused}</b> en pause
+                </span>
+              </>
+            )}
+            <span className='dot' />
+            <span>
+              Progression moyenne · <b>{avgProgress}%</b>
+            </span>
           </div>
+        </div>
+        <div className='fp-pane-intro-actions'>
           <button
+            type='button'
+            className='fp-btn fp-btn-peps'
             onClick={() => setShowCreateModal(true)}
-            className='inline-flex items-center gap-2 px-4 py-2 bg-[#1B998B] text-white rounded-lg hover:bg-[#147569] transition-colors text-sm font-medium'
           >
-            <Plus className='w-4 h-4' />
-            Nouvel objectif
+            + Nouvel objectif
           </button>
         </div>
+      </section>
 
-        {/* Status filter */}
-        <div className='flex gap-2 mt-4'>
-          {['all', 'active', 'paused', 'completed', 'cancelled'].map(status => (
-            <button
-              key={status}
-              onClick={() => setStatusFilter(status)}
-              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                statusFilter === status
-                  ? 'bg-[#1B998B] text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
-            >
-              {status === 'all'
-                ? 'Tous'
-                : statusConfig[status]?.label || status}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Objectives list */}
-      {filtered.length === 0 ? (
-        <div className='bg-white rounded-xl border border-gray-200 p-8 text-center'>
-          <Target className='w-12 h-12 text-gray-300 mx-auto mb-3' />
-          <p className='text-gray-800 font-medium mb-1'>Aucun objectif</p>
-          <p className='text-sm text-gray-500'>
-            Créez le premier objectif pour ce patient.
-          </p>
-        </div>
-      ) : (
-        <div className='space-y-3'>
-          {filtered.map(obj => {
-            const config = statusConfig[obj.status] || statusConfig.active;
-            const StatusIcon = config.icon;
-            return (
-              <div
-                key={obj.id}
-                className='bg-white rounded-xl border border-gray-200 p-5'
+      {/* ─── Filters ─── */}
+      {allObjectives.length > 0 && (
+        <div className='fp-list-toolbar'>
+          <div className='fp-list-toolbar-filters'>
+            {FILTERS.map(f => (
+              <button
+                key={f}
+                type='button'
+                onClick={() => setStatusFilter(f)}
+                className={statusFilter === f ? 'is-active' : ''}
               >
-                <div className='flex items-start justify-between mb-3'>
-                  <div className='flex-1'>
-                    <div className='flex items-center gap-2 mb-1'>
-                      <h4 className='text-sm font-semibold text-gray-800'>
-                        {obj.title}
-                      </h4>
-                      <span
-                        className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium ${config.color}`}
-                      >
-                        <StatusIcon className='w-3 h-3' />
-                        {config.label}
-                      </span>
-                    </div>
-                    {obj.description && (
-                      <p className='text-sm text-gray-500'>{obj.description}</p>
-                    )}
-                  </div>
-                  <div className='flex gap-1 ml-3'>
-                    {obj.status === 'active' && (
-                      <>
-                        <button
-                          onClick={() =>
-                            updateObjective.mutate({
-                              objectiveId: obj.id,
-                              status: 'completed',
-                            })
-                          }
-                          className='p-1.5 text-gray-400 hover:text-green-600 transition-colors'
-                          title='Marquer terminé'
-                        >
-                          <CheckCircle className='w-4 h-4' />
-                        </button>
-                        <button
-                          onClick={() =>
-                            updateObjective.mutate({
-                              objectiveId: obj.id,
-                              status: 'paused',
-                            })
-                          }
-                          className='p-1.5 text-gray-400 hover:text-amber-600 transition-colors'
-                          title='Mettre en pause'
-                        >
-                          <Pause className='w-4 h-4' />
-                        </button>
-                      </>
-                    )}
-                    {obj.status === 'paused' && (
-                      <button
-                        onClick={() =>
-                          updateObjective.mutate({
-                            objectiveId: obj.id,
-                            status: 'active',
-                          })
-                        }
-                        className='p-1.5 text-gray-400 hover:text-green-600 transition-colors'
-                        title='Réactiver'
-                      >
-                        <TrendingUp className='w-4 h-4' />
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                {/* Progress bar */}
-                <div className='mb-3'>
-                  <div className='flex items-center justify-between text-xs text-gray-500 mb-1'>
-                    <span>Progression</span>
-                    <span>{obj.progress}%</span>
-                  </div>
-                  <div className='h-2 bg-gray-100 rounded-full overflow-hidden'>
-                    <div
-                      className='h-full bg-[#1B998B] rounded-full transition-all'
-                      style={{ width: `${Math.min(obj.progress, 100)}%` }}
-                    />
-                  </div>
-                </div>
-
-                {/* Meta */}
-                <div className='flex items-center gap-4 text-xs text-gray-400'>
-                  <span>Catégorie : {obj.category}</span>
-                  {obj.target_value && (
-                    <span>
-                      Cible : {obj.target_value}
-                      {obj.target_unit ? ` ${obj.target_unit}` : ''}
-                    </span>
-                  )}
-                  <span>Début : {formatDate(obj.start_date)}</span>
-                  {obj.deadline && (
-                    <span>Échéance : {formatDate(obj.deadline)}</span>
-                  )}
-                </div>
-              </div>
-            );
-          })}
+                {FILTER_LABELS[f]} · {counts[f]}
+              </button>
+            ))}
+          </div>
+          <span
+            style={{
+              fontFamily: 'var(--ns-font-serif)',
+              fontStyle: 'italic',
+              fontSize: 13,
+              color: 'var(--ns-ink-3)',
+            }}
+          >
+            Trié par priorité · 1 (haute) en premier
+          </span>
         </div>
       )}
 
-      {/* Create Modal */}
+      {/* ─── List ─── */}
+      {allObjectives.length === 0 ? (
+        <div className='fp-card text-center' style={{ padding: '48px 32px' }}>
+          <Target
+            className='w-10 h-10 mx-auto mb-3'
+            style={{ color: 'var(--ns-ink-4)' }}
+          />
+          <p
+            className='font-serif text-lg mb-1'
+            style={{ color: 'var(--ns-ink)' }}
+          >
+            Aucun objectif
+          </p>
+          <p className='text-sm' style={{ color: 'var(--ns-ink-3)' }}>
+            Créez le premier objectif pour ce patient.
+          </p>
+        </div>
+      ) : filtered.length === 0 ? (
+        <div className='fp-cr-empty'>
+          Aucun objectif {FILTER_LABELS[statusFilter].toLowerCase()}.
+        </div>
+      ) : (
+        <div className='fp-obj-list'>
+          {filtered.map(obj => (
+            <ObjectiveCard
+              key={obj.id}
+              objective={obj}
+              onUpdateStatus={(objectiveId, status) =>
+                updateObjective.mutate({ objectiveId, status })
+              }
+            />
+          ))}
+        </div>
+      )}
+
       {showCreateModal && (
         <ObjectiveCreateModal
           patientId={patientId}

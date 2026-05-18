@@ -26,12 +26,26 @@ export interface MessageAttachment {
   thumbnailUrl?: string;
 }
 
+export interface MessageReaction {
+  emoji: string;
+  count: number;
+  hasReacted: boolean;
+}
+
+export interface MessageReplyTo {
+  id: string;
+  content: string;
+  senderName: string;
+  isFromUser: boolean;
+}
+
 export interface Message {
   id: string;
   content: string;
   type: MessageType;
   timestamp: Date;
   isFromUser: boolean;
+  senderId?: string;
   status: MessageStatus;
   attachment?: MessageAttachment;
   // For plan-modification type
@@ -40,6 +54,13 @@ export interface Message {
     newValue: string;
     field: string;
   };
+  // Reactions
+  reactions?: MessageReaction[];
+  // Edit/delete
+  editedAt?: Date;
+  isDeleted?: boolean;
+  // Reply/quote
+  replyTo?: MessageReplyTo;
 }
 
 export interface Nutritionist {
@@ -330,6 +351,90 @@ export function groupMessagesByDate(
   });
 
   return groups;
+}
+
+// ==================== THREAD HELPERS ====================
+
+/**
+ * Count how many messages reply to each message ID.
+ */
+export function getReplyCountMap(messages: Message[]): Map<string, number> {
+  const map = new Map<string, number>();
+  for (const msg of messages) {
+    if (msg.replyTo?.id) {
+      map.set(msg.replyTo.id, (map.get(msg.replyTo.id) || 0) + 1);
+    }
+  }
+  return map;
+}
+
+/**
+ * Walk up the replyTo chain from a given message to find the thread root.
+ * Returns the root message ID (oldest ancestor in the loaded messages).
+ */
+export function getThreadRootId(
+  messages: Message[],
+  messageId: string
+): string {
+  const messageMap = new Map<string, Message>();
+  for (const msg of messages) {
+    messageMap.set(msg.id, msg);
+  }
+
+  let currentId = messageId;
+  const visited = new Set<string>();
+
+  while (true) {
+    if (visited.has(currentId)) break; // prevent cycles
+    visited.add(currentId);
+    const current = messageMap.get(currentId);
+    if (!current?.replyTo?.id) break;
+    const parent = messageMap.get(current.replyTo.id);
+    if (!parent) break;
+    currentId = parent.id;
+  }
+
+  return currentId;
+}
+
+/**
+ * Build a full thread chain: root message + all messages that reply to the root.
+ * Sorted chronologically.
+ */
+export function buildThreadMessages(
+  messages: Message[],
+  rootId: string
+): Message[] {
+  const root = messages.find(m => m.id === rootId);
+  if (!root) return [];
+
+  // Collect all messages that directly or indirectly reply to the root
+  const childrenMap = new Map<string, Message[]>();
+  for (const msg of messages) {
+    if (msg.replyTo?.id) {
+      const existing = childrenMap.get(msg.replyTo.id) || [];
+      existing.push(msg);
+      childrenMap.set(msg.replyTo.id, existing);
+    }
+  }
+
+  // BFS to collect all descendants
+  const threadSet = new Set<string>([rootId]);
+  const queue = [rootId];
+  while (queue.length > 0) {
+    const id = queue.shift()!;
+    const children = childrenMap.get(id) || [];
+    for (const child of children) {
+      if (!threadSet.has(child.id)) {
+        threadSet.add(child.id);
+        queue.push(child.id);
+      }
+    }
+  }
+
+  return messages
+    .filter(m => threadSet.has(m.id))
+    .sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
 }
 
 // MSG-005: Default quick replies

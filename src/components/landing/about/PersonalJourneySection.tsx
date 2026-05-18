@@ -3,18 +3,13 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Image from 'next/image';
-import { cn } from '@/lib/utils';
 import { useFirstVisit } from '@/hooks/useFirstVisit';
 
 /**
- * Section Parcours - Transformer votre santé par la nutrition
+ * Section Parcours — Transformer votre santé par la nutrition (DS v2 Editorial)
  *
- * Layout: Image en haut, contenu textuel centré en dessous
- * - Image principale
- * - Titre H2
- * - Paragraphes explicatifs
- * - Information remboursement
- * - CTA "Premier pas"
+ * Image cadrée en haut, contenu éditorial dessous, encadré
+ * "Remboursement" en card peps-soft avec bordure ink.
  */
 export function PersonalJourneySection() {
   const ref = useRef(null);
@@ -25,183 +20,176 @@ export function PersonalJourneySection() {
   });
   const { isFirstVisit } = useFirstVisit();
 
-  // Animation conditionnelle basée sur première visite
   const shouldAnimate = isFirstVisit && isInView;
   const showContent = !isFirstVisit || isInView;
 
-  // Helpers pour les animations conditionnelles
-  const getHiddenStyle = (yOffset: number) => {
-    if (!isFirstVisit) return {};
-    return { opacity: 0, transform: `translateY(${yOffset}px)` };
-  };
+  const getHidden = (yOffset: number) =>
+    !isFirstVisit ? {} : { opacity: 0, transform: `translateY(${yOffset}px)` };
 
-  const getTransition = (delay: number) => {
-    if (shouldAnimate) {
-      return { duration: 0.6, delay, ease: 'easeOut' as const };
-    }
-    return { duration: 0 };
-  };
+  const getTransition = (delay: number) =>
+    shouldAnimate
+      ? { duration: 0.6, delay, ease: 'easeOut' as const }
+      : { duration: 0 };
 
   return (
     <section
       ref={ref}
-      className={cn(
-        'relative w-full',
-        'py-[100px] px-10',
-        'max-md:py-[60px] max-md:px-6'
-      )}
-      style={{ backgroundColor: '#FBF9F7' }} /* Warm Cream - Méditerranée */
+      style={{
+        background: 'var(--ns-cream-200)',
+        padding: '112px 0',
+        borderTop: '1.5px solid var(--ns-ink)',
+        borderBottom: '1.5px solid var(--ns-ink)',
+      }}
     >
-      <div className='container mx-auto max-w-[900px]'>
-        {/* Image en haut */}
-        <motion.div
-          style={getHiddenStyle(30)}
-          animate={showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={getTransition(0)}
-          className='flex justify-center mb-12'
-        >
-          <div
+      <div className='ns2-container'>
+        <div style={{ maxWidth: 880, margin: '0 auto' }}>
+          {/* Image */}
+          <motion.div
+            className='ns2-frame'
             style={{
-              borderRadius: '16px',
-              overflow: 'hidden',
-              boxShadow: '0 8px 30px rgba(0, 0, 0, 0.12)',
               width: '100%',
-              maxWidth: '700px',
-              aspectRatio: '16/9',
+              aspectRatio: '16 / 9',
+              marginBottom: 56,
+              position: 'relative',
+              ...getHidden(30),
             }}
-            className='relative'
+            animate={showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+            transition={getTransition(0)}
           >
             <Image
               src='/images/nutritionist-consultation.jpg'
               alt='Consultation nutritionnelle personnalisée avec Lucie Cornille'
               fill
-              className='object-cover object-center'
-              sizes='(max-width: 768px) 100vw, 700px'
+              style={{ objectFit: 'cover' }}
+              sizes='(max-width: 768px) 100vw, 880px'
             />
-          </div>
-        </motion.div>
+          </motion.div>
 
-        {/* Contenu textuel centré */}
-        <div className='text-center max-w-[800px] mx-auto'>
-          {/* Titre H2 */}
+          {/* Eyebrow */}
+          <motion.div
+            className='ns2-eyebrow ns2-eyebrow-dot'
+            style={{ marginBottom: 18, ...getHidden(20) }}
+            animate={showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={getTransition(0.05)}
+          >
+            Notre raison d&apos;être
+          </motion.div>
+
+          {/* Titre */}
           <motion.h2
+            className='ns2-display'
             style={{
-              fontFamily: "'Marcellus', serif",
-              fontSize: '42px',
-              lineHeight: '1.2',
-              fontWeight: 700,
-              color: '#1B998B' /* Turquoise Azur */,
-              marginBottom: '32px',
-              ...getHiddenStyle(30),
+              fontSize: 'clamp(32px, 5vw, 56px)',
+              marginBottom: 32,
+              ...getHidden(30),
             }}
             animate={showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
             transition={getTransition(0.1)}
-            className='max-md:!text-[28px] max-md:!leading-[1.3]'
           >
-            Transformer votre santé par la nutrition, une consultation à la fois
+            Transformer votre santé par la <em>nutrition</em>,
+            <br />
+            une <span className='ns2-hl'>consultation</span> à la fois.
           </motion.h2>
 
-          {/* Paragraphe 1 */}
-          <motion.p
-            style={{
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-              fontSize: '16px',
-              lineHeight: '1.8',
-              color: '#4B5563',
-              marginBottom: '24px',
-              ...getHiddenStyle(20),
-            }}
-            animate={showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={getTransition(0.2)}
-            className='max-md:!text-[14px]'
-          >
-            En Suisse, des milliers de personnes vivent avec des problématiques
-            de santé liées à leur alimentation, pourtant peu ont accès à un
-            accompagnement nutritionnel personnalisé et de qualité. Beaucoup
-            pensent que consulter un·e professionnel·le de la nutrition signifie
-            renoncer aux plaisirs de la table ou suivre un régime restrictif.
-            C'est faux.
-          </motion.p>
+          {/* Paragraphes */}
+          {[
+            {
+              delay: 0.2,
+              content: (
+                <>
+                  En Suisse, des milliers de personnes vivent avec des troubles
+                  liés à leur alimentation. Pourtant, peu ont accès à un
+                  accompagnement personnalisé. Et beaucoup pensent encore que
+                  voir une nutritionniste, c&apos;est renoncer aux plaisirs de
+                  la table.{' '}
+                  <em
+                    style={{
+                      fontFamily: 'var(--ns-font-serif-stack)',
+                      fontStyle: 'italic',
+                      color: 'var(--ns-ink)',
+                      fontWeight: 500,
+                    }}
+                  >
+                    C&apos;est faux.
+                  </em>{' '}
+                  Et c&apos;est exactement ce qu&apos;on essaie de changer.
+                </>
+              ),
+            },
+            {
+              delay: 0.3,
+              content:
+                "Chez NutriSensia, on croit qu'une vraie expertise nutritionnelle ne devrait pas être un luxe. Lucie Cornille, nutritionniste, propose des consultations en ligne fondées sur les connaissances scientifiques actuelles — et qui respectent qui vous êtes, ce que vous mangez, et d'où vous venez.",
+            },
+            {
+              delay: 0.4,
+              content:
+                "Notre approche n'est pas un protocole : elle s'adapte à vos habitudes, vos goûts, vos contraintes. On construit, ensemble, un chemin qui tient — pas trois semaines.",
+            },
+          ].map((para, idx) => (
+            <motion.p
+              key={idx}
+              className='ns2-body-lg'
+              style={{
+                marginBottom: 22,
+                lineHeight: 1.75,
+                ...getHidden(20),
+              }}
+              animate={
+                showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+              }
+              transition={getTransition(para.delay)}
+            >
+              {para.content}
+            </motion.p>
+          ))}
 
-          {/* Paragraphe 2 */}
-          <motion.p
-            style={{
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-              fontSize: '16px',
-              lineHeight: '1.8',
-              color: '#4B5563',
-              marginBottom: '24px',
-              ...getHiddenStyle(20),
-            }}
-            animate={showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={getTransition(0.3)}
-            className='max-md:!text-[14px]'
-          >
-            Chez NutriSensia, nous croyons que chaque personne mérite un
-            accompagnement nutritionnel accessible, professionnel et
-            bienveillant. Nous proposons des consultations personnalisées en
-            ligne avec Lucie Cornille, nutritionniste, pour un suivi fondé sur
-            les connaissances actuelles en nutrition, inclusif et respectueux de
-            votre culture alimentaire.
-          </motion.p>
-
-          {/* Paragraphe 3 */}
-          <motion.p
-            style={{
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-              fontSize: '16px',
-              lineHeight: '1.8',
-              color: '#4B5563',
-              marginBottom: '40px',
-              ...getHiddenStyle(20),
-            }}
-            animate={showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={getTransition(0.4)}
-            className='max-md:!text-[14px]'
-          >
-            Notre approche est non-jugeante, durable et adaptée à votre réalité
-            quotidienne. Nous honorons vos habitudes, vos goûts et vos
-            contraintes pour construire ensemble un chemin vers une meilleure
-            santé.
-          </motion.p>
-
-          {/* Encadré Remboursement */}
+          {/* Encart Remboursement */}
           <motion.div
             style={{
-              backgroundColor: 'rgba(27, 153, 139, 0.08)' /* Turquoise pale */,
-              borderRadius: '12px',
-              padding: '24px 32px',
-              ...getHiddenStyle(20),
+              background: 'var(--ns-peps-soft)',
+              border: '1.5px solid var(--ns-ink)',
+              borderRadius: 'var(--ns-r-md)',
+              padding: 'clamp(24px, 4vw, 36px)',
+              marginTop: 40,
+              boxShadow: 'var(--ns-shadow-hard-sm)',
+              position: 'relative',
+              ...getHidden(20),
             }}
             animate={showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={getTransition(0.5)}
-            className='max-md:!px-5 max-md:!py-5'
           >
-            <h3
+            <span
+              className='ns2-sticker ns2-sticker-coral'
               style={{
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontSize: '20px',
-                fontWeight: 600,
-                color: '#1B998B' /* Turquoise Azur */,
-                marginBottom: '12px',
+                position: 'absolute',
+                top: -14,
+                left: 24,
+                transform: 'rotate(-4deg)',
               }}
-              className='max-md:!text-[18px]'
             >
-              Remboursement possible par les assurances complémentaires
+              Bon à savoir ↘
+            </span>
+            <div className='ns2-eyebrow' style={{ marginBottom: 10 }}>
+              Remboursement
+            </div>
+            <h3
+              className='ns2-display'
+              style={{
+                fontSize: 26,
+                lineHeight: 1.25,
+                marginBottom: 12,
+              }}
+            >
+              Pris en charge par votre <em>assurance complémentaire</em>.
             </h3>
             <p
-              style={{
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontSize: '16px',
-                lineHeight: '1.6',
-                color: '#4B5563',
-                margin: 0,
-              }}
-              className='max-md:!text-[15px]'
+              className='ns2-body'
+              style={{ margin: 0, color: 'var(--ns-ink)' }}
             >
-              De nombreuses assurances complémentaires prennent en charge tout
-              ou partie des consultations en nutrition. Nous vous invitons à
-              vérifier votre couverture auprès de votre assurance.
+              La plupart des assurances complémentaires couvrent tout ou partie
+              des consultations en nutrition. Un appel à votre assurance suffit
+              pour vérifier votre couverture.
             </p>
           </motion.div>
         </div>

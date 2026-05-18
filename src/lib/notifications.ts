@@ -38,6 +38,7 @@ export type NotificationTypeCode =
   // Système
   | 'welcome'
   | 'questionnaire_due'
+  | 'questionnaire_received'
   | 'streak_milestone'
   | 'badge_earned';
 
@@ -158,6 +159,31 @@ export async function notifyAppointmentNoShow(
   await createNotification(supabase, patientUserId, 'appointment_no_show', {
     date: appointmentData.date,
     nutritionist: appointmentData.nutritionist,
+  });
+}
+
+/**
+ * Crée une notification d'envoi de questionnaire pour le patient.
+ * Le champ `title` est interpolé dans le body via `{{title}}`. Les autres
+ * champs (`assignment_id`, `due_at`) sont stockés dans `notifications.data`
+ * pour permettre une navigation future ciblée vers l'assignment.
+ */
+export async function notifyQuestionnaireReceived(
+  supabase: SupabaseClientAny,
+  patientUserId: string,
+  payload: {
+    assignment_id: string;
+    title: string;
+    due_at: string | null;
+  }
+): Promise<void> {
+  await createNotification(supabase, patientUserId, 'questionnaire_received', {
+    assignment_id: payload.assignment_id,
+    title: payload.title,
+    // JSONB n'aime pas les `null` typés différemment du reste : on sérialise
+    // l'absence de due_at en chaîne vide pour rester compatible avec
+    // NotificationData (string | number | boolean).
+    due_at: payload.due_at ?? '',
   });
 }
 

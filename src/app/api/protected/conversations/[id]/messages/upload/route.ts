@@ -16,7 +16,15 @@ const ALLOWED_IMAGE_TYPES = [
   'image/webp',
   'image/gif',
 ];
-const ALLOWED_DOCUMENT_TYPES = ['application/pdf'];
+const ALLOWED_DOCUMENT_TYPES = [
+  'application/pdf',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/vnd.ms-excel',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'text/plain',
+  'text/csv',
+];
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5 MB
 const MAX_DOCUMENT_SIZE = 10 * 1024 * 1024; // 10 MB
 
@@ -64,28 +72,22 @@ export async function POST(
     if (fileType === 'image') {
       if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
         return apiResponse.error(
-          'Type d\'image non supporté (JPEG, PNG, WebP, GIF uniquement)',
+          "Type d'image non supporté (JPEG, PNG, WebP, GIF uniquement)",
           400
         );
       }
       if (file.size > MAX_IMAGE_SIZE) {
-        return apiResponse.error(
-          'Image trop volumineuse (max 5 MB)',
-          413
-        );
+        return apiResponse.error('Image trop volumineuse (max 5 MB)', 413);
       }
     } else {
       if (!ALLOWED_DOCUMENT_TYPES.includes(file.type)) {
         return apiResponse.error(
-          'Type de document non supporté (PDF uniquement)',
+          'Type de document non supporté (PDF, Word, Excel, CSV, TXT)',
           400
         );
       }
       if (file.size > MAX_DOCUMENT_SIZE) {
-        return apiResponse.error(
-          'Document trop volumineux (max 10 MB)',
-          413
-        );
+        return apiResponse.error('Document trop volumineux (max 10 MB)', 413);
       }
     }
 

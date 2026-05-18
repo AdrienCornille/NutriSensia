@@ -5,7 +5,17 @@ import { motion, useInView } from 'framer-motion';
 import Image from 'next/image';
 import { useFirstVisit } from '@/hooks/useFirstVisit';
 
+/**
+ * Les 3 piliers — page Approche, DS v2.
+ * Cream-200 section with 3 .ns2-card editorial cards (image top + content
+ * bottom). Each card carries a number, a colored tag, italic tagline, body
+ * description. Hover lift signature.
+ */
+
 interface Pillar {
+  number: string;
+  tagVariant: 'sage' | 'coral' | 'peps';
+  tag: string;
   image: string;
   title: string;
   tagline: string;
@@ -16,226 +26,204 @@ export interface PrinciplesSectionProps {
   className?: string;
 }
 
+const PILLARS: Pillar[] = [
+  {
+    number: '01',
+    tagVariant: 'sage',
+    tag: 'Écoute',
+    image:
+      'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=800&h=600&fit=crop&q=80',
+    title: 'Écouter avant de conseiller',
+    tagline: "Vous n'êtes pas un cas, vous êtes une personne.",
+    description:
+      "Avant tout plan, on écoute. Vraiment. Votre histoire, vos goûts, votre quotidien, ce qui coince. Parce qu'un accompagnement qui ne part pas de vous ne vous emmène nulle part.",
+  },
+  {
+    number: '02',
+    tagVariant: 'coral',
+    tag: 'Bilan',
+    image:
+      'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=800&h=600&fit=crop&q=80',
+    title: 'Comprendre et ressentir',
+    tagline: 'La science écoute le corps.',
+    description:
+      "Les chiffres d'un bilan racontent une partie de l'histoire. Votre ressenti raconte l'autre. Les vraies transformations naissent quand on lit les deux.",
+  },
+  {
+    number: '03',
+    tagVariant: 'peps',
+    tag: 'Objectifs',
+    image:
+      'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800&h=600&fit=crop&q=80',
+    title: 'Entre ambition et réalisme',
+    tagline: "Ambitieux. Réaliste. Pas l'un sans l'autre.",
+    description:
+      "Des objectifs ambitieux, oui. Des promesses miraculeuses, non. On vous accompagne vers la meilleure version possible — la vôtre, pas celle d'Instagram.",
+  },
+];
+
 export function PrinciplesSection({ className }: PrinciplesSectionProps) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
   const { isFirstVisit } = useFirstVisit();
 
-  // Animation conditionnelle basée sur première visite
-  const shouldAnimate = isFirstVisit && isInView;
   const showContent = !isFirstVisit || isInView;
-
-  // Style initial : cacher seulement si première visite
-  const getHiddenStyle = (yOffset: number) => {
-    if (!isFirstVisit) {
-      return {};
-    }
-    return {
-      opacity: 0,
-      transform: `translateY(${yOffset}px)`,
-    };
-  };
-
-  // Transition : animation seulement si première visite et en vue
-  const getTransition = (delay: number) => {
-    if (shouldAnimate) {
-      return { duration: 0.6, delay, ease: 'easeOut' as const };
-    }
-    return { duration: 0 };
-  };
-
-  const pillars: Pillar[] = [
-    {
-      image:
-        'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=800&h=600&fit=crop&q=80',
-      title: 'Écouter avant\nde conseiller',
-      tagline: "Vous n'êtes pas un cas, vous êtes une personne",
-      description:
-        "Avant tout plan alimentaire, nous prenons le temps de vraiment vous écouter. Votre histoire, vos goûts, votre quotidien, vos blocages. Comprendre qui vous êtes, c'est la base d'un accompagnement qui vous ressemble. Parce qu'une approche qui fonctionne ne sort jamais d'un livre, elle naît d'une rencontre entre votre réalité et notre expertise.",
-    },
-    {
-      image:
-        'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=800&h=600&fit=crop&q=80',
-      title: 'Comprendre et\nressentir',
-      tagline: 'Le meilleur des deux mondes',
-      description:
-        "Les chiffres d'un bilan, c'est important. Mais ce que vous ressentez au quotidien l'est tout autant. Nous ne nous contentons pas d'analyser vos résultats : nous écoutons aussi les signaux de votre corps. Votre fatigue, votre digestion, votre énergie. Les vraies transformations naissent quand science et ressenti travaillent ensemble, pas quand on suit aveuglément des données sur un papier.",
-    },
-    {
-      image:
-        'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800&h=600&fit=crop&q=80',
-      title: 'Entre ambition\net réalisme',
-      tagline: 'Ce que votre corps peut vraiment atteindre',
-      description:
-        'Des objectifs ambitieux ? Oui. Des promesses irréalistes ? Non. Notre rôle ? Vous accompagner vers la meilleure version de vous-même, celle que VOTRE corps peut atteindre. Ensemble, nous définissons des objectifs motivants ET réalistes, en tenant compte de votre physiologie, votre mode de vie, votre santé.',
-    },
-  ];
+  const getHidden = (yOffset: number) =>
+    !isFirstVisit ? {} : { opacity: 0, transform: `translateY(${yOffset}px)` };
+  const getTransition = (delay: number) =>
+    isFirstVisit && isInView
+      ? { duration: 0.6, delay, ease: 'easeOut' as const }
+      : { duration: 0 };
 
   return (
     <section
       ref={ref}
       className={className}
       style={{
-        backgroundColor: '#FBF9F7' /* Crème Méditerranée */,
-        padding: '96px 0',
-        width: '100%',
+        background: 'var(--ns-cream-200)',
+        paddingTop: 96,
+        paddingBottom: 96,
+        borderTop: 'var(--ns-bw) solid var(--ns-ink)',
+        borderBottom: 'var(--ns-bw) solid var(--ns-ink)',
       }}
     >
-      <div
-        style={{
-          maxWidth: '1200px',
-          margin: '0 auto',
-          padding: '0 24px',
-        }}
-      >
-        {/* Header de section */}
+      <div className='ns2-container'>
+        {/* Header */}
         <motion.div
-          style={{
-            textAlign: 'center',
-            marginBottom: '64px',
-            ...getHiddenStyle(20),
-          }}
+          style={{ marginBottom: 64, ...getHidden(20) }}
           animate={showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={getTransition(0)}
         >
-          {/* Titre principal */}
+          <div className='ns2-eyebrow ns2-eyebrow-dot'>Les 3 piliers</div>
           <h2
+            className='ns2-display'
             style={{
-              fontFamily: "'Marcellus', serif",
-              fontSize: '48px',
-              fontWeight: 700,
-              lineHeight: '57.6px',
-              color: '#1B998B' /* Turquoise Méditerranée */,
-              marginBottom: '24px',
+              fontSize: 'clamp(32px, 4.4vw, 56px)',
+              marginTop: 18,
+              color: 'var(--ns-ink)',
             }}
           >
-            Les 3 Piliers de Notre Approche
+            Trois <em>convictions</em> <span className='ns2-hl'>profondes</span>
+            ,
+            <br />
+            forgées par l&apos;expérience.
           </h2>
-
-          {/* Sous-titre */}
-          <p
-            style={{
-              fontFamily:
-                "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-              fontSize: '18px',
-              lineHeight: '28px',
-              color: '#41556b',
-              maxWidth: '800px',
-              margin: '0 auto',
-            }}
-          >
-            Voici les trois principes qui guident chaque accompagnement. Ce sont
-            nos convictions profondes, forgées par notre expérience
-            professionnelle et notre parcours.
+          <p className='ns2-body-lg' style={{ marginTop: 20, maxWidth: 780 }}>
+            Voici les principes qui guident chaque accompagnement. Pas des
+            slogans — des choix qu&apos;on tient, séance après séance.
           </p>
         </motion.div>
 
-        {/* Grille de 3 cartes */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: '32px',
-          }}
-          className='principles-grid'
-        >
-          {pillars.map((pillar, index) => (
-            <motion.div
-              key={index}
+        {/* Cards */}
+        <div className='principles-grid'>
+          {PILLARS.map((p, index) => (
+            <motion.article
+              key={p.number}
+              className='ns2-card'
               style={{
-                backgroundColor: '#ffffff',
-                border: '1px solid #e5e5e5',
-                borderRadius: '10px',
-                overflow: 'hidden',
-                boxShadow: '8px 8px 0 #E5DED6' /* Beige sand */,
-                ...getHiddenStyle(40),
+                display: 'flex',
+                flexDirection: 'column',
+                ...getHidden(40),
               }}
               animate={
                 showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }
               }
-              transition={getTransition(0.1 + index * 0.15)}
+              transition={getTransition(0.15 + index * 0.12)}
             >
               {/* Image */}
               <div
                 style={{
                   position: 'relative',
                   width: '100%',
-                  height: '220px',
+                  aspectRatio: '4 / 3',
+                  borderBottom: 'var(--ns-bw) solid var(--ns-ink)',
+                  overflow: 'hidden',
                 }}
               >
                 <Image
-                  src={pillar.image}
-                  alt={pillar.title.replace('\n', ' ')}
+                  src={p.image}
+                  alt={p.title}
                   fill
                   style={{ objectFit: 'cover' }}
                   sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
                 />
               </div>
 
-              {/* Contenu de la carte */}
-              <div style={{ padding: '32px' }}>
-                {/* Titre de la carte */}
-                <h3
+              {/* Body */}
+              <div
+                style={{
+                  padding: 28,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 14,
+                  flex: 1,
+                }}
+              >
+                <div
                   style={{
-                    fontFamily: "'Marcellus', serif",
-                    fontSize: '24px',
-                    fontWeight: 700,
-                    lineHeight: '1.3',
-                    color: '#1B998B' /* Turquoise Méditerranée */,
-                    marginBottom: '12px',
-                    whiteSpace: 'pre-line',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
                   }}
                 >
-                  {pillar.title}
+                  <span className={`ns2-tag ns2-tag-${p.tagVariant}`}>
+                    {p.tag}
+                  </span>
+                  <span
+                    className='ns2-display'
+                    style={{
+                      fontStyle: 'italic',
+                      fontSize: 32,
+                      color: 'var(--ns-ink-3)',
+                      lineHeight: 1,
+                    }}
+                  >
+                    {p.number}
+                  </span>
+                </div>
+
+                <h3
+                  className='ns2-display'
+                  style={{
+                    fontSize: 24,
+                    color: 'var(--ns-ink)',
+                    lineHeight: 1.1,
+                  }}
+                >
+                  {p.title}
                 </h3>
 
-                {/* Tagline avec underline */}
                 <p
                   style={{
-                    fontFamily:
-                      "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-                    fontSize: '16px',
-                    fontWeight: 600,
-                    lineHeight: '1.4',
-                    color: '#1B998B' /* Turquoise Méditerranée */,
-                    borderBottom: '1px solid #E5DED6' /* Beige sand */,
-                    paddingBottom: '12px',
-                    marginBottom: '16px',
+                    fontFamily: 'var(--ns-font-serif-stack)',
+                    fontStyle: 'italic',
+                    fontSize: 16,
+                    color: 'var(--ns-ink)',
+                    lineHeight: 1.4,
                   }}
                 >
-                  {pillar.tagline}
+                  {p.tagline}
                 </p>
 
-                {/* Description */}
-                <p
-                  style={{
-                    fontFamily:
-                      "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-                    fontSize: '16px',
-                    lineHeight: '26px',
-                    color: '#41556b',
-                  }}
-                >
-                  {pillar.description}
+                <p className='ns2-body' style={{ marginTop: 'auto' }}>
+                  {p.description}
                 </p>
               </div>
-            </motion.div>
+            </motion.article>
           ))}
         </div>
       </div>
 
-      {/* Responsive Styles */}
       <style jsx>{`
+        .principles-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 32px;
+        }
         @media (max-width: 1024px) {
           .principles-grid {
-            grid-template-columns: repeat(2, 1fr) !important;
-          }
-        }
-
-        @media (max-width: 768px) {
-          .principles-grid {
-            grid-template-columns: 1fr !important;
-            gap: 24px !important;
+            grid-template-columns: 1fr;
+            gap: 24px;
           }
         }
       `}</style>

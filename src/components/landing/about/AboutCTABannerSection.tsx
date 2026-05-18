@@ -2,51 +2,51 @@
 
 import React, { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
+import { ArrowRight } from 'lucide-react';
+import { Link } from '@/i18n/navigation';
 import { useFirstVisit } from '@/hooks/useFirstVisit';
 
 /**
- * Section CTA Banner pour la page About - Bande Terracotta Méditerranée
+ * CTA Banner — À propos (DS v2 Editorial)
  *
- * Design Méditerranée :
- * - Background Terracotta : #E76F51
- * - Texte blanc centré
- * - Bouton blanc avec texte turquoise foncé (#147569)
- * - Layout flex horizontal sur desktop, vertical sur mobile
+ * Bannière peps avec sticker coral, hard shadow ink,
+ * CTA dark + outline.
  */
 export function AboutCTABannerSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-50px' });
   const { isFirstVisit } = useFirstVisit();
 
-  // Animation conditionnelle basée sur première visite
   const shouldAnimate = isFirstVisit && isInView;
   const showContent = !isFirstVisit || isInView;
 
-  // Transition conditionnelle
-  const getTransition = (delay: number) => {
-    if (shouldAnimate) {
-      return { duration: 0.6, delay, ease: 'easeOut' as const };
-    }
-    return { duration: 0 };
-  };
+  const getTransition = (delay: number) =>
+    shouldAnimate
+      ? { duration: 0.6, delay, ease: 'easeOut' as const }
+      : { duration: 0 };
 
   return (
     <section
       ref={ref}
       style={{
-        backgroundColor: '#E76F51' /* Terracotta Méditerranée */,
-        padding: '2rem 0',
+        background: 'var(--ns-cream-100)',
+        padding: '64px 0',
       }}
     >
-      <div className='container mx-auto max-w-[1200px] px-6'>
+      <div className='ns2-container'>
         <motion.div
           style={{
+            background: 'var(--ns-peps)',
+            border: '1.5px solid var(--ns-ink)',
+            borderRadius: 'var(--ns-r-lg)',
+            boxShadow: 'var(--ns-shadow-hard-lg)',
+            padding: 'clamp(32px, 5vw, 56px)',
             display: 'flex',
-            flexDirection: 'row',
             alignItems: 'center',
-            justifyContent: 'center',
-            gap: '32px',
+            justifyContent: 'space-between',
+            gap: 32,
             flexWrap: 'wrap',
+            position: 'relative',
             ...(isFirstVisit
               ? { opacity: 0, transform: 'translateY(20px)' }
               : {}),
@@ -54,66 +54,46 @@ export function AboutCTABannerSection() {
           animate={showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={getTransition(0)}
         >
-          {/* Texte */}
-          <motion.span
+          <span
+            className='ns2-sticker ns2-sticker-coral'
             style={{
-              fontFamily:
-                "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-              fontSize: '18px',
-              fontWeight: 600,
-              color: '#ffffff',
-              textAlign: 'center',
-              ...(isFirstVisit
-                ? { opacity: 0, transform: 'translateX(-20px)' }
-                : {}),
+              position: 'absolute',
+              top: -16,
+              right: 32,
+              transform: 'rotate(4deg)',
             }}
-            animate={
-              showContent ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }
-            }
-            transition={getTransition(0.2)}
           >
-            Prêt·e à faire le premier pas vers une meilleure santé ?
-          </motion.span>
+            On commence ↘
+          </span>
 
-          {/* Bouton CTA */}
-          <motion.a
-            href='/contact'
-            style={{
-              backgroundColor: '#ffffff',
-              borderRadius: '35px',
-              padding: '14px 32px',
-              fontFamily:
-                "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-              fontSize: '14px',
-              fontWeight: 700,
-              color: '#147569' /* Turquoise foncé */,
-              textDecoration: 'none',
-              textAlign: 'center',
-              lineHeight: '16px',
-              cursor: 'pointer',
-              whiteSpace: 'nowrap',
-              ...(isFirstVisit
-                ? { opacity: 0, transform: 'translateX(20px)' }
-                : {}),
-            }}
-            animate={showContent ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }}
-            transition={getTransition(0.4)}
-            whileHover={{ backgroundColor: '#f0f0f0' }}
-          >
-            Premier pas →
-          </motion.a>
+          <div style={{ flex: '1 1 360px' }}>
+            <div className='ns2-eyebrow' style={{ marginBottom: 10 }}>
+              Premier pas
+            </div>
+            <h3
+              className='ns2-display'
+              style={{
+                fontSize: 'clamp(26px, 4vw, 40px)',
+                margin: 0,
+                color: 'var(--ns-ink)',
+                lineHeight: 1.15,
+              }}
+            >
+              Prêt·e à faire <em>le premier pas</em> ?
+            </h3>
+          </div>
+
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+            <Link href='/contact' className='ns2-btn ns2-btn-dark'>
+              Réserver une consultation
+              <ArrowRight className='w-4 h-4' />
+            </Link>
+            <Link href='/contact' className='ns2-btn ns2-btn-outline'>
+              Poser une question
+            </Link>
+          </div>
         </motion.div>
       </div>
-
-      {/* Responsive Styles */}
-      <style jsx>{`
-        @media (max-width: 768px) {
-          section > div > div {
-            flex-direction: column !important;
-            gap: 20px !important;
-          }
-        }
-      `}</style>
     </section>
   );
 }

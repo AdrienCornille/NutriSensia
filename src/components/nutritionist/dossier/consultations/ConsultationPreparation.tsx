@@ -1,15 +1,26 @@
 'use client';
 
 import React from 'react';
-import { Loader2, AlertTriangle } from 'lucide-react';
+import { Loader2, AlertTriangle, ArrowRight } from 'lucide-react';
 import { useConsultationPreparation } from '@/hooks/useNutritionistConsultations';
-import type { ConsultationDetail } from '@/types/nutritionist-dossier';
-import type { PatientObjectiveDetail } from '@/types/nutritionist-dossier';
+import type {
+  ConsultationDetail,
+  PatientObjectiveDetail,
+} from '@/types/nutritionist-dossier';
+import { PrivateNotesBlock } from './PrivateNotesBlock';
 
 interface ConsultationPreparationProps {
   patientId: string;
   onStartReport: () => void;
 }
+
+const CHANGE_TYPE_LABEL: Record<string, string> = {
+  health: 'Santé',
+  medication: 'Médicament',
+  allergy: 'Allergie',
+  lifestyle: 'Mode de vie',
+  other: 'Autre',
+};
 
 function formatDateFR(dateStr: string) {
   return new Date(dateStr + 'T00:00:00').toLocaleDateString('fr-FR', {
@@ -19,13 +30,11 @@ function formatDateFR(dateStr: string) {
   });
 }
 
-const statusColors: Record<string, { bar: string; text: string }> = {
-  on_track: { bar: 'bg-green-500', text: 'text-green-600' },
-  in_progress: { bar: 'bg-blue-500', text: 'text-blue-600' },
-  needs_attention: { bar: 'bg-amber-500', text: 'text-amber-600' },
-  not_started: { bar: 'bg-gray-300', text: 'text-gray-500' },
-  completed: { bar: 'bg-[#1B998B]', text: 'text-[#1B998B]' },
-};
+function objectiveRowClass(status: string): string {
+  if (status === 'needs_attention') return 'is-warn';
+  if (status === 'completed' || status === 'on_track') return 'is-done';
+  return '';
+}
 
 export function ConsultationPreparation({
   patientId,
@@ -36,9 +45,12 @@ export function ConsultationPreparation({
   if (isLoading) {
     return (
       <div className='flex items-center justify-center py-16'>
-        <Loader2 className='w-6 h-6 animate-spin text-[#1B998B]' />
-        <span className='ml-2 text-sm text-gray-500'>
-          Chargement de la préparation...
+        <Loader2
+          className='w-6 h-6 animate-spin'
+          style={{ color: 'var(--ns-peps-deep)' }}
+        />
+        <span className='ml-2 text-sm' style={{ color: 'var(--ns-ink-3)' }}>
+          Chargement de la préparation…
         </span>
       </div>
     );
@@ -46,8 +58,8 @@ export function ConsultationPreparation({
 
   if (error || !data) {
     return (
-      <div className='bg-white rounded-xl border border-gray-200 p-12 text-center'>
-        <p className='text-gray-500 text-sm'>
+      <div className='fp-card text-center' style={{ padding: '48px 32px' }}>
+        <p className='text-sm' style={{ color: 'var(--ns-ink-3)' }}>
           Impossible de charger les données de préparation.
         </p>
       </div>
@@ -57,187 +69,214 @@ export function ConsultationPreparation({
   const { lastConsultation, objectives, changeReports } = data as {
     lastConsultation: ConsultationDetail | null;
     objectives: PatientObjectiveDetail[];
-    changeReports: { id: string; change_type: string; title: string; description: string }[];
+    changeReports: {
+      id: string;
+      change_type: string;
+      title: string;
+      description: string;
+    }[];
   };
 
   const activeObjectives = objectives.filter(
-    (o: PatientObjectiveDetail) => o.status !== 'completed' && o.status !== 'abandoned'
+    o => o.status !== 'completed' && o.status !== 'abandoned'
   );
   const pendingReports = changeReports || [];
+  const avgProgress =
+    activeObjectives.length > 0
+      ? Math.round(
+          activeObjectives.reduce((sum, o) => sum + o.progress, 0) /
+            activeObjectives.length
+        )
+      : 0;
 
   return (
-    <div className='space-y-6'>
-      {/* Alerts - Pending change reports */}
+    <div className='space-y-4'>
+      {/* ─── Critical alerts ─── */}
       {pendingReports.length > 0 && (
-        <div className='bg-red-50 border border-red-200 rounded-xl p-4'>
-          <h3 className='text-sm font-semibold text-red-800 mb-2 flex items-center gap-1.5'>
+        <div className='fp-prep-block is-alert'>
+          <div className='fp-prep-block-title'>
             <AlertTriangle className='w-4 h-4' />
-            Signalements à traiter
-          </h3>
+            <span>
+              <em>{pendingReports.length} signalement</em>
+              {pendingReports.length > 1 ? 's' : ''} à aborder
+            </span>
+          </div>
           <div className='space-y-2'>
-            {pendingReports.map((report) => (
+            {pendingReports.map(report => (
               <div
                 key={report.id}
-                className='bg-white rounded-lg p-3 border border-red-100'
+                className='fp-flag'
+                style={{
+                  borderColor: 'var(--ns-coral)',
+                  background: 'rgba(255, 255, 255, 0.55)',
+                  padding: '10px 14px',
+                }}
               >
-                <span className='px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-600'>
-                  {report.change_type === 'health'
-                    ? 'Santé'
-                    : report.change_type === 'medication'
-                      ? 'Médicament'
-                      : report.change_type === 'lifestyle'
-                        ? 'Mode de vie'
-                        : report.change_type === 'allergy'
-                          ? 'Allergie'
-                          : 'Autre'}
+                <div>
+                  <div className='fp-flag-head'>
+                    <span
+                      className='fp-flag-icon'
+                      style={{
+                        background: 'var(--ns-coral-soft)',
+                        borderColor: 'var(--ns-coral)',
+                      }}
+                      aria-hidden='true'
+                    >
+                      ⚠
+                    </span>
+                    <div>
+                      <div className='fp-flag-title'>{report.title}</div>
+                      <div className='fp-flag-cat'>
+                        {CHANGE_TYPE_LABEL[report.change_type] || 'Autre'}
+                        {report.description && ` · ${report.description}`}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <span
+                  className='fp-flag-status'
+                  style={{
+                    background: 'var(--ns-coral)',
+                    color: 'var(--ns-cream-50)',
+                    borderColor: 'var(--ns-coral)',
+                  }}
+                >
+                  À traiter
                 </span>
-                <p className='text-sm text-gray-600 mt-1'>
-                  {report.title}
-                  {report.description && ` — ${report.description}`}
-                </p>
               </div>
             ))}
           </div>
         </div>
       )}
 
-      {/* Two-column grid */}
-      <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
-        {/* Last consultation */}
-        <div className='bg-white rounded-xl p-6 border border-gray-200'>
-          <h3 className='font-medium text-gray-800 mb-4'>
-            Dernière consultation
-          </h3>
+      {/* ─── KPI mini ─── */}
+      <div className='fp-prep-kpis'>
+        <div className='fp-prep-kpi'>
+          <span className='lbl'>Consultations</span>
+          <span className='val'>{lastConsultation ? '1+' : '0'}</span>
+          <span className='sub'>au total</span>
+        </div>
+        <div className='fp-prep-kpi'>
+          <span className='lbl'>Objectifs actifs</span>
+          <span className='val'>{activeObjectives.length}</span>
+          <span className='sub'>en cours</span>
+        </div>
+        <div
+          className={`fp-prep-kpi ${pendingReports.length > 0 ? 'is-warn' : ''}`}
+        >
+          <span className='lbl'>Signalements</span>
+          <span className='val'>{pendingReports.length}</span>
+          <span className='sub'>à traiter</span>
+        </div>
+        <div className='fp-prep-kpi'>
+          <span className='lbl'>Progression moy.</span>
+          <span className='val'>
+            {avgProgress}
+            <em>%</em>
+          </span>
+          <span className='sub'>des objectifs</span>
+        </div>
+      </div>
+
+      {/* ─── Grid: last consultation + active objectives ─── */}
+      <div className='fp-prep-grid'>
+        <div className='fp-prep-block'>
+          <div className='fp-prep-block-title'>
+            Dernière <em>consultation</em>
+          </div>
           {lastConsultation ? (
             <div className='space-y-3'>
-              <p className='text-xs text-gray-500'>
-                {formatDateFR(lastConsultation.date)}
-                {lastConsultation.duration_minutes &&
-                  ` · ${lastConsultation.duration_minutes} min`}
-              </p>
+              <div className='fp-cons-card-meta' style={{ marginBottom: 6 }}>
+                <span>
+                  <b>{formatDateFR(lastConsultation.date)}</b>
+                </span>
+                {lastConsultation.duration_minutes && (
+                  <>
+                    <span className='dot' />
+                    <span>{lastConsultation.duration_minutes} min</span>
+                  </>
+                )}
+              </div>
               {lastConsultation.summary && (
-                <div>
-                  <p className='text-xs font-semibold text-gray-500 uppercase mb-1'>
-                    Résumé
-                  </p>
-                  <p className='text-sm text-gray-600'>
-                    {lastConsultation.summary}
-                  </p>
-                </div>
+                <p className='fp-cons-summary' style={{ marginTop: 0 }}>
+                  {lastConsultation.summary}
+                </p>
               )}
               {lastConsultation.next_steps && (
-                <div>
-                  <p className='text-xs font-semibold text-gray-500 uppercase mb-1'>
-                    Prochaines étapes définies
-                  </p>
-                  <p className='text-sm text-gray-600 whitespace-pre-line'>
-                    {lastConsultation.next_steps}
-                  </p>
+                <div className='fp-cons-next'>
+                  <b>Prochaines étapes définies</b>
+                  <p>{lastConsultation.next_steps}</p>
                 </div>
               )}
               {lastConsultation.private_notes && (
-                <div className='bg-red-50 rounded-lg p-3 border border-red-200'>
-                  <p className='text-xs font-semibold text-red-400 mb-1'>
-                    🔒 Notes privées
-                  </p>
-                  <p className='text-xs text-gray-600 italic'>
-                    {lastConsultation.private_notes}
-                  </p>
-                </div>
+                <PrivateNotesBlock label='Note interne'>
+                  {lastConsultation.private_notes}
+                </PrivateNotesBlock>
               )}
             </div>
           ) : (
-            <p className='text-sm text-gray-500 italic'>
-              Aucune consultation précédente
+            <p
+              style={{
+                fontFamily: 'var(--ns-font-serif)',
+                fontStyle: 'italic',
+                fontSize: 14,
+                color: 'var(--ns-ink-3)',
+                margin: 0,
+              }}
+            >
+              Aucune consultation précédente.
             </p>
           )}
         </div>
 
-        {/* Active objectives */}
-        <div className='bg-white rounded-xl p-6 border border-gray-200'>
-          <h3 className='font-medium text-gray-800 mb-4'>
-            Objectifs en cours
-          </h3>
+        <div className='fp-prep-block'>
+          <div className='fp-prep-block-title'>
+            Objectifs <em>en cours</em>
+          </div>
           {activeObjectives.length > 0 ? (
-            <div className='space-y-4'>
-              {activeObjectives.map((obj: PatientObjectiveDetail) => {
-                const colors =
-                  statusColors[obj.status] || statusColors.in_progress;
-                return (
-                  <div key={obj.id}>
-                    <div className='flex items-center justify-between mb-1'>
-                      <p className='text-sm font-medium text-gray-700'>
-                        {obj.title}
-                      </p>
-                      <span className={`text-xs font-medium ${colors.text}`}>
-                        {obj.progress}%
-                      </span>
-                    </div>
-                    <div className='h-2 bg-gray-100 rounded-full overflow-hidden'>
-                      <div
-                        className={`h-full rounded-full ${colors.bar}`}
-                        style={{ width: `${Math.min(obj.progress, 100)}%` }}
-                      />
-                    </div>
+            <div className='fp-prep-obj'>
+              {activeObjectives.map(obj => (
+                <div
+                  key={obj.id}
+                  className={`fp-prep-obj-row ${objectiveRowClass(obj.status)}`}
+                >
+                  <div className='fp-prep-obj-row-head'>
+                    <span>{obj.title}</span>
+                    <b>{obj.progress}%</b>
                   </div>
-                );
-              })}
+                  <div className='fp-prep-obj-bar'>
+                    <span
+                      style={{ width: `${Math.min(obj.progress, 100)}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
             </div>
           ) : (
-            <p className='text-sm text-gray-500 italic'>
-              Aucun objectif actif
+            <p
+              style={{
+                fontFamily: 'var(--ns-font-serif)',
+                fontStyle: 'italic',
+                fontSize: 14,
+                color: 'var(--ns-ink-3)',
+                margin: 0,
+              }}
+            >
+              Aucun objectif actif.
             </p>
           )}
         </div>
       </div>
 
-      {/* KPI indicators */}
-      <div className='grid grid-cols-2 lg:grid-cols-4 gap-4'>
-        <div className='bg-gray-50 rounded-xl p-4 text-center'>
-          <p className='text-sm text-gray-500'>Consultations</p>
-          <p className='text-3xl font-bold text-gray-800 mt-1'>
-            {lastConsultation ? '1+' : '0'}
-          </p>
-          <p className='text-xs text-gray-500 mt-1'>au total</p>
-        </div>
-        <div className='bg-gray-50 rounded-xl p-4 text-center'>
-          <p className='text-sm text-gray-500'>Objectifs actifs</p>
-          <p className='text-3xl font-bold text-gray-800 mt-1'>
-            {activeObjectives.length}
-          </p>
-          <p className='text-xs text-gray-500 mt-1'>en cours</p>
-        </div>
-        <div className='bg-gray-50 rounded-xl p-4 text-center'>
-          <p className='text-sm text-gray-500'>Signalements</p>
-          <p className='text-3xl font-bold text-gray-800 mt-1'>
-            {pendingReports.length}
-          </p>
-          <p className='text-xs text-gray-500 mt-1'>à traiter</p>
-        </div>
-        <div className='bg-gray-50 rounded-xl p-4 text-center'>
-          <p className='text-sm text-gray-500'>Progression moy.</p>
-          <p className='text-3xl font-bold text-gray-800 mt-1'>
-            {activeObjectives.length > 0
-              ? Math.round(
-                  activeObjectives.reduce(
-                    (sum: number, o: PatientObjectiveDetail) => sum + o.progress,
-                    0
-                  ) / activeObjectives.length
-                )
-              : 0}
-            %
-          </p>
-          <p className='text-xs text-gray-500 mt-1'>des objectifs</p>
-        </div>
-      </div>
-
-      {/* CTA */}
-      <div className='text-center'>
+      {/* ─── CTA ─── */}
+      <div className='text-center pt-2'>
         <button
+          type='button'
           onClick={onStartReport}
-          className='px-6 py-2.5 bg-[#1B998B] text-white rounded-lg hover:bg-[#147569] transition-colors font-medium'
+          className='fp-btn fp-btn-peps'
         >
-          Commencer le compte-rendu →
+          Commencer le compte-rendu
+          <ArrowRight className='w-3.5 h-3.5' />
         </button>
       </div>
     </div>

@@ -1,94 +1,79 @@
 'use client';
 
 import React, { useRef } from 'react';
-import { cn } from '@/lib/utils';
+import Link from 'next/link';
 import { motion, useInView } from 'framer-motion';
+import { ArrowRight } from 'lucide-react';
 import { useFirstVisit } from '@/hooks/useFirstVisit';
 
 /**
- * Section "Comment je vous accompagne" - Flow Horizontal
- *
- * Design selon le Style Guide NutriSensia (Culina Health) :
- * - Titre H2 en Marcellus (serif), 48px, #3f6655, centré
- * - Sous-titre centré
- * - 4 étapes en flow horizontal avec icônes et flèches
- * - Icônes SVG personnalisées
- * - Flèches de connexion entre les étapes
- * - Responsive : horizontal sur desktop, vertical sur mobile
+ * Comment nous vous accompagnons — DS v2.
+ * Dark ink section (signature) — cream typography, peps accents.
+ * 4 numbered steps with eyebrow numbers, recolored SVG icons inside cream-bordered
+ * frames, dotted connector line on desktop, peps CTA at bottom.
  */
 
 interface ProcessStep {
   id: number;
+  number: string;
   title: string;
+  body: string;
   icon: React.ReactNode;
 }
+
+const PEPS = '#c4f048';
+const PEPS_DEEP = '#9bd418';
+const SAGE = '#95ad7e';
+const CREAM = '#faf6ea';
+const INK = '#14160f';
 
 const processSteps: ProcessStep[] = [
   {
     id: 1,
-    title: 'On prend le temps\nde se connaître',
+    number: '01',
+    title: 'Première rencontre, sans chrono',
+    body: 'On parle de vous, vraiment. Pas de questionnaire à la chaîne.',
     icon: (
       <svg
         viewBox='0 0 200 200'
         xmlns='http://www.w3.org/2000/svg'
-        className='w-full h-full'
+        style={{ width: '100%', height: '100%' }}
       >
-        {/* Deux personnes qui discutent */}
         <rect
-          x='20'
-          y='15'
-          width='70'
-          height='50'
-          rx='4'
-          fill='#F0F9F8'
-          stroke='#E5DED6'
-          strokeWidth='2'
+          x='30'
+          y='40'
+          width='140'
+          height='110'
+          rx='12'
+          fill={CREAM}
+          stroke={INK}
+          strokeWidth='3'
         />
-        <rect x='30' y='25' width='50' height='30' rx='2' fill='#ffffff' />
-        <rect
-          x='65'
-          y='35'
-          width='70'
-          height='50'
-          rx='4'
-          fill='#F0F9F8'
-          stroke='#E5DED6'
-          strokeWidth='2'
+        <circle
+          cx='80'
+          cy='95'
+          r='22'
+          fill={PEPS}
+          stroke={INK}
+          strokeWidth='3'
         />
-        <rect x='75' y='45' width='50' height='30' rx='2' fill='#ffffff' />
-        <rect
-          x='110'
-          y='55'
-          width='70'
-          height='50'
-          rx='4'
-          fill='#F0F9F8'
-          stroke='#E5DED6'
-          strokeWidth='2'
+        <path
+          d='M 60 130 Q 80 115 100 130'
+          stroke={INK}
+          strokeWidth='3'
+          fill='none'
+          strokeLinecap='round'
         />
-        <rect x='120' y='65' width='50' height='30' rx='2' fill='#ffffff' />
-        {/* Card principale avec profil */}
-        <rect
-          x='40'
-          y='100'
-          width='120'
-          height='85'
-          rx='8'
-          fill='#E5DED6'
-          stroke='#1B998B'
-          strokeWidth='2'
-        />
-        <circle cx='80' cy='135' r='15' fill='#1B998B' />
-        <path d='M 65 160 Q 80 150 95 160' fill='#1B998B' />
-        {/* Étoile avec check */}
-        <g transform='translate(115, 125)'>
+        <g transform='translate(120, 70)'>
           <path
-            d='M 15 0 L 18 10 L 28 10 L 20 16 L 23 26 L 15 20 L 7 26 L 10 16 L 2 10 L 12 10 Z'
-            fill='#E9C46A'
+            d='M 18 0 L 22 12 L 34 12 L 24 20 L 28 32 L 18 24 L 8 32 L 12 20 L 2 12 L 14 12 Z'
+            fill={PEPS_DEEP}
+            stroke={INK}
+            strokeWidth='2'
           />
           <path
-            d='M 12 13 L 15 16 L 20 11'
-            stroke='#ffffff'
+            d='M 14 16 L 18 20 L 24 13'
+            stroke={INK}
             strokeWidth='2'
             fill='none'
             strokeLinecap='round'
@@ -99,303 +84,322 @@ const processSteps: ProcessStep[] = [
   },
   {
     id: 2,
-    title: 'Nous créons VOTRE\nplan personnalisé',
+    number: '02',
+    title: 'Un plan, pas un protocole',
+    body: 'Construit pour vous, vos goûts, votre semaine. Et modifiable autant de fois qu’il faudra.',
     icon: (
       <svg
         viewBox='0 0 200 200'
         xmlns='http://www.w3.org/2000/svg'
-        className='w-full h-full'
+        style={{ width: '100%', height: '100%' }}
       >
-        {/* Document */}
         <rect
           x='50'
           y='40'
           width='100'
           height='120'
-          rx='8'
-          fill='#F0F9F8'
-          stroke='#1B998B'
-          strokeWidth='2'
-        />
-        <rect x='60' y='60' width='80' height='8' rx='2' fill='#E5DED6' />
-        <rect x='60' y='80' width='60' height='6' rx='2' fill='#E5DED6' />
-        <rect x='60' y='95' width='70' height='6' rx='2' fill='#E5DED6' />
-        <rect x='60' y='110' width='50' height='6' rx='2' fill='#E5DED6' />
-        {/* Loupe */}
-        <circle
-          cx='130'
-          cy='110'
-          r='25'
-          fill='#E9C46A'
-          stroke='#E76F51'
+          rx='10'
+          fill={CREAM}
+          stroke={INK}
           strokeWidth='3'
         />
-        <circle cx='130' cy='110' r='18' fill='#ffffff' />
+        <rect x='62' y='60' width='76' height='8' rx='2' fill={INK} />
+        <rect
+          x='62'
+          y='80'
+          width='56'
+          height='6'
+          rx='2'
+          fill={INK}
+          opacity='0.5'
+        />
+        <rect
+          x='62'
+          y='95'
+          width='66'
+          height='6'
+          rx='2'
+          fill={INK}
+          opacity='0.5'
+        />
+        <rect
+          x='62'
+          y='110'
+          width='48'
+          height='6'
+          rx='2'
+          fill={INK}
+          opacity='0.5'
+        />
+        <circle
+          cx='130'
+          cy='120'
+          r='28'
+          fill={PEPS}
+          stroke={INK}
+          strokeWidth='3'
+        />
+        <circle
+          cx='130'
+          cy='120'
+          r='20'
+          fill={CREAM}
+          stroke={INK}
+          strokeWidth='2'
+        />
         <line
-          x1='148'
-          y1='128'
-          x2='165'
-          y2='145'
-          stroke='#E76F51'
+          x1='150'
+          y1='140'
+          x2='168'
+          y2='158'
+          stroke={INK}
           strokeWidth='5'
           strokeLinecap='round'
         />
         <path
-          d='M 122 110 L 128 116 L 138 106'
-          stroke='#1B998B'
+          d='M 121 120 L 128 127 L 140 113'
+          stroke={INK}
           strokeWidth='3'
           fill='none'
           strokeLinecap='round'
-        />
-        {/* Badge check */}
-        <circle cx='110' cy='45' r='12' fill='#E76F51' />
-        <path
-          d='M 105 45 L 108 48 L 115 41'
-          stroke='#ffffff'
-          strokeWidth='2'
-          fill='none'
-          strokeLinecap='round'
+          strokeLinejoin='round'
         />
       </svg>
     ),
   },
   {
     id: 3,
-    title: 'On ajuste au\nfur et à mesure',
+    number: '03',
+    title: 'La vie bouge, le plan suit',
+    body: 'Ajustements en messagerie, consultations de suivi. La vraie vie ne respecte pas les tableurs Excel.',
     icon: (
       <svg
         viewBox='0 0 200 200'
         xmlns='http://www.w3.org/2000/svg'
-        className='w-full h-full'
+        style={{ width: '100%', height: '100%' }}
       >
-        {/* Phone 1 */}
         <rect
-          x='35'
+          x='30'
           y='50'
-          width='55'
-          height='100'
-          rx='8'
-          fill='#F0F9F8'
-          stroke='#1B998B'
+          width='60'
+          height='105'
+          rx='10'
+          fill={CREAM}
+          stroke={INK}
+          strokeWidth='3'
+        />
+        <rect
+          x='36'
+          y='60'
+          width='48'
+          height='80'
+          rx='4'
+          fill='#fff'
+          stroke={INK}
+          strokeWidth='1.5'
+        />
+        <circle cx='60' cy='148' r='3' fill={INK} />
+        <circle
+          cx='60'
+          cy='90'
+          r='12'
+          fill={SAGE}
+          stroke={INK}
           strokeWidth='2'
         />
-        <rect x='40' y='60' width='45' height='75' rx='4' fill='#ffffff' />
-        <circle cx='62.5' cy='145' r='3' fill='#1B998B' />
-        <circle cx='62.5' cy='85' r='12' fill='#E5DED6' />
-        <path d='M 50 110 Q 62.5 100 75 110' fill='#E5DED6' />
-        {/* Bulle 1 */}
-        <rect x='20' y='20' width='40' height='25' rx='4' fill='#E9C46A' />
-        <polygon points='50,35 55,40 50,45' fill='#E9C46A' />
+        <path
+          d='M 48 115 Q 60 105 72 115'
+          stroke={INK}
+          strokeWidth='2'
+          fill='none'
+          strokeLinecap='round'
+        />
+        <rect
+          x='10'
+          y='20'
+          width='50'
+          height='30'
+          rx='6'
+          fill={PEPS}
+          stroke={INK}
+          strokeWidth='2.5'
+        />
+        <polygon
+          points='48,40 56,48 48,52'
+          fill={PEPS}
+          stroke={INK}
+          strokeWidth='2.5'
+        />
         <line
-          x1='27'
-          y1='28'
-          x2='47'
-          y2='28'
-          stroke='#1B998B'
+          x1='18'
+          y1='30'
+          x2='42'
+          y2='30'
+          stroke={INK}
           strokeWidth='2'
+          strokeLinecap='round'
         />
         <line
-          x1='27'
-          y1='35'
-          x2='43'
-          y2='35'
-          stroke='#1B998B'
+          x1='18'
+          y1='40'
+          x2='36'
+          y2='40'
+          stroke={INK}
           strokeWidth='2'
+          strokeLinecap='round'
         />
-        {/* Phone 2 */}
+
         <rect
           x='110'
           y='50'
-          width='55'
-          height='100'
-          rx='8'
-          fill='#F0F9F8'
-          stroke='#1B998B'
+          width='60'
+          height='105'
+          rx='10'
+          fill={CREAM}
+          stroke={INK}
+          strokeWidth='3'
+        />
+        <rect
+          x='116'
+          y='60'
+          width='48'
+          height='80'
+          rx='4'
+          fill='#fff'
+          stroke={INK}
+          strokeWidth='1.5'
+        />
+        <circle cx='140' cy='148' r='3' fill={INK} />
+        <circle
+          cx='140'
+          cy='90'
+          r='12'
+          fill={SAGE}
+          stroke={INK}
           strokeWidth='2'
         />
-        <rect x='115' y='60' width='45' height='75' rx='4' fill='#ffffff' />
-        <circle cx='137.5' cy='145' r='3' fill='#1B998B' />
-        <circle cx='137.5' cy='85' r='12' fill='#E5DED6' />
-        <path d='M 125 110 Q 137.5 100 150 110' fill='#E5DED6' />
-        {/* Bulle 2 */}
-        <rect x='140' y='20' width='40' height='25' rx='4' fill='#E9C46A' />
-        <polygon points='150,45 145,40 150,35' fill='#E9C46A' />
-        <line
-          x1='147'
-          y1='28'
-          x2='173'
-          y2='28'
-          stroke='#1B998B'
+        <path
+          d='M 128 115 Q 140 105 152 115'
+          stroke={INK}
           strokeWidth='2'
+          fill='none'
+          strokeLinecap='round'
+        />
+        <rect
+          x='140'
+          y='20'
+          width='50'
+          height='30'
+          rx='6'
+          fill={PEPS_DEEP}
+          stroke={INK}
+          strokeWidth='2.5'
+        />
+        <polygon
+          points='150,40 144,48 152,52'
+          fill={PEPS_DEEP}
+          stroke={INK}
+          strokeWidth='2.5'
         />
         <line
-          x1='147'
-          y1='35'
-          x2='167'
-          y2='35'
-          stroke='#1B998B'
+          x1='148'
+          y1='30'
+          x2='182'
+          y2='30'
+          stroke={INK}
           strokeWidth='2'
+          strokeLinecap='round'
+        />
+        <line
+          x1='148'
+          y1='40'
+          x2='176'
+          y2='40'
+          stroke={INK}
+          strokeWidth='2'
+          strokeLinecap='round'
         />
       </svg>
     ),
   },
   {
     id: 4,
-    title: 'Vous devenez\nautonome',
+    number: '04',
+    title: 'Vous tenez la barre',
+    body: 'Les bons gestes deviennent naturels. Vous décidez, on reste là si besoin.',
     icon: (
       <svg
         viewBox='0 0 200 200'
         xmlns='http://www.w3.org/2000/svg'
-        className='w-full h-full'
+        style={{ width: '100%', height: '100%' }}
       >
-        {/* Calendrier */}
         <rect
-          x='50'
-          y='40'
-          width='100'
-          height='120'
-          rx='8'
-          fill='#F0F9F8'
-          stroke='#1B998B'
-          strokeWidth='2'
+          x='40'
+          y='35'
+          width='120'
+          height='130'
+          rx='10'
+          fill={CREAM}
+          stroke={INK}
+          strokeWidth='3'
         />
-        <line
-          x1='50'
-          y1='55'
-          x2='150'
-          y2='55'
-          stroke='#1B998B'
-          strokeWidth='2'
-        />
-        <circle
-          cx='70'
-          cy='48'
-          r='4'
-          fill='none'
-          stroke='#1B998B'
-          strokeWidth='2'
-        />
-        <circle
-          cx='100'
-          cy='48'
-          r='4'
-          fill='none'
-          stroke='#1B998B'
-          strokeWidth='2'
-        />
-        <circle
-          cx='130'
-          cy='48'
-          r='4'
-          fill='none'
-          stroke='#1B998B'
-          strokeWidth='2'
-        />
-        {/* Grille calendrier */}
-        <g transform='translate(60, 70)'>
-          <rect
-            x='0'
-            y='0'
-            width='18'
-            height='18'
-            rx='3'
-            fill='#ffffff'
-            stroke='#E5DED6'
-          />
-          <rect
-            x='22'
-            y='0'
-            width='18'
-            height='18'
-            rx='3'
-            fill='#ffffff'
-            stroke='#E5DED6'
-          />
-          <rect x='44' y='0' width='18' height='18' rx='3' fill='#E76F51' />
-          <rect
-            x='66'
-            y='0'
-            width='18'
-            height='18'
-            rx='3'
-            fill='#ffffff'
-            stroke='#E5DED6'
-          />
-          <rect
-            x='0'
-            y='22'
-            width='18'
-            height='18'
-            rx='3'
-            fill='#ffffff'
-            stroke='#E5DED6'
-          />
-          <rect x='22' y='22' width='18' height='18' rx='3' fill='#1B998B' />
-          <rect
-            x='44'
-            y='22'
-            width='18'
-            height='18'
-            rx='3'
-            fill='#ffffff'
-            stroke='#E5DED6'
-          />
-          <rect
-            x='66'
-            y='22'
-            width='18'
-            height='18'
-            rx='3'
-            fill='#ffffff'
-            stroke='#E5DED6'
-          />
-          <rect
-            x='0'
-            y='44'
-            width='18'
-            height='18'
-            rx='3'
-            fill='#ffffff'
-            stroke='#E5DED6'
-          />
-          <rect
-            x='22'
-            y='44'
-            width='18'
-            height='18'
-            rx='3'
-            fill='#ffffff'
-            stroke='#E5DED6'
-          />
-          <rect
-            x='44'
-            y='44'
-            width='18'
-            height='18'
-            rx='3'
-            fill='#ffffff'
-            stroke='#E5DED6'
-          />
-          <rect x='66' y='44' width='18' height='18' rx='3' fill='#E9C46A' />
-        </g>
-        {/* Check marks */}
+        <line x1='40' y1='55' x2='160' y2='55' stroke={INK} strokeWidth='2.5' />
+        <circle cx='62' cy='46' r='4' fill={INK} />
+        <circle cx='100' cy='46' r='4' fill={INK} />
+        <circle cx='138' cy='46' r='4' fill={INK} />
+        {[
+          [60, 75],
+          [85, 75],
+          [110, 75],
+          [135, 75],
+          [60, 100],
+          [85, 100],
+          [110, 100],
+          [135, 100],
+          [60, 125],
+          [85, 125],
+          [110, 125],
+          [135, 125],
+        ].map(([x, y], idx) => {
+          const fill =
+            idx === 5
+              ? PEPS
+              : idx === 11
+                ? PEPS_DEEP
+                : idx === 2
+                  ? SAGE
+                  : '#fff';
+          return (
+            <rect
+              key={`${x}-${y}`}
+              x={x}
+              y={y}
+              width='20'
+              height='20'
+              rx='3'
+              fill={fill}
+              stroke={INK}
+              strokeWidth='1.8'
+            />
+          );
+        })}
         <path
-          d='M 106 79 L 109 82 L 115 76'
-          stroke='#fff'
+          d='M 91 109 L 95 113 L 102 105'
+          stroke={INK}
           strokeWidth='2'
           fill='none'
           strokeLinecap='round'
         />
         <path
-          d='M 84 101 L 87 104 L 93 98'
-          stroke='#fff'
+          d='M 116 84 L 119 87 L 125 81'
+          stroke={INK}
           strokeWidth='2'
           fill='none'
           strokeLinecap='round'
         />
         <path
-          d='M 128 123 L 131 126 L 137 120'
-          stroke='#fff'
+          d='M 141 134 L 144 137 L 150 131'
+          stroke={INK}
           strokeWidth='2'
           fill='none'
           strokeLinecap='round'
@@ -405,243 +409,181 @@ const processSteps: ProcessStep[] = [
   },
 ];
 
-// Composant flèche
-const ArrowIcon = () => (
-  <svg
-    viewBox='0 0 24 24'
-    xmlns='http://www.w3.org/2000/svg'
-    className='w-6 h-6 text-white'
-  >
-    <path
-      d='M5 12h14M12 5l7 7-7 7'
-      stroke='currentColor'
-      strokeWidth='2'
-      fill='none'
-      strokeLinecap='round'
-      strokeLinejoin='round'
-    />
-  </svg>
-);
-
 export function HowItWorksSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
   const { isFirstVisit } = useFirstVisit();
 
-  // Animation conditionnelle basée sur première visite
-  const shouldAnimate = isFirstVisit && isInView;
   const showContent = !isFirstVisit || isInView;
-
-  // Style initial : cacher seulement si première visite
-  const getHiddenStyle = (yOffset: number) => {
-    if (!isFirstVisit) {
-      return {};
-    }
-    return {
-      opacity: 0,
-      transform: `translateY(${yOffset}px)`,
-    };
-  };
-
-  // Transition : animation seulement si première visite et en vue
-  const getTransition = (delay: number) => {
-    if (shouldAnimate) {
-      return { duration: 0.6, delay, ease: 'easeOut' as const };
-    }
-    return { duration: 0 };
-  };
+  const getHidden = (yOffset: number) =>
+    !isFirstVisit ? {} : { opacity: 0, transform: `translateY(${yOffset}px)` };
+  const getTransition = (delay: number) =>
+    isFirstVisit && isInView
+      ? { duration: 0.6, delay, ease: 'easeOut' as const }
+      : { duration: 0 };
 
   return (
     <section
       id='how-it-works'
       ref={ref}
       style={{
-        padding: '96px 0',
-        backgroundColor: '#1B998B' /* Turquoise Méditerranée */,
+        background: 'var(--ns-ink)',
+        color: 'var(--ns-cream-100)',
+        paddingTop: 96,
+        paddingBottom: 96,
+        position: 'relative',
+        overflow: 'hidden',
       }}
     >
-      {/* Container principal - max-width 1370px */}
-      <div className='container mx-auto max-w-[1370px] px-6 md:px-10 lg:px-14 xl:px-20'>
-        {/* ============================================ */}
-        {/* HEADER SECTION - Titre + Sous-titre centrés */}
-        {/* ============================================ */}
+      <div className='ns2-container'>
+        {/* Header */}
         <motion.div
-          className='text-center'
-          style={{ marginBottom: '64px', ...getHiddenStyle(30) }}
-          animate={showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          style={{ marginBottom: 72, ...getHidden(20) }}
+          animate={showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={getTransition(0)}
         >
-          {/* H2 Title - Marcellus serif */}
+          <div
+            className='ns2-eyebrow ns2-eyebrow-dot'
+            style={{ color: 'var(--ns-cream-100)' }}
+          >
+            Le parcours
+          </div>
           <h2
+            className='ns2-display'
             style={{
-              fontFamily: "'Marcellus', serif",
-              color: '#ffffff',
-              fontSize: '48px',
-              lineHeight: '57.6px',
-              textAlign: 'center',
-              marginBottom: '24px',
-              fontWeight: 700,
+              fontSize: 'clamp(36px, 5vw, 60px)',
+              marginTop: 18,
+              maxWidth: 880,
+              color: 'var(--ns-cream-100)',
             }}
           >
-            Comment nous vous accompagnons
+            Quatre étapes simples,
+            <br />
+            <span className='ns2-hl' style={{ color: 'var(--ns-cream-100)' }}>
+              zéro brutalité
+            </span>
+            .
           </h2>
-
-          {/* Subtitle */}
-          <p
-            style={{
-              fontFamily:
-                "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-              color: 'rgba(255, 255, 255, 0.9)',
-              fontSize: '18px',
-              lineHeight: '28px',
-              textAlign: 'center',
-              maxWidth: '800px',
-              margin: '0 auto',
-            }}
-          >
-            Un parcours en 4 étapes, pensé pour des résultats durables.
-          </p>
         </motion.div>
 
-        {/* ============================================ */}
-        {/* FLOW STEPS - Horizontal avec flèches        */}
-        {/* ============================================ */}
-        <div
-          className={cn(
-            'flex',
-            'flex-col md:flex-row',
-            'items-center md:items-start',
-            'justify-center'
-          )}
-          style={{ gap: '16px' }}
-        >
+        {/* Steps */}
+        <div className='steps-grid'>
           {processSteps.map((step, index) => (
-            <React.Fragment key={step.id}>
-              {/* Step Card */}
-              <motion.div
-                className='flex flex-col items-center'
-                style={{ maxWidth: '240px', ...getHiddenStyle(40) }}
-                animate={
-                  showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }
-                }
-                transition={getTransition(0.2 + index * 0.15)}
+            <motion.div
+              key={step.id}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 16,
+                ...getHidden(40),
+              }}
+              animate={
+                showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }
+              }
+              transition={getTransition(0.15 + index * 0.12)}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'baseline',
+                  gap: 12,
+                }}
               >
-                {/* Icon Container */}
-                <div
+                <span
+                  className='ns2-display'
                   style={{
-                    width: '160px',
-                    height: '160px',
-                    marginBottom: '20px',
+                    fontSize: 56,
+                    color: 'var(--ns-peps)',
+                    fontStyle: 'italic',
+                    lineHeight: 1,
                   }}
                 >
-                  {step.icon}
-                </div>
-
-                {/* Step Text */}
-                <p
+                  {step.number}
+                </span>
+                <span
                   style={{
-                    fontFamily:
-                      "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-                    color: '#ffffff',
-                    fontSize: '18px',
-                    fontWeight: 600,
-                    lineHeight: '27px',
-                    textAlign: 'center',
-                    whiteSpace: 'pre-line',
+                    flex: 1,
+                    height: 2,
+                    borderTop: '1.5px dashed rgba(250, 246, 234, 0.3)',
+                    marginBottom: 6,
                   }}
-                >
-                  {step.title}
-                </p>
-              </motion.div>
+                />
+              </div>
 
-              {/* Arrow (pas après la dernière étape) */}
-              {index < processSteps.length - 1 && (
-                <motion.div
-                  className={cn(
-                    'flex items-center justify-center',
-                    'hidden md:flex',
-                    'mt-16'
-                  )}
-                  style={{
-                    minWidth: '32px',
-                    ...(isFirstVisit
-                      ? { opacity: 0, transform: 'scale(0.8)' }
-                      : {}),
-                  }}
-                  animate={
-                    showContent
-                      ? { opacity: 1, scale: 1 }
-                      : { opacity: 0, scale: 0.8 }
-                  }
-                  transition={getTransition(0.4 + index * 0.15)}
-                >
-                  <ArrowIcon />
-                </motion.div>
-              )}
+              <div
+                style={{
+                  width: '100%',
+                  aspectRatio: '1 / 1',
+                  border: 'var(--ns-bw) solid var(--ns-cream-100)',
+                  borderRadius: 'var(--ns-r-md)',
+                  background: 'rgba(250, 246, 234, 0.04)',
+                  padding: 16,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                {step.icon}
+              </div>
 
-              {/* Arrow mobile (verticale) */}
-              {index < processSteps.length - 1 && (
-                <motion.div
-                  className='flex md:hidden items-center justify-center my-4 rotate-90'
-                  style={
-                    isFirstVisit ? { opacity: 0, transform: 'scale(0.8)' } : {}
-                  }
-                  animate={
-                    showContent
-                      ? { opacity: 1, scale: 1 }
-                      : { opacity: 0, scale: 0.8 }
-                  }
-                  transition={getTransition(0.4 + index * 0.15)}
-                >
-                  <ArrowIcon />
-                </motion.div>
-              )}
-            </React.Fragment>
+              <h3
+                className='ns2-display'
+                style={{
+                  fontSize: 22,
+                  color: 'var(--ns-cream-100)',
+                  marginTop: 8,
+                  lineHeight: 1.1,
+                }}
+              >
+                {step.title}
+              </h3>
+              <p
+                className='ns2-body'
+                style={{ color: 'rgba(250, 246, 234, 0.75)' }}
+              >
+                {step.body}
+              </p>
+            </motion.div>
           ))}
         </div>
 
-        {/* ============================================ */}
-        {/* CTA Button centré                           */}
-        {/* ============================================ */}
+        {/* CTA */}
         <motion.div
           style={{
-            textAlign: 'center',
-            marginTop: '64px',
-            ...getHiddenStyle(20),
+            marginTop: 64,
+            display: 'flex',
+            justifyContent: 'center',
+            ...getHidden(20),
           }}
           animate={showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={getTransition(1)}
+          transition={getTransition(0.85)}
         >
-          <a
-            href='/approche'
-            style={{
-              backgroundColor: '#ffffff',
-              borderRadius: '35px',
-              lineHeight: '16px',
-              color: '#147569' /* Turquoise foncé */,
-              display: 'inline-block',
-              fontFamily:
-                "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-              fontSize: '14px',
-              fontWeight: 700,
-              textAlign: 'center',
-              padding: '14px 32px',
-              border: 'none',
-              cursor: 'pointer',
-              textDecoration: 'none',
-              transition: 'all 0.3s ease',
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.backgroundColor = '#f0f0f0';
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.backgroundColor = '#ffffff';
-            }}
-          >
-            Découvrir notre approche →
-          </a>
+          <Link href='/approche' className='ns2-btn ns2-btn-peps'>
+            Découvrir l&apos;approche
+            <ArrowRight className='w-4 h-4' />
+          </Link>
         </motion.div>
       </div>
+
+      <style jsx>{`
+        .steps-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 32px;
+        }
+        @media (max-width: 1024px) {
+          .steps-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+          }
+        }
+        @media (max-width: 640px) {
+          .steps-grid {
+            grid-template-columns: 1fr;
+            gap: 32px;
+          }
+        }
+      `}</style>
     </section>
   );
 }

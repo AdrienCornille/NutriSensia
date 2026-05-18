@@ -7,15 +7,7 @@ import Image from 'next/image';
 import { useFirstVisit } from '@/hooks/useFirstVisit';
 
 /**
- * Section Fonctionnalités - Scroll Horizontal Style Apple
- *
- * Comportement :
- * - Cartes 25% plus grandes, complètement visibles (non coupées)
- * - Navigation via boutons flèches en dessous des cartes
- * - Première carte alignée au bord gauche du container
- * - Animation fluide et responsive
- *
- * Design conforme au NutriSensia Style Guide
+ * Section Fonctionnalités — Scroll horizontal (DS v2 Editorial)
  */
 
 interface FeatureData {
@@ -32,77 +24,77 @@ interface FeatureData {
 const featuresData: FeatureData[] = [
   {
     id: 1,
-    title: 'Tableau de Bord Personnalisé',
+    title: 'Tableau de bord personnalisé',
     subtitle: "Votre vue d'ensemble en un coup d'œil",
     description:
-      'Dès que vous vous connectez, tout est visible : prochain rendez-vous, progrès de la semaine, objectifs et messages.',
+      'Tout ce qui compte, au premier regard : prochain rendez-vous, progrès de la semaine, objectifs, messages.',
     bullets: [
       'Progrès de la semaine (poids, énergie, symptômes)',
       'Objectifs et leur avancement',
       'Plan de repas du jour',
     ],
-    whyUseful:
-      'Plus besoin de fouiller. Tout est centralisé, clair, accessible.',
+    whyUseful: 'Plus besoin de chercher. Tout est là où vous le cherchiez.',
     image:
       'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=400&fit=crop&q=80',
     alt: 'Tableau de bord avec graphiques et métriques de santé',
   },
   {
     id: 2,
-    title: 'Plans de Repas Personnalisés',
-    subtitle: 'Votre feuille de route alimentaire, évolutive',
+    title: 'Plans de repas personnalisés',
+    subtitle: "Une feuille de route qui s'ajuste avec vous",
     description:
-      'Chaque semaine, retrouvez vos repas planifiés selon VOS besoins avec quantités ajustables.',
+      'Chaque semaine, vos repas planifiés selon vos vraies contraintes. Quantités ajustables, alternatives prévues.',
     bullets: [
       'Repas adaptés à vos contraintes',
       "Alternatives si vous n'aimez pas un ingrédient",
       'Informations nutritionnelles complètes',
     ],
     whyUseful:
-      "Ce n'est pas un PDF figé. C'est un plan vivant ajusté après chaque consultation.",
+      "Fini le PDF figé. C'est un plan vivant, ajusté après chaque consultation.",
     image:
       'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&h=400&fit=crop&q=80',
     alt: 'Assiette équilibrée avec légumes colorés et protéines',
   },
   {
     id: 3,
-    title: 'Listes de Courses Automatiques',
+    title: 'Listes de courses automatiques',
     subtitle: 'Ne manquez plus jamais un ingrédient',
     description:
-      'En un clic, votre liste se génère depuis votre plan de repas, organisée par rayon.',
+      'En un clic, votre liste se génère depuis le plan de repas — déjà rangée par rayon.',
     bullets: [
       'Cochez les articles au fur et à mesure',
       'Partagez avec votre conjoint(e)',
       'Accessible depuis votre téléphone',
     ],
-    whyUseful: 'Fini les courses à tâtons. Vous savez exactement quoi acheter.',
+    whyUseful:
+      'Fini les allers-retours dans le supermarché. On sait pourquoi on est venu.',
     image:
       'https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&h=400&fit=crop&q=80',
     alt: 'Panier de courses avec fruits et légumes frais',
   },
   {
     id: 4,
-    title: 'Journal Alimentaire Simplifié',
+    title: 'Journal alimentaire, sans le calvaire',
     subtitle: 'Suivez ce que vous mangez sans prise de tête',
     description:
-      "Plusieurs façons d'enregistrer : recherche, photo, favoris ou note rapide.",
+      "Plusieurs façons d'enregistrer : recherche, photo, favoris ou note rapide. Vous choisissez.",
     bullets: [
       "Base de données avec milliers d'aliments",
       'Photo de votre assiette (rapide et visuel)',
       'Favoris sauvegardés (1 clic)',
     ],
     whyUseful:
-      "Le journal n'est pas là pour juger. C'est un outil de conscience et de dialogue.",
+      "Le journal n'est pas là pour juger — c'est un outil de conscience, pas un tribunal.",
     image:
       'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&h=400&fit=crop&q=80',
     alt: "Photo d'une assiette saine vue du dessus",
   },
   {
     id: 5,
-    title: 'Suivi de Vos Progrès',
+    title: 'Suivi de vos progrès',
     subtitle: 'Mesurez votre évolution au-delà de la balance',
     description:
-      "La balance ne raconte qu'une partie de l'histoire. Suivez bien-être, énergie et symptômes.",
+      "La balance ne raconte qu'une partie de l'histoire. Suivez aussi votre bien-être, votre énergie, vos symptômes.",
     bullets: [
       'Graphiques de progression',
       "Niveau d'énergie et qualité du sommeil",
@@ -116,42 +108,36 @@ const featuresData: FeatureData[] = [
   },
   {
     id: 6,
-    title: 'Messagerie + Bibliothèque',
-    subtitle: 'Restez en contact et apprenez',
+    title: 'Messagerie & bibliothèque',
+    subtitle: 'Une question, une réponse. Et de quoi lire entre les séances.',
     description:
-      'Messagerie sécurisée pour poser vos questions et bibliothèque de ressources éducatives.',
+      'Messagerie sécurisée pour poser vos questions, bibliothèque de ressources pour aller plus loin.',
     bullets: [
-      'Réponse sous 48-72h garantie',
+      'Réponse sous 48-72 h garantie',
       'Articles et guides pratiques',
       'Recettes saines et simples',
     ],
     whyUseful:
-      "Vous ne devriez pas attendre pour une réponse qui vous bloque aujourd'hui.",
+      "Une question qui bloque aujourd'hui ne devrait pas attendre la semaine prochaine.",
     image:
       'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&h=400&fit=crop&q=80',
     alt: 'Personne utilisant une application de messagerie sur tablette',
   },
 ];
 
-// Dimensions des cartes (25% plus grandes que 380px original)
-const CARD_WIDTH = 475; // 380 * 1.25
-const CARD_HEIGHT_IMAGE = 250; // 200 * 1.25
-const CARD_HEIGHT_TOTAL = 680; // Hauteur totale fixe pour toutes les cartes
+const CARD_WIDTH = 460;
+const CARD_HEIGHT_IMAGE = 240;
+const CARD_HEIGHT_TOTAL = 680;
 const GAP = 32;
-const CONTAINER_MAX_WIDTH = 1200;
-const CONTAINER_PADDING = 24;
+const CONTAINER_MAX_WIDTH = 1320;
+const CONTAINER_PADDING = 32;
 
-// Hauteurs fixes pour chaque section du contenu (alignement parfait)
-const TITLE_HEIGHT = 68; // Hauteur pour le titre (2 lignes max)
-const SUBTITLE_HEIGHT = 70; // Hauteur pour le sous-titre avec underline
-const DESCRIPTION_HEIGHT = 78; // Hauteur pour la description (3 lignes)
-const BULLETS_HEIGHT = 132; // Hauteur pour 3 bullets
-const USEFUL_BOX_HEIGHT = 90; // Hauteur pour la box "Pourquoi c'est utile"
+const TITLE_HEIGHT = 68;
+const SUBTITLE_HEIGHT = 70;
+const DESCRIPTION_HEIGHT = 78;
+const BULLETS_HEIGHT = 132;
+const USEFUL_BOX_HEIGHT = 96;
 
-/**
- * Carte Feature individuelle pour le scroll horizontal
- * Toutes les cartes ont exactement la même taille avec des sections alignées
- */
 function FeatureCard({
   feature,
   index,
@@ -164,22 +150,17 @@ function FeatureCard({
   const cardRef = useRef(null);
   const isInView = useInView(cardRef, { once: true, margin: '-50px' });
 
-  // Animation conditionnelle basée sur première visite
   const shouldAnimate = isFirstVisit && isInView;
   const showContent = !isFirstVisit || isInView;
 
   return (
-    <motion.div
+    <motion.article
       ref={cardRef}
+      className='ns2-card-static'
       style={{
         flex: '0 0 auto',
         width: `${CARD_WIDTH}px`,
         height: `${CARD_HEIGHT_TOTAL}px`,
-        backgroundColor: '#ffffff',
-        border: '1px solid #e5e5e5',
-        borderRadius: '24px',
-        overflow: 'hidden',
-        boxShadow: '8px 8px 0 #E5DED6' /* Beige Sand */,
         display: 'flex',
         flexDirection: 'column',
         ...(isFirstVisit ? { opacity: 0, transform: 'translateY(30px)' } : {}),
@@ -190,9 +171,8 @@ function FeatureCard({
           ? { duration: 0.6, delay: index * 0.1, ease: 'easeOut' }
           : { duration: 0 }
       }
-      className='feature-card-horizontal'
     >
-      {/* Image - hauteur fixe */}
+      {/* Image */}
       <div
         style={{
           position: 'relative',
@@ -200,52 +180,31 @@ function FeatureCard({
           height: `${CARD_HEIGHT_IMAGE}px`,
           flexShrink: 0,
           overflow: 'hidden',
+          borderBottom: '1.5px solid var(--ns-ink)',
         }}
       >
         <Image
           src={feature.image}
           alt={feature.alt}
           fill
-          style={{
-            objectFit: 'cover',
-          }}
+          style={{ objectFit: 'cover' }}
           sizes={`${CARD_WIDTH}px`}
         />
-        {/* Gradient overlay */}
-        <div
+        {/* Numéro sticker */}
+        <span
+          className='ns2-sticker'
           style={{
             position: 'absolute',
-            inset: 0,
-            background:
-              'linear-gradient(180deg, transparent 50%, rgba(27, 153, 139, 0.08) 100%)',
-            pointerEvents: 'none',
-          }}
-        />
-        {/* Numéro badge */}
-        <div
-          style={{
-            position: 'absolute',
-            top: '20px',
-            left: '20px',
-            width: '48px',
-            height: '48px',
-            backgroundColor: '#1B998B' /* Turquoise Azur */,
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontFamily: "'Plus Jakarta Sans', sans-serif",
-            fontSize: '20px',
-            fontWeight: 700,
-            color: '#ffffff',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+            top: 16,
+            left: 16,
+            transform: 'rotate(-4deg)',
           }}
         >
           {String(feature.id).padStart(2, '0')}
-        </div>
+        </span>
       </div>
 
-      {/* Contenu - hauteur fixe avec sections alignées */}
+      {/* Contenu */}
       <div
         style={{
           padding: '28px 32px 32px',
@@ -255,22 +214,18 @@ function FeatureCard({
           overflow: 'hidden',
         }}
       >
-        {/* Titre - hauteur fixe */}
         <div
           style={{
             height: `${TITLE_HEIGHT}px`,
             display: 'flex',
             alignItems: 'flex-start',
-            marginBottom: '0',
           }}
         >
           <h3
+            className='ns2-display'
             style={{
-              fontFamily: "'Marcellus', serif",
-              fontSize: '24px',
-              fontWeight: 700,
-              lineHeight: '1.35',
-              color: '#1B998B' /* Turquoise Azur */,
+              fontSize: 26,
+              lineHeight: 1.15,
               margin: 0,
               display: '-webkit-box',
               WebkitLineClamp: 2,
@@ -282,24 +237,22 @@ function FeatureCard({
           </h3>
         </div>
 
-        {/* Sous-titre avec underline - hauteur fixe */}
         <div
           style={{
             height: `${SUBTITLE_HEIGHT}px`,
             display: 'flex',
             flexDirection: 'column',
-            justifyContent: 'flex-start',
           }}
         >
           <p
             style={{
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-              fontSize: '15px',
-              lineHeight: '1.4',
-              color: '#1B998B' /* Turquoise Azur */,
+              fontFamily: 'var(--ns-font-serif-stack)',
+              fontSize: 16,
+              lineHeight: 1.4,
+              color: 'var(--ns-ink-2)',
               fontStyle: 'italic',
-              borderBottom: '1px solid #E5DED6' /* Beige Sand */,
-              paddingBottom: '14px',
+              borderBottom: '1.5px solid var(--ns-ink)',
+              paddingBottom: 14,
               margin: 0,
               display: '-webkit-box',
               WebkitLineClamp: 2,
@@ -311,20 +264,17 @@ function FeatureCard({
           </p>
         </div>
 
-        {/* Description - hauteur fixe */}
         <div
           style={{
             height: `${DESCRIPTION_HEIGHT}px`,
             display: 'flex',
             alignItems: 'flex-start',
+            paddingTop: 14,
           }}
         >
           <p
+            className='ns2-body'
             style={{
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-              fontSize: '15px',
-              lineHeight: '24px',
-              color: '#41556b',
               margin: 0,
               display: '-webkit-box',
               WebkitLineClamp: 3,
@@ -336,57 +286,46 @@ function FeatureCard({
           </p>
         </div>
 
-        {/* Bullets - hauteur fixe */}
-        <div
-          style={{
-            height: `${BULLETS_HEIGHT}px`,
-            overflow: 'hidden',
-          }}
-        >
+        <div style={{ height: `${BULLETS_HEIGHT}px`, overflow: 'hidden' }}>
           {feature.bullets && (
-            <ul
-              style={{
-                listStyle: 'none',
-                padding: 0,
-                margin: 0,
-              }}
-            >
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
               {feature.bullets.slice(0, 3).map((bullet, idx) => (
                 <li
                   key={idx}
                   style={{
                     display: 'flex',
                     alignItems: 'flex-start',
-                    gap: '10px',
-                    marginBottom: '10px',
-                    fontFamily: "'Plus Jakarta Sans', sans-serif",
-                    fontSize: '14px',
+                    gap: 10,
+                    marginBottom: 10,
+                    fontFamily: 'var(--ns-font-sans-stack)',
+                    fontSize: 14,
                     lineHeight: '22px',
-                    color: '#41556b',
+                    color: 'var(--ns-ink-2)',
                   }}
                 >
-                  <div
+                  <span
                     style={{
-                      width: '18px',
-                      height: '18px',
-                      backgroundColor: '#4A9B7B',
+                      width: 18,
+                      height: 18,
+                      background: 'var(--ns-peps)',
+                      border: '1.5px solid var(--ns-ink)',
                       borderRadius: '50%',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       flexShrink: 0,
-                      marginTop: '2px',
+                      marginTop: 2,
                     }}
                   >
                     <Check
                       style={{
-                        width: '11px',
-                        height: '11px',
-                        color: '#ffffff',
+                        width: 11,
+                        height: 11,
+                        color: 'var(--ns-ink)',
                       }}
                       strokeWidth={3}
                     />
-                  </div>
+                  </span>
                   <span
                     style={{
                       display: '-webkit-box',
@@ -403,14 +342,14 @@ function FeatureCard({
           )}
         </div>
 
-        {/* Why Useful Box - hauteur fixe, toujours en bas */}
+        {/* Why useful */}
         <div
           style={{
             height: `${USEFUL_BOX_HEIGHT}px`,
-            backgroundColor: 'rgba(27, 153, 139, 0.08)' /* Turquoise pale */,
-            borderRadius: '10px',
+            background: 'var(--ns-peps-soft)',
+            border: '1.5px solid var(--ns-ink)',
+            borderRadius: 12,
             padding: '14px 16px',
-            border: '1px solid #E5DED6' /* Beige Sand */,
             display: 'flex',
             alignItems: 'center',
             marginTop: 'auto',
@@ -418,10 +357,10 @@ function FeatureCard({
         >
           <p
             style={{
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-              fontSize: '14px',
-              lineHeight: '1.5',
-              color: '#41556b',
+              fontFamily: 'var(--ns-font-sans-stack)',
+              fontSize: 14,
+              lineHeight: 1.5,
+              color: 'var(--ns-ink)',
               margin: 0,
               display: '-webkit-box',
               WebkitLineClamp: 3,
@@ -429,20 +368,17 @@ function FeatureCard({
               overflow: 'hidden',
             }}
           >
-            <span style={{ fontWeight: 700, color: '#3f6655' }}>
-              Pourquoi c&apos;est utile :
-            </span>{' '}
+            <span className='ns2-eyebrow' style={{ marginRight: 8 }}>
+              · Pourquoi
+            </span>
             {feature.whyUseful}
           </p>
         </div>
       </div>
-    </motion.div>
+    </motion.article>
   );
 }
 
-/**
- * Bouton de navigation (flèche)
- */
 function NavigationButton({
   direction,
   onClick,
@@ -456,50 +392,34 @@ function NavigationButton({
     <motion.button
       onClick={onClick}
       disabled={disabled}
-      whileHover={!disabled ? { scale: 1.05 } : {}}
+      whileHover={!disabled ? { x: direction === 'left' ? -2 : 2, y: -2 } : {}}
       whileTap={!disabled ? { scale: 0.95 } : {}}
       style={{
-        width: '42px',
-        height: '42px',
+        width: 48,
+        height: 48,
         borderRadius: '50%',
-        backgroundColor: disabled ? '#e0e0e0' : '#3f6655',
-        border: 'none',
+        background: disabled ? 'var(--ns-cream-300)' : 'var(--ns-peps)',
+        border: '1.5px solid var(--ns-ink)',
         cursor: disabled ? 'not-allowed' : 'pointer',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        boxShadow: disabled ? 'none' : '0 4px 12px rgba(27, 153, 139, 0.3)',
-        transition: 'all 0.3s ease',
-        opacity: disabled ? 0.5 : 1,
+        boxShadow: disabled ? 'none' : 'var(--ns-shadow-hard-sm)',
+        transition: 'all var(--ns-dur) var(--ns-ease)',
+        opacity: disabled ? 0.6 : 1,
+        color: 'var(--ns-ink)',
       }}
       aria-label={direction === 'left' ? 'Carte précédente' : 'Carte suivante'}
     >
       {direction === 'left' ? (
-        <ChevronLeft
-          style={{
-            width: '21px',
-            height: '21px',
-            color: disabled ? '#999' : '#ffffff',
-          }}
-          strokeWidth={2.5}
-        />
+        <ChevronLeft style={{ width: 22, height: 22 }} strokeWidth={2.5} />
       ) : (
-        <ChevronRight
-          style={{
-            width: '21px',
-            height: '21px',
-            color: disabled ? '#999' : '#ffffff',
-          }}
-          strokeWidth={2.5}
-        />
+        <ChevronRight style={{ width: 22, height: 22 }} strokeWidth={2.5} />
       )}
     </motion.button>
   );
 }
 
-/**
- * Composant principal avec navigation par boutons
- */
 export function PlatformFeaturesHorizontal() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef(null);
@@ -510,42 +430,24 @@ export function PlatformFeaturesHorizontal() {
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
 
-  // Animation conditionnelle basée sur première visite
   const shouldAnimate = isFirstVisit && isInView;
   const showContent = !isFirstVisit || isInView;
 
-  // Style initial : cacher seulement si première visite
-  const getHiddenStyle = (yOffset: number) => {
-    if (!isFirstVisit) {
-      return {};
-    }
-    return {
-      opacity: 0,
-      transform: `translateY(${yOffset}px)`,
-    };
-  };
+  const getHidden = (yOffset: number) =>
+    !isFirstVisit ? {} : { opacity: 0, transform: `translateY(${yOffset}px)` };
 
-  // Transition : animation seulement si première visite et en vue
-  const getTransition = (delay: number) => {
-    if (shouldAnimate) {
-      return { duration: 0.6, delay, ease: 'easeOut' as const };
-    }
-    return { duration: 0 };
-  };
+  const getTransition = (delay: number) =>
+    shouldAnimate
+      ? { duration: 0.6, delay, ease: 'easeOut' as const }
+      : { duration: 0 };
 
-  // Détection mobile
   useEffect(() => {
-    const updateLayout = () => {
-      const windowWidth = window.innerWidth;
-      setIsMobile(windowWidth < 1024);
-    };
-
+    const updateLayout = () => setIsMobile(window.innerWidth < 1024);
     updateLayout();
     window.addEventListener('resize', updateLayout);
     return () => window.removeEventListener('resize', updateLayout);
   }, []);
 
-  // Mettre à jour les états de navigation
   const updateNavigationState = useCallback(() => {
     if (scrollContainerRef.current) {
       const { scrollLeft, scrollWidth, clientWidth } =
@@ -553,14 +455,12 @@ export function PlatformFeaturesHorizontal() {
       setCanScrollLeft(scrollLeft > 10);
       setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
 
-      // Calculer l'index actuel
       const cardTotalWidth = CARD_WIDTH + GAP;
       const newIndex = Math.round(scrollLeft / cardTotalWidth);
       setCurrentIndex(Math.min(newIndex, featuresData.length - 1));
     }
   }, []);
 
-  // Écouter le scroll
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (container) {
@@ -571,86 +471,89 @@ export function PlatformFeaturesHorizontal() {
     }
   }, [updateNavigationState]);
 
-  // Navigation vers une carte spécifique
   const scrollToCard = useCallback((index: number) => {
     if (scrollContainerRef.current) {
       const cardTotalWidth = CARD_WIDTH + GAP;
-      const targetScroll = index * cardTotalWidth;
       scrollContainerRef.current.scrollTo({
-        left: targetScroll,
+        left: index * cardTotalWidth,
         behavior: 'smooth',
       });
     }
   }, []);
 
-  // Navigation gauche/droite
   const handlePrevious = useCallback(() => {
-    const newIndex = Math.max(0, currentIndex - 1);
-    scrollToCard(newIndex);
+    scrollToCard(Math.max(0, currentIndex - 1));
   }, [currentIndex, scrollToCard]);
 
   const handleNext = useCallback(() => {
-    const newIndex = Math.min(featuresData.length - 1, currentIndex + 1);
-    scrollToCard(newIndex);
+    scrollToCard(Math.min(featuresData.length - 1, currentIndex + 1));
   }, [currentIndex, scrollToCard]);
 
-  // Version mobile : scroll horizontal natif
+  const Header = (
+    <>
+      <motion.div
+        className='ns2-eyebrow ns2-eyebrow-dot'
+        style={{ marginBottom: 16, ...getHidden(20) }}
+        animate={showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+        transition={getTransition(0)}
+      >
+        Six outils essentiels
+      </motion.div>
+      <motion.h2
+        className='ns2-display'
+        style={{
+          fontSize: 'clamp(36px, 5vw, 60px)',
+          marginBottom: 18,
+          maxWidth: 760,
+          ...getHidden(20),
+        }}
+        animate={showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+        transition={getTransition(0.05)}
+      >
+        Tout ce dont vous avez besoin,
+        <br />
+        au <em>même</em> <span className='ns2-hl'>endroit</span>.
+      </motion.h2>
+      <motion.p
+        className='ns2-body-lg'
+        style={{ maxWidth: 600, ...getHidden(20) }}
+        animate={showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+        transition={getTransition(0.1)}
+      >
+        Six outils pensés pour que la nutrition devienne un réflexe — pas une
+        corvée.
+      </motion.p>
+    </>
+  );
+
   if (isMobile) {
     return (
       <section
+        id='platform-features'
         style={{
-          backgroundColor: '#FBF9F7' /* Warm Cream */,
+          background: 'var(--ns-cream-200)',
           padding: '80px 0',
+          borderTop: '1.5px solid var(--ns-ink)',
+          borderBottom: '1.5px solid var(--ns-ink)',
         }}
       >
-        {/* Header */}
-        <div
-          style={{
-            maxWidth: `${CONTAINER_MAX_WIDTH}px`,
-            margin: '0 auto',
-            padding: `0 ${CONTAINER_PADDING}px`,
-            textAlign: 'center',
-            marginBottom: '48px',
-          }}
-        >
-          <h2
-            style={{
-              fontFamily: "'Marcellus', serif",
-              fontSize: '32px',
-              fontWeight: 700,
-              lineHeight: '40px',
-              color: '#1B998B' /* Turquoise Azur */,
-              marginBottom: '16px',
-            }}
-          >
-            Tout Ce Dont Vous Avez Besoin
-          </h2>
-          <p
-            style={{
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-              fontSize: '16px',
-              lineHeight: '24px',
-              color: '#41556b',
-            }}
-          >
-            Six outils essentiels pour transformer votre quotidien nutritionnel.
-          </p>
+        <div className='ns2-container' style={{ marginBottom: 40 }}>
+          {Header}
         </div>
 
-        {/* Scroll horizontal natif sur mobile */}
         <div
           ref={scrollContainerRef}
           onScroll={updateNavigationState}
           style={{
             display: 'flex',
-            gap: '20px',
+            gap: 20,
             overflowX: 'auto',
             overflowY: 'hidden',
             WebkitOverflowScrolling: 'touch',
             scrollSnapType: 'x mandatory',
-            paddingBottom: '24px',
-            paddingLeft: `${CONTAINER_PADDING}px`,
-            paddingRight: `${CONTAINER_PADDING}px`,
+            paddingBottom: 24,
+            paddingLeft: 24,
+            paddingRight: 24,
             scrollbarWidth: 'none',
             msOverflowStyle: 'none',
           }}
@@ -659,11 +562,7 @@ export function PlatformFeaturesHorizontal() {
           {featuresData.map((feature, index) => (
             <div
               key={feature.id}
-              style={{
-                scrollSnapAlign: 'start',
-                flex: '0 0 auto',
-                width: '320px',
-              }}
+              style={{ scrollSnapAlign: 'start', flex: '0 0 auto', width: 320 }}
             >
               <FeatureCard
                 feature={feature}
@@ -674,15 +573,13 @@ export function PlatformFeaturesHorizontal() {
           ))}
         </div>
 
-        {/* Navigation mobile - Boutons flèches */}
         <div
           style={{
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            gap: '32px',
-            marginTop: '40px',
-            padding: `0 ${CONTAINER_PADDING}px`,
+            gap: 24,
+            marginTop: 32,
           }}
         >
           <NavigationButton
@@ -697,7 +594,6 @@ export function PlatformFeaturesHorizontal() {
           />
         </div>
 
-        {/* Style pour masquer la scrollbar */}
         <style jsx>{`
           .hide-scrollbar::-webkit-scrollbar {
             display: none;
@@ -707,57 +603,22 @@ export function PlatformFeaturesHorizontal() {
     );
   }
 
-  // Version desktop : Navigation par boutons en bas
   return (
     <section
+      id='platform-features'
       ref={sectionRef}
       style={{
-        backgroundColor: '#FBF9F7' /* Warm Cream */,
-        padding: '96px 0',
+        background: 'var(--ns-cream-200)',
+        padding: '112px 0',
         overflow: 'hidden',
+        borderTop: '1.5px solid var(--ns-ink)',
+        borderBottom: '1.5px solid var(--ns-ink)',
       }}
     >
-      {/* Header - aligné avec le container */}
-      <div
-        style={{
-          maxWidth: `${CONTAINER_MAX_WIDTH}px`,
-          margin: '0 auto',
-          padding: `0 ${CONTAINER_PADDING}px`,
-          marginBottom: '56px',
-        }}
-      >
-        <motion.h2
-          style={{
-            fontFamily: "'Marcellus', serif",
-            fontSize: '48px',
-            fontWeight: 700,
-            lineHeight: '57.6px',
-            color: '#1B998B' /* Turquoise Azur */,
-            marginBottom: '16px',
-            ...getHiddenStyle(20),
-          }}
-          animate={showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={getTransition(0)}
-        >
-          Tout Ce Dont Vous Avez Besoin, au Même Endroit
-        </motion.h2>
-        <motion.p
-          style={{
-            fontFamily: "'Plus Jakarta Sans', sans-serif",
-            fontSize: '18px',
-            lineHeight: '28px',
-            color: '#41556b',
-            maxWidth: '600px',
-            ...getHiddenStyle(20),
-          }}
-          animate={showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={getTransition(0.1)}
-        >
-          Six outils essentiels pour transformer votre quotidien nutritionnel.
-        </motion.p>
+      <div className='ns2-container' style={{ marginBottom: 56 }}>
+        {Header}
       </div>
 
-      {/* Container des cartes - aligné à gauche avec le titre, étendu à droite jusqu'au bord */}
       <div
         style={{
           maxWidth: `${CONTAINER_MAX_WIDTH}px`,
@@ -775,8 +636,9 @@ export function PlatformFeaturesHorizontal() {
             overflowY: 'hidden',
             scrollSnapType: 'x mandatory',
             scrollBehavior: 'smooth',
-            paddingBottom: '8px',
-            paddingRight: '150px',
+            paddingTop: 12,
+            paddingBottom: 12,
+            paddingRight: 200,
             marginRight: 'calc(-50vw + 50%)',
             scrollbarWidth: 'none',
             msOverflowStyle: 'none',
@@ -786,10 +648,7 @@ export function PlatformFeaturesHorizontal() {
           {featuresData.map((feature, index) => (
             <div
               key={feature.id}
-              style={{
-                scrollSnapAlign: 'start',
-                flex: '0 0 auto',
-              }}
+              style={{ scrollSnapAlign: 'start', flex: '0 0 auto' }}
             >
               <FeatureCard
                 feature={feature}
@@ -801,26 +660,31 @@ export function PlatformFeaturesHorizontal() {
         </div>
       </div>
 
-      {/* Navigation - Boutons flèches positionnés à 75% de la largeur */}
       <motion.div
+        className='ns2-container'
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '16px',
-          marginTop: '48px',
-          marginLeft: '75%',
-          transform: 'translateX(-50%)',
-          ...getHiddenStyle(20),
+          justifyContent: 'flex-end',
+          gap: 14,
+          marginTop: 48,
+          ...getHidden(20),
         }}
         animate={showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
         transition={getTransition(0.3)}
       >
+        <span
+          className='ns2-meta'
+          style={{ marginRight: 'auto', color: 'var(--ns-ink-2)' }}
+        >
+          {String(currentIndex + 1).padStart(2, '0')} ·{' '}
+          {String(featuresData.length).padStart(2, '0')}
+        </span>
         <NavigationButton
           direction='left'
           onClick={handlePrevious}
           disabled={!canScrollLeft}
         />
-
         <NavigationButton
           direction='right'
           onClick={handleNext}
@@ -828,7 +692,6 @@ export function PlatformFeaturesHorizontal() {
         />
       </motion.div>
 
-      {/* Style pour masquer la scrollbar */}
       <style jsx global>{`
         .hide-scrollbar::-webkit-scrollbar {
           display: none;

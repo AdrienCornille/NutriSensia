@@ -11,3 +11,4 @@ export { HowItWorksSection } from './HowItWorksSection';
 export { FAQSection } from './FAQSection';
 export { CTABannerSection } from './CTABannerSection';
 export { BlogPreviewSection } from './BlogPreviewSection';
+export { MarqueeStrip } from './MarqueeStrip';

@@ -1,62 +1,80 @@
 'use client';
 
-import React, { useState } from 'react';
-import {
-  Loader2,
-  AlertCircle,
-  FileText,
-  Upload,
-  Trash2,
-  Download,
-  FolderOpen,
-} from 'lucide-react';
+import React, { useMemo, useState } from 'react';
+import { Loader2, AlertCircle, FolderOpen } from 'lucide-react';
 import {
   usePatientDocuments,
   useDeleteDocument,
 } from '@/hooks/useNutritionistDossier';
 import { DocumentUploadModal } from './DocumentUploadModal';
+import { DocumentCard } from './DocumentCard';
+import { DocumentUploadCard } from './DocumentUploadCard';
 
 interface NutritionistDocumentsViewProps {
   patientId: string;
 }
 
-const categoryColors: Record<string, string> = {
-  Analyses: 'bg-blue-100 text-blue-700',
-  Plans: 'bg-green-100 text-green-700',
-  Ressources: 'bg-purple-100 text-purple-700',
-  Autre: 'bg-gray-100 text-gray-600',
+const FILTERS = ['all', 'Analyses', 'Plans', 'Ressources', 'Autre'] as const;
+const FILTER_LABELS: Record<(typeof FILTERS)[number], string> = {
+  all: 'Tous',
+  Analyses: 'Analyses',
+  Plans: 'Plans',
+  Ressources: 'Ressources',
+  Autre: 'Autre',
 };
 
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('fr-FR', {
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString('fr-FR', {
     day: 'numeric',
-    month: 'short',
+    month: 'long',
     year: 'numeric',
   });
-}
-
-function formatFileSize(bytes: number | null): string {
-  if (!bytes) return '';
-  if (bytes < 1024) return `${bytes} o`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} Ko`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} Mo`;
 }
 
 export function NutritionistDocumentsView({
   patientId,
 }: NutritionistDocumentsViewProps) {
   const [showUploadModal, setShowUploadModal] = useState(false);
-  const [categoryFilter, setCategoryFilter] = useState<string>('all');
+  const [categoryFilter, setCategoryFilter] =
+    useState<(typeof FILTERS)[number]>('all');
 
   const { data: documents, isLoading, error } = usePatientDocuments(patientId);
   const deleteDocument = useDeleteDocument(patientId);
 
+  const counts = useMemo(() => {
+    const list = documents || [];
+    const c: Record<string, number> = { all: list.length };
+    for (const cat of FILTERS) {
+      if (cat === 'all') continue;
+      c[cat] = list.filter(d => d.category === cat).length;
+    }
+    return c;
+  }, [documents]);
+
+  const filteredDocs = useMemo(() => {
+    const list = documents || [];
+    if (categoryFilter === 'all') return list;
+    return list.filter(d => d.category === categoryFilter);
+  }, [documents, categoryFilter]);
+
+  const myUploads = (documents || []).filter(
+    d => d.uploader_type === 'nutritionist'
+  ).length;
+  const patientUploads = (documents || []).length - myUploads;
+  const lastUpload = (documents || []).reduce<string | null>((acc, d) => {
+    if (!acc) return d.created_at;
+    return d.created_at > acc ? d.created_at : acc;
+  }, null);
+
   if (isLoading) {
     return (
       <div className='flex items-center justify-center py-16'>
-        <Loader2 className='w-6 h-6 animate-spin text-[#1B998B]' />
-        <span className='ml-2 text-sm text-gray-500'>
-          Chargement des documents...
+        <Loader2
+          className='w-6 h-6 animate-spin'
+          style={{ color: 'var(--ns-peps-deep)' }}
+        />
+        <span className='ml-2 text-sm' style={{ color: 'var(--ns-ink-3)' }}>
+          Chargement des documents…
         </span>
       </div>
     );
@@ -64,137 +82,124 @@ export function NutritionistDocumentsView({
 
   if (error) {
     return (
-      <div className='bg-white rounded-xl border border-gray-200 p-8 text-center'>
-        <AlertCircle className='w-8 h-8 text-red-500 mx-auto mb-3' />
-        <p className='text-gray-800 font-medium mb-1'>Erreur de chargement</p>
-        <p className='text-sm text-gray-500'>{error.message}</p>
+      <div className='fp-card text-center'>
+        <AlertCircle
+          className='w-8 h-8 mx-auto mb-3'
+          style={{ color: 'var(--ns-coral)' }}
+        />
+        <p
+          className='font-serif text-lg mb-1'
+          style={{ color: 'var(--ns-ink)' }}
+        >
+          Erreur de chargement
+        </p>
+        <p className='text-sm' style={{ color: 'var(--ns-ink-3)' }}>
+          {error.message}
+        </p>
       </div>
     );
   }
 
-  const filteredDocs =
-    categoryFilter === 'all'
-      ? documents || []
-      : (documents || []).filter(d => d.category === categoryFilter);
-
-  const categories = ['all', 'Analyses', 'Plans', 'Ressources', 'Autre'];
+  const total = (documents || []).length;
 
   return (
     <div className='space-y-4'>
-      {/* Header */}
-      <div className='bg-white rounded-xl border border-gray-200 p-6'>
-        <div className='flex items-center justify-between'>
-          <div>
-            <h3 className='text-lg font-semibold text-gray-800'>Documents</h3>
-            <p className='text-sm text-gray-500 mt-1'>
-              {(documents || []).length} document
-              {(documents || []).length !== 1 ? 's' : ''}
-            </p>
+      {/* ─── Pane intro ─── */}
+      <section className='fp-pane-intro'>
+        <div>
+          <h2 className='fp-pane-intro-title'>
+            Documents <em>du patient</em>
+          </h2>
+          <div className='fp-pane-intro-meta'>
+            <span>
+              <b>{total}</b> fichier{total > 1 ? 's' : ''}
+            </span>
+            {total > 0 && (
+              <>
+                <span className='dot' />
+                <span>
+                  Vous : <b>{myUploads}</b>
+                </span>
+                <span className='dot' />
+                <span>
+                  Patient : <b>{patientUploads}</b>
+                </span>
+              </>
+            )}
+            {lastUpload && (
+              <>
+                <span className='dot' />
+                <span>
+                  Dernier upload · <b>{formatDate(lastUpload)}</b>
+                </span>
+              </>
+            )}
           </div>
+        </div>
+        <div className='fp-pane-intro-actions'>
           <button
+            type='button'
+            className='fp-btn fp-btn-peps'
             onClick={() => setShowUploadModal(true)}
-            className='inline-flex items-center gap-2 px-4 py-2 bg-[#1B998B] text-white rounded-lg hover:bg-[#147569] transition-colors text-sm font-medium'
           >
-            <Upload className='w-4 h-4' />
-            Ajouter un document
+            + Ajouter un document
           </button>
         </div>
+      </section>
 
-        {/* Category filter */}
-        <div className='flex gap-2 mt-4'>
-          {categories.map(cat => (
+      {/* ─── Toolbar ─── */}
+      <div className='fp-doc-toolbar'>
+        <div className='fp-doc-filters'>
+          {FILTERS.map(cat => (
             <button
               key={cat}
+              type='button'
               onClick={() => setCategoryFilter(cat)}
-              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                categoryFilter === cat
-                  ? 'bg-[#1B998B] text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
+              className={categoryFilter === cat ? 'is-active' : ''}
             >
-              {cat === 'all' ? 'Tous' : cat}
+              {FILTER_LABELS[cat]} <span className='cnt'>{counts[cat]}</span>
             </button>
           ))}
         </div>
+        <span
+          style={{
+            fontFamily: 'var(--ns-font-serif)',
+            fontStyle: 'italic',
+            fontSize: 13,
+            color: 'var(--ns-ink-3)',
+          }}
+        >
+          Glisser-déposer pour ajouter · 10 Mo max par fichier
+        </span>
       </div>
 
-      {/* Documents list */}
-      {filteredDocs.length === 0 ? (
-        <div className='bg-white rounded-xl border border-gray-200 p-8 text-center'>
-          <FolderOpen className='w-12 h-12 text-gray-300 mx-auto mb-3' />
-          <p className='text-gray-800 font-medium mb-1'>Aucun document</p>
-          <p className='text-sm text-gray-500'>
-            {categoryFilter !== 'all'
-              ? 'Aucun document dans cette catégorie.'
-              : 'Ajoutez le premier document pour ce patient.'}
+      {/* ─── Grid ─── */}
+      {filteredDocs.length === 0 && categoryFilter !== 'all' ? (
+        <div className='fp-card text-center' style={{ padding: '48px 32px' }}>
+          <FolderOpen
+            className='w-10 h-10 mx-auto mb-3'
+            style={{ color: 'var(--ns-ink-4)' }}
+          />
+          <p
+            className='font-serif text-lg mb-1'
+            style={{ color: 'var(--ns-ink)' }}
+          >
+            Aucun document dans cette catégorie
           </p>
         </div>
       ) : (
-        <div className='space-y-2'>
+        <div className='fp-doc-grid'>
+          <DocumentUploadCard onClick={() => setShowUploadModal(true)} />
           {filteredDocs.map(doc => (
-            <div
+            <DocumentCard
               key={doc.id}
-              className='bg-white rounded-xl border border-gray-200 p-4 flex items-center justify-between'
-            >
-              <div className='flex items-center gap-3'>
-                <div className='w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center'>
-                  <FileText className='w-5 h-5 text-gray-400' />
-                </div>
-                <div>
-                  <p className='text-sm font-medium text-gray-800'>
-                    {doc.name}
-                  </p>
-                  <div className='flex items-center gap-2 mt-0.5'>
-                    <span
-                      className={`px-1.5 py-0.5 rounded text-xs font-medium ${
-                        categoryColors[doc.category] || categoryColors.Autre
-                      }`}
-                    >
-                      {doc.category}
-                    </span>
-                    <span className='text-xs text-gray-400'>
-                      {formatDate(doc.created_at)}
-                    </span>
-                    {doc.file_size && (
-                      <span className='text-xs text-gray-400'>
-                        {formatFileSize(doc.file_size)}
-                      </span>
-                    )}
-                    <span className='text-xs text-gray-400'>
-                      par{' '}
-                      {doc.uploader_type === 'nutritionist'
-                        ? 'vous'
-                        : 'le patient'}
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <div className='flex items-center gap-1'>
-                {doc.file_url && (
-                  <a
-                    href={doc.file_url}
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    className='p-2 text-gray-400 hover:text-[#1B998B] transition-colors'
-                    title='Télécharger'
-                  >
-                    <Download className='w-4 h-4' />
-                  </a>
-                )}
-                <button
-                  onClick={() => {
-                    if (confirm('Supprimer ce document ?')) {
-                      deleteDocument.mutate(doc.id);
-                    }
-                  }}
-                  disabled={deleteDocument.isPending}
-                  className='p-2 text-gray-400 hover:text-red-500 transition-colors disabled:opacity-50'
-                  title='Supprimer'
-                >
-                  <Trash2 className='w-4 h-4' />
-                </button>
-              </div>
-            </div>
+              document={doc}
+              onDelete={id => deleteDocument.mutate(id)}
+              isDeleting={
+                deleteDocument.isPending &&
+                (deleteDocument.variables as string | undefined) === doc.id
+              }
+            />
           ))}
         </div>
       )}

@@ -2,16 +2,16 @@
 
 import React from 'react';
 import { Library, Search, Bookmark } from 'lucide-react';
-import type { Content, ContentTab } from '@/types/content';
+import { EducationalContent } from '@/types/educational-content';
 import { ContentCard } from './ContentCard';
 
 interface ContentGridProps {
-  contents: Content[];
+  contents: EducationalContent[];
   savedIds: string[];
-  activeTab: ContentTab;
+  activeTab: string;
   searchQuery: string;
   onToggleSave: (contentId: string) => void;
-  onContentClick: (content: Content) => void;
+  onContentClick: (content: EducationalContent) => void;
   onExploreAll?: () => void;
 }
 
@@ -40,6 +40,7 @@ export function ContentGrid({
       videos: 'Vidéos',
       guides: 'Guides',
       podcasts: 'Podcasts',
+      courses: 'Cours',
     };
     return `${tabLabels[activeTab] || 'Contenu'} (${contents.length})`;
   };
@@ -68,7 +69,7 @@ export function ContentGrid({
                 <Search className='w-8 h-8 text-gray-400' />
               </div>
               <p className='text-gray-500'>
-                Aucun contenu trouvé pour "{searchQuery}"
+                Aucun contenu trouvé pour &quot;{searchQuery}&quot;
               </p>
             </>
           ) : (

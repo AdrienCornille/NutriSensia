@@ -43,6 +43,7 @@ export const routing = defineRouting({
     '/dashboard/patient/recettes': '/dashboard/patient/recettes',
     '/dashboard/patient/aliments': '/dashboard/patient/aliments',
     '/dashboard/patient/messagerie': '/dashboard/patient/messagerie',
+    '/dashboard/patient/questionnaires': '/dashboard/patient/questionnaires',
     '/dashboard/patient/contenu': '/dashboard/patient/contenu',
 
     // Nutritionist dashboard routes
@@ -52,6 +53,8 @@ export const routing = defineRouting({
     '/dashboard/nutritionist/agenda': '/dashboard/nutritionist/agenda',
     '/dashboard/nutritionist/patients': '/dashboard/nutritionist/patients',
     '/dashboard/nutritionist/messagerie': '/dashboard/nutritionist/messagerie',
+    '/dashboard/nutritionist/notifications':
+      '/dashboard/nutritionist/notifications',
     '/dashboard/nutritionist/parametres/types-consultation':
       '/dashboard/nutritionist/parametres/types-consultation',
 

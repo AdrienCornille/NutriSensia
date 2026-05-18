@@ -52,7 +52,8 @@ export function ApproachPageWithIntro({
 
   return (
     <div
-      className={cn('relative min-h-screen bg-background-primary', className)}
+      className={cn('ns2 relative min-h-screen', className)}
+      style={{ backgroundColor: 'var(--ns-cream-100)' }}
     >
       {/* Header de navigation principal - fixe en haut */}
       <MarketingHeader />

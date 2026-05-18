@@ -7,6 +7,7 @@ Ce document liste les fonctionnalités futures planifiées pour NutriSensia.
 ## Visioconférence
 
 ### État actuel
+
 - **Solution** : Jitsi Meet (gratuit, open-source)
 - **Fonctionnement** : Génération automatique d'un lien `meet.jit.si/nutrisensia-{id}` pour chaque RDV en visio
 - **Avantages** : Aucune configuration requise, RGPD-friendly, fonctionne immédiatement
@@ -18,17 +19,20 @@ Ce document liste les fonctionnalités futures planifiées pour NutriSensia.
 **Statut** : À planifier
 
 #### Pourquoi Google Meet ?
+
 - Meilleure familiarité des utilisateurs avec l'interface Google
 - Qualité vidéo/audio supérieure
 - Intégration native avec Google Calendar
 
 #### Prérequis techniques
+
 1. **API Google Calendar** - Pas d'API Google Meet directe ; il faut créer un événement Calendar avec `conferenceData`
 2. **OAuth 2.0** - Le nutritionniste doit autoriser l'accès à son Google Calendar
 3. **Credentials Google Cloud** - Clés API et OAuth client ID/secret
 4. **Consentement utilisateur** - Écran de consentement Google à configurer
 
 #### Architecture proposée
+
 ```
 Patient réserve RDV
        ↓
@@ -42,6 +46,7 @@ Lien Google Meet retourné et stocké en DB
 ```
 
 #### Étapes d'implémentation
+
 1. Créer un projet Google Cloud Console
 2. Activer Google Calendar API
 3. Configurer l'écran de consentement OAuth
@@ -52,23 +57,25 @@ Lien Google Meet retourné et stocké en DB
 
 #### Alternatives considérées
 
-| Solution | Avantages | Inconvénients |
-|----------|-----------|---------------|
-| **Jitsi** (actuel) | Gratuit, simple, RGPD | Moins connu |
-| **Google Meet** | Familier, qualité | OAuth complexe |
-| **Zoom** | Très connu, API simple | Coût (payant) |
-| **Cal.com** | Tout-en-un | Payant pour API |
+| Solution           | Avantages              | Inconvénients   |
+| ------------------ | ---------------------- | --------------- |
+| **Jitsi** (actuel) | Gratuit, simple, RGPD  | Moins connu     |
+| **Google Meet**    | Familier, qualité      | OAuth complexe  |
+| **Zoom**           | Très connu, API simple | Coût (payant)   |
+| **Cal.com**        | Tout-en-un             | Payant pour API |
 
 ---
 
 ## Autres fonctionnalités futures
 
 ### Notifications push
+
 - **Priorité** : Haute
 - **Description** : Notifications push mobile pour rappels de RDV
 - **Technologies** : Firebase Cloud Messaging ou Web Push API
 
 ### Emails transactionnels
+
 - **Priorité** : Haute
 - **Description** : Envoi d'emails automatiques pour les événements clés
 - **Emails prévus** :
@@ -81,25 +88,40 @@ Lien Google Meet retourné et stocké en DB
 - **Templates** : React Email pour des templates maintenables
 
 ### Export des données patient
+
 - **Priorité** : Moyenne
 - **Description** : Export PDF/CSV des données nutritionnelles pour le patient
 - **Conformité** : RGPD Article 20 (portabilité des données)
 
 ### Application mobile native
+
 - **Priorité** : Basse
 - **Description** : Version React Native de l'application
 - **Prérequis** : Stabilisation de la version web
+
+### Messagerie — Améliorations futures
+
+Fonctionnalités optionnelles identifiées pour enrichir la messagerie (MSG-001 à MSG-010 + indicateur de frappe, réactions, édition/suppression déjà implémentés) :
+
+| Feature                          | Priorité | Complexité | Description                                                                                             |
+| -------------------------------- | -------- | ---------- | ------------------------------------------------------------------------------------------------------- |
+| **Messages vocaux**              | Moyenne  | Élevée     | Enregistrement micro + lecture inline avec waveform. Nécessite Supabase Storage + MediaRecorder API     |
+| **Épingler un message**          | Basse    | Faible     | Marquer un message important visible en haut de la conversation. 1 colonne `pinned_at` + UI             |
+| **Accusés de lecture améliorés** | Moyenne  | Moyenne    | Marquer automatiquement les messages comme lus quand la conversation est ouverte (IntersectionObserver) |
+| **Statut en ligne/hors ligne**   | Basse    | Faible     | Pastille verte dans le header basée sur la table `heartbeat` existante                                  |
+| **Notification sonore**          | Basse    | Faible     | Son discret à la réception d'un nouveau message via Realtime                                            |
+| **Transfert de message**         | Basse    | Moyenne    | Forward d'un message vers une autre conversation (pertinent côté nutritionniste multi-patients)         |
 
 ---
 
 ## Historique des décisions
 
-| Date | Décision | Raison |
-|------|----------|--------|
-| 2025-02 | Abandon Cal.com | Nécessite plan payant pour l'API |
-| 2025-02 | Choix Jitsi | Solution gratuite et immédiate |
+| Date    | Décision           | Raison                                    |
+| ------- | ------------------ | ----------------------------------------- |
+| 2025-02 | Abandon Cal.com    | Nécessite plan payant pour l'API          |
+| 2025-02 | Choix Jitsi        | Solution gratuite et immédiate            |
 | 2025-02 | Report Google Meet | Complexité OAuth, à implémenter plus tard |
 
 ---
 
-*Dernière mise à jour : Février 2025*
+_Dernière mise à jour : Février 2025_

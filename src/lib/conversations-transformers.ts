@@ -6,6 +6,8 @@
 import type {
   Message,
   MessageAttachment,
+  MessageReaction,
+  MessageReplyTo,
   MessageType,
   MessageStatus,
   Nutritionist,
@@ -28,6 +30,11 @@ export interface MessageAttachmentFromDB {
   thumbnail_url: string | null;
 }
 
+export interface MessageReactionFromDB {
+  emoji: string;
+  user_id: string;
+}
+
 export interface MessageFromDB {
   id: string;
   conversation_id: string;
@@ -43,7 +50,19 @@ export interface MessageFromDB {
   read_at: string | null;
   created_at: string;
   updated_at: string;
+  edited_at: string | null;
+  deleted_at: string | null;
+  reply_to_id: string | null;
   message_attachments?: MessageAttachmentFromDB[];
+  message_reactions?: MessageReactionFromDB[];
+  // Joined reply parent (from Supabase nested select)
+  reply_to?: {
+    id: string;
+    content: string | null;
+    sender_id: string;
+    deleted_at: string | null;
+    sender?: { first_name: string | null; last_name: string | null };
+  } | null;
 }
 
 export interface ConversationFromDB {
@@ -113,14 +132,25 @@ export function transformMessageFromDB(
   };
   const type: MessageType = typeMap[msg.message_type] || 'text';
 
+  // Handle soft-deleted messages
+  const isDeleted = !!msg.deleted_at;
+
   const message: Message = {
     id: msg.id,
-    content: msg.content || '',
+    content: isDeleted ? '' : msg.content || '',
     type,
     timestamp: new Date(msg.created_at),
     isFromUser,
+    senderId: msg.sender_id,
     status,
+    isDeleted,
+    editedAt: msg.edited_at ? new Date(msg.edited_at) : undefined,
   };
+
+  // Don't include attachment/reactions/modifications for deleted messages
+  if (isDeleted) {
+    return message;
+  }
 
   // Add attachment if present
   if (msg.message_attachments && msg.message_attachments.length > 0) {
@@ -135,6 +165,30 @@ export function transformMessageFromDB(
       oldValue: msg.plan_modification.oldValue,
       newValue: msg.plan_modification.newValue,
     };
+  }
+
+  // Aggregate reactions
+  if (msg.message_reactions && msg.message_reactions.length > 0) {
+    message.reactions = aggregateReactions(
+      msg.message_reactions,
+      currentUserId
+    );
+  }
+
+  // Reply/quote (Supabase returns {} instead of null for empty joins, so check for id)
+  if (msg.reply_to && msg.reply_to.id) {
+    const reply = msg.reply_to;
+    const isReplyDeleted = !!reply.deleted_at;
+    const senderFirst = reply.sender?.first_name || '';
+    const senderLast = reply.sender?.last_name || '';
+    const senderName = `${senderFirst} ${senderLast}`.trim() || 'Utilisateur';
+
+    message.replyTo = {
+      id: reply.id,
+      content: isReplyDeleted ? 'Message supprimé' : reply.content || '',
+      senderName,
+      isFromUser: reply.sender_id === currentUserId,
+    } as MessageReplyTo;
   }
 
   return message;
@@ -216,6 +270,27 @@ export function transformQuickReplyFromDB(qr: QuickReplyFromDB): QuickReply {
 // ============================================================================
 // HELPERS
 // ============================================================================
+
+/**
+ * Aggregate raw reaction rows into MessageReaction[] grouped by emoji
+ */
+function aggregateReactions(
+  reactions: MessageReactionFromDB[],
+  currentUserId: string
+): MessageReaction[] {
+  const map = new Map<string, { count: number; hasReacted: boolean }>();
+  for (const r of reactions) {
+    const entry = map.get(r.emoji) || { count: 0, hasReacted: false };
+    entry.count++;
+    if (r.user_id === currentUserId) entry.hasReacted = true;
+    map.set(r.emoji, entry);
+  }
+  return Array.from(map.entries()).map(([emoji, data]) => ({
+    emoji,
+    count: data.count,
+    hasReacted: data.hasReacted,
+  }));
+}
 
 /**
  * Get initials from first and last name

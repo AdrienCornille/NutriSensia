@@ -36,13 +36,13 @@ import type {
   Objective,
   ObjectiveCategory as DossierObjCategory,
   ObjectiveStatus,
+  QuestionnaireType,
+  QuestionnaireStatus,
 } from '@/types/dossier';
-import {
-  getQuestionnairesData,
-  getDocumentsData,
-} from '@/data/mock-dossier';
+import { getDocumentsData } from '@/data/mock-dossier';
 import { useWeeklyObjectives } from '@/hooks/useObjectives';
 import { usePatientAnamnese } from '@/hooks/usePatientDossier';
+import { usePatientQuestionnaireInbox } from '@/hooks/usePatientQuestionnaires';
 
 /**
  * Transforme les objectifs hebdomadaires API en format Dossier (Objective[])
@@ -97,8 +97,32 @@ export default function DossierPage() {
     usePatientAnamnese();
   const anamneseData = anamneseResponse?.anamnese ?? null;
 
-  // Load mock data (questionnaires, documents)
-  const questionnaires = getQuestionnairesData();
+  // Questionnaires: real inbox data — read-only summary in the dossier;
+  // full inbox lives at /dashboard/patient/questionnaires.
+  const { data: questionnaireInbox } = usePatientQuestionnaireInbox();
+  const questionnaires = useMemo(() => {
+    const items = questionnaireInbox || [];
+    const CATEGORY_TO_LEGACY_TYPE: Record<
+      'regular_followup' | 'around_consultation' | 'deep_dive',
+      QuestionnaireType
+    > = {
+      regular_followup: 'Suivi',
+      around_consultation: 'Feedback',
+      deep_dive: 'Anamnèse',
+    };
+    return items.map(item => ({
+      id: item.id,
+      title: item.title,
+      type: CATEGORY_TO_LEGACY_TYPE[item.category],
+      date: item.submitted_at ?? item.sent_at,
+      status: (item.status === 'submitted'
+        ? 'completed'
+        : 'pending') as QuestionnaireStatus,
+      consultationLinked: null,
+    }));
+  }, [questionnaireInbox]);
+
+  // Load mock data (documents only — questionnaires are real now)
   const documents = getDocumentsData();
 
   // FILE-006: Objectifs depuis l'API
@@ -124,7 +148,9 @@ export default function DossierPage() {
             year: 'numeric',
           })
         : null,
-      status: obj.isCompleted ? 'on-track' as ObjectiveStatus : mapProgressToStatus(obj.progress),
+      status: obj.isCompleted
+        ? ('on-track' as ObjectiveStatus)
+        : mapProgressToStatus(obj.progress),
     }));
   }, [weeklyObjectivesData]);
 
@@ -200,11 +226,10 @@ export default function DossierPage() {
               </>
             ) : (
               <div className='text-center py-12'>
-                <p className='text-gray-500'>
-                  Aucune anamnèse disponible.
-                </p>
+                <p className='text-gray-500'>Aucune anamnèse disponible.</p>
                 <p className='text-sm text-gray-400 mt-1'>
-                  Votre nutritionniste la remplira lors de votre première consultation.
+                  Votre nutritionniste la remplira lors de votre première
+                  consultation.
                 </p>
               </div>
             )}
@@ -273,7 +298,8 @@ export default function DossierPage() {
                   Aucun objectif défini pour cette semaine.
                 </p>
                 <p className='text-sm text-gray-400 mt-1'>
-                  Votre nutritionniste peut vous définir des objectifs personnalisés.
+                  Votre nutritionniste peut vous définir des objectifs
+                  personnalisés.
                 </p>
               </div>
             )}

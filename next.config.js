@@ -9,6 +9,7 @@ const nextConfig = {
 
   // Configuration des images
   images: {
+    formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       {
         protocol: 'https',
@@ -40,9 +41,21 @@ const nextConfig = {
     },
   },
 
+  // pdfkit + fontkit + linebreak use Node.js fs/native modules — must not be bundled by webpack
+  serverExternalPackages: ['pdfkit', 'fontkit', 'linebreak', 'png-js'],
+
   experimental: {
-    // Optimiser les imports de packages volumineux
-    optimizePackageImports: ['framer-motion', 'date-fns', 'lucide-react', '@heroicons/react'],
+    // Optimiser les imports de packages volumineux (tree-shake granulaire)
+    optimizePackageImports: [
+      'framer-motion',
+      'date-fns',
+      'lucide-react',
+      '@heroicons/react',
+      'recharts',
+      '@tanstack/react-query',
+      'zod',
+      'react-hook-form',
+    ],
   },
 
   // Optimisations webpack pour accélérer le développement

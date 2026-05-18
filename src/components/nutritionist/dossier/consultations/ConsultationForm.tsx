@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useCallback } from 'react';
-import { X, Plus, Loader2 } from 'lucide-react';
+import { X, Plus, Loader2, Clock, Video, Building2, Phone } from 'lucide-react';
 import {
   useCreateConsultation,
   useUpdateConsultation,
@@ -9,6 +9,7 @@ import {
 import type { AppointmentSummary } from '@/hooks/useNutritionistConsultations';
 import type { ConsultationDetail } from '@/types/nutritionist-dossier';
 import { Toast, type ToastType } from '@/components/suivi/shared/Toast';
+import { PrivateNotesBlock } from './PrivateNotesBlock';
 
 interface ConsultationFormProps {
   patientId: string;
@@ -21,14 +22,26 @@ interface ConsultationFormProps {
   onSuccess: () => void;
 }
 
+const CONSULTATION_TYPES = [
+  'Première consultation',
+  'Consultation de suivi',
+  'Bilan approfondi',
+  'Consultation urgente',
+];
+
+type ConsultationMode = 'visio' | 'cabinet' | 'phone';
+
 function deriveFromAppointment(apt: AppointmentSummary) {
   const d = new Date(apt.scheduled_at);
   return {
     date: d.toISOString().split('T')[0],
-    startTime: d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+    startTime: d.toLocaleTimeString('fr-FR', {
+      hour: '2-digit',
+      minute: '2-digit',
+    }),
     duration: apt.duration || apt.consultation_type?.default_duration || 30,
     type: apt.consultation_type?.name_fr || 'Consultation de suivi',
-    mode: apt.mode,
+    mode: apt.mode as ConsultationMode,
     appointmentId: apt.id,
   };
 }
@@ -42,14 +55,23 @@ export function ConsultationForm({
   onSuccess,
 }: ConsultationFormProps) {
   const isEditing = !!consultation;
-  const prefill = prefillAppointment ? deriveFromAppointment(prefillAppointment) : null;
+  const prefill = prefillAppointment
+    ? deriveFromAppointment(prefillAppointment)
+    : null;
 
   // Form state — priority: consultation (edit) > prefillAppointment > defaults
   const [date, setDate] = useState(
-    consultation?.date || prefill?.date || new Date().toISOString().split('T')[0]
+    consultation?.date ||
+      prefill?.date ||
+      new Date().toISOString().split('T')[0]
   );
   const [startTime, setStartTime] = useState(
-    consultation?.start_time || prefill?.startTime || new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+    consultation?.start_time ||
+      prefill?.startTime ||
+      new Date().toLocaleTimeString('fr-FR', {
+        hour: '2-digit',
+        minute: '2-digit',
+      })
   );
   const [durationMinutes, setDurationMinutes] = useState(
     consultation?.duration_minutes || prefill?.duration || 30
@@ -57,10 +79,12 @@ export function ConsultationForm({
   const [consultationType, setConsultationType] = useState(
     consultation?.consultation_type || prefill?.type || 'Consultation de suivi'
   );
-  const [mode, setMode] = useState<'visio' | 'cabinet' | 'phone'>(
-    (consultation?.mode as 'visio' | 'cabinet' | 'phone') || prefill?.mode || 'visio'
+  const [mode, setMode] = useState<ConsultationMode>(
+    (consultation?.mode as ConsultationMode) || prefill?.mode || 'visio'
   );
-  const [appointmentId] = useState<string | null>(prefill?.appointmentId || null);
+  const [appointmentId] = useState<string | null>(
+    prefill?.appointmentId || null
+  );
   const [summary, setSummary] = useState(consultation?.summary || '');
   const [keyPoints, setKeyPoints] = useState<string[]>(
     consultation?.key_points && consultation.key_points.length > 0
@@ -91,16 +115,14 @@ export function ConsultationForm({
   function addKeyPoint() {
     setKeyPoints(prev => [...prev, '']);
   }
-
   function removeKeyPoint(index: number) {
     setKeyPoints(prev => prev.filter((_, i) => i !== index));
   }
-
   function updateKeyPoint(index: number, value: string) {
     setKeyPoints(prev => prev.map((p, i) => (i === index ? value : p)));
   }
 
-  async function handleSubmit(asDraft: boolean = false) {
+  async function handleSubmit(asDraft = false) {
     if (!summary.trim()) {
       setToast({
         visible: true,
@@ -163,15 +185,8 @@ export function ConsultationForm({
     }
   }
 
-  const consultationTypes = [
-    'Première consultation',
-    'Consultation de suivi',
-    'Bilan approfondi',
-    'Consultation urgente',
-  ];
-
   return (
-    <div className='space-y-6'>
+    <div className='space-y-4'>
       <Toast
         isVisible={toast.visible}
         type={toast.type}
@@ -181,48 +196,60 @@ export function ConsultationForm({
       />
 
       {/* Appointment link indicator */}
-      {appointmentId && (
-        <div className='bg-amber-50 border border-amber-200 rounded-lg px-4 py-2 text-sm text-amber-700'>
-          Ce compte-rendu sera lié au rendez-vous du{' '}
-          <span className='font-medium'>
-            {new Date(prefillAppointment!.scheduled_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+      {appointmentId && prefillAppointment && (
+        <div
+          className='fp-cons-drafts-alert'
+          style={{
+            background: 'var(--ns-peps-soft)',
+            borderColor: 'var(--ns-ink)',
+          }}
+        >
+          <span>
+            <b>Lié au rendez-vous</b> du{' '}
+            {new Date(prefillAppointment.scheduled_at).toLocaleDateString(
+              'fr-FR',
+              { day: 'numeric', month: 'long', year: 'numeric' }
+            )}
           </span>
         </div>
       )}
 
-      {/* Auto-filled header */}
-      <div className='bg-[#1B998B]/5 rounded-xl p-4 border border-[#1B998B]/10'>
-        <div className='flex items-center gap-6 text-sm flex-wrap'>
-          <div>
-            <span className='text-[#1B998B] font-medium'>Patient :</span>
-            <span className='text-[#147569] ml-1'>{patientName}</span>
+      <form
+        className='fp-cons-form'
+        onSubmit={e => {
+          e.preventDefault();
+          handleSubmit(false);
+        }}
+      >
+        {/* ─── Meta row ─── */}
+        <div className='fp-form-meta'>
+          <div className='fp-form-meta-cell'>
+            <label>Patient</label>
+            <input type='text' value={patientName} disabled readOnly />
           </div>
-          <div className='flex items-center gap-2'>
-            <span className='text-[#1B998B] font-medium'>Date :</span>
+          <div className='fp-form-meta-cell'>
+            <label>Date</label>
             <input
               type='date'
               value={date}
               onChange={e => setDate(e.target.value)}
-              className='px-2 py-1 border border-[#1B998B]/20 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1B998B]/30'
               disabled={isEditing}
             />
           </div>
-          <div className='flex items-center gap-2'>
-            <span className='text-[#1B998B] font-medium'>Heure :</span>
+          <div className='fp-form-meta-cell'>
+            <label>Heure</label>
             <input
               type='time'
               value={startTime}
               onChange={e => setStartTime(e.target.value)}
-              className='px-2 py-1 border border-[#1B998B]/20 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1B998B]/30'
               disabled={isEditing}
             />
           </div>
-          <div className='flex items-center gap-2'>
-            <span className='text-[#1B998B] font-medium'>Durée :</span>
+          <div className='fp-form-meta-cell'>
+            <label>Durée</label>
             <select
               value={durationMinutes}
               onChange={e => setDurationMinutes(Number(e.target.value))}
-              className='px-2 py-1 border border-[#1B998B]/20 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1B998B]/30'
             >
               {[15, 30, 45, 60, 90, 120].map(d => (
                 <option key={d} value={d}>
@@ -231,156 +258,178 @@ export function ConsultationForm({
               ))}
             </select>
           </div>
-        </div>
-        <div className='flex items-center gap-6 text-sm mt-3 flex-wrap'>
-          <div className='flex items-center gap-2'>
-            <span className='text-[#1B998B] font-medium'>Type :</span>
+          <div className='fp-form-meta-cell'>
+            <label>Type</label>
             <select
               value={consultationType}
               onChange={e => setConsultationType(e.target.value)}
-              className='px-2 py-1 border border-[#1B998B]/20 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1B998B]/30'
             >
-              {consultationTypes.map(t => (
+              {CONSULTATION_TYPES.map(t => (
                 <option key={t} value={t}>
                   {t}
                 </option>
               ))}
             </select>
           </div>
-          <div className='flex items-center gap-2'>
-            <span className='text-[#1B998B] font-medium'>Mode :</span>
-            <div className='flex gap-1'>
-              {(['visio', 'cabinet', 'phone'] as const).map(m => (
-                <button
-                  key={m}
-                  onClick={() => setMode(m)}
-                  className={`px-3 py-1 rounded-lg text-sm transition-colors ${
-                    mode === m
-                      ? 'bg-[#1B998B] text-white'
-                      : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
-                  }`}
+          <div
+            className='fp-form-meta-cell'
+            style={{ gridColumn: 'span 2', minWidth: 0 }}
+          >
+            <label>Mode</label>
+            <div className='fp-form-mode-row'>
+              {(
+                [
+                  { id: 'visio', label: 'Visio', Icon: Video },
+                  { id: 'cabinet', label: 'Cabinet', Icon: Building2 },
+                  { id: 'phone', label: 'Téléphone', Icon: Phone },
+                ] as const
+              ).map(({ id, label, Icon }) => (
+                <label
+                  key={id}
+                  className={mode === id ? 'is-active' : ''}
+                  onClick={() => setMode(id)}
                 >
-                  {m === 'visio'
-                    ? '📹 Visio'
-                    : m === 'cabinet'
-                      ? '🏢 Cabinet'
-                      : '📞 Téléphone'}
-                </button>
+                  <Icon className='w-3 h-3' />
+                  {label}
+                </label>
               ))}
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Form */}
-      <div className='bg-white rounded-xl border border-gray-200 p-6'>
-        <div className='space-y-6'>
-          {/* Summary */}
-          <div>
-            <label className='block text-sm font-medium text-gray-700 mb-2'>
-              Résumé de la consultation *
-            </label>
-            <textarea
-              value={summary}
-              onChange={e => setSummary(e.target.value)}
-              placeholder='Décrivez les points abordés, les progrès observés et les ajustements décidés...'
-              className='w-full p-4 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B998B] focus:border-transparent resize-none h-32 text-sm'
-            />
+        {/* ─── Summary ─── */}
+        <div>
+          <label className='fp-form-label'>
+            Résumé de la consultation <em>· obligatoire</em>
+          </label>
+          <textarea
+            className='fp-form-textarea'
+            value={summary}
+            onChange={e => setSummary(e.target.value)}
+            placeholder='Décrivez les points abordés, les observations cliniques, le ressenti du patient…'
+          />
+        </div>
+
+        {/* ─── Key points ─── */}
+        <div>
+          <label className='fp-form-label'>
+            Points clés <em>· trois max recommandés</em>
+          </label>
+          <div className='fp-form-points'>
+            {keyPoints.map((point, i) => (
+              <div key={i} className='fp-form-point-row'>
+                <input
+                  type='text'
+                  className='fp-form-input'
+                  value={point}
+                  onChange={e => updateKeyPoint(i, e.target.value)}
+                  placeholder='Saisissez un point clé…'
+                />
+                <button
+                  type='button'
+                  aria-label='Supprimer ce point clé'
+                  onClick={() => removeKeyPoint(i)}
+                  disabled={keyPoints.length <= 1}
+                >
+                  <X className='w-3 h-3' />
+                </button>
+              </div>
+            ))}
           </div>
+          <button
+            type='button'
+            className='fp-form-add-point'
+            onClick={addKeyPoint}
+            style={{ marginTop: 8 }}
+          >
+            <Plus className='w-3 h-3' />
+            Ajouter un point clé
+          </button>
+        </div>
 
-          {/* Key points */}
-          <div>
-            <label className='block text-sm font-medium text-gray-700 mb-2'>
-              Points clés
-            </label>
-            <div className='space-y-2'>
-              {keyPoints.map((point, i) => (
-                <div key={i} className='flex items-center gap-2'>
-                  <span className='text-[#1B998B]'>•</span>
-                  <input
-                    type='text'
-                    value={point}
-                    onChange={e => updateKeyPoint(i, e.target.value)}
-                    placeholder='Saisissez un point clé...'
-                    className='flex-1 w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B998B] focus:border-transparent text-sm'
-                  />
-                  {keyPoints.length > 1 && (
-                    <button
-                      onClick={() => removeKeyPoint(i)}
-                      className='p-1 text-gray-400 hover:text-red-500 transition-colors'
-                    >
-                      <X className='w-4 h-4' />
-                    </button>
-                  )}
-                </div>
-              ))}
-              <button
-                onClick={addKeyPoint}
-                className='flex items-center gap-1.5 text-sm text-[#1B998B] font-medium hover:text-[#147569] mt-1 transition-colors'
-              >
-                <Plus className='w-4 h-4' />
-                Ajouter un point clé
-              </button>
-            </div>
-          </div>
+        {/* ─── Next steps ─── */}
+        <div>
+          <label className='fp-form-label'>Prochaines étapes</label>
+          <textarea
+            className='fp-form-textarea'
+            style={{ minHeight: 70 }}
+            value={nextSteps}
+            onChange={e => setNextSteps(e.target.value)}
+            placeholder='Actions, objectifs, plan envoyé, prochain RDV…'
+          />
+        </div>
 
-          {/* Next steps */}
-          <div>
-            <label className='block text-sm font-medium text-gray-700 mb-2'>
-              Prochaines étapes
-            </label>
+        {/* ─── Private notes ─── */}
+        <div>
+          <label className='fp-form-label'>
+            Notes privées <em>· non visibles par le patient</em>
+          </label>
+          <PrivateNotesBlock>
             <textarea
-              value={nextSteps}
-              onChange={e => setNextSteps(e.target.value)}
-              placeholder='Définissez les actions et objectifs pour la période à venir...'
-              className='w-full p-4 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B998B] focus:border-transparent resize-none h-24 text-sm'
-            />
-          </div>
-
-          {/* Private notes */}
-          <div className='bg-red-50 rounded-xl p-5 border border-red-100'>
-            <label className='flex items-center gap-2 text-sm font-medium text-red-700 mb-2'>
-              🔒 Notes privées
-              <span className='text-xs font-normal text-red-500'>
-                (non visibles par le patient)
-              </span>
-            </label>
-            <textarea
+              className='fp-form-textarea is-private'
+              style={{
+                marginTop: 6,
+                background: 'transparent',
+                border: 0,
+                padding: 0,
+                minHeight: 60,
+              }}
               value={privateNotes}
               onChange={e => setPrivateNotes(e.target.value)}
-              placeholder='Notes confidentielles sur le patient...'
-              className='w-full p-4 border border-red-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-300 focus:border-transparent resize-none h-20 text-sm bg-white'
+              placeholder='Vos observations cliniques internes, hypothèses, alertes à garder en tête…'
             />
+          </PrivateNotesBlock>
+        </div>
+
+        {/* ─── Form footer ─── */}
+        <div className='fp-form-foot'>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              fontFamily: 'var(--ns-font-serif)',
+              fontStyle: 'italic',
+              fontSize: 13,
+              color: 'var(--ns-ink-3)',
+            }}
+          >
+            <Clock className='w-3 h-3' style={{ color: 'var(--ns-ink-3)' }} />
+            <span>
+              Une fois finalisé, vous disposez de{' '}
+              <b style={{ color: 'var(--ns-ink)' }}>48h</b> pour modifier ce
+              compte-rendu.
+            </span>
+          </div>
+          <div className='fp-form-foot-actions'>
+            <button
+              type='button'
+              className='fp-btn'
+              onClick={onClose}
+              disabled={isSaving}
+            >
+              Annuler
+            </button>
+            <button
+              type='button'
+              className='fp-btn'
+              style={{ background: 'var(--ns-honey)' }}
+              onClick={() => handleSubmit(true)}
+              disabled={isSaving}
+            >
+              Sauvegarder en brouillon
+            </button>
+            <button
+              type='submit'
+              className='fp-btn fp-btn-peps'
+              disabled={isSaving || !summary.trim()}
+            >
+              {isSaving && <Loader2 className='w-3 h-3 animate-spin' />}
+              {isEditing ? 'Enregistrer' : 'Finaliser'}
+            </button>
           </div>
         </div>
-      </div>
-
-      {/* Actions */}
-      <div className='flex items-center justify-between'>
-        <button
-          onClick={() => handleSubmit(true)}
-          disabled={isSaving}
-          className='px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium text-sm disabled:opacity-50'
-        >
-          Sauvegarder en brouillon
-        </button>
-        <div className='flex gap-3'>
-          <button
-            onClick={onClose}
-            className='px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium text-sm'
-          >
-            Annuler
-          </button>
-          <button
-            onClick={() => handleSubmit(false)}
-            disabled={isSaving || !summary.trim()}
-            className='flex items-center gap-2 px-4 py-2 bg-[#1B998B] text-white rounded-lg hover:bg-[#147569] transition-colors font-medium text-sm disabled:opacity-50'
-          >
-            {isSaving && <Loader2 className='w-4 h-4 animate-spin' />}
-            {isEditing ? 'Enregistrer les modifications' : 'Enregistrer le compte-rendu'}
-          </button>
-        </div>
-      </div>
+      </form>
     </div>
   );
 }

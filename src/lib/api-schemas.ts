@@ -11,7 +11,15 @@ export const mealTypeEnum = z.enum(['breakfast', 'lunch', 'dinner', 'snack']);
 export const mealLocationEnum = z.enum(['home', 'work', 'restaurant', 'other']);
 
 // Unité de mesure pour les aliments
-export const foodUnitEnum = z.enum(['g', 'ml', 'c_a_s', 'c_a_c', 'tasse', 'portion', 'piece']);
+export const foodUnitEnum = z.enum([
+  'g',
+  'ml',
+  'c_a_s',
+  'c_a_c',
+  'tasse',
+  'portion',
+  'piece',
+]);
 
 // Schéma pour un aliment dans un repas
 export const mealFoodSchema = z.object({
@@ -608,26 +616,29 @@ export type NutritionistAppointmentResponseData = z.infer<
 >;
 
 // Réponse patient à une contre-proposition du nutritionniste
-export const patientCounterProposalResponseSchema = z.discriminatedUnion('action', [
-  z.object({
-    action: z.literal('accept'),
-  }),
-  z.object({
-    action: z.literal('decline'),
-    reason: z
-      .string()
-      .max(500, 'Raison trop longue (max 500 caractères)')
-      .optional(),
-  }),
-  z.object({
-    action: z.literal('counter_propose'),
-    proposed_at: z.string().min(1, 'Date proposée requise'),
-    message: z
-      .string()
-      .max(500, 'Message trop long (max 500 caractères)')
-      .optional(),
-  }),
-]);
+export const patientCounterProposalResponseSchema = z.discriminatedUnion(
+  'action',
+  [
+    z.object({
+      action: z.literal('accept'),
+    }),
+    z.object({
+      action: z.literal('decline'),
+      reason: z
+        .string()
+        .max(500, 'Raison trop longue (max 500 caractères)')
+        .optional(),
+    }),
+    z.object({
+      action: z.literal('counter_propose'),
+      proposed_at: z.string().min(1, 'Date proposée requise'),
+      message: z
+        .string()
+        .max(500, 'Message trop long (max 500 caractères)')
+        .optional(),
+    }),
+  ]
+);
 
 export type PatientCounterProposalResponseData = z.infer<
   typeof patientCounterProposalResponseSchema
@@ -670,6 +681,7 @@ export const createMessageSchema = z.object({
     .string()
     .min(1, 'Le message ne peut pas être vide')
     .max(5000, 'Message trop long (max 5000 caractères)'),
+  reply_to_id: z.string().uuid().optional(),
 });
 
 // Query params pour les messages (pagination cursor-based)
@@ -705,17 +717,40 @@ export const conversationsQuerySchema = z.object({
 
 // Création d'un compte-rendu de consultation
 export const createConsultationSchema = z.object({
-  appointment_id: z.string().uuid('ID rendez-vous invalide').nullable().optional(),
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Format de date invalide (YYYY-MM-DD)'),
-  start_time: z.string().regex(/^\d{2}:\d{2}$/, 'Format d\'heure invalide (HH:MM)').optional(),
-  duration_minutes: z.number().int().min(5, 'Durée minimum 5 min').max(480, 'Durée maximum 8h').optional(),
+  appointment_id: z
+    .string()
+    .uuid('ID rendez-vous invalide')
+    .nullable()
+    .optional(),
+  date: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Format de date invalide (YYYY-MM-DD)'),
+  start_time: z
+    .string()
+    .regex(/^\d{2}:\d{2}$/, "Format d'heure invalide (HH:MM)")
+    .optional(),
+  duration_minutes: z
+    .number()
+    .int()
+    .min(5, 'Durée minimum 5 min')
+    .max(480, 'Durée maximum 8h')
+    .optional(),
   consultation_type: z.string().max(50, 'Type trop long').optional(),
   mode: consultationModeEnum,
-  summary: z.string().min(10, 'Le résumé doit faire au moins 10 caractères').max(5000, 'Résumé trop long (max 5000 caractères)'),
-  key_points: z.array(z.string().max(500, 'Point clé trop long')).max(20, 'Maximum 20 points clés').optional(),
+  summary: z
+    .string()
+    .min(10, 'Le résumé doit faire au moins 10 caractères')
+    .max(5000, 'Résumé trop long (max 5000 caractères)'),
+  key_points: z
+    .array(z.string().max(500, 'Point clé trop long'))
+    .max(20, 'Maximum 20 points clés')
+    .optional(),
   next_steps: z.string().max(2000, 'Prochaines étapes trop longues').optional(),
   private_notes: z.string().max(2000, 'Notes privées trop longues').optional(),
-  attached_document_ids: z.array(z.string().uuid('ID document invalide')).max(10, 'Maximum 10 documents').optional(),
+  attached_document_ids: z
+    .array(z.string().uuid('ID document invalide'))
+    .max(10, 'Maximum 10 documents')
+    .optional(),
   status: z.enum(['draft', 'final']).default('final'),
 });
 
@@ -723,7 +758,11 @@ export type CreateConsultationData = z.infer<typeof createConsultationSchema>;
 
 // Modification d'un compte-rendu
 export const updateConsultationSchema = z.object({
-  summary: z.string().min(10, 'Le résumé doit faire au moins 10 caractères').max(5000, 'Résumé trop long').optional(),
+  summary: z
+    .string()
+    .min(10, 'Le résumé doit faire au moins 10 caractères')
+    .max(5000, 'Résumé trop long')
+    .optional(),
   key_points: z.array(z.string().max(500)).max(20).optional(),
   next_steps: z.string().max(2000).optional(),
   private_notes: z.string().max(2000).optional(),
@@ -749,7 +788,11 @@ export const mealPlanStatusEnum = z.enum([
 ]);
 
 export const nutritionalTargetsSchema = z.object({
-  calories: z.number().int().min(500, 'Minimum 500 kcal').max(10000, 'Maximum 10000 kcal'),
+  calories: z
+    .number()
+    .int()
+    .min(500, 'Minimum 500 kcal')
+    .max(10000, 'Maximum 10000 kcal'),
   protein: z.number().min(0).max(500, 'Maximum 500g'),
   carbs: z.number().min(0).max(1000, 'Maximum 1000g'),
   fat: z.number().min(0).max(500, 'Maximum 500g'),
@@ -757,36 +800,63 @@ export const nutritionalTargetsSchema = z.object({
   sodium: z.number().min(0).max(10000, 'Maximum 10000mg').nullable().optional(),
 });
 
-export const planMealTypeEnum = z.enum(['breakfast', 'morning_snack', 'lunch', 'afternoon_snack', 'dinner', 'evening_snack']);
+export const planMealTypeEnum = z.enum([
+  'breakfast',
+  'morning_snack',
+  'lunch',
+  'afternoon_snack',
+  'dinner',
+  'evening_snack',
+]);
 
-export const createMealPlanNutriSchema = z.object({
-  name: z.string().min(3, 'Nom requis (min 3 caractères)').max(200, 'Nom trop long (max 200)'),
-  objective: z.string().max(200, 'Objectif trop long (max 200)').optional(),
-  description: z.string().max(2000, 'Description trop longue').optional(),
-  start_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Format de date invalide (YYYY-MM-DD)'),
-  end_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Format de date invalide (YYYY-MM-DD)'),
-  nutritional_targets: nutritionalTargetsSchema.optional(),
-  notes: z.string().max(2000, 'Notes trop longues').optional(),
-  meal_types: z.array(planMealTypeEnum).min(1, 'Sélectionnez au moins un type de repas').optional(),
-}).refine(
-  data => new Date(data.end_date) > new Date(data.start_date),
-  { message: 'La date de fin doit être après la date de début', path: ['end_date'] }
-);
+export const createMealPlanNutriSchema = z
+  .object({
+    name: z
+      .string()
+      .min(3, 'Nom requis (min 3 caractères)')
+      .max(200, 'Nom trop long (max 200)'),
+    objective: z.string().max(200, 'Objectif trop long (max 200)').optional(),
+    description: z.string().max(2000, 'Description trop longue').optional(),
+    start_date: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, 'Format de date invalide (YYYY-MM-DD)'),
+    end_date: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, 'Format de date invalide (YYYY-MM-DD)'),
+    nutritional_targets: nutritionalTargetsSchema.optional(),
+    notes: z.string().max(2000, 'Notes trop longues').optional(),
+    meal_types: z
+      .array(planMealTypeEnum)
+      .min(1, 'Sélectionnez au moins un type de repas')
+      .optional(),
+  })
+  .refine(data => new Date(data.end_date) > new Date(data.start_date), {
+    message: 'La date de fin doit être après la date de début',
+    path: ['end_date'],
+  });
 
-export const updateMealPlanNutriSchema = z.object({
-  name: z.string().min(3).max(200).optional(),
-  objective: z.string().max(200).optional().nullable(),
-  description: z.string().max(2000).optional().nullable(),
-  start_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
-  end_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
-  status: mealPlanStatusEnum.optional(),
-  is_template: z.boolean().optional(),
-  nutritional_targets: nutritionalTargetsSchema.optional().nullable(),
-  notes: z.string().max(2000).optional().nullable(),
-  meal_types: z.array(planMealTypeEnum).min(1).optional().nullable(),
-}).refine(data => Object.keys(data).length > 0, {
-  message: 'Au moins un champ doit être fourni pour la mise à jour',
-});
+export const updateMealPlanNutriSchema = z
+  .object({
+    name: z.string().min(3).max(200).optional(),
+    objective: z.string().max(200).optional().nullable(),
+    description: z.string().max(2000).optional().nullable(),
+    start_date: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/)
+      .optional(),
+    end_date: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/)
+      .optional(),
+    status: mealPlanStatusEnum.optional(),
+    is_template: z.boolean().optional(),
+    nutritional_targets: nutritionalTargetsSchema.optional().nullable(),
+    notes: z.string().max(2000).optional().nullable(),
+    meal_types: z.array(planMealTypeEnum).min(1).optional().nullable(),
+  })
+  .refine(data => Object.keys(data).length > 0, {
+    message: 'Au moins un champ doit être fourni pour la mise à jour',
+  });
 
 export type CreateMealPlanNutriData = z.infer<typeof createMealPlanNutriSchema>;
 export type UpdateMealPlanNutriData = z.infer<typeof updateMealPlanNutriSchema>;
@@ -797,17 +867,28 @@ export type NutritionalTargetsData = z.infer<typeof nutritionalTargetsSchema>;
 // SCHEMA POUR PLAN-N-005: Templates / Duplication
 // =====================================================
 
-export const duplicateFromTemplateSchema = z.object({
-  template_plan_id: z.string().uuid('ID du template invalide'),
-  name: z.string().min(3, 'Nom requis (min 3 caractères)').max(200, 'Nom trop long'),
-  start_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Format de date invalide (YYYY-MM-DD)'),
-  end_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Format de date invalide (YYYY-MM-DD)'),
-}).refine(
-  data => new Date(data.end_date) > new Date(data.start_date),
-  { message: 'La date de fin doit être après la date de début', path: ['end_date'] }
-);
+export const duplicateFromTemplateSchema = z
+  .object({
+    template_plan_id: z.string().uuid('ID du template invalide'),
+    name: z
+      .string()
+      .min(3, 'Nom requis (min 3 caractères)')
+      .max(200, 'Nom trop long'),
+    start_date: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, 'Format de date invalide (YYYY-MM-DD)'),
+    end_date: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, 'Format de date invalide (YYYY-MM-DD)'),
+  })
+  .refine(data => new Date(data.end_date) > new Date(data.start_date), {
+    message: 'La date de fin doit être après la date de début',
+    path: ['end_date'],
+  });
 
-export type DuplicateFromTemplateData = z.infer<typeof duplicateFromTemplateSchema>;
+export type DuplicateFromTemplateData = z.infer<
+  typeof duplicateFromTemplateSchema
+>;
 
 // =====================================================
 // SCHEMAS POUR LES JOURS & REPAS DU PLAN (PLAN-N-002)
@@ -817,13 +898,20 @@ export const createPlanMealSchema = z.object({
   day_id: z.string().uuid('ID du jour invalide'),
   meal_type: planMealTypeEnum,
   title: z.string().max(200, 'Titre trop long').optional(),
-  suggested_time: z.string().regex(/^\d{2}:\d{2}$/, 'Format HH:mm').optional(),
+  suggested_time: z
+    .string()
+    .regex(/^\d{2}:\d{2}$/, 'Format HH:mm')
+    .optional(),
   notes: z.string().max(2000).optional(),
 });
 
 export const updatePlanMealSchema = z.object({
   title: z.string().max(200).optional().nullable(),
-  suggested_time: z.string().regex(/^\d{2}:\d{2}$/).optional().nullable(),
+  suggested_time: z
+    .string()
+    .regex(/^\d{2}:\d{2}$/)
+    .optional()
+    .nullable(),
   notes: z.string().max(2000).optional().nullable(),
   display_order: z.number().int().min(0).optional(),
 });
@@ -840,14 +928,19 @@ export type UpdatePlanDayData = z.infer<typeof updatePlanDaySchema>;
 // SCHEMAS POUR LES ALIMENTS DU PLAN (PLAN-N-003)
 // =====================================================
 
-export const addPlanFoodSchema = z.object({
-  food_id: z.string().uuid('ID aliment invalide').optional(),
-  custom_name: z.string().max(200, 'Nom trop long').optional(),
-  quantity: z.number().positive('La quantité doit être positive').max(10000, 'Maximum 10000'),
-  unit: foodUnitEnum.default('g'),
-}).refine(data => data.food_id || data.custom_name, {
-  message: 'Un aliment ou un nom personnalisé est requis',
-});
+export const addPlanFoodSchema = z
+  .object({
+    food_id: z.string().uuid('ID aliment invalide').optional(),
+    custom_name: z.string().max(200, 'Nom trop long').optional(),
+    quantity: z
+      .number()
+      .positive('La quantité doit être positive')
+      .max(10000, 'Maximum 10000'),
+    unit: foodUnitEnum.default('g'),
+  })
+  .refine(data => data.food_id || data.custom_name, {
+    message: 'Un aliment ou un nom personnalisé est requis',
+  });
 
 export const updatePlanFoodSchema = z.object({
   quantity: z.number().positive().max(10000).optional(),
@@ -856,10 +949,15 @@ export const updatePlanFoodSchema = z.object({
 });
 
 export const reorderPlanFoodsSchema = z.object({
-  items: z.array(z.object({
-    id: z.string().uuid(),
-    display_order: z.number().int().min(0),
-  })).min(1).max(100),
+  items: z
+    .array(
+      z.object({
+        id: z.string().uuid(),
+        display_order: z.number().int().min(0),
+      })
+    )
+    .min(1)
+    .max(100),
 });
 
 export type AddPlanFoodData = z.infer<typeof addPlanFoodSchema>;
@@ -875,7 +973,9 @@ export const respondModificationRequestSchema = z.object({
   response: z.string().max(2000, 'Réponse trop longue').optional(),
 });
 
-export type RespondModificationRequestData = z.infer<typeof respondModificationRequestSchema>;
+export type RespondModificationRequestData = z.infer<
+  typeof respondModificationRequestSchema
+>;
 
 // =====================================================
 // SCHEMA POUR L'ENVOI DE LISTE DE COURSES (PLAN-N-009)
@@ -896,7 +996,10 @@ export type SendShoppingListData = z.infer<typeof sendShoppingListSchema>;
 
 export const copyDayMealsSchema = z.object({
   source_day_id: z.string().uuid('ID du jour source invalide'),
-  target_day_ids: z.array(z.string().uuid('ID du jour cible invalide')).min(1, 'Au moins un jour cible requis').max(27, 'Maximum 27 jours cibles'),
+  target_day_ids: z
+    .array(z.string().uuid('ID du jour cible invalide'))
+    .min(1, 'Au moins un jour cible requis')
+    .max(27, 'Maximum 27 jours cibles'),
 });
 
 export type CopyDayMealsData = z.infer<typeof copyDayMealsSchema>;
@@ -1250,26 +1353,38 @@ export type NutritionistPatientsQueryParams = z.infer<
 
 // Schema pour la mise à jour des notes internes d'un patient (legacy - champ unique)
 export const patientNotesUpdateSchema = z.object({
-  notes_internal: z.string().max(5000, 'Notes trop longues (max 5000 caractères)').optional(),
+  notes_internal: z
+    .string()
+    .max(5000, 'Notes trop longues (max 5000 caractères)')
+    .optional(),
 });
 
 // Schema pour la mise à jour du statut d'un patient
 export const updatePatientStatusSchema = z.object({
   status: z.enum(['active', 'inactive', 'pending']),
-  status_reason: z.string().max(500, 'Raison trop longue (max 500 caractères)').optional(),
+  status_reason: z
+    .string()
+    .max(500, 'Raison trop longue (max 500 caractères)')
+    .optional(),
 });
 
 export type UpdatePatientStatusData = z.infer<typeof updatePatientStatusSchema>;
 
 // Schemas pour les notes internes individuelles (PAT-006)
 export const createPatientNoteSchema = z.object({
-  content: z.string().min(1, 'La note ne peut pas être vide').max(5000, 'Note trop longue (max 5000 caractères)'),
+  content: z
+    .string()
+    .min(1, 'La note ne peut pas être vide')
+    .max(5000, 'Note trop longue (max 5000 caractères)'),
 });
 
 export type CreatePatientNoteData = z.infer<typeof createPatientNoteSchema>;
 
 export const updatePatientNoteSchema = z.object({
-  content: z.string().min(1, 'La note ne peut pas être vide').max(5000, 'Note trop longue (max 5000 caractères)'),
+  content: z
+    .string()
+    .min(1, 'La note ne peut pas être vide')
+    .max(5000, 'Note trop longue (max 5000 caractères)'),
 });
 
 export type UpdatePatientNoteData = z.infer<typeof updatePatientNoteSchema>;
@@ -1332,9 +1447,21 @@ export const reviewChangeReportSchema = z.object({
 });
 
 export const createChangeReportSchema = z.object({
-  change_type: z.enum(['health', 'medication', 'allergy', 'lifestyle', 'other']),
-  title: z.string().min(3, 'Le titre doit contenir au moins 3 caractères').max(200),
-  description: z.string().min(5, 'La description doit contenir au moins 5 caractères').max(2000),
+  change_type: z.enum([
+    'health',
+    'medication',
+    'allergy',
+    'lifestyle',
+    'other',
+  ]),
+  title: z
+    .string()
+    .min(3, 'Le titre doit contenir au moins 3 caractères')
+    .max(200),
+  description: z
+    .string()
+    .min(5, 'La description doit contenir au moins 5 caractères')
+    .max(2000),
   anamnesis_section_id: z.string().max(50).default('general'),
   old_value: z.string().max(500).optional(),
   new_value: z.string().max(500).optional(),
@@ -1349,17 +1476,37 @@ export const questionnaireQuestionSchema = z.object({
   required: z.boolean().default(true),
 });
 
+// Accepts either a plain YYYY-MM-DD (what <input type="date"> sends) or a
+// full ISO 8601 datetime. Rejects malformed strings clearly.
+const dateOrDatetime = z
+  .string()
+  .regex(
+    /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:\d{2})?)?$/,
+    'Date invalide (format attendu : YYYY-MM-DD)'
+  );
+
 export const createQuestionnaireSchema = z.object({
   title: z.string().min(1, 'Titre requis').max(200),
   questionnaire_type: z.string().min(1, 'Type requis'),
-  due_date: z.string().datetime().optional(),
-  questions: z.array(questionnaireQuestionSchema).min(1, 'Au moins une question requise'),
+  due_date: dateOrDatetime.optional(),
+  // When set, the assignment uses this template version directly (preserves
+  // display_rules + option slugs). Otherwise a draft template is created
+  // from the `questions` array (ad-hoc flow).
+  template_version_id: z.string().uuid().optional(),
+  questions: z
+    .array(questionnaireQuestionSchema)
+    .min(1, 'Au moins une question requise'),
   consultation_id: z.string().uuid().optional(),
 });
 
 // -- Documents --
 
-export const documentCategoryEnum = z.enum(['Analyses', 'Plans', 'Ressources', 'Autre']);
+export const documentCategoryEnum = z.enum([
+  'Analyses',
+  'Plans',
+  'Ressources',
+  'Autre',
+]);
 
 export const createDocumentMetadataSchema = z.object({
   name: z.string().min(1, 'Nom requis').max(200),
@@ -1407,13 +1554,31 @@ export const objectiveProgressLogSchema = z.object({
 // -- Patient Modification Requests (Plan Alimentaire) --
 
 export const createPatientModificationRequestSchema = z.object({
-  request_type: z.enum(['substitution', 'quantity', 'meal_time', 'allergy', 'preference', 'other']),
-  title: z.string().min(3, 'Le titre doit contenir au moins 3 caractères').max(200, 'Titre trop long (max 200 caractères)'),
-  description: z.string().min(5, 'La description doit contenir au moins 5 caractères').max(2000, 'Description trop longue (max 2000 caractères)'),
-  suggested_alternative: z.string().max(500, 'Suggestion trop longue (max 500 caractères)').optional(),
+  request_type: z.enum([
+    'substitution',
+    'quantity',
+    'meal_time',
+    'allergy',
+    'preference',
+    'other',
+  ]),
+  title: z
+    .string()
+    .min(3, 'Le titre doit contenir au moins 3 caractères')
+    .max(200, 'Titre trop long (max 200 caractères)'),
+  description: z
+    .string()
+    .min(5, 'La description doit contenir au moins 5 caractères')
+    .max(2000, 'Description trop longue (max 2000 caractères)'),
+  suggested_alternative: z
+    .string()
+    .max(500, 'Suggestion trop longue (max 500 caractères)')
+    .optional(),
 });
 
-export type CreatePatientModificationRequestData = z.infer<typeof createPatientModificationRequestSchema>;
+export type CreatePatientModificationRequestData = z.infer<
+  typeof createPatientModificationRequestSchema
+>;
 
 // -- Export --
 
@@ -1484,111 +1649,668 @@ export const activityLevelEnum = z.enum([
 ]);
 
 // Micro-nutriment targets (optionnel, mode basique ou avancé)
-export const microTargetsSchema = z.object({
-  fiber_g: z.number().min(0).max(100).optional(),
-  sodium_mg: z.number().min(0).max(10000).optional(),
-  calcium_mg: z.number().min(0).max(5000).optional(),
-  iron_mg: z.number().min(0).max(100).optional(),
-  magnesium_mg: z.number().min(0).max(2000).optional(),
-  phosphorus_mg: z.number().min(0).max(5000).optional(),
-  potassium_mg: z.number().min(0).max(10000).optional(),
-  zinc_mg: z.number().min(0).max(100).optional(),
-  vitamin_a_ug: z.number().min(0).max(10000).optional(),
-  vitamin_b1_mg: z.number().min(0).max(100).optional(),
-  vitamin_b2_mg: z.number().min(0).max(100).optional(),
-  vitamin_b3_mg: z.number().min(0).max(500).optional(),
-  vitamin_b6_mg: z.number().min(0).max(100).optional(),
-  vitamin_b9_ug: z.number().min(0).max(2000).optional(),
-  vitamin_b12_ug: z.number().min(0).max(100).optional(),
-  vitamin_c_mg: z.number().min(0).max(5000).optional(),
-  vitamin_d_ug: z.number().min(0).max(200).optional(),
-  vitamin_e_mg: z.number().min(0).max(1000).optional(),
-  vitamin_k_ug: z.number().min(0).max(500).optional(),
-  cholesterol_mg: z.number().min(0).max(1000).optional(),
-}).optional().nullable();
+export const microTargetsSchema = z
+  .object({
+    fiber_g: z.number().min(0).max(100).optional(),
+    sodium_mg: z.number().min(0).max(10000).optional(),
+    calcium_mg: z.number().min(0).max(5000).optional(),
+    iron_mg: z.number().min(0).max(100).optional(),
+    magnesium_mg: z.number().min(0).max(2000).optional(),
+    phosphorus_mg: z.number().min(0).max(5000).optional(),
+    potassium_mg: z.number().min(0).max(10000).optional(),
+    zinc_mg: z.number().min(0).max(100).optional(),
+    vitamin_a_ug: z.number().min(0).max(10000).optional(),
+    vitamin_b1_mg: z.number().min(0).max(100).optional(),
+    vitamin_b2_mg: z.number().min(0).max(100).optional(),
+    vitamin_b3_mg: z.number().min(0).max(500).optional(),
+    vitamin_b6_mg: z.number().min(0).max(100).optional(),
+    vitamin_b9_ug: z.number().min(0).max(2000).optional(),
+    vitamin_b12_ug: z.number().min(0).max(100).optional(),
+    vitamin_c_mg: z.number().min(0).max(5000).optional(),
+    vitamin_d_ug: z.number().min(0).max(200).optional(),
+    vitamin_e_mg: z.number().min(0).max(1000).optional(),
+    vitamin_k_ug: z.number().min(0).max(500).optional(),
+    cholesterol_mg: z.number().min(0).max(1000).optional(),
+  })
+  .optional()
+  .nullable();
 
 // Création d'un profil nutritionnel
-export const createNutritionalProfileSchema = z.object({
-  name: z.string().min(3, 'Nom requis (min 3 caractères)').max(200, 'Nom trop long (max 200)'),
-  status: profileStatusEnum.optional().default('draft'),
-  weight_kg: z.number().min(30, 'Poids minimum : 30 kg').max(300, 'Poids maximum : 300 kg'),
-  height_cm: z.number().min(100, 'Taille minimum : 100 cm').max(250, 'Taille maximum : 250 cm'),
-  age: z.number().int().min(13, 'Âge minimum : 13 ans').max(120, 'Âge maximum : 120 ans'),
-  gender: z.enum(['male', 'female']),
-  body_fat_pct: z.number().min(1).max(60).optional().nullable(),
-  bmr_formula: bmrFormulaEnum.default('mifflin_st_jeor'),
-  activity_level: activityLevelEnum.default('moderatelyActive'),
-  goal: profileGoalEnum.default('maintain'),
-  goal_adjustment_kcal: z.number().int().min(-1000).max(1000).optional().default(0),
-  special_case: specialCaseEnum.optional().default('none'),
-  special_case_adjustment_kcal: z.number().int().min(-1000).max(1000).optional().nullable(),
-  macro_template: z.string().max(50).optional().nullable(),
-  protein_pct: z.number().min(5, 'Protéines : minimum 5%').max(60, 'Protéines : maximum 60%'),
-  carbs_pct: z.number().min(0, 'Glucides : minimum 0%').max(80, 'Glucides : maximum 80%'),
-  fat_pct: z.number().min(10, 'Lipides : minimum 10%').max(80, 'Lipides : maximum 80%'),
-  micro_targets: microTargetsSchema,
-  notes: z.string().max(2000, 'Notes trop longues').optional().nullable(),
-  private_notes: z.string().max(2000, 'Notes privées trop longues').optional().nullable(),
-}).refine(
-  data => data.bmr_formula !== 'katch_mcardle' || (data.body_fat_pct != null && data.body_fat_pct > 0),
-  { message: 'Le taux de masse grasse est requis pour la formule Katch-McArdle', path: ['body_fat_pct'] }
-).refine(
-  data => Math.abs(data.protein_pct + data.carbs_pct + data.fat_pct - 100) <= 1,
-  { message: 'La somme des macronutriments doit être égale à 100%', path: ['protein_pct'] }
-);
+export const createNutritionalProfileSchema = z
+  .object({
+    name: z
+      .string()
+      .min(3, 'Nom requis (min 3 caractères)')
+      .max(200, 'Nom trop long (max 200)'),
+    status: profileStatusEnum.optional().default('draft'),
+    weight_kg: z
+      .number()
+      .min(30, 'Poids minimum : 30 kg')
+      .max(300, 'Poids maximum : 300 kg'),
+    height_cm: z
+      .number()
+      .min(100, 'Taille minimum : 100 cm')
+      .max(250, 'Taille maximum : 250 cm'),
+    age: z
+      .number()
+      .int()
+      .min(13, 'Âge minimum : 13 ans')
+      .max(120, 'Âge maximum : 120 ans'),
+    gender: z.enum(['male', 'female']),
+    body_fat_pct: z.number().min(1).max(60).optional().nullable(),
+    bmr_formula: bmrFormulaEnum.default('mifflin_st_jeor'),
+    activity_level: activityLevelEnum.default('moderatelyActive'),
+    goal: profileGoalEnum.default('maintain'),
+    goal_adjustment_kcal: z
+      .number()
+      .int()
+      .min(-1000)
+      .max(1000)
+      .optional()
+      .default(0),
+    special_case: specialCaseEnum.optional().default('none'),
+    special_case_adjustment_kcal: z
+      .number()
+      .int()
+      .min(-1000)
+      .max(1000)
+      .optional()
+      .nullable(),
+    macro_template: z.string().max(50).optional().nullable(),
+    protein_pct: z
+      .number()
+      .min(5, 'Protéines : minimum 5%')
+      .max(60, 'Protéines : maximum 60%'),
+    carbs_pct: z
+      .number()
+      .min(0, 'Glucides : minimum 0%')
+      .max(80, 'Glucides : maximum 80%'),
+    fat_pct: z
+      .number()
+      .min(10, 'Lipides : minimum 10%')
+      .max(80, 'Lipides : maximum 80%'),
+    micro_targets: microTargetsSchema,
+    notes: z.string().max(2000, 'Notes trop longues').optional().nullable(),
+    private_notes: z
+      .string()
+      .max(2000, 'Notes privées trop longues')
+      .optional()
+      .nullable(),
+  })
+  .refine(
+    data =>
+      data.bmr_formula !== 'katch_mcardle' ||
+      (data.body_fat_pct != null && data.body_fat_pct > 0),
+    {
+      message:
+        'Le taux de masse grasse est requis pour la formule Katch-McArdle',
+      path: ['body_fat_pct'],
+    }
+  )
+  .refine(
+    data =>
+      Math.abs(data.protein_pct + data.carbs_pct + data.fat_pct - 100) <= 1,
+    {
+      message: 'La somme des macronutriments doit être égale à 100%',
+      path: ['protein_pct'],
+    }
+  );
 
 // Mise à jour d'un profil nutritionnel (partiel)
-export const updateNutritionalProfileSchema = z.object({
-  name: z.string().min(3).max(200).optional(),
-  status: profileStatusEnum.optional(),
-  weight_kg: z.number().min(30).max(300).optional(),
-  height_cm: z.number().min(100).max(250).optional(),
-  age: z.number().int().min(13).max(120).optional(),
-  gender: z.enum(['male', 'female']).optional(),
-  body_fat_pct: z.number().min(1).max(60).optional().nullable(),
-  bmr_formula: bmrFormulaEnum.optional(),
-  activity_level: activityLevelEnum.optional(),
-  goal: profileGoalEnum.optional(),
-  goal_adjustment_kcal: z.number().int().min(-1000).max(1000).optional(),
-  special_case: specialCaseEnum.optional(),
-  special_case_adjustment_kcal: z.number().int().min(-1000).max(1000).optional().nullable(),
-  macro_template: z.string().max(50).optional().nullable(),
-  protein_pct: z.number().min(5).max(60).optional(),
-  carbs_pct: z.number().min(0).max(80).optional(),
-  fat_pct: z.number().min(10).max(80).optional(),
-  micro_targets: microTargetsSchema,
-  notes: z.string().max(2000).optional().nullable(),
-  private_notes: z.string().max(2000).optional().nullable(),
-}).refine(data => Object.keys(data).length > 0, {
-  message: 'Au moins un champ doit être fourni pour la mise à jour',
-});
+export const updateNutritionalProfileSchema = z
+  .object({
+    name: z.string().min(3).max(200).optional(),
+    status: profileStatusEnum.optional(),
+    weight_kg: z.number().min(30).max(300).optional(),
+    height_cm: z.number().min(100).max(250).optional(),
+    age: z.number().int().min(13).max(120).optional(),
+    gender: z.enum(['male', 'female']).optional(),
+    body_fat_pct: z.number().min(1).max(60).optional().nullable(),
+    bmr_formula: bmrFormulaEnum.optional(),
+    activity_level: activityLevelEnum.optional(),
+    goal: profileGoalEnum.optional(),
+    goal_adjustment_kcal: z.number().int().min(-1000).max(1000).optional(),
+    special_case: specialCaseEnum.optional(),
+    special_case_adjustment_kcal: z
+      .number()
+      .int()
+      .min(-1000)
+      .max(1000)
+      .optional()
+      .nullable(),
+    macro_template: z.string().max(50).optional().nullable(),
+    protein_pct: z.number().min(5).max(60).optional(),
+    carbs_pct: z.number().min(0).max(80).optional(),
+    fat_pct: z.number().min(10).max(80).optional(),
+    micro_targets: microTargetsSchema,
+    notes: z.string().max(2000).optional().nullable(),
+    private_notes: z.string().max(2000).optional().nullable(),
+  })
+  .refine(data => Object.keys(data).length > 0, {
+    message: 'Au moins un champ doit être fourni pour la mise à jour',
+  });
 
 export type BmrFormulaType = z.infer<typeof bmrFormulaEnum>;
 export type ProfileGoalType = z.infer<typeof profileGoalEnum>;
 export type SpecialCaseType = z.infer<typeof specialCaseEnum>;
 export type ProfileStatusType = z.infer<typeof profileStatusEnum>;
 export type ActivityLevelType = z.infer<typeof activityLevelEnum>;
-export type CreateNutritionalProfileData = z.infer<typeof createNutritionalProfileSchema>;
-export type UpdateNutritionalProfileData = z.infer<typeof updateNutritionalProfileSchema>;
+export type CreateNutritionalProfileData = z.infer<
+  typeof createNutritionalProfileSchema
+>;
+export type UpdateNutritionalProfileData = z.infer<
+  typeof updateNutritionalProfileSchema
+>;
 
 // =====================================================
 // SCHÉMAS POUR LES RAPPELS (REMINDERS)
 // =====================================================
 
-export const updateReminderPreferencesSchema = z.object({
-  email_enabled: z.boolean().optional(),
-  email_hours_before: z.number().int().min(1).max(72).optional(),
-  push_enabled: z.boolean().optional(),
-  push_hours_before: z.number().int().min(1).max(48).optional(),
-  sms_enabled: z.boolean().optional(),
-  sms_hours_before: z.number().int().min(1).max(48).optional(),
-}).refine(data => Object.keys(data).length > 0, {
-  message: 'Au moins un champ doit être fourni',
-});
+export const updateReminderPreferencesSchema = z
+  .object({
+    email_enabled: z.boolean().optional(),
+    email_hours_before: z.number().int().min(1).max(72).optional(),
+    push_enabled: z.boolean().optional(),
+    push_hours_before: z.number().int().min(1).max(48).optional(),
+    sms_enabled: z.boolean().optional(),
+    sms_hours_before: z.number().int().min(1).max(48).optional(),
+  })
+  .refine(data => Object.keys(data).length > 0, {
+    message: 'Au moins un champ doit être fourni',
+  });
 
 export const updateAppointmentReminderSchema = z.object({
   enabled: z.boolean(),
 });
 
-export type UpdateReminderPreferencesData = z.infer<typeof updateReminderPreferencesSchema>;
-export type UpdateAppointmentReminderData = z.infer<typeof updateAppointmentReminderSchema>;
+export type UpdateReminderPreferencesData = z.infer<
+  typeof updateReminderPreferencesSchema
+>;
+export type UpdateAppointmentReminderData = z.infer<
+  typeof updateAppointmentReminderSchema
+>;
+
+// =====================================================
+// SCHÉMAS POUR LA MESSAGERIE (MESSAGING FEATURES)
+// =====================================================
+
+// Indicateur de frappe
+export const updateTypingSchema = z.object({
+  is_typing: z.boolean(),
+});
+
+// Réaction emoji
+export const toggleReactionSchema = z.object({
+  emoji: z.enum(['👍', '❤️', '😂', '😮', '😢', '🙏']),
+});
+
+// Édition de message
+export const editMessageSchema = z.object({
+  content: z
+    .string()
+    .min(1, 'Le message ne peut pas être vide')
+    .max(5000, 'Message trop long (max 5000 caractères)'),
+});
+
+export type UpdateTypingData = z.infer<typeof updateTypingSchema>;
+export type ToggleReactionData = z.infer<typeof toggleReactionSchema>;
+export type EditMessageData = z.infer<typeof editMessageSchema>;
+
+// =====================================================
+// SCHÉMAS POUR CONTENU ÉDUCATIF (CONTENT-N-001 à 007)
+// =====================================================
+
+const contentTypeSchema = z.enum([
+  'article',
+  'video',
+  'guide',
+  'podcast',
+  'course',
+]);
+const contentStatusSchema = z.enum([
+  'draft',
+  'scheduled',
+  'published',
+  'archived',
+]);
+const contentCategorySchema = z.enum([
+  'nutrition_basics',
+  'healthy_recipes',
+  'weight_management',
+  'sports_nutrition',
+  'digestive_health',
+  'mental_wellbeing',
+  'food_allergies',
+  'supplements',
+  'meal_planning',
+  'lifestyle',
+  'other',
+]);
+
+export const createContentSchema = z.object({
+  type: contentTypeSchema.default('article'),
+  category: contentCategorySchema.default('other'),
+  title: z
+    .string()
+    .min(3, 'Le titre doit contenir au moins 3 caractères')
+    .max(200, 'Le titre ne peut pas dépasser 200 caractères'),
+  summary: z
+    .string()
+    .max(500, 'Le résumé ne peut pas dépasser 500 caractères')
+    .optional()
+    .nullable(),
+  body: z.string().optional().nullable(),
+  media_url: z.string().url('URL invalide').optional().nullable(),
+  media_type: z.string().optional().nullable(),
+  thumbnail_url: z.string().url('URL invalide').optional().nullable(),
+  tags: z.array(z.string()).default([]),
+  key_points: z.array(z.string()).default([]),
+  reading_time_minutes: z.number().int().min(1).optional().nullable(),
+  duration_seconds: z.number().int().min(1).optional().nullable(),
+  file_size_bytes: z.number().int().min(1).optional().nullable(),
+  page_count: z.number().int().min(1).optional().nullable(),
+  scheduled_publish_at: z.string().datetime().optional().nullable(),
+  custom_category_id: z.string().uuid().optional().nullable(),
+});
+
+export const updateContentSchema = z
+  .object({
+    type: contentTypeSchema.optional(),
+    category: contentCategorySchema.optional(),
+    status: contentStatusSchema.optional(),
+    custom_category_id: z.string().uuid().optional().nullable(),
+    title: z.string().min(3).max(200).optional(),
+    summary: z.string().max(500).optional().nullable(),
+    body: z.string().optional().nullable(),
+    media_url: z.string().url().optional().nullable(),
+    media_type: z.string().optional().nullable(),
+    thumbnail_url: z.string().url().optional().nullable(),
+    tags: z.array(z.string()).optional(),
+    key_points: z.array(z.string()).optional(),
+    is_featured: z.boolean().optional(),
+    featured_order: z.number().int().min(0).optional(),
+    reading_time_minutes: z.number().int().min(1).optional().nullable(),
+    duration_seconds: z.number().int().min(1).optional().nullable(),
+    file_size_bytes: z.number().int().min(1).optional().nullable(),
+    page_count: z.number().int().min(1).optional().nullable(),
+    scheduled_publish_at: z.string().datetime().optional().nullable(),
+  })
+  .refine(data => Object.keys(data).length > 0, {
+    message: 'Au moins un champ doit être fourni',
+  });
+
+export type CreateContentData = z.infer<typeof createContentSchema>;
+export type UpdateContentData = z.infer<typeof updateContentSchema>;
+
+// =====================================================
+// SCHÉMAS POUR LES ASSIGNATIONS DE CONTENU (CONTENT-N-010)
+// =====================================================
+
+export const assignContentSchema = z.object({
+  patient_ids: z
+    .array(z.string().uuid('ID patient invalide'))
+    .min(1, 'Au moins un patient doit être sélectionné')
+    .max(50, 'Maximum 50 patients par assignation'),
+  note: z
+    .string()
+    .max(500, 'La note ne peut pas dépasser 500 caractères')
+    .optional()
+    .nullable(),
+});
+
+export type AssignContentData = z.infer<typeof assignContentSchema>;
+
+// =====================================================
+// SCHÉMAS POUR LES COURS ÉDUCATIFS (Epic Cours)
+// =====================================================
+
+// --- Chapitres ---
+
+export const createChapterSchema = z.object({
+  title: z
+    .string()
+    .min(1, 'Le titre est requis')
+    .max(200, 'Le titre ne peut pas dépasser 200 caractères'),
+  description: z.string().max(1000).optional().nullable(),
+  sort_order: z.number().int().min(0).optional(),
+});
+
+export const updateChapterSchema = z
+  .object({
+    title: z.string().min(1).max(200).optional(),
+    description: z.string().max(1000).optional().nullable(),
+  })
+  .refine(data => Object.keys(data).length > 0, {
+    message: 'Au moins un champ doit être fourni',
+  });
+
+export const reorderChaptersSchema = z.object({
+  chapter_ids: z.array(z.string().uuid()),
+});
+
+// --- Sections ---
+
+export const createSectionSchema = z.object({
+  title: z.string().min(1, 'Le titre est requis').max(200),
+  section_type: z.enum(['blocks', 'reference']),
+  referenced_content_id: z.string().uuid().optional().nullable(),
+  sort_order: z.number().int().min(0).optional(),
+});
+
+export const updateSectionSchema = z
+  .object({
+    title: z.string().min(1).max(200).optional(),
+    section_type: z.enum(['blocks', 'reference']).optional(),
+    referenced_content_id: z.string().uuid().optional().nullable(),
+  })
+  .refine(data => Object.keys(data).length > 0, {
+    message: 'Au moins un champ doit être fourni',
+  });
+
+export const reorderSectionsSchema = z.object({
+  section_ids: z.array(z.string().uuid()),
+});
+
+// --- Blocs ---
+
+export const createBlockSchema = z.object({
+  block_type: z.enum(['rich_text', 'video', 'pdf', 'image']),
+  body: z.string().optional().nullable(),
+  media_url: z.string().url('URL invalide').optional().nullable(),
+  media_type: z.enum(['youtube', 'vimeo']).optional().nullable(),
+  file_url: z.string().optional().nullable(),
+  file_name: z.string().optional().nullable(),
+  file_size: z.number().int().min(0).optional().nullable(),
+  sort_order: z.number().int().min(0).optional(),
+});
+
+export const updateBlockSchema = z
+  .object({
+    block_type: z.enum(['rich_text', 'video', 'pdf', 'image']).optional(),
+    body: z.string().optional().nullable(),
+    media_url: z.string().url().optional().nullable(),
+    media_type: z.enum(['youtube', 'vimeo']).optional().nullable(),
+    file_url: z.string().optional().nullable(),
+    file_name: z.string().optional().nullable(),
+    file_size: z.number().int().min(0).optional().nullable(),
+  })
+  .refine(data => Object.keys(data).length > 0, {
+    message: 'Au moins un champ doit être fourni',
+  });
+
+export const reorderBlocksSchema = z.object({
+  block_ids: z.array(z.string().uuid()),
+});
+
+// --- Quizz ---
+
+export const createQuizSchema = z.object({
+  chapter_id: z.string().uuid().optional().nullable(),
+  title: z.string().min(1, 'Le titre est requis').max(200),
+  description: z.string().max(1000).optional().nullable(),
+  passing_score: z.number().int().min(0).max(100).default(70),
+  sort_order: z.number().int().min(0).optional(),
+});
+
+export const updateQuizSchema = z
+  .object({
+    title: z.string().min(1).max(200).optional(),
+    description: z.string().max(1000).optional().nullable(),
+    passing_score: z.number().int().min(0).max(100).optional(),
+  })
+  .refine(data => Object.keys(data).length > 0, {
+    message: 'Au moins un champ doit être fourni',
+  });
+
+// --- Questions ---
+
+const quizOptionSchema = z.object({
+  text: z.string().max(500).default(''),
+  is_correct: z.boolean(),
+});
+
+export const createQuestionSchema = z.object({
+  question_type: z.enum(['mcq', 'true_false']),
+  question_text: z.string().max(2000).default(''),
+  options: z.array(quizOptionSchema).default([]),
+  correct_answer: z.boolean().optional().nullable(),
+  explanation: z.string().max(2000).optional().nullable(),
+  sort_order: z.number().int().min(0).optional(),
+});
+
+export const updateQuestionSchema = z
+  .object({
+    question_type: z.enum(['mcq', 'true_false']).optional(),
+    question_text: z.string().min(1).max(2000).optional(),
+    options: z.array(quizOptionSchema).optional(),
+    correct_answer: z.boolean().optional().nullable(),
+    explanation: z.string().max(2000).optional().nullable(),
+  })
+  .refine(data => Object.keys(data).length > 0, {
+    message: 'Au moins un champ doit être fourni',
+  });
+
+// --- Quiz Submit (patient) ---
+
+const quizAnswerSchema = z.object({
+  question_id: z.string().uuid(),
+  selected_options: z.array(z.number().int().min(0)).optional(),
+  answer: z.boolean().optional(),
+});
+
+export const submitQuizSchema = z.object({
+  answers: z.array(quizAnswerSchema).min(1, 'Au moins une réponse est requise'),
+});
+
+// --- Prerequis ---
+
+export const createPrerequisiteSchema = z.object({
+  prerequisite_course_id: z.string().uuid('ID du cours prérequis invalide'),
+  require_completion: z.boolean().default(true),
+  require_quiz_score: z.boolean().default(false),
+  min_quiz_score: z.number().int().min(0).max(100).default(70),
+});
+
+// --- Badge ---
+
+export const upsertBadgeSchema = z.object({
+  badge_name: z.string().min(1, 'Le nom du badge est requis').max(100),
+  badge_icon: z.string().min(1, "L'icône est requise"),
+  points_awarded: z.number().int().min(0).default(50),
+});
+
+// --- Time tracking (patient) ---
+
+export const trackTimeSchema = z.object({
+  seconds: z.number().int().min(1).max(3600, 'Maximum 1 heure par envoi'),
+});
+
+// --- Duplication ---
+
+export const duplicateCourseSchema = z.object({
+  new_title: z
+    .string()
+    .min(3, 'Le titre doit contenir au moins 3 caractères')
+    .max(200),
+});
+
+// Types exports
+export type CreateChapterData = z.infer<typeof createChapterSchema>;
+export type UpdateChapterData = z.infer<typeof updateChapterSchema>;
+export type CreateSectionData = z.infer<typeof createSectionSchema>;
+export type UpdateSectionData = z.infer<typeof updateSectionSchema>;
+export type CreateBlockData = z.infer<typeof createBlockSchema>;
+export type UpdateBlockData = z.infer<typeof updateBlockSchema>;
+export type CreateQuizData = z.infer<typeof createQuizSchema>;
+export type UpdateQuizData = z.infer<typeof updateQuizSchema>;
+export type CreateQuestionData = z.infer<typeof createQuestionSchema>;
+export type UpdateQuestionData = z.infer<typeof updateQuestionSchema>;
+export type SubmitQuizData = z.infer<typeof submitQuizSchema>;
+export type CreatePrerequisiteData = z.infer<typeof createPrerequisiteSchema>;
+export type UpsertBadgeData = z.infer<typeof upsertBadgeSchema>;
+export type DuplicateCourseData = z.infer<typeof duplicateCourseSchema>;
+
+// =====================================================
+// SCHÉMAS POUR LES RECETTES (RECIPE-N-001, RECIPE-N-002)
+// =====================================================
+
+const recipeDifficultySchema = z.enum(['easy', 'medium', 'hard']);
+const recipeStatusSchema = z.enum(['draft', 'published']);
+
+export const createRecipeSchema = z.object({
+  title: z
+    .string()
+    .min(3, 'Le titre doit contenir au moins 3 caractères')
+    .max(200, 'Le titre ne peut pas dépasser 200 caractères'),
+  description: z
+    .string()
+    .max(2000, 'La description ne peut pas dépasser 2000 caractères')
+    .optional()
+    .nullable(),
+  category_id: z
+    .string()
+    .uuid('ID de catégorie invalide')
+    .optional()
+    .nullable(),
+  difficulty: recipeDifficultySchema.default('easy'),
+  prep_time_minutes: z.number().int().min(0).default(0),
+  cook_time_minutes: z.number().int().min(0).default(0),
+  servings: z.number().int().min(1).max(100).default(2),
+  image_url: z.string().url('URL invalide').optional().nullable(),
+  tips: z.string().max(2000).optional().nullable(),
+  tags: z.array(z.string().uuid()).default([]),
+  diet_types: z.array(z.string().uuid()).default([]),
+});
+
+export const updateRecipeSchema = z
+  .object({
+    title: z.string().min(3).max(200).optional(),
+    description: z.string().max(2000).optional().nullable(),
+    category_id: z.string().uuid().optional().nullable(),
+    difficulty: recipeDifficultySchema.optional(),
+    prep_time_minutes: z.number().int().min(0).optional(),
+    cook_time_minutes: z.number().int().min(0).optional(),
+    servings: z.number().int().min(1).max(100).optional(),
+    image_url: z.string().url().optional().nullable(),
+    tips: z.string().max(2000).optional().nullable(),
+    tags: z.array(z.string().uuid()).optional(),
+    diet_types: z.array(z.string().uuid()).optional(),
+  })
+  .refine(data => Object.keys(data).length > 0, {
+    message: 'Au moins un champ doit être fourni',
+  });
+
+// Ingrédients (bulk upsert)
+const recipeIngredientItemSchema = z.object({
+  id: z.string().uuid().optional(), // existing ingredient to update
+  food_id: z.string().uuid().optional().nullable(),
+  name: z.string().min(1, "Le nom de l'ingrédient est requis").max(200),
+  quantity: z.string().min(1, 'La quantité est requise').max(50),
+  quantity_value: z.number().min(0).optional().nullable(),
+  quantity_unit: z.string().max(30).optional().nullable(),
+  is_optional: z.boolean().default(false),
+  substitution_notes: z.string().max(500).optional().nullable(),
+  group_name: z.string().max(100).optional().nullable(),
+  display_order: z.number().int().min(0).default(0),
+});
+
+export const upsertRecipeIngredientsSchema = z.object({
+  ingredients: z.array(recipeIngredientItemSchema),
+});
+
+// Étapes (bulk upsert)
+const recipeStepItemSchema = z.object({
+  id: z.string().uuid().optional(),
+  step_number: z.number().int().min(1),
+  instruction: z.string().min(1, "L'instruction est requise").max(2000),
+  duration_minutes: z.number().int().min(0).optional().nullable(),
+  image_url: z.string().url().optional().nullable(),
+  tips: z.string().max(500).optional().nullable(),
+});
+
+export const upsertRecipeStepsSchema = z.object({
+  steps: z.array(recipeStepItemSchema).min(1, 'Au moins une étape est requise'),
+});
+
+// Duplication
+export const duplicateRecipeSchema = z.object({
+  new_title: z
+    .string()
+    .min(3, 'Le titre doit contenir au moins 3 caractères')
+    .max(200),
+});
+
+// Types exports
+export type CreateRecipeData = z.infer<typeof createRecipeSchema>;
+export type UpdateRecipeData = z.infer<typeof updateRecipeSchema>;
+export type RecipeIngredientItem = z.infer<typeof recipeIngredientItemSchema>;
+export type UpsertRecipeIngredientsData = z.infer<
+  typeof upsertRecipeIngredientsSchema
+>;
+export type RecipeStepItem = z.infer<typeof recipeStepItemSchema>;
+export type UpsertRecipeStepsData = z.infer<typeof upsertRecipeStepsSchema>;
+export type DuplicateRecipeData = z.infer<typeof duplicateRecipeSchema>;
+
+// =====================================================
+// SCHÉMAS RECETTES PHASE 3 (REC-004, REC-005, REC-006)
+// =====================================================
+
+// Rating (REC-004)
+export const recipeRatingSchema = z.object({
+  rating: z.number().int().min(1).max(5),
+  comment: z
+    .string()
+    .max(1000, 'Le commentaire ne peut pas dépasser 1000 caractères')
+    .optional()
+    .nullable(),
+});
+
+// Log recipe as meal (REC-005)
+export const logRecipeAsMealSchema = z.object({
+  meal_type: z.enum(['breakfast', 'lunch', 'dinner', 'snack']),
+  date: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Format de date invalide (YYYY-MM-DD)'),
+  servings_multiplier: z.number().min(0.25).max(10).default(1),
+});
+
+// Shopping list (REC-006)
+export const addRecipeToShoppingListSchema = z.object({
+  recipe_id: z.string().uuid('ID de recette invalide'),
+  servings_multiplier: z.number().min(0.25).max(10).default(1),
+  excluded_ingredient_ids: z.array(z.string()).default([]),
+});
+
+export const updateShoppingListItemSchema = z.object({
+  is_checked: z.boolean().optional(),
+  quantity: z.string().max(50).optional(),
+  notes: z.string().max(200).optional().nullable(),
+});
+
+export type RecipeRatingData = z.infer<typeof recipeRatingSchema>;
+export type LogRecipeAsMealData = z.infer<typeof logRecipeAsMealSchema>;
+export type AddRecipeToShoppingListData = z.infer<
+  typeof addRecipeToShoppingListSchema
+>;
+export type UpdateShoppingListItemData = z.infer<
+  typeof updateShoppingListItemSchema
+>;
+
+// =====================================================
+// SCHÉMAS RECETTES PHASE 4 (RECIPE-N-003, RECIPE-N-004)
+// =====================================================
+
+// Recipe assignment (RECIPE-N-003)
+export const assignRecipeSchema = z.object({
+  patient_ids: z
+    .array(z.string().uuid('ID patient invalide'))
+    .min(1, 'Au moins un patient doit être sélectionné')
+    .max(50, 'Maximum 50 patients par assignation'),
+  note: z
+    .string()
+    .max(500, 'La note ne peut pas dépasser 500 caractères')
+    .optional()
+    .nullable(),
+});
+
+export type AssignRecipeData = z.infer<typeof assignRecipeSchema>;

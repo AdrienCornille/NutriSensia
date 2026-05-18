@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, use } from 'react';
+import dynamic from 'next/dynamic';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
   Loader2,
@@ -8,77 +9,228 @@ import {
   MessageSquare,
   FileText,
   ClipboardList,
+  ClipboardCheck,
   FolderOpen,
+  Calendar,
   Utensils,
   TrendingUp,
   MessageCircle,
   Calculator,
+  ChevronLeft,
+  CalendarPlus,
+  MoreVertical,
+  Target,
 } from 'lucide-react';
 import { useNutritionistPatientDetail } from '@/hooks/useNutritionistPatients';
-import { PatientSyntheseTab } from '@/components/nutritionist/patients/PatientSyntheseTab';
-import { PatientDossierTab } from '@/components/nutritionist/dossier/PatientDossierTab';
-import { ConsultationsTab } from '@/components/nutritionist/dossier/consultations';
-import { MealPlanTab } from '@/components/nutritionist/meal-plans';
-import { SuiviTab } from '@/components/nutritionist/suivi';
-import { NutritionalProfileTab } from '@/components/nutritionist/nutritional-profiles';
+import { useDossierSummary } from '@/hooks/useNutritionistDossier';
 import { formatConsultationReason } from '@/lib/utils';
+
+// Lazy-load tab content — each tab is heavy (forms, charts, lists) and only one
+// is visible at a time. Splits into 7 chunks loaded on-demand on tab click.
+const TabLoadingFallback = () => (
+  <div className='flex items-center justify-center min-h-[40vh]'>
+    <Loader2
+      className='w-8 h-8 animate-spin'
+      style={{ color: 'var(--ns-peps-deep)' }}
+    />
+  </div>
+);
+
+const PatientSyntheseTab = dynamic(
+  () =>
+    import('@/components/nutritionist/patients/PatientSyntheseTab').then(
+      m => m.PatientSyntheseTab
+    ),
+  { ssr: false, loading: TabLoadingFallback }
+);
+
+const PatientMessagesTab = dynamic(
+  () =>
+    import('@/components/nutritionist/patients/PatientMessagesTab').then(
+      m => m.PatientMessagesTab
+    ),
+  { ssr: false, loading: TabLoadingFallback }
+);
+
+// Dossier sub-components — promoted to top-level tabs (v3 flat structure).
+// Imported directly (not via PatientDossierTab orchestrator, which is deprecated).
+const NutritionistAnamneseView = dynamic(
+  () =>
+    import('@/components/nutritionist/dossier/anamnese/NutritionistAnamneseView').then(
+      m => m.NutritionistAnamneseView
+    ),
+  { ssr: false, loading: TabLoadingFallback }
+);
+
+const NutritionistQuestionnairesView = dynamic(
+  () =>
+    import('@/components/nutritionist/dossier/questionnaires/NutritionistQuestionnairesView').then(
+      m => m.NutritionistQuestionnairesView
+    ),
+  { ssr: false, loading: TabLoadingFallback }
+);
+
+const NutritionistDocumentsView = dynamic(
+  () =>
+    import('@/components/nutritionist/dossier/documents/NutritionistDocumentsView').then(
+      m => m.NutritionistDocumentsView
+    ),
+  { ssr: false, loading: TabLoadingFallback }
+);
+
+const ConsultationsTab = dynamic(
+  () =>
+    import('@/components/nutritionist/dossier/consultations/ConsultationsTab').then(
+      m => m.ConsultationsTab
+    ),
+  { ssr: false, loading: TabLoadingFallback }
+);
+
+const NutritionistObjectivesView = dynamic(
+  () =>
+    import('@/components/nutritionist/dossier/objectives/NutritionistObjectivesView').then(
+      m => m.NutritionistObjectivesView
+    ),
+  { ssr: false, loading: TabLoadingFallback }
+);
+
+const MealPlanTab = dynamic(
+  () =>
+    import('@/components/nutritionist/meal-plans/MealPlanTab').then(
+      m => m.MealPlanTab
+    ),
+  { ssr: false, loading: TabLoadingFallback }
+);
+
+const SuiviTab = dynamic(
+  () =>
+    import('@/components/nutritionist/suivi/SuiviTab').then(m => m.SuiviTab),
+  { ssr: false, loading: TabLoadingFallback }
+);
+
+const NutritionalProfileTab = dynamic(
+  () =>
+    import('@/components/nutritionist/nutritional-profiles/NutritionalProfileTab').then(
+      m => m.NutritionalProfileTab
+    ),
+  { ssr: false, loading: TabLoadingFallback }
+);
 
 // ==================== TYPES ====================
 
 type PatientTab =
   | 'synthese'
-  | 'dossier'
+  | 'anamnese'
+  | 'questionnaires'
+  | 'documents'
+  | 'consultations'
+  | 'objectifs'
   | 'profil'
   | 'plan'
   | 'suivi'
-  | 'consultations'
   | 'messages';
 
-const tabs: { id: PatientTab; label: string; icon: React.ElementType }[] = [
-  { id: 'synthese', label: 'Synthèse', icon: ClipboardList },
-  { id: 'dossier', label: 'Dossier', icon: FolderOpen },
-  { id: 'profil', label: 'Profil nutritionnel', icon: Calculator },
-  { id: 'plan', label: 'Plan alimentaire', icon: Utensils },
-  { id: 'suivi', label: 'Suivi', icon: TrendingUp },
-  { id: 'consultations', label: 'Consultations', icon: FileText },
-  { id: 'messages', label: 'Messages', icon: MessageCircle },
+type TabGroup = 'dossier' | 'autre';
+
+const tabs: {
+  id: PatientTab;
+  label: string;
+  icon: React.ElementType;
+  group: TabGroup;
+}[] = [
+  // ─── Groupe Dossier (flat v3) ───
+  { id: 'synthese', label: 'Synthèse', icon: ClipboardList, group: 'dossier' },
+  { id: 'anamnese', label: 'Anamnèse', icon: FileText, group: 'dossier' },
+  {
+    id: 'questionnaires',
+    label: 'Questionnaires',
+    icon: ClipboardCheck,
+    group: 'dossier',
+  },
+  { id: 'documents', label: 'Documents', icon: FolderOpen, group: 'dossier' },
+  {
+    id: 'consultations',
+    label: 'Consultations',
+    icon: Calendar,
+    group: 'dossier',
+  },
+  { id: 'objectifs', label: 'Objectifs', icon: Target, group: 'dossier' },
+  // ─── Groupe Autre ───
+  {
+    id: 'profil',
+    label: 'Profil nutritionnel',
+    icon: Calculator,
+    group: 'autre',
+  },
+  {
+    id: 'plan',
+    label: 'Plan alimentaire',
+    icon: Utensils,
+    group: 'autre',
+  },
+  { id: 'suivi', label: 'Suivi', icon: TrendingUp, group: 'autre' },
+  { id: 'messages', label: 'Messages', icon: MessageCircle, group: 'autre' },
 ];
 
 const statusConfig: Record<
   string,
-  { label: string; bgColor: string; textColor: string }
+  { label: string; chipClass: string; bannerClass: string; barClass: string }
 > = {
   active: {
-    label: 'Actif',
-    bgColor: 'bg-[#1B998B]/10',
-    textColor: 'text-[#1B998B]',
+    label: 'Suivi actif',
+    chipClass: '',
+    bannerClass: '',
+    barClass: '',
   },
   pending: {
     label: 'Nouveau',
-    bgColor: 'bg-amber-100',
-    textColor: 'text-amber-700',
+    chipClass: 'is-pending',
+    bannerClass: 'is-pending',
+    barClass: 'is-pending',
   },
   inactive: {
     label: 'En pause',
-    bgColor: 'bg-gray-100',
-    textColor: 'text-gray-600',
+    chipClass: 'is-inactive',
+    bannerClass: 'is-inactive',
+    barClass: 'is-inactive',
   },
 };
 
-// ==================== PLACEHOLDER TAB ====================
+// ==================== HELPERS ====================
 
-function PlaceholderTab({ label }: { label: string }) {
-  return (
-    <div className='bg-white rounded-xl border border-gray-200 p-12 text-center'>
-      <div className='w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4'>
-        <FileText className='w-8 h-8 text-gray-300' />
-      </div>
-      <p className='text-gray-800 font-medium mb-1'>{label}</p>
-      <p className='text-gray-500 text-sm'>
-        Cette section sera disponible prochainement.
-      </p>
-    </div>
-  );
+function computeAge(birthDate: string | null): number | null {
+  if (!birthDate) return null;
+  const today = new Date();
+  const birth = new Date(birthDate);
+  let age = today.getFullYear() - birth.getFullYear();
+  const m = today.getMonth() - birth.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+  return age;
+}
+
+function formatGender(g: string | null): string | null {
+  if (!g) return null;
+  const lower = g.toLowerCase();
+  if (lower === 'male' || lower === 'm' || lower === 'homme') return 'Homme';
+  if (lower === 'female' || lower === 'f' || lower === 'femme') return 'Femme';
+  return g;
+}
+
+function formatFollowUpDuration(assignedAt: string | null): string | null {
+  if (!assignedAt) return null;
+  const start = new Date(assignedAt);
+  const now = new Date();
+  const diffMs = now.getTime() - start.getTime();
+  if (diffMs < 0) return null;
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  if (diffDays < 30) return `Suivi · ${diffDays} j`;
+  const diffMonths = Math.floor(diffDays / 30);
+  if (diffMonths < 12) return `Suivi · ${diffMonths} mois`;
+  const years = Math.floor(diffMonths / 12);
+  const months = diffMonths % 12;
+  return months > 0
+    ? `Suivi · ${years} an${years > 1 ? 's' : ''} ${months} m`
+    : `Suivi · ${years} an${years > 1 ? 's' : ''}`;
 }
 
 // ==================== PAGE COMPONENT ====================
@@ -99,27 +251,34 @@ export default function NutritionistPatientDetailPage({
 
   // Sync tab from URL params (e.g., after redirect from agenda)
   useEffect(() => {
-    if (tabParam && tabs.some(t => t.id === tabParam) && tabParam !== activeTab) {
+    if (
+      tabParam &&
+      tabs.some(t => t.id === tabParam) &&
+      tabParam !== activeTab
+    ) {
       setActiveTab(tabParam);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tabParam]);
 
   const { data, isLoading, error } = useNutritionistPatientDetail(id);
+  // Aggregated summary used to drive tab badge counts (Anamnèse signalements, Questionnaires pending).
+  // Returns `undefined` while loading — badges stay hidden until data arrives.
+  const { data: dossierSummary } = useDossierSummary(id);
 
   // Loading state
   if (isLoading) {
     return (
-      <div className='min-h-screen bg-gray-100'>
-        <header className='bg-white border-b border-gray-200 px-8 h-[93px] flex items-center sticky top-0 z-10'>
-          <h1 className='text-2xl font-semibold text-gray-800'>
-            Dossier patient
-          </h1>
-        </header>
+      <div className='px-9 pb-16'>
         <div className='flex items-center justify-center min-h-[60vh]'>
           <div className='text-center'>
-            <Loader2 className='w-8 h-8 animate-spin text-[#1B998B] mx-auto mb-3' />
-            <p className='text-gray-500 text-sm'>Chargement du dossier...</p>
+            <Loader2
+              className='w-8 h-8 animate-spin mx-auto mb-3'
+              style={{ color: 'var(--ns-peps-deep)' }}
+            />
+            <p className='ns2-body' style={{ color: 'var(--ns-ink-3)' }}>
+              Chargement du dossier…
+            </p>
           </div>
         </div>
       </div>
@@ -129,26 +288,28 @@ export default function NutritionistPatientDetailPage({
   // Error state
   if (error || !data) {
     return (
-      <div className='min-h-screen bg-gray-100'>
-        <header className='bg-white border-b border-gray-200 px-8 h-[93px] flex items-center sticky top-0 z-10'>
-          <h1 className='text-2xl font-semibold text-gray-800'>
-            Dossier patient
-          </h1>
-        </header>
+      <div className='px-9 pb-16'>
         <div className='flex items-center justify-center min-h-[60vh]'>
           <div className='text-center'>
-            <AlertCircle className='w-8 h-8 text-red-500 mx-auto mb-3' />
-            <p className='text-gray-800 font-medium mb-1'>
+            <AlertCircle
+              className='w-8 h-8 mx-auto mb-3'
+              style={{ color: 'var(--ns-coral)' }}
+            />
+            <p
+              className='font-serif text-2xl mb-2'
+              style={{ color: 'var(--ns-ink)' }}
+            >
               Erreur de chargement
             </p>
-            <p className='text-gray-500 text-sm'>
+            <p className='ns2-body mb-4' style={{ color: 'var(--ns-ink-3)' }}>
               {error?.message || 'Patient introuvable'}
             </p>
             <button
               onClick={() => router.push('/dashboard/nutritionist/patients')}
-              className='mt-4 px-4 py-2 text-sm text-[#1B998B] hover:text-[#147569]'
+              className='fp-btn'
             >
-              ← Retour à la liste
+              <ChevronLeft className='w-3.5 h-3.5' />
+              Retour à la liste
             </button>
           </div>
         </div>
@@ -156,100 +317,197 @@ export default function NutritionistPatientDetailPage({
     );
   }
 
-  const { patient } = data;
+  const { patient, appointments_count } = data;
   const fullName = `${patient.first_name} ${patient.last_name}`;
   const initials =
     `${patient.first_name.charAt(0)}${patient.last_name.charAt(0)}`.toUpperCase();
   const status = statusConfig[patient.status] || statusConfig.active;
 
+  const age = computeAge(patient.date_of_birth);
+  const gender = formatGender(patient.gender);
+  const stickerLabel = formatFollowUpDuration(patient.assigned_at);
+  const reasonLabel = patient.consultation_reason
+    ? formatConsultationReason(patient.consultation_reason)
+    : null;
+  const sinceLabel = patient.assigned_at
+    ? `Patient depuis le ${new Date(patient.assigned_at).toLocaleDateString(
+        'fr-FR',
+        { day: 'numeric', month: 'long', year: 'numeric' }
+      )}`
+    : null;
+  const sessionsLabel =
+    appointments_count > 0
+      ? `${appointments_count} séance${appointments_count > 1 ? 's' : ''}`
+      : null;
+
+  // Split last name to italicize it for editorial effect (matches Fraunces italic accent)
+  const firstNameDisplay = patient.first_name;
+  const lastNameDisplay = patient.last_name;
+
   return (
-    <div className='min-h-screen bg-gray-100'>
-      {/* Header */}
-      <header className='bg-white border-b border-gray-200 px-8 h-[93px] flex items-center sticky top-0 z-10'>
-        <div className='flex items-center justify-between w-full'>
-          <div className='flex items-center gap-4'>
-            {patient.avatar_url ? (
-              <img
-                src={patient.avatar_url}
-                alt={fullName}
-                className='w-10 h-10 rounded-full object-cover'
-              />
-            ) : (
-              <div className='w-10 h-10 bg-[#1B998B] rounded-full flex items-center justify-center text-white font-semibold'>
-                {initials}
-              </div>
-            )}
-            <div>
-              <div className='flex items-center gap-2'>
-                <h1 className='text-lg font-semibold text-gray-800'>
-                  {fullName}
-                </h1>
-                <span
-                  className={`px-2 py-0.5 rounded-full text-xs font-medium ${status.bgColor} ${status.textColor}`}
-                >
-                  {status.label}
+    <div className='px-9 pb-16'>
+      {/* ─── Hero patient ─── */}
+      <section className='fp-hero'>
+        {stickerLabel && (
+          <span className='fp-hero-sticker'>{stickerLabel}</span>
+        )}
+
+        <div className='fp-hero-left'>
+          <span
+            className={`fp-hero-avatar ${
+              patient.status === 'pending'
+                ? 'is-pending'
+                : patient.status === 'inactive'
+                  ? 'is-inactive'
+                  : ''
+            }`}
+            style={
+              patient.avatar_url
+                ? { backgroundImage: `url(${patient.avatar_url})` }
+                : undefined
+            }
+            aria-label={fullName}
+          >
+            {!patient.avatar_url && initials}
+            <span className='fp-status-dot' aria-hidden='true' />
+          </span>
+
+          <div className='min-w-0'>
+            <span className='fp-eyebrow'>
+              Fiche patient
+              {sinceLabel ? <> · {sinceLabel}</> : null}
+            </span>
+            <h1 className='fp-hero-name'>
+              {firstNameDisplay} <em>{lastNameDisplay}</em>
+              <span className={`fp-hero-chip ${status.chipClass}`}>
+                {status.label}
+              </span>
+            </h1>
+            <div className='fp-hero-meta'>
+              {reasonLabel && (
+                <span className='fp-pill-obj'>
+                  <Target className='w-3.5 h-3.5' />
+                  {reasonLabel}
                 </span>
-              </div>
-              <p className='text-sm text-gray-500'>
-                {patient.email}
-                {patient.consultation_reason && (
-                  <>
-                    <span className='mx-1.5'>·</span>
-                    {formatConsultationReason(patient.consultation_reason)}
-                  </>
-                )}
-              </p>
+              )}
+              {(age || gender) && (
+                <>
+                  {reasonLabel && (
+                    <span className='fp-hero-meta-sep' aria-hidden='true' />
+                  )}
+                  <span>
+                    {age && <>{age} ans</>}
+                    {age && gender && ' · '}
+                    {gender}
+                  </span>
+                </>
+              )}
+              {sessionsLabel && (
+                <>
+                  <span className='fp-hero-meta-sep' aria-hidden='true' />
+                  <span>{sessionsLabel}</span>
+                </>
+              )}
+              <span className='fp-hero-meta-sep' aria-hidden='true' />
+              <a href={`mailto:${patient.email}`}>{patient.email}</a>
+              {patient.phone && (
+                <>
+                  <span className='fp-hero-meta-sep' aria-hidden='true' />
+                  <a href={`tel:${patient.phone}`}>{patient.phone}</a>
+                </>
+              )}
             </div>
           </div>
-
-          <div className='flex gap-3'>
-            <button
-              onClick={() => router.push('/dashboard/nutritionist/messagerie')}
-              className='flex items-center gap-2 px-4 py-2 bg-[#1B998B] text-white rounded-lg hover:bg-[#147569] transition-colors text-sm font-medium'
-            >
-              <MessageSquare className='w-4 h-4' />
-              Message
-            </button>
-            <button
-              onClick={() => router.push('/dashboard/nutritionist/patients')}
-              className='px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-800 transition-colors'
-            >
-              Retour aux patients
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <div className='px-8 py-6'>
-        {/* Tab Navigation */}
-        <div className='mb-6'>
-          <div className='flex gap-1 bg-gray-100 p-1 rounded-xl w-fit'>
-            {tabs.map(tab => {
-              const Icon = tab.icon;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    activeTab === tab.id
-                      ? 'bg-white text-gray-800 shadow-sm'
-                      : 'text-gray-500 hover:text-gray-700'
-                  }`}
-                >
-                  <Icon className='w-4 h-4' />
-                  {tab.label}
-                </button>
-              );
-            })}
-          </div>
         </div>
 
-        {/* Tab Content */}
+        <div className='fp-hero-actions'>
+          <button
+            className='fp-btn fp-btn-icon'
+            aria-label="Plus d'actions"
+            title="Plus d'actions"
+            type='button'
+          >
+            <MoreVertical className='w-4 h-4' />
+          </button>
+          <button
+            type='button'
+            className='fp-btn'
+            onClick={() => router.push('/dashboard/nutritionist/patients')}
+          >
+            <ChevronLeft className='w-3.5 h-3.5' />
+            Retour
+          </button>
+          <button
+            type='button'
+            className='fp-btn fp-btn-peps'
+            onClick={() => setActiveTab('messages')}
+          >
+            <MessageSquare className='w-3.5 h-3.5' />
+            Message
+          </button>
+          <button
+            type='button'
+            className='fp-btn fp-btn-dark'
+            onClick={() => router.push('/dashboard/nutritionist/agenda')}
+          >
+            <CalendarPlus className='w-3.5 h-3.5' />
+            Planifier RDV
+          </button>
+        </div>
+      </section>
+
+      {/* ─── Tabs (flat v3 — Dossier group + separator + Autre group) ─── */}
+      <div className='fp-tabs' role='tablist'>
+        {tabs.map((tab, index) => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.id;
+          const prevTab = tabs[index - 1];
+          const showSeparator = prevTab && prevTab.group !== tab.group;
+
+          // Tab badges driven by useDossierSummary.
+          // Anamnèse no longer carries a badge: change-reports are removed
+          // from the simplified UI.
+          let badge: { count: number; coral?: boolean } | null = null;
+          if (
+            tab.id === 'questionnaires' &&
+            dossierSummary?.pending_questionnaires
+          ) {
+            badge = { count: dossierSummary.pending_questionnaires };
+          }
+
+          return (
+            <React.Fragment key={tab.id}>
+              {showSeparator && (
+                <span className='fp-tab-sep' aria-hidden='true' />
+              )}
+              <button
+                type='button'
+                role='tab'
+                aria-selected={isActive}
+                onClick={() => setActiveTab(tab.id)}
+                className={`fp-tab ${isActive ? 'is-active' : ''}`}
+              >
+                <Icon className='w-3.5 h-3.5' />
+                {tab.label}
+                {badge && (
+                  <span
+                    className={`fp-tab-count ${badge.coral ? 'is-coral' : ''}`}
+                  >
+                    {badge.count}
+                  </span>
+                )}
+              </button>
+            </React.Fragment>
+          );
+        })}
+      </div>
+
+      {/* ─── Tab Content ─── */}
+      <div className='fp-pane' key={activeTab}>
         {activeTab === 'synthese' && <PatientSyntheseTab data={data} />}
-        {activeTab === 'dossier' && (
-          <PatientDossierTab
+        {activeTab === 'anamnese' && (
+          <NutritionistAnamneseView
             patientId={patient.id}
-            patientName={fullName}
             patientFirstName={patient.first_name}
             patientLastName={patient.last_name}
             patientEmail={patient.email}
@@ -257,14 +515,11 @@ export default function NutritionistPatientDetailPage({
             patientConsultationReason={patient.consultation_reason || undefined}
           />
         )}
-        {activeTab === 'profil' && (
-          <NutritionalProfileTab patientId={patient.id} patientName={fullName} />
+        {activeTab === 'questionnaires' && (
+          <NutritionistQuestionnairesView patientId={patient.id} />
         )}
-        {activeTab === 'plan' && (
-          <MealPlanTab patientId={patient.id} patientName={fullName} />
-        )}
-        {activeTab === 'suivi' && (
-          <SuiviTab patientId={patient.id} patientName={fullName} />
+        {activeTab === 'documents' && (
+          <NutritionistDocumentsView patientId={patient.id} />
         )}
         {activeTab === 'consultations' && (
           <ConsultationsTab
@@ -273,7 +528,27 @@ export default function NutritionistPatientDetailPage({
             fromAppointmentId={fromAppointment || undefined}
           />
         )}
-        {activeTab === 'messages' && <PlaceholderTab label='Messages' />}
+        {activeTab === 'objectifs' && (
+          <NutritionistObjectivesView patientId={patient.id} />
+        )}
+        {activeTab === 'profil' && (
+          <NutritionalProfileTab
+            patientId={patient.id}
+            patientName={fullName}
+          />
+        )}
+        {activeTab === 'plan' && (
+          <MealPlanTab patientId={patient.id} patientName={fullName} />
+        )}
+        {activeTab === 'suivi' && (
+          <SuiviTab patientId={patient.id} patientName={fullName} />
+        )}
+        {activeTab === 'messages' && (
+          <PatientMessagesTab
+            patientUserId={patient.user_id}
+            patientName={fullName}
+          />
+        )}
       </div>
     </div>
   );

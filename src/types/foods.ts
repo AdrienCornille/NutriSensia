@@ -23,7 +23,14 @@ export type SortOption =
   | 'name-desc'
   | 'calories-asc'
   | 'calories-desc'
-  | 'protein-desc';
+  | 'protein-asc'
+  | 'protein-desc'
+  | 'carbs-asc'
+  | 'carbs-desc'
+  | 'fat-asc'
+  | 'fat-desc'
+  | 'fiber-asc'
+  | 'fiber-desc';
 
 // ==================== INTERFACES ====================
 

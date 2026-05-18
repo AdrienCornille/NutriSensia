@@ -1,64 +1,114 @@
 'use client';
 
 import React, { useRef } from 'react';
-import { cn } from '@/lib/utils';
 import { motion, useInView } from 'framer-motion';
 import { useFirstVisit } from '@/hooks/useFirstVisit';
 
 /**
- * Section "Ce qui va vraiment changer pour vous"
- *
- * Design selon le Style Guide NutriSensia (Culina Health) :
- * - Titre H2 en Marcellus (serif), 48px, #3f6655, centré
- * - Sous-titre centré
- * - 3 cartes avec illustration, titre et description
- * - Cartes avec border 1px #3f6655, border-radius 10px
- * - Box-shadow signature : 8px 8px 0 #d7e1ce
- * - Hover : translateY(-2px) translateX(-2px) + border 2px
+ * Une approche qui respecte votre vie — DS v2.
+ * Three hard-bordered cream cards with offset ink shadow and lift-on-hover.
+ * SVG icons recolored to sage / peps / ink palette. Eyebrow + display title
+ * with italic accent and lime highlight.
  */
 
 interface BenefitCard {
   id: number;
+  number: string;
+  tag: string;
   title: string;
   description: string;
   icon: React.ReactNode;
 }
 
+const SAGE = '#6b8a55';
+const SAGE_DARK = '#2d3a26';
+const SAGE_LIGHT = '#e6efd9';
+const PEPS = '#c4f048';
+const INK = '#14160f';
+const CREAM = '#faf6ea';
+const CORAL = '#ff6b4a';
+
 const benefits: BenefitCard[] = [
   {
     id: 1,
-    title: "Des solutions qui s'intègrent à votre vie",
+    number: '01',
+    tag: 'Réaliste',
+    title: 'Ça doit tenir un mardi soir, pas qu’un dimanche',
     description:
-      'Grâce à une approche centrée sur vos besoins réels, vous découvrez des solutions faciles à intégrer à votre routine. Sans sacrifices inutiles.',
+      'Un accompagnement pensé pour vos vraies semaines — celles avec les imprévus, les enfants qui boudent les courgettes, et le repas avalé à 22 h.',
     icon: (
       <svg
         viewBox='0 0 80 80'
         fill='none'
         xmlns='http://www.w3.org/2000/svg'
-        className='w-16 h-16'
+        style={{ width: '100%', height: '100%' }}
       >
-        {/* Calendrier/routine */}
         <rect
           x='12'
           y='16'
           width='56'
           height='52'
           rx='6'
-          fill='#F0F9F8'
-          stroke='#1B998B'
-          strokeWidth='2'
+          fill={CREAM}
+          stroke={INK}
+          strokeWidth='1.5'
         />
-        <rect x='12' y='16' width='56' height='14' rx='6' fill='#1B998B' />
-        <circle cx='26' cy='23' r='2' fill='#fff' />
-        <circle cx='54' cy='23' r='2' fill='#fff' />
-        <rect x='20' y='38' width='12' height='10' rx='2' fill='#E5DED6' />
-        <rect x='34' y='38' width='12' height='10' rx='2' fill='#E76F51' />
-        <rect x='48' y='38' width='12' height='10' rx='2' fill='#E5DED6' />
-        <rect x='20' y='52' width='12' height='10' rx='2' fill='#E5DED6' />
-        <rect x='34' y='52' width='12' height='10' rx='2' fill='#E5DED6' />
+        <rect x='12' y='16' width='56' height='14' rx='6' fill={INK} />
+        <circle cx='26' cy='23' r='2' fill={PEPS} />
+        <circle cx='54' cy='23' r='2' fill={PEPS} />
+        <rect
+          x='20'
+          y='38'
+          width='12'
+          height='10'
+          rx='2'
+          fill={SAGE_LIGHT}
+          stroke={INK}
+          strokeWidth='1.2'
+        />
+        <rect
+          x='34'
+          y='38'
+          width='12'
+          height='10'
+          rx='2'
+          fill={PEPS}
+          stroke={INK}
+          strokeWidth='1.2'
+        />
+        <rect
+          x='48'
+          y='38'
+          width='12'
+          height='10'
+          rx='2'
+          fill={SAGE_LIGHT}
+          stroke={INK}
+          strokeWidth='1.2'
+        />
+        <rect
+          x='20'
+          y='52'
+          width='12'
+          height='10'
+          rx='2'
+          fill={SAGE_LIGHT}
+          stroke={INK}
+          strokeWidth='1.2'
+        />
+        <rect
+          x='34'
+          y='52'
+          width='12'
+          height='10'
+          rx='2'
+          fill={SAGE_LIGHT}
+          stroke={INK}
+          strokeWidth='1.2'
+        />
         <path
-          d='M38 43 L42 47 L50 39'
-          stroke='#fff'
+          d='M37 43 L41 47 L49 39'
+          stroke={INK}
           strokeWidth='2'
           strokeLinecap='round'
           strokeLinejoin='round'
@@ -68,76 +118,120 @@ const benefits: BenefitCard[] = [
   },
   {
     id: 2,
-    title: "Le plaisir au cœur de l'accompagnement",
+    number: '02',
+    tag: 'Savoureux',
+    title: 'Le plaisir, pas en bonus — au cœur',
     description:
-      'Fini les compromis entre ce que vous aimez manger et ce qui est bon pour vous. Un équilibre qui rime avec plaisir et résultats durables.',
+      'Manger doit rester un moment qu’on attend, pas qu’on subit. On garde la gourmandise, on retire la culpabilité.',
     icon: (
       <svg
         viewBox='0 0 80 80'
         fill='none'
         xmlns='http://www.w3.org/2000/svg'
-        className='w-16 h-16'
+        style={{ width: '100%', height: '100%' }}
       >
-        {/* Coeur avec assiette */}
         <circle
           cx='40'
           cy='40'
           r='28'
-          fill='#F0F9F8'
-          stroke='#1B998B'
-          strokeWidth='2'
+          fill={SAGE_LIGHT}
+          stroke={INK}
+          strokeWidth='1.5'
         />
         <path
           d='M40 54 C28 46 24 38 28 32 C32 26 40 30 40 30 C40 30 48 26 52 32 C56 38 52 46 40 54Z'
-          fill='#E76F51'
+          fill={CORAL}
+          stroke={INK}
+          strokeWidth='1.5'
         />
         <ellipse
           cx='40'
-          cy='58'
+          cy='59'
           rx='18'
-          ry='6'
+          ry='5'
           fill='none'
-          stroke='#E5DED6'
-          strokeWidth='2'
-          strokeDasharray='4 2'
+          stroke={INK}
+          strokeWidth='1.5'
+          strokeDasharray='4 3'
         />
       </svg>
     ),
   },
   {
     id: 3,
-    title: 'Des outils pour avancer en douceur',
+    number: '03',
+    tag: 'Soutenu',
+    title: 'Une plateforme, pas un poste de surveillance',
     description:
-      "Plateforme accessible 24/7, plans personnalisés, messagerie sécurisée... Tout ce qu'il faut pour rester motivée et atteindre vos objectifs.",
+      'Plan, messagerie, suivi. Disponibles à toute heure quand vous en avez besoin. Silencieux quand vous voulez la paix.',
     icon: (
       <svg
         viewBox='0 0 80 80'
         fill='none'
         xmlns='http://www.w3.org/2000/svg'
-        className='w-16 h-16'
+        style={{ width: '100%', height: '100%' }}
       >
-        {/* Smartphone/plateforme */}
         <rect
           x='22'
           y='10'
           width='36'
           height='60'
           rx='6'
-          fill='#F0F9F8'
-          stroke='#1B998B'
-          strokeWidth='2'
+          fill={CREAM}
+          stroke={INK}
+          strokeWidth='1.5'
         />
-        <rect x='26' y='18' width='28' height='40' rx='2' fill='#fff' />
-        <circle cx='40' cy='64' r='3' fill='#1B998B' />
-        {/* Lignes de contenu */}
-        <rect x='30' y='24' width='20' height='3' rx='1' fill='#E5DED6' />
-        <rect x='30' y='30' width='16' height='3' rx='1' fill='#E5DED6' />
-        <rect x='30' y='38' width='20' height='8' rx='2' fill='#1B998B' />
-        <rect x='30' y='50' width='14' height='3' rx='1' fill='#E5DED6' />
-        {/* Checkmark */}
+        <rect
+          x='26'
+          y='18'
+          width='28'
+          height='40'
+          rx='2'
+          fill='#ffffff'
+          stroke={INK}
+          strokeWidth='1'
+        />
+        <circle cx='40' cy='64' r='3' fill={INK} />
+        <rect
+          x='30'
+          y='24'
+          width='20'
+          height='3'
+          rx='1'
+          fill={INK}
+          opacity='0.4'
+        />
+        <rect
+          x='30'
+          y='30'
+          width='16'
+          height='3'
+          rx='1'
+          fill={INK}
+          opacity='0.4'
+        />
+        <rect
+          x='30'
+          y='38'
+          width='20'
+          height='8'
+          rx='2'
+          fill={PEPS}
+          stroke={INK}
+          strokeWidth='1.2'
+        />
+        <rect
+          x='30'
+          y='50'
+          width='14'
+          height='3'
+          rx='1'
+          fill={INK}
+          opacity='0.4'
+        />
         <path
           d='M34 42 L37 45 L46 36'
-          stroke='#fff'
+          stroke={INK}
           strokeWidth='2'
           strokeLinecap='round'
           strokeLinejoin='round'
@@ -152,156 +246,136 @@ export function AccordionBenefitsSection() {
   const isInView = useInView(ref, { once: true, margin: '-100px' });
   const { isFirstVisit } = useFirstVisit();
 
-  // Animation conditionnelle basée sur première visite
-  const shouldAnimate = isFirstVisit && isInView;
   const showContent = !isFirstVisit || isInView;
-
-  // Style initial : cacher seulement si première visite
-  const getHiddenStyle = (yOffset: number) => {
-    if (!isFirstVisit) {
-      return {};
-    }
-    return {
-      opacity: 0,
-      transform: `translateY(${yOffset}px)`,
-    };
-  };
-
-  // Transition : animation seulement si première visite et en vue
-  const getTransition = (delay: number) => {
-    if (shouldAnimate) {
-      return { duration: 0.6, delay, ease: 'easeOut' as const };
-    }
-    return { duration: 0 };
-  };
+  const getHidden = (yOffset: number) =>
+    !isFirstVisit ? {} : { opacity: 0, transform: `translateY(${yOffset}px)` };
+  const getTransition = (delay: number) =>
+    isFirstVisit && isInView
+      ? { duration: 0.6, delay, ease: 'easeOut' as const }
+      : { duration: 0 };
 
   return (
     <section
       id='benefits'
       ref={ref}
       style={{
-        padding: '96px 0',
-        backgroundColor: '#FBF9F7' /* Crème Méditerranée */,
+        background: 'var(--ns-cream-200)',
+        paddingTop: 96,
+        paddingBottom: 96,
+        borderTop: 'var(--ns-bw) solid var(--ns-ink)',
+        borderBottom: 'var(--ns-bw) solid var(--ns-ink)',
       }}
     >
-      {/* Container principal - max-width 1200px */}
-      <div className='container mx-auto max-w-[1200px] px-6'>
-        {/* ============================================ */}
-        {/* HEADER SECTION - Titre + Sous-titre centrés */}
-        {/* ============================================ */}
+      <div className='ns2-container'>
+        {/* Header */}
         <motion.div
-          className='text-center'
-          style={{ marginBottom: '64px', ...getHiddenStyle(30) }}
-          animate={showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          style={{ marginBottom: 64, ...getHidden(20) }}
+          animate={showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={getTransition(0)}
         >
-          {/* H2 Title - Marcellus serif */}
           <h2
+            className='ns2-display'
             style={{
-              fontFamily: "'Marcellus', serif",
-              color: '#1B998B' /* Turquoise Méditerranée */,
-              fontSize: '48px',
-              lineHeight: '57.6px',
-              textAlign: 'center',
-              marginBottom: '24px',
-              fontWeight: 700,
+              fontSize: 'clamp(32px, 4.4vw, 56px)',
+              color: 'var(--ns-ink)',
             }}
           >
-            Une approche qui respecte votre vie
+            Une approche qui respecte{' '}
+            <span className='ns2-hl'>votre vie, pas l&apos;inverse</span>.
           </h2>
-
-          {/* Subtitle */}
-          <p
-            style={{
-              fontFamily:
-                "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-              color: '#41556b',
-              fontSize: '18px',
-              lineHeight: '28px',
-              textAlign: 'center',
-              maxWidth: '800px',
-              margin: '0 auto',
-            }}
-          >
-            Pas de régime strict, pas de culpabilité. Juste des conseils
-            personnalisés qui s'adaptent à votre rythme, vos goûts et votre
-            quotidien.
+          <p className='ns2-body-lg' style={{ marginTop: 20, maxWidth: 700 }}>
+            Vos goûts, votre rythme, votre frigo réel. On part de là — pas
+            d&apos;un plan théorique conçu pour quelqu&apos;un d&apos;autre.
           </p>
         </motion.div>
 
-        {/* ============================================ */}
-        {/* CARDS GRID - 3 colonnes                      */}
-        {/* ============================================ */}
-        <div
-          className={cn('grid', 'grid-cols-1 md:grid-cols-3')}
-          style={{ gap: '32px' }}
-        >
-          {benefits.map((benefit, index) => (
-            <motion.div
-              key={benefit.id}
+        {/* Cards */}
+        <div className='benefits-grid'>
+          {benefits.map((b, index) => (
+            <motion.article
+              key={b.id}
+              className='ns2-card'
               style={{
-                backgroundColor: '#b6ccae26',
-                border: '1px solid #e5e5e5',
-                borderRadius: '10px',
-                padding: '48px',
-                textAlign: 'center',
-                boxShadow: '8px 8px 0 #E5DED6' /* Beige sand shadow */,
-                ...getHiddenStyle(40),
+                padding: 32,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 20,
+                ...getHidden(40),
               }}
               animate={
                 showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }
               }
-              transition={getTransition(0.2 + index * 0.15)}
+              transition={getTransition(0.15 + index * 0.12)}
             >
-              {/* Icon Container */}
               <div
                 style={{
-                  width: '80px',
-                  height: '80px',
-                  margin: '0 auto 24px',
-                  backgroundColor: '#fff',
-                  borderRadius: '50%',
                   display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <span className='ns2-tag ns2-tag-sage'>{b.tag}</span>
+                <span
+                  className='ns2-display'
+                  style={{
+                    fontStyle: 'italic',
+                    fontSize: 36,
+                    color: 'var(--ns-ink-3)',
+                    lineHeight: 1,
+                  }}
+                >
+                  {b.number}
+                </span>
+              </div>
+
+              <div
+                style={{
+                  width: 88,
+                  height: 88,
+                  background: 'var(--ns-cream-100)',
+                  border: 'var(--ns-bw) solid var(--ns-ink)',
+                  borderRadius: 'var(--ns-r-md)',
+                  padding: 12,
+                  display: 'inline-flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}
               >
-                {benefit.icon}
+                {b.icon}
               </div>
 
-              {/* Card Title */}
               <h3
+                className='ns2-display'
                 style={{
-                  fontFamily:
-                    "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-                  color: '#1B998B' /* Turquoise Méditerranée */,
-                  fontSize: '18px',
-                  fontWeight: 700,
-                  lineHeight: '27px',
-                  textAlign: 'center',
-                  marginBottom: '16px',
+                  fontSize: 24,
+                  color: 'var(--ns-ink)',
+                  lineHeight: 1.05,
                 }}
               >
-                {benefit.title}
+                {b.title}
               </h3>
 
-              {/* Card Description */}
-              <p
-                style={{
-                  fontFamily:
-                    "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-                  color: '#41556b',
-                  fontSize: '16px',
-                  lineHeight: '24px',
-                  textAlign: 'center',
-                }}
-              >
-                {benefit.description}
+              <p className='ns2-body' style={{ marginTop: 'auto' }}>
+                {b.description}
               </p>
-            </motion.div>
+            </motion.article>
           ))}
         </div>
       </div>
+
+      <style jsx>{`
+        .benefits-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 32px;
+        }
+        @media (max-width: 1024px) {
+          .benefits-grid {
+            grid-template-columns: 1fr;
+            gap: 24px;
+          }
+        }
+      `}</style>
     </section>
   );
 }
