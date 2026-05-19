@@ -1,6 +1,6 @@
 # NutriSensia - User Stories Dashboard Nutritionniste
 
-> **Version 2.1** | Février 2026 | 82 user stories | 10 épics + Phase 2.5
+> **Version 2.1** | Février 2026 | 83 user stories | 10 épics + Phase 2.5
 
 ---
 
@@ -9,7 +9,7 @@
 | Métrique                     | Valeur         |
 | ---------------------------- | -------------- |
 | Nombre total d'épics         | 10 + Phase 2.5 |
-| Nombre total de user stories | 84             |
+| Nombre total de user stories | 85             |
 | Must Have                    | 35 (43%)       |
 | Should Have                  | 37 (45%)       |
 | Could Have                   | 10 (12%)       |
@@ -432,7 +432,7 @@ const useNotifications = () => {
 
 ## Epic 3 : Dossier & Anamnèse patient
 
-> 10 user stories | ✅ 10 | ⚠️ 0 | ❌ 0
+> 11 user stories | ✅ 10 | ⚠️ 0 | ❌ 1
 
 **Dépendances** : Aucune
 
@@ -633,6 +633,50 @@ const useNotifications = () => {
 **Statut actuel** : Complet pour JSON. Manque : format PDF, anonymisation, sélection des sections.
 
 **💡 Notes Claude Code** : Utiliser la fonction DB `export_patient_file(patient_id)`. Pour le PDF, utiliser puppeteer ou pdfkit.
+
+---
+
+### DOSSIER-011 - Templates personnels de questionnaires [Should Have] ❌
+
+**En tant que** nutritionniste,
+**Je veux** transformer mes questionnaires ad-hoc en templates réutilisables, les éditer (avec versioning automatique) et configurer des questions conditionnelles dessus,
+**Afin de** capitaliser sur mes formulations entre patients et créer des questionnaires intelligents qui s'adaptent au répondant, sans tout reconstruire à chaque envoi.
+
+**Critères d'acceptation — CRUD & versioning** :
+
+- ✓ Toggle "Enregistrer comme template réutilisable" dans le modal d'envoi existant (la branche ad-hoc crée alors un template publié `is_draft=false` au lieu du draft jetable)
+- ✓ Les templates personnels apparaissent dans le picker à côté des templates système (RLS déjà scope par `created_by`)
+- ✓ Menu "⋯" sur chaque card du picker pour les templates non-système : Modifier / Dupliquer / Archiver (templates `is_system=true` non éditables)
+- ✓ Édition : réouvre le modal pré-rempli ; sauvegarde sans envoi
+- ✓ Versioning automatique : si le template a au moins un assignment, l'édition crée une nouvelle version (`questionnaire_template_versions.version = N+1`, l'ancienne reste `is_published=false` mais préservée) ; les assignments historiques gardent leur version d'origine, garantissant la cohérence des réponses déjà soumises
+- ✓ Duplication : crée une copie indépendante (utile pour partir d'un template système comme base)
+- ✓ Archivage : `active = false` → disparaît du picker mais reste lisible pour les assignments historiques ; restore possible
+- ✓ Strictement personnel (RLS `created_by = auth.uid()`) — pas de partage multi-cabinet en v1
+
+**Critères d'acceptation — Questions conditionnelles** :
+
+- ✓ Toggle "Rendre cette question conditionnelle" sur chaque question dans l'éditeur de template (modal de création/édition)
+- ✓ Sélecteur de question parente : dropdown listant uniquement les questions précédentes du template (pas de cycle, pas de référence à une question postérieure)
+- ✓ Sélecteur d'opérateur adapté au type de la parente : `=`, `≠` pour `single_choice` ; `>`, `<`, `=` pour `scale`/`number` ; `contient` pour `free_text`
+- ✓ Sélecteur de valeur attendue typé : options de la parente pour `single_choice` ; input numérique pour `scale`/`number` ; texte libre pour `free_text`
+- ✓ Validation serveur : la question parente doit exister dans la même version du template
+- ✓ Aperçu temps réel dans l'éditeur ("Cette question apparaîtra si Q2 = 'Non'")
+- ✓ Côté patient : aucune modification UI — la logique d'évaluation est déjà en place (`isQuestionVisible` dans `src/lib/questionnaire-display-rules.ts`, utilisée par les templates système)
+
+**↔ Miroir patient** : aucun — feature 100 % côté nutritionniste. Les templates personnels apparaissent côté patient comme n'importe quel autre questionnaire reçu (rien à changer dans la boîte de réception).
+
+**Tables DB** : `questionnaire_templates`, `questionnaire_template_versions`, `questionnaire_questions`, `questionnaire_question_options`, `questionnaire_question_display_rules` — toutes existantes, **aucune migration de schéma requise**. L'index `idx_qt_picker_visible` (déjà créé) sert exactement ce filtre.
+
+**API à livrer** :
+
+- Étendre `POST /api/protected/nutritionist/patients/[id]/dossier/questionnaires` (branche B) : accepter un champ optionnel `save_as_template: boolean` qui flip `is_draft=false` à la création
+- `PATCH /api/protected/nutritionist/questionnaire-templates/[id]` : édition (crée nouvelle version si nécessaire, archive l'ancienne)
+- `POST /api/protected/nutritionist/questionnaire-templates/[id]/duplicate` : duplication
+- `PATCH /api/protected/nutritionist/questionnaire-templates/[id]/archive` : `active = false` (et restore via le même endpoint)
+
+**Statut actuel** : Non démarré. Pré-requis livrés : la branche (B) de la route POST crée déjà des templates personnels (mais `is_draft=true`), le picker filtre déjà `is_draft=false` (P2.C.3), la RLS supporte déjà la lecture par `created_by`, et `questionnaire_question_display_rules` est déjà câblée côté patient. Hors scope : scoring (pas de cas d'usage clair, `is_clinical_screening` reste réservé aux templates système type SCOFF), partage multi-cabinet (pas d'équipes dans le schéma).
+
+**💡 Notes Claude Code** : 60 % du scope = UI d'éditeur de display rules (sélecteur typé selon question parente). Le reste réutilise massivement l'existant (`QuestionnaireCreateModal`, `QuestionnaireTemplatePicker`, hooks). Versioning : pour éviter une explosion du nombre de versions, ne créer une nouvelle version que si le template a déjà au moins un assignment et que les questions/options/règles ont changé (no-op si seulement le titre/description).
 
 ---
 

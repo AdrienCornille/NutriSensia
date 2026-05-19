@@ -24,7 +24,13 @@ export async function GET(_req: NextRequest) {
 
     const supabase = await createClient();
 
-    // RLS filters automatically: is_system=true OR created_by=auth.uid()
+    // RLS filters automatically: is_system=true OR created_by=auth.uid().
+    // We also exclude `is_draft=true` rows — those are throw-away templates
+    // created by the ad-hoc send flow (branch B of the POST route). They are
+    // referenced by their assignments but must stay out of the picker,
+    // otherwise every ad-hoc send accumulates as a perceived "duplicate" of
+    // existing templates. The composite index `idx_qt_picker_visible` is
+    // defined exactly on this filter.
     const { data: templates, error: tmplError } = await (supabase as any)
       .from('questionnaire_templates')
       .select(
@@ -53,6 +59,7 @@ export async function GET(_req: NextRequest) {
       `
       )
       .eq('active', true)
+      .eq('is_draft', false)
       .order('category', { ascending: true })
       .order('title', { ascending: true });
 

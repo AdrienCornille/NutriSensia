@@ -3856,6 +3856,15 @@
   background: var(--ns-cream-100);
   border-color: var(--ns-ink);
 }
+.fp-btn-coral {
+  background: var(--ns-coral);
+  color: var(--ns-cream-50);
+  border-color: var(--ns-coral);
+}
+.fp-btn-coral:hover:not(:disabled) {
+  border-color: var(--ns-ink);
+  box-shadow: 3px 3px 0 var(--ns-ink);
+}
 .fp-btn-icon {
   width: 42px;
   height: 42px;

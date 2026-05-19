@@ -1,13 +1,16 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { Loader2, AlertCircle, FileText } from 'lucide-react';
 import {
   usePatientQuestionnaires,
   useDeleteQuestionnaire,
 } from '@/hooks/useNutritionistDossier';
+import { Toast, type ToastType } from '@/components/suivi/shared/Toast';
+import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { QuestionnaireCreateModal } from './QuestionnaireCreateModal';
 import { QuestionnaireCard } from './QuestionnaireCard';
+import type { QuestionnaireDetail } from '@/types/nutritionist-dossier';
 
 interface NutritionistQuestionnairesViewProps {
   patientId: string;
@@ -34,6 +37,27 @@ export function NutritionistQuestionnairesView({
 }: NutritionistQuestionnairesViewProps) {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [filter, setFilter] = useState<(typeof FILTERS)[number]>('all');
+  const [pendingDelete, setPendingDelete] = useState<Pick<
+    QuestionnaireDetail,
+    'id' | 'title'
+  > | null>(null);
+  const [toast, setToast] = useState<{
+    visible: boolean;
+    type: ToastType;
+    title: string;
+    message?: string;
+  }>({ visible: false, type: 'success', title: '' });
+
+  const hideToast = useCallback(
+    () => setToast(t => ({ ...t, visible: false })),
+    []
+  );
+  const showToast = useCallback(
+    (type: ToastType, title: string, message?: string) => {
+      setToast({ visible: true, type, title, message });
+    },
+    []
+  );
 
   const {
     data: questionnaires,
@@ -220,7 +244,7 @@ export function NutritionistQuestionnairesView({
             <QuestionnaireCard
               key={q.id}
               questionnaire={q}
-              onDelete={id => deleteQuestionnaire.mutate(id)}
+              onDelete={id => setPendingDelete({ id, title: q.title })}
               isDeleting={
                 deleteQuestionnaire.isPending &&
                 (deleteQuestionnaire.variables as string | undefined) === q.id
@@ -234,8 +258,61 @@ export function NutritionistQuestionnairesView({
         <QuestionnaireCreateModal
           patientId={patientId}
           onClose={() => setShowCreateModal(false)}
+          onSent={title =>
+            showToast(
+              'success',
+              'Questionnaire envoyé',
+              `« ${title} » a bien été transmis au patient.`
+            )
+          }
+          onError={msg => showToast('error', 'Échec de l’envoi', msg)}
         />
       )}
+
+      <ConfirmModal
+        isOpen={pendingDelete !== null}
+        tone='danger'
+        title='Supprimer ce questionnaire ?'
+        message={
+          pendingDelete ? (
+            <>
+              « <b style={{ color: 'var(--ns-ink)' }}>{pendingDelete.title}</b>{' '}
+              » sera retiré du dossier du patient. Cette action est définitive.
+            </>
+          ) : undefined
+        }
+        confirmLabel='Supprimer'
+        cancelLabel='Annuler'
+        isLoading={deleteQuestionnaire.isPending}
+        onCancel={() => setPendingDelete(null)}
+        onConfirm={async () => {
+          if (!pendingDelete) return;
+          const { id, title } = pendingDelete;
+          try {
+            await deleteQuestionnaire.mutateAsync(id);
+            setPendingDelete(null);
+            showToast(
+              'success',
+              'Questionnaire supprimé',
+              `« ${title} » a été retiré du dossier.`
+            );
+          } catch (err) {
+            const msg =
+              err instanceof Error
+                ? err.message
+                : 'Une erreur est survenue lors de la suppression';
+            showToast('error', 'Échec de la suppression', msg);
+          }
+        }}
+      />
+
+      <Toast
+        isVisible={toast.visible}
+        type={toast.type}
+        title={toast.title}
+        message={toast.message}
+        onClose={hideToast}
+      />
     </div>
   );
 }

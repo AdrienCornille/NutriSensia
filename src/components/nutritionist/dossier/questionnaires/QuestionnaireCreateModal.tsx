@@ -45,6 +45,14 @@ const QUESTIONNAIRE_TYPE_OPTIONS = [
 interface QuestionnaireCreateModalProps {
   patientId: string;
   onClose: () => void;
+  /** Called after a successful send, just before onClose. The parent typically
+   *  surfaces a toast — we pass the questionnaire title so the message can
+   *  reference it. */
+  onSent?: (title: string) => void;
+  /** Called when the create mutation throws. The parent surfaces the failure
+   *  via a toast since the modal is dismissed on success but kept open on
+   *  error (so the user can fix and retry). */
+  onError?: (message: string) => void;
 }
 
 type QuestionType = 'text' | 'scale' | 'choice' | 'boolean' | 'number';
@@ -101,6 +109,8 @@ const CATEGORY_TO_TYPE: Record<string, string> = {
 export function QuestionnaireCreateModal({
   patientId,
   onClose,
+  onSent,
+  onError,
 }: QuestionnaireCreateModalProps) {
   const [view, setView] = useState<'form' | 'picker'>('form');
   const [title, setTitle] = useState('');
@@ -243,9 +253,10 @@ export function QuestionnaireCreateModal({
     }
     const validQuestions = questions.filter(q => q.question.trim());
 
+    const trimmedTitle = title.trim();
     try {
       await createQuestionnaire.mutateAsync({
-        title: title.trim(),
+        title: trimmedTitle,
         questionnaire_type: questionnaireType,
         due_date: dueDate || undefined,
         // When a template was picked, the API uses that version directly
@@ -259,9 +270,16 @@ export function QuestionnaireCreateModal({
           required: q.required,
         })),
       });
+      onSent?.(trimmedTitle);
       onClose();
-    } catch {
-      // handled by React Query
+    } catch (err) {
+      // Stay in the modal on error so the user can fix and retry; surface
+      // the failure via the parent toast.
+      const msg =
+        err instanceof Error
+          ? err.message
+          : 'Une erreur est survenue lors de l’envoi';
+      onError?.(msg);
     }
   }
 

@@ -129,9 +129,7 @@ export function QuestionnaireCard({
                 type='button'
                 className='fp-btn fp-btn-icon'
                 style={{ width: 32, height: 32 }}
-                onClick={() => {
-                  if (confirm('Supprimer ce questionnaire ?')) onDelete(q.id);
-                }}
+                onClick={() => onDelete(q.id)}
                 disabled={isDeleting}
                 aria-label='Supprimer'
               >
